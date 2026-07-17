@@ -41,6 +41,22 @@ STREAM_META: dict[str, str] = {
     "mixin_gain": "",
     "energy_residual": "",
     "twin_health": "",
+    # Genset-style site I/O
+    "batt_SOC": "",
+    "batt_kWh": "kWh",
+    "batt_kWh_cap": "kWh",
+    "batt_V": "V",
+    "batt_A": "A",
+    "batt_draw_kW": "kW",
+    "batt_charge_kW": "kW",
+    "batt_used_kWh": "kWh",
+    "grid_export_kW": "kW",
+    "grid_export_kWh": "kWh",
+    "H_in_g": "g",
+    "B11_in_g": "g",
+    "He_out_g": "g",
+    "rad_out_g": "g",
+    "Q_ref": "",  # constant 1.0 reference line
 }
 
 

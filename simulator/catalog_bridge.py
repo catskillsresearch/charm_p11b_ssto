@@ -79,13 +79,30 @@ def hedp_host_slugs() -> set[str]:
     return {a["slug"] for a in list_architectures() if a["hedp_host"]}
 
 
+def load_plant_spec(slug: str) -> dict:
+    with connect() as conn:
+        row = conn.execute(
+            """
+            SELECT ps.*
+            FROM plant_spec ps
+            JOIN architecture a ON a.id = ps.architecture_id
+            WHERE a.slug = ?
+            """,
+            (slug,),
+        ).fetchone()
+    return dict(row) if row else {}
+
+
 def config_from_slug(slug: str, **knob_overrides: object) -> PlantConfig:
     arches = {a["slug"]: a for a in list_architectures()}
     if slug not in arches:
         raise KeyError(f"Unknown architecture slug: {slug}")
     a = arches[slug]
     family = a["family"]
+    spec = load_plant_spec(slug)
     defaults = _default_knobs(family, slug)
+    if spec.get("rated_driver_MW"):
+        defaults["driver_power_MW"] = float(spec["rated_driver_MW"])
     defaults.update({k: v for k, v in knob_overrides.items() if v is not None})
     return PlantConfig(
         slug=slug,
@@ -110,6 +127,19 @@ def config_from_slug(slug: str, **knob_overrides: object) -> PlantConfig:
         Z_eff=float(defaults["Z_eff"]),
         fuel_mode=str(defaults["fuel_mode"]),
         novel_tag=defaults.get("novel_tag"),  # type: ignore[arg-type]
+        footprint_m2=float(spec.get("footprint_m2") or 100.0),
+        vessel_length_m=float(spec.get("vessel_length_m") or 5.0),
+        vessel_diameter_m=float(spec.get("vessel_diameter_m") or 2.0),
+        rated_gross_MW=float(spec.get("rated_gross_MW") or 1.0),
+        rated_net_MW=float(spec.get("rated_net_MW") or 0.5),
+        rated_driver_MW=float(spec.get("rated_driver_MW") or defaults["driver_power_MW"]),
+        starter_battery_kWh=float(spec.get("starter_battery_kWh") or 50.0),
+        starter_battery_V=float(spec.get("starter_battery_V") or 400.0),
+        design_fuel_H_mg_s=float(spec.get("design_fuel_H_mg_s") or 0.5),
+        design_fuel_B11_mg_s=float(spec.get("design_fuel_B11_mg_s") or 0.5),
+        neutron_energy_fraction=float(spec.get("neutron_energy_fraction") or 0.02),
+        spec_notes=str(spec.get("notes") or ""),
+        spec_data_quality=str(spec.get("data_quality") or "editorial"),
     )
 
 

@@ -23,6 +23,7 @@ from simulator.ui.alarms import AlarmRail
 from simulator.ui.controls import ControlPanel
 from simulator.ui.novel_dialog import NovelDialog
 from simulator.ui.schematic_view import SchematicView
+from simulator.ui.site_io_panel import SiteIOPanel
 from simulator.ui.stripcharts import StripChartPanel
 
 
@@ -60,8 +61,14 @@ class MainWindow(QMainWindow):
         split = QSplitter(Qt.Orientation.Horizontal)
         outer.addWidget(split, 1)
 
+        left = QWidget()
+        left_l = QVBoxLayout(left)
+        left_l.setContentsMargins(0, 0, 0, 0)
         self.controls = ControlPanel()
-        split.addWidget(self.controls)
+        left_l.addWidget(self.controls, 3)
+        self.site_io = SiteIOPanel()
+        left_l.addWidget(self.site_io, 2)
+        split.addWidget(left)
 
         mid = QWidget()
         mid_l = QVBoxLayout(mid)
@@ -85,7 +92,7 @@ class MainWindow(QMainWindow):
         )
         right_l.addWidget(self.report_view, 1)
         split.addWidget(right)
-        split.setSizes([300, 750, 320])
+        split.setSizes([340, 720, 300])
 
         self.controls.config_changed.connect(self._on_config)
         self.controls.run_clicked.connect(self._run)
@@ -110,6 +117,7 @@ class MainWindow(QMainWindow):
             cfg.slug,
             bool(cfg.mixins.get("degenerate_boron")),
         )
+        self.site_io.set_config(cfg)
         self._refresh_header()
 
     def _run(self) -> None:
@@ -120,6 +128,7 @@ class MainWindow(QMainWindow):
             cfg.slug,
             bool(cfg.mixins.get("degenerate_boron")),
         )
+        self.site_io.set_config(cfg)
         self.clock.start()
         self._refresh_header()
 
@@ -154,6 +163,7 @@ class MainWindow(QMainWindow):
         self.schematic.set_bus(self.clock.bus)
         self.charts.update_from_bus(self.clock.bus)
         self.alarms.update_from_bus(self.clock.bus)
+        self.site_io.update_from_bus(self.clock.bus)
         self._refresh_header()
 
     def _refresh_header(self) -> None:
@@ -163,7 +173,10 @@ class MainWindow(QMainWindow):
         rank = f"#{cfg.plant_odds_rank}" if cfg.plant_odds_rank else ""
         novel = f"  |  {cfg.novel_tag}" if cfg.novel_tag else ""
         health = self.clock.bus.get("twin_health", 1.0)
+        batt = self.clock.bus.get("batt_SOC", 1.0)
+        qpl = self.clock.bus.get("Q_plant", 0.0)
         self.header.setText(
             f"{cfg.name}  [{cfg.slug}]  ·  {st.value}  ·  t={self.clock.t:6.1f}s  ·  "
-            f"{pos} {rank}  ·  twin health {health:.2f}  ·  family={cfg.family}{novel}"
+            f"{pos} {rank}  ·  Q_plant={qpl:.3g}  ·  batt {100*batt:.0f}%  ·  "
+            f"health {health:.2f}  ·  {cfg.family}{novel}"
         )

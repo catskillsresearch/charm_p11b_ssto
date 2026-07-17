@@ -30,6 +30,20 @@ class PlantConfig:
     Z_eff: float = 1.5
     fuel_mode: str = "p11b"  # p11b | dt_learning
     novel_tag: str | None = None
+    # Plant envelope (from plant_spec / defaults)
+    footprint_m2: float = 100.0
+    vessel_length_m: float = 5.0
+    vessel_diameter_m: float = 2.0
+    rated_gross_MW: float = 1.0
+    rated_net_MW: float = 0.5
+    rated_driver_MW: float = 1.0
+    starter_battery_kWh: float = 50.0
+    starter_battery_V: float = 400.0
+    design_fuel_H_mg_s: float = 0.5
+    design_fuel_B11_mg_s: float = 0.5
+    neutron_energy_fraction: float = 0.02
+    spec_notes: str = ""
+    spec_data_quality: str = "editorial"
 
     def capability(self, name: str) -> bool:
         caps = {

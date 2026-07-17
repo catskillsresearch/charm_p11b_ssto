@@ -61,6 +61,15 @@ def build_report(clock: PlantClock) -> RunReport:
         "twin_health_avg": avg("twin_health"),
         "energy_residual_avg": avg("energy_residual"),
         "mixin_gain": bus.get("mixin_gain", 1.0),
+        "batt_SOC_final": bus.get("batt_SOC"),
+        "batt_used_kWh": bus.get("batt_used_kWh"),
+        "grid_export_kWh": bus.get("grid_export_kWh"),
+        "H_in_g": bus.get("H_in_g"),
+        "B11_in_g": bus.get("B11_in_g"),
+        "He_out_g": bus.get("He_out_g"),
+        "rad_out_g": bus.get("rad_out_g"),
+        "starter_battery_kWh_cap": cfg.starter_battery_kWh,
+        "rated_net_MW": cfg.rated_net_MW,
     }
 
     # Crude gate proxies from metrics

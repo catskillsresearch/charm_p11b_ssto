@@ -147,6 +147,24 @@ CREATE TABLE architecture_entity (
     PRIMARY KEY (architecture_id, entity_id, role)
 );
 
+-- Physical / I/O design envelope (survey-informed editorial theater values)
+CREATE TABLE plant_spec (
+    architecture_id INTEGER PRIMARY KEY REFERENCES architecture(id) ON DELETE CASCADE,
+    footprint_m2 REAL,                 -- hall / pad footprint
+    vessel_length_m REAL,
+    vessel_diameter_m REAL,
+    rated_gross_MW REAL,               -- intended gross electric generation
+    rated_net_MW REAL,                 -- intended busbar export
+    rated_driver_MW REAL,              -- wall-plug driver / recirculating class
+    starter_battery_kWh REAL NOT NULL, -- site startup bank (fully charged at RUN)
+    starter_battery_V REAL NOT NULL,   -- DC bus nominal
+    design_fuel_H_mg_s REAL,           -- design proton/H feed
+    design_fuel_B11_mg_s REAL,         -- design boron-11 feed
+    neutron_energy_fraction REAL,      -- ~0 for clean p11B; higher for D–T learning
+    notes TEXT,
+    data_quality TEXT NOT NULL DEFAULT 'editorial'  -- survey | editorial | aspirational
+);
+
 -- ---------------------------------------------------------------------------
 -- Prototypes (machines, facilities, digital twins, concepts)
 -- ---------------------------------------------------------------------------

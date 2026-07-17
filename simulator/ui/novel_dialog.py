@@ -79,6 +79,61 @@ class NovelDialog(QDialog):
         family = nearest_family_for_qualifiers(time, conf, fuel, kin)
         tag = self._mint_novel(time, conf, fuel, kin)
         hedp = family == "laser_hedp"
+        # Envelope defaults by family (genset-scale editorial)
+        if family == "mec_orbitron":
+            env = dict(
+                footprint_m2=20,
+                vessel_length_m=1.5,
+                vessel_diameter_m=1.0,
+                rated_gross_MW=0.05,
+                rated_net_MW=0.01,
+                rated_driver_MW=0.2,
+                starter_battery_kWh=30,
+                starter_battery_V=400,
+                design_fuel_H_mg_s=0.05,
+                design_fuel_B11_mg_s=0.02,
+                neutron_energy_fraction=0.5,
+                driver_power_MW=0.2,
+                rep_rate_Hz=40.0,
+                HV_kV=250.0,
+                B_T=0.0,
+            )
+        elif family == "laser_hedp":
+            env = dict(
+                footprint_m2=800,
+                vessel_length_m=8,
+                vessel_diameter_m=6,
+                rated_gross_MW=40,
+                rated_net_MW=10,
+                rated_driver_MW=40,
+                starter_battery_kWh=200,
+                starter_battery_V=800,
+                design_fuel_H_mg_s=0.5,
+                design_fuel_B11_mg_s=0.8,
+                neutron_energy_fraction=0.001,
+                driver_power_MW=40.0,
+                rep_rate_Hz=10.0,
+                HV_kV=0.0,
+                B_T=0.0,
+            )
+        else:
+            env = dict(
+                footprint_m2=1000,
+                vessel_length_m=15,
+                vessel_diameter_m=4,
+                rated_gross_MW=50,
+                rated_net_MW=25,
+                rated_driver_MW=20,
+                starter_battery_kWh=250,
+                starter_battery_V=800,
+                design_fuel_H_mg_s=1.0,
+                design_fuel_B11_mg_s=1.0,
+                neutron_energy_fraction=0.02,
+                driver_power_MW=20.0,
+                rep_rate_Hz=0.0,
+                HV_kV=0.0,
+                B_T=1.5,
+            )
         cfg = PlantConfig(
             slug=tag,
             name=f"Novel twin ({tag})",
@@ -90,11 +145,10 @@ class NovelDialog(QDialog):
             hedp_degenerate_host=hedp,
             mixins={"degenerate_boron": False},
             novel_tag=tag,
-            driver_power_MW=10.0 if family == "laser_hedp" else 5.0,
-            rep_rate_Hz=10.0 if family != "magnetic_compact" else 0.0,
-            HV_kV=250.0 if family == "mec_orbitron" else 0.0,
-            B_T=1.5 if family == "magnetic_compact" else 0.0,
             nonthermal=0.6,
+            spec_notes="Novel qualifier combo — envelope is family-default editorial.",
+            spec_data_quality="aspirational",
+            **env,
         )
         self._save_preset(cfg)
         self._result = cfg

@@ -677,6 +677,83 @@ def seed_architectures(conn: sqlite3.Connection) -> None:
         )
 
 
+def seed_plant_specs(conn: sqlite3.Connection) -> None:
+    """Survey-informed editorial envelopes for operator-twin site I/O.
+
+    Sizes and ratings are theater defaults for genset-style bookkeeping, not
+    certified plant data. Prefer public scale cues (Norman warehouse, Orbitron
+    desk-scale, ST halls) when available.
+    """
+    # slug: footprint_m2, L, D, gross, net, driver, batt_kWh, batt_V, H, B, n_frac, quality, notes
+    specs: list[tuple] = [
+        ("avalanche", 12, 1.2, 0.8, 0.05, 0.01, 0.15, 25, 400, 0.05, 0.02, 0.85,
+         "editorial", "Desk-scale Orbitron / modular kWe pack; D–T learning neutrons dominate byproducts."),
+        ("jiht-nvd", 8, 0.6, 0.4, 0.002, 0.0005, 0.02, 5, 200, 0.02, 0.02, 0.05,
+         "editorial", "Lab NVD–IEC; tiny net; low but nonzero side neutrons."),
+        ("tae", 2500, 30, 4, 150, 100, 80, 800, 1000, 2.0, 1.5, 0.02,
+         "editorial", "Norman-class linear hall (~100 ft class); Da Vinci plant ratings aspirational."),
+        ("enn", 1800, 8, 6, 100, 50, 40, 500, 1000, 1.5, 1.2, 0.02,
+         "editorial", "ST hall + nuclear-data program; demo-class net power aspirational."),
+        ("pale-blue-charm", 900, 12, 3, 80, 40, 25, 200, 800, 1.0, 1.0, 0.01,
+         "aspirational", "Still incorporating; open-field CHARM concept scale."),
+        ("hb11", 1200, 10, 10, 120, 50, 100, 400, 800, 0.8, 1.2, 0.001,
+         "editorial", "Amplifier / laser plant sketch; driver bank >> net until gain closes."),
+        ("marvel", 1500, 12, 8, 80, 40, 60, 300, 800, 0.6, 1.0, 0.001,
+         "editorial", "CSU laser facility class; plant L early."),
+        ("blue-laser", 800, 8, 6, 40, 15, 40, 150, 800, 0.4, 0.6, 0.001,
+         "editorial", "Company laser/target stack; boron path thinner publicly."),
+        ("anubal", 200, 4, 3, 5, 1, 8, 40, 400, 0.1, 0.2, 0.001,
+         "editorial", "Early academic collaborations; small envelope."),
+        ("xjtu-cn-hedp", 400, 5, 3, 2, 0.2, 10, 30, 400, 0.2, 0.3, 0.001,
+         "editorial", "Component / beam-target science path, not integrated plant."),
+        ("lppfusion", 150, 3, 2, 5, 1, 8, 40, 480, 0.3, 0.4, 0.05,
+         "editorial", "Lab DPF; electrode/rep-rate limited."),
+        ("helion", 2000, 20, 5, 80, 50, 40, 400, 1000, 1.5, 0.0, 0.15,
+         "editorial", "Polaris-class pulsed FRC; D–³He — not p11B-clean; side neutrons."),
+        ("pfs-pfrc", 120, 4, 2, 1, 0.2, 1.5, 40, 480, 0.2, 0.0, 0.1,
+         "editorial", "PFRC microreactor line; D–³He."),
+        ("thea", 2200, 15, 10, 200, 100, 50, 600, 1000, 0.0, 0.0, 0.8,
+         "editorial", "Eos/Helios D–T stellarator; tritium/activation dominate byproducts."),
+        ("lhd-nifs", 5000, 40, 10, 0, 0, 20, 100, 480, 0.1, 0.1, 0.02,
+         "survey", "Science facility; not a plant owner — ratings are experiment-support only."),
+        ("probono", 0, 0, 0, 0, 0, 0, 10, 400, 0.05, 0.05, 0.001,
+         "editorial", "Consortium coordination — no single reactor pad."),
+        ("fusion-project", 300, 5, 3, 0, 0, 5, 20, 400, 0.1, 0.1, 0.001,
+         "editorial", "PALS-class targetry/diagnostics."),
+        ("nanjing-mucf", 50, 2, 1, 0, 0, 0.5, 5, 200, 0.05, 0.05, 0.0,
+         "aspirational", "Imputed muon theory path — no hardware plant."),
+        ("degenerate-catcher", 400, 5, 3, 10, 2, 20, 50, 400, 0.3, 0.5, 0.001,
+         "aspirational", "Imputed theory plant from [91] mixin."),
+        ("catania-avalanche", 100, 3, 2, 1, 0.1, 2, 10, 400, 0.1, 0.1, 0.01,
+         "aspirational", "Imputed α-avalanche MCF scans."),
+        ("radiation-trapping", 100, 3, 2, 1, 0.1, 2, 10, 400, 0.1, 0.1, 0.01,
+         "aspirational", "Imputed radiation-trapping paper plant."),
+    ]
+    for row in specs:
+        (
+            slug, foot, length, diam, gross, net, driver, bkwh, bv,
+            h, b, nfrac, quality, notes,
+        ) = row
+        conn.execute(
+            """
+            INSERT INTO plant_spec (
+                architecture_id, footprint_m2, vessel_length_m, vessel_diameter_m,
+                rated_gross_MW, rated_net_MW, rated_driver_MW,
+                starter_battery_kWh, starter_battery_V,
+                design_fuel_H_mg_s, design_fuel_B11_mg_s, neutron_energy_fraction,
+                notes, data_quality
+            ) VALUES (
+                (SELECT id FROM architecture WHERE slug = ?),
+                ?,?,?,?,?,?,?,?,?,?,?,?,?
+            )
+            """,
+            (
+                slug, foot, length, diam, gross, net, driver, bkwh, bv,
+                h, b, nfrac, notes, quality,
+            ),
+        )
+
+
 def seed_gate_scores(conn: sqlite3.Connection) -> None:
     # Map symbols to codes
     sym = {"●": "full", "◐": "partial", "○": "weak", "—": "na", "-": "na"}
@@ -1321,6 +1398,7 @@ def verify(conn: sqlite3.Connection) -> None:
         "plant_odds": "SELECT COUNT(*) FROM plant_odds",
         "patents": "SELECT COUNT(*) FROM patent",
         "authors_linked": "SELECT COUNT(*) FROM reference_author",
+        "plant_specs": "SELECT COUNT(*) FROM plant_spec",
     }
     print("Catalog DB summary:")
     for label, sql in checks.items():
@@ -1345,6 +1423,7 @@ def main() -> None:
         seed_static(conn)
         seed_organizations(conn)
         seed_architectures(conn)
+        seed_plant_specs(conn)
         seed_gate_scores(conn)
         seed_plant_odds(conn)
         seed_prototypes(conn)

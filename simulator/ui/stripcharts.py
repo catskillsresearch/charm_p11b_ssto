@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pyqtgraph as pg
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QVBoxLayout, QWidget
 
 from simulator.plant.streams import StreamBus
@@ -20,9 +21,10 @@ class StripChartPanel(QWidget):
 
         self._curves: dict[str, pg.PlotDataItem] = {}
         specs = [
-            ("power", ["P_f", "P_driver", "P_rad", "P_net"], "MW"),
-            ("gain", ["Q_plasma", "Q_eng", "Q_plant"], "Q"),
-            ("store", ["store_SOC", "twin_health"], ""),
+            ("power MW", ["P_f", "P_driver", "P_rad", "P_net"], "MW"),
+            ("gain (Q=1 dashed)", ["Q_plasma", "Q_eng", "Q_plant", "Q_ref"], "Q"),
+            ("battery / health", ["batt_SOC", "twin_health"], ""),
+            ("site kW", ["batt_draw_kW", "grid_export_kW", "batt_charge_kW"], "kW"),
         ]
         colors = {
             "P_f": "#3dd6c6",
@@ -32,8 +34,12 @@ class StripChartPanel(QWidget):
             "Q_plasma": "#7dffb3",
             "Q_eng": "#c79bff",
             "Q_plant": "#ffd27a",
-            "store_SOC": "#8ecae6",
+            "Q_ref": "#888888",
+            "batt_SOC": "#8ecae6",
             "twin_health": "#90be6d",
+            "batt_draw_kW": "#ff8b6a",
+            "grid_export_kW": "#3dd6c6",
+            "batt_charge_kW": "#6aa9ff",
         }
         for row, (title, names, _unit) in enumerate(specs):
             plt = self.plot.addPlot(row=row, col=0, title=title)
@@ -42,7 +48,10 @@ class StripChartPanel(QWidget):
             if row < len(specs) - 1:
                 plt.hideAxis("bottom")
             for name in names:
-                c = plt.plot(pen=pg.mkPen(colors.get(name, "#fff"), width=1.5), name=name)
+                pen = pg.mkPen(colors.get(name, "#fff"), width=1.5)
+                if name == "Q_ref":
+                    pen.setStyle(Qt.PenStyle.DashLine)
+                c = plt.plot(pen=pen, name=name)
                 self._curves[name] = c
 
     def update_from_bus(self, bus: StreamBus) -> None:
