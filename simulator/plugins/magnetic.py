@@ -64,7 +64,8 @@ class MagneticCompactPlugin(ArchitecturePlugin):
         P_i_to_e *= coeffs["couple_scale"]
         P_rad *= coeffs["rad_scale"]
 
-        # Fusion yield: beam-assisted window (theater-scaled for visible Q)
+        # Fusion yield: research FRC devices do not report plant Q>1.
+        # TAE Norman/C-2W is NBI-sustained plasma physics (Q≪1); keep yield tiny.
         reactivity = max(0.2, (state["T_i"] / 25.0) ** 1.5 * state["n_e"] ** 1.3)
         P_f = (
             0.55
@@ -75,6 +76,10 @@ class MagneticCompactPlugin(ArchitecturePlugin):
             * (1.0 - 0.55 * poison)
             * (0.7 + 0.15 * cfg.B_T)
         )
+        if cfg.slug in {"tae", "helion", "pfs-pfrc"}:
+            P_f *= 1e-6  # wall-lock: no published engineering Q>1 on these paths
+        elif cfg.slug in {"enn", "pale-blue-charm", "lhd-nifs"}:
+            P_f *= 1e-4  # still Q≪1 vs NBI/aux; not plant breakeven
 
         # Magnet store
         state["magnet_SOC"] = min(
@@ -96,21 +101,14 @@ class MagneticCompactPlugin(ArchitecturePlugin):
 
         self._publish(bus, cfg, state, books, Z)
 
-        # Trips / warnings (grace period so startup is playable)
-        if state["t_flattop"] > 3.0 and P_rad > 1.6 * max(P_f, 0.5):
-            bus.alarm(bus.get("t"), "trip", "RIDER", "Radiation exceeds fusion — Rider collapse")
-            state["plasma_on"] = 0.0
-            P_f *= 0.05
-        elif state["t_flattop"] > 1.0 and P_rad > 1.2 * max(P_f, 0.5):
-            bus.alarm(bus.get("t"), "warn", "RIDER", "Bremsstrahlung climbing toward Rider limit")
-        if Z > 3.2:
-            bus.alarm(bus.get("t"), "warn", "ZEFF", f"Z_eff elevated ({Z:.2f}) — impurity / ash")
-        if state["magnet_SOC"] < 0.2:
-            bus.alarm(bus.get("t"), "warn", "MAG", "Magnet store low — recharge lag")
-        # Ash trip after sustained poisoning
-        if state["ash_He"] > 55.0 and state["t_flattop"] > 5.0:
-            bus.alarm(bus.get("t"), "trip", "ASH", "Helium ash poisoning — exhaust lag")
-            P_f *= 0.1
+        # Research-shot windows are short (e.g. TAE ~40 ms); skip long-flattop theater trips
+        if state["t_flattop"] > 2.0:
+            if P_rad > 1.6 * max(P_f, 0.5):
+                bus.alarm(bus.get("t"), "warn", "RIDER", "Radiation exceeds fusion — Rider (Q≪1)")
+            if Z > 3.2:
+                bus.alarm(bus.get("t"), "warn", "ZEFF", f"Z_eff elevated ({Z:.2f})")
+            if state["ash_He"] > 55.0:
+                bus.alarm(bus.get("t"), "warn", "ASH", "Helium ash accumulating")
 
         # Twin health
         bus.set("twin_health", max(0.0, 1.0 - books.energy_residual * 3.0))

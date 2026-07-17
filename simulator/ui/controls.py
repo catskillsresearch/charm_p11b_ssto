@@ -23,6 +23,7 @@ from simulator.plant.config import PlantConfig
 class ControlPanel(QWidget):
     config_changed = Signal(object)  # PlantConfig
     run_clicked = Signal()
+    pause_clicked = Signal()
     abort_clicked = Signal()
     reset_clicked = Signal()
     report_clicked = Signal()
@@ -92,11 +93,15 @@ class ControlPanel(QWidget):
 
         btn_row = QHBoxLayout()
         self.btn_run = QPushButton("RUN")
+        self.btn_pause = QPushButton("PAUSE")
         self.btn_abort = QPushButton("ABORT")
         self.btn_reset = QPushButton("RESET")
         self.btn_run.setStyleSheet("background:#0b6e4f; color:white; font-weight:600;")
+        self.btn_pause.setStyleSheet("background:#3d4f48; color:white;")
+        self.btn_pause.setToolTip("Freeze the plant clock (toggle to resume)")
         self.btn_abort.setStyleSheet("background:#8b2e2e; color:white;")
         btn_row.addWidget(self.btn_run)
+        btn_row.addWidget(self.btn_pause)
         btn_row.addWidget(self.btn_abort)
         btn_row.addWidget(self.btn_reset)
         root.addLayout(btn_row)
@@ -124,6 +129,7 @@ class ControlPanel(QWidget):
             w.valueChanged.connect(self._emit_config)
         self.fuel_mode.currentIndexChanged.connect(self._emit_config)
         self.btn_run.clicked.connect(self.run_clicked.emit)
+        self.btn_pause.clicked.connect(self.pause_clicked.emit)
         self.btn_abort.clicked.connect(self.abort_clicked.emit)
         self.btn_reset.clicked.connect(self.reset_clicked.emit)
         self.btn_report.clicked.connect(self.report_clicked.emit)

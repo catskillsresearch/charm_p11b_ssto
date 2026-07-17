@@ -96,6 +96,7 @@ class MainWindow(QMainWindow):
 
         self.controls.config_changed.connect(self._on_config)
         self.controls.run_clicked.connect(self._run)
+        self.controls.pause_clicked.connect(self._pause)
         self.controls.abort_clicked.connect(self._abort)
         self.controls.reset_clicked.connect(self._reset)
         self.controls.report_clicked.connect(self._report)
@@ -130,16 +131,24 @@ class MainWindow(QMainWindow):
         )
         self.site_io.set_config(cfg)
         self.clock.start()
+        self.controls.btn_pause.setText("PAUSE")
+        self._refresh_header()
+
+    def _pause(self) -> None:
+        self.clock.pause()
+        self.controls.btn_pause.setText("RESUME" if self.clock.paused else "PAUSE")
         self._refresh_header()
 
     def _abort(self) -> None:
         self.clock.abort()
+        self.controls.btn_pause.setText("PAUSE")
         self._refresh_header()
 
     def _reset(self) -> None:
         self.clock.reset()
         self.alarms.reset()
         self.report_view.clear()
+        self.controls.btn_pause.setText("PAUSE")
         self._refresh_header()
 
     def _report(self) -> None:
@@ -175,8 +184,19 @@ class MainWindow(QMainWindow):
         health = self.clock.bus.get("twin_health", 1.0)
         batt = self.clock.bus.get("batt_SOC", 1.0)
         qpl = self.clock.bus.get("Q_plant", 0.0)
+        rem = self.clock.bus.get("preprod_remaining_s", 0.0)
+        prep = ""
+        cur = self.clock.commission.current
+        if cur and st in (RunState.PREPPING, RunState.PAUSED, RunState.PLASMA, RunState.PULSE):
+            prep = f"  ·  {cur.label}"
+            if rem > 0 and not cur.plasma:
+                prep += f" ({rem:.1f}s left)"
+            elif cur.plasma:
+                prep += f" ({rem*1000:.0f} ms left)"
+        elif st == RunState.SHOT_END:
+            prep = "  ·  shot complete"
         self.header.setText(
-            f"{cfg.name}  [{cfg.slug}]  ·  {st.value}  ·  t={self.clock.t:6.1f}s  ·  "
+            f"{cfg.name}  [{cfg.slug}]  ·  {st.value}  ·  t={self.clock.t:6.1f}s{prep}  ·  "
             f"{pos} {rank}  ·  Q_plant={qpl:.3g}  ·  batt {100*batt:.0f}%  ·  "
             f"health {health:.2f}  ·  {cfg.family}{novel}"
         )

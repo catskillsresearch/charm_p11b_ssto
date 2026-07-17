@@ -57,6 +57,10 @@ STREAM_META: dict[str, str] = {
     "He_out_g": "g",
     "rad_out_g": "g",
     "Q_ref": "",  # constant 1.0 reference line
+    "apu_ramp": "",  # 0→1 pre-production fraction
+    "apu_bootstrap_s": "s",
+    "preprod_remaining_s": "s",
+    "batt_charge_C": "",
 }
 
 

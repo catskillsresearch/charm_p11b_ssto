@@ -138,6 +138,10 @@ def config_from_slug(slug: str, **knob_overrides: object) -> PlantConfig:
         design_fuel_H_mg_s=float(spec.get("design_fuel_H_mg_s") or 0.5),
         design_fuel_B11_mg_s=float(spec.get("design_fuel_B11_mg_s") or 0.5),
         neutron_energy_fraction=float(spec.get("neutron_energy_fraction") or 0.02),
+        time_to_production_s=float(spec.get("time_to_production_s") or 0.0),
+        startup_aux_MW=float(spec.get("startup_aux_MW") or 0.0),
+        startup_energy_kWh=float(spec.get("startup_energy_kWh") or 0.0),
+        startup_notes=str(spec.get("startup_notes") or ""),
         spec_notes=str(spec.get("notes") or ""),
         spec_data_quality=str(spec.get("data_quality") or "editorial"),
     )
@@ -159,7 +163,7 @@ def _default_knobs(family: str, slug: str) -> dict:
     if family == "magnetic_compact":
         base.update(
             {
-                "driver_power_MW": 8.0 if slug == "tae" else 6.0,
+                "driver_power_MW": 20.0 if slug == "tae" else 6.0,
                 "B_T": 1.2 if slug == "tae" else 2.5,
                 "nonthermal": 0.55 if slug == "tae" else 0.35,
                 "rep_rate_Hz": 0.0,

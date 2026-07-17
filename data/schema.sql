@@ -161,6 +161,11 @@ CREATE TABLE plant_spec (
     design_fuel_H_mg_s REAL,           -- design proton/H feed
     design_fuel_B11_mg_s REAL,         -- design boron-11 feed
     neutron_energy_fraction REAL,      -- ~0 for clean p11B; higher for D–T learning
+    -- Honest black-start / first-production window (not full driver on battery)
+    time_to_production_s REAL NOT NULL DEFAULT 0,  -- 0 = instantaneous production model
+    startup_aux_MW REAL NOT NULL DEFAULT 0,        -- continuous house/aux during prep
+    startup_energy_kWh REAL NOT NULL DEFAULT 0,    -- one-shot magnet/bank energy over prep
+    startup_notes TEXT,                -- justification for the three fields above
     notes TEXT,
     data_quality TEXT NOT NULL DEFAULT 'editorial'  -- survey | editorial | aspirational
 );

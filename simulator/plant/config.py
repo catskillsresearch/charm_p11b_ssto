@@ -39,9 +39,15 @@ class PlantConfig:
     rated_driver_MW: float = 1.0
     starter_battery_kWh: float = 50.0
     starter_battery_V: float = 400.0
+    batt_max_charge_C: float = 1.0  # battery recharge limit (1C = 1 h to full)
     design_fuel_H_mg_s: float = 0.5
     design_fuel_B11_mg_s: float = 0.5
     neutron_energy_fraction: float = 0.02
+    # Black-start / first production (plant_spec); 0 ⇒ instantaneous books
+    time_to_production_s: float = 0.0
+    startup_aux_MW: float = 0.0
+    startup_energy_kWh: float = 0.0
+    startup_notes: str = ""
     spec_notes: str = ""
     spec_data_quality: str = "editorial"
 
