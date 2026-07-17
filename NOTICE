@@ -1,0 +1,41 @@
+CATSKILLS RESEARCH COMPANY P11B FUSION SIMULATION SOFTWARE
+Copyright 2026 Catskills Research Company
+
+This product includes software and documentation developed by Catskills
+Research Company and licensed under the Apache License, Version 2.0.
+This NOTICE is informational and does not modify that License.
+
+RESEARCH, SAFETY, AND USE NOTICE
+
+This project is intended solely for theoretical research, education, and
+software development. It is not an engineering specification, construction
+plan, operating procedure, safety analysis, regulatory submission, investment
+recommendation, or representation that any modeled reactor is feasible, safe,
+or capable of producing net energy.
+
+The models may contain simplifying assumptions, uncertain or disputed data,
+unvalidated extrapolations, software defects, and AI-assisted content. Results
+must be independently verified before any use. Users assume responsibility for
+determining the suitability and safety of their use.
+
+The Work is provided "AS IS," without warranties or conditions of any kind.
+The warranty disclaimer and limitation of liability in Sections 7 and 8 of the
+Apache License 2.0 apply.
+
+THIRD-PARTY RESEARCH MATERIALS
+
+The research/ directory and portions of pb11.md cite, describe, link to, or
+archive material created by third parties. Those materials remain subject to
+their respective copyrights, licenses, attribution requirements, and terms of
+use. Their presence in this repository is for research provenance and
+documentation and does not imply endorsement or grant rights beyond those
+provided by the applicable rights holder.
+
+See research/figures/CREDITS.md and the citations in pb11.md for source and
+provenance information. When redistributing or publishing third-party
+materials, users must review and comply with the original terms.
+
+No license is granted to use the trade names, trademarks, service marks, or
+product names of Catskills Research Company or any referenced organization,
+except for reasonable and customary attribution as permitted by law and by the
+Apache License 2.0.

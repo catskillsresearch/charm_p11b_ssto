@@ -1,0 +1,53 @@
+[project]
+name = "p11b"
+version = "0.1.0"
+description = "General-purpose digital-twin simulator for proton-boron-11 fusion architectures"
+authors = [{ name = "Catskills Research Company" }]
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "numpy>=2.0,<3.0",
+    "scipy>=1.17.1,<2.0",
+    "pyqtgraph>=0.14,<0.15",
+    "pillow>=12.2,<13.0",
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.simulator]
+optional = true
+
+[tool.poetry.group.simulator.dependencies]
+PySide6 = ">=6.8,<6.12"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.18"
+pytest = "^8.4"
+ruff = "^0.12"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
