@@ -279,7 +279,8 @@ CREATE TABLE digital_twin_tool (
     prototype_id INTEGER PRIMARY KEY REFERENCES prototype(id) ON DELETE CASCADE,
     claim TEXT,
     license_openness TEXT,
-    access_how TEXT
+    access_how TEXT,
+    repo TEXT  -- public GitHub / GitLab / Docker Hub / etc. when redistributable
 );
 
 CREATE TABLE legal_footprint (

@@ -137,12 +137,15 @@ committing the project to a particular solver design.
 
 ```text
 .
-├── pb11.md          State-of-the-art survey and architecture catalog
-├── research/        Survey research materials and figure provenance
-├── pyproject.toml   Python/Poetry project definition
-├── poetry.lock      Reproducible dependency resolution
-├── LICENSE          Apache License 2.0
-└── NOTICE           Attribution and third-party-material notice
+├── pb11.md              State-of-the-art survey and architecture catalog
+├── data/                SQLite catalog + operator presets
+├── simulator/           0-order operator twin (PySide6 survey theater)
+├── scripts/             Catalog build / browse / digital-twin picker
+├── research/            Survey research materials and figure provenance
+├── pyproject.toml       Python/Poetry project definition
+├── poetry.lock          Reproducible dependency resolution
+├── LICENSE              Apache License 2.0
+└── NOTICE               Attribution and third-party-material notice
 ```
 
 The files under `research/` were copied verbatim from the survey repository.
@@ -156,19 +159,28 @@ See [`research/figures/CREDITS.md`](research/figures/CREDITS.md) and
 Python 3.12–3.14 and [Poetry](https://python-poetry.org/) are expected.
 
 ```bash
-poetry install
+poetry install --with simulator
 ```
 
-There is not yet an executable simulator.
+### Operator twin (survey theater)
+
+A lab-style control console over a **0-order** plant model keyed by the survey
+catalog (not EPICS/MDSplus fidelity):
+
+```bash
+poetry run python -m simulator.app
+# or: .venv/bin/python -m simulator.app
+```
+
+Pick TAE / ENN / HB11 / Avalanche (and other catalog rows), toggle the
+compressed-degenerate boron mixin on laser/HEDP hosts, RUN for stripcharts +
+core schematic + alarms, or mint a `novel-N` preset from qualifiers.
 
 ## Project status
 
-Pre-implementation. The immediate work is to turn the survey taxonomy into:
-
-1. a common model and diagnostics interface;
-2. explicit fidelity and validation requirements;
-3. architecture-specific specifications; and
-4. the first reference implementation.
+Documentation-first survey plus an executable **0-order operator twin** that
+animates catalog architectures. Still ahead: higher-fidelity solvers, V&V
+hooks, and architecture-specific physics beyond theater power-balance.
 
 ## License, safety, and limitations
 

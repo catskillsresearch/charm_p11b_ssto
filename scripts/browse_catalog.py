@@ -214,6 +214,7 @@ def load_bundle() -> dict:
                     ) AS entities,
                     p.description AS description,
                     dt.license_openness AS openness,
+                    dt.repo AS repo,
                     dt.claim AS twin_claim,
                     p.slug AS _slug,
                     a.slug AS _arch_slug
@@ -433,7 +434,8 @@ DETAIL_QUERIES = {
                 SELECT json_object(
                     'claim', dt.claim,
                     'openness', dt.license_openness,
-                    'access', dt.access_how
+                    'access', dt.access_how,
+                    'repo', dt.repo
                 )
                 FROM digital_twin_tool dt WHERE dt.prototype_id = p.id
             )
@@ -1081,6 +1083,7 @@ function renderRichDetail(kind, data) {
       <div class="kv"><dt>Entities</dt><dd><ul>${ents || "<li>—</li>"}</ul></dd></div>
       ${dt ? kv("Twin claim", dt.claim) : ""}
       ${dt ? kv("Openness", dt.openness) : ""}
+      ${dt ? kv("Repo", dt.repo) : ""}
       ${dt ? kv("Access", dt.access) : ""}
     `;
   }

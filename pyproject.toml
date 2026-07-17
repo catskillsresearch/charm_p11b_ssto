@@ -22,6 +22,9 @@ optional = true
 [tool.poetry.group.simulator.dependencies]
 PySide6 = ">=6.8,<6.12"
 
+[project.scripts]
+p11b-operator = "simulator.app:main"
+
 [tool.poetry.group.dev]
 optional = true
 

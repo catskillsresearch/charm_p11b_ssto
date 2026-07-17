@@ -932,28 +932,107 @@ def seed_secondary_tables(conn: sqlite3.Connection) -> None:
             (aid(conn, slug), fuel, capital, federal, web, outlook),
         )
 
+    # repo: public VCS or container registry when redistributable; NULL if closed/collab-only
     dt_tools = [
-        ("dt-openmc", "Monte Carlo neutron/photon transport; CAD→DAGMC workflows", "Open source (MIT)", "conda/Docker/GitHub openmc-dev/openmc"),
-        ("dt-paramak", "Parametric 3D fusion CAD → neutronics geometry", "Open (MIT)", "pip / GitHub fusion-energy/paramak"),
-        ("dt-bluemira", "Integrated tokamak/FPP design framework", "Open LGPL-2.1+; commercial licence for larger orgs", "GitHub Fusion-Power-Plant-Framework/bluemira"),
-        ("dt-process", "0D–1D systems code often driven by Bluemira", "Open (see repo)", "GitHub ukaea/PROCESS"),
-        ("dt-warpx", "Exascale PIC; industrial rapid-iteration loops", "Open (BSD-style; DOE ECP lineage)", "GitHub ECP-WarpX/WarpX"),
-        ("dt-karat", "Fully electromagnetic PIC for NVD/IEC p–¹¹B", "Proprietary / closed", "Collaboration with code author / user groups"),
-        ("dt-xie-fusionbook", "Open 0D Lawson / power-balance scripts", "Open (GitHub)", "github.com/hsxie/fusionbook"),
-        ("dt-charm-stack", "Specialized nonthermal / multi-chamber / radiative FP tools", "Academic / not productized", "ARPA-E materials; collaboration with Princeton authors"),
-        ("dt-freda", "Whole-facility plasma+engineering digital-twin framework", "Federal R&D; mostly open umbrella", "DOE/ORNL SciDAC collaboration"),
-        ("dt-omniverse", "Visualization / collaborative digital twin of plants", "Closed / commercial", "NVIDIA Omniverse licence / lab partnerships"),
-        ("dt-nuplant", "End-to-end FPP design with AI surrogates", "Closed platform + services", "nttaudigital.com"),
-        ("dt-fusionalpha", "AI simulator to test reactor designs before hardware", "Closed startup product (seed)", "Company/press channels (mid-2026)"),
-        ("dt-mcnp", "Gold-standard Monte Carlo", "Export-controlled / licensed (LANL)", "RSICC / institutional licence"),
+        (
+            "dt-openmc",
+            "Monte Carlo neutron/photon transport; CAD→DAGMC workflows",
+            "Open source (MIT)",
+            "conda install -c conda-forge openmc; Docker Hub: https://hub.docker.com/r/openmc/openmc ; docs: https://docs.openmc.org",
+            "https://github.com/openmc-dev/openmc",
+        ),
+        (
+            "dt-paramak",
+            "Parametric 3D fusion CAD → neutronics geometry",
+            "Open (MIT)",
+            "pip / GitHub; docs: fusion-energy.github.io/paramak",
+            "https://github.com/fusion-energy/paramak",
+        ),
+        (
+            "dt-bluemira",
+            "Integrated tokamak/FPP design framework",
+            "Open LGPL-2.1+; commercial licence for larger orgs",
+            "Clone + conda via project scripts; UKAEA contact for commercial licence",
+            "https://github.com/Fusion-Power-Plant-Framework/bluemira",
+        ),
+        (
+            "dt-process",
+            "0D–1D systems code often driven by Bluemira",
+            "Open (see repo)",
+            "Installable as Bluemira extra [process]",
+            "https://github.com/ukaea/PROCESS",
+        ),
+        (
+            "dt-warpx",
+            "Exascale PIC; industrial rapid-iteration loops",
+            "Open (BSD-style; DOE ECP lineage)",
+            "Spack/containers common",
+            "https://github.com/ECP-WarpX/WarpX",
+        ),
+        (
+            "dt-karat",
+            "Fully electromagnetic PIC for NVD/IEC p–¹¹B",
+            "Proprietary / closed",
+            "Collaboration with code author / user groups",
+            None,
+        ),
+        (
+            "dt-xie-fusionbook",
+            "Open 0D Lawson / power-balance scripts",
+            "Open (GitHub)",
+            "Also http://hsxie.me/fusionbook",
+            "https://github.com/hsxie/fusionbook",
+        ),
+        (
+            "dt-charm-stack",
+            "Specialized nonthermal / multi-chamber / radiative FP tools",
+            "Academic / not productized",
+            "ARPA-E materials; collaboration with Princeton authors",
+            None,
+        ),
+        (
+            "dt-freda",
+            "Whole-facility plasma+engineering digital-twin framework",
+            "Federal R&D; mostly open umbrella",
+            "DOE/ORNL SciDAC collaboration — not a public self-serve repo",
+            None,
+        ),
+        (
+            "dt-omniverse",
+            "Visualization / collaborative digital twin of plants",
+            "Closed / commercial",
+            "NVIDIA Omniverse licence / lab partnerships",
+            None,
+        ),
+        (
+            "dt-nuplant",
+            "End-to-end FPP design with AI surrogates",
+            "Closed platform + services",
+            "nttaudigital.com",
+            None,
+        ),
+        (
+            "dt-fusionalpha",
+            "AI simulator to test reactor designs before hardware",
+            "Closed startup product (seed)",
+            "Company/press channels (mid-2026)",
+            None,
+        ),
+        (
+            "dt-mcnp",
+            "Gold-standard Monte Carlo",
+            "Export-controlled / licensed (LANL)",
+            "RSICC / institutional licence",
+            None,
+        ),
     ]
-    for pslug, claim, lic, access in dt_tools:
+    for pslug, claim, lic, access, repo in dt_tools:
         conn.execute(
             """
-            INSERT INTO digital_twin_tool (prototype_id, claim, license_openness, access_how)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO digital_twin_tool (prototype_id, claim, license_openness, access_how, repo)
+            VALUES (?, ?, ?, ?, ?)
             """,
-            (pid(conn, pslug), claim, lic, access),
+            (pid(conn, pslug), claim, lic, access, repo),
         )
 
     legal = [
