@@ -48,17 +48,27 @@ class SchematicView(QWidget):
         else:
             self._paint_generic(p, r)
 
-        # I/O arrows legend strip
         p.setPen(QColor(160, 180, 170))
         p.setFont(QFont("IBM Plex Sans", 9))
-        pf = self.bus.get("P_f")
-        pin = self.bus.get("P_import")
-        pnet = self.bus.get("P_net")
-        p.drawText(
-            r.adjusted(10, 6, -10, -6),
-            Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
-            f"{self.slug}  |  Pin {pin:.2f} MW  Pf {pf:.2f} MW  Pnet {pnet:.2f} MW",
-        )
+        if self.bus.get("shot_t_ms") > 0 or self.bus.get("r_dphi_m") > 0:
+            p.drawText(
+                r.adjusted(10, 6, -10, -6),
+                Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
+                f"{self.slug}  |  t={self.bus.get('shot_t_ms'):.1f} ms  "
+                f"rΔφ={self.bus.get('r_dphi_m'):.2f} m  "
+                f"Etot={self.bus.get('E_tot_kJ'):.1f} kJ  "
+                f"Te={self.bus.get('T_e_avg_keV'):.2f} keV  "
+                f"PNBI={self.bus.get('P_NBI_MW'):.1f} MW",
+            )
+        else:
+            pf = self.bus.get("P_f")
+            pin = self.bus.get("P_import")
+            pnet = self.bus.get("P_net")
+            p.drawText(
+                r.adjusted(10, 6, -10, -6),
+                Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
+                f"{self.slug}  |  Pin {pin:.2f} MW  Pf {pf:.2f} MW  Pnet {pnet:.2f} MW",
+            )
         if self.mixin_on:
             p.setPen(QColor(230, 160, 60))
             p.drawText(
@@ -75,20 +85,30 @@ class SchematicView(QWidget):
         p.setBrush(QBrush(QColor(28, 36, 34)))
         p.drawRoundedRect(vessel, 12, 12)
 
-        # Plasma blob
+        # Plasma blob sized by excluded-flux radius (lab shot) or brightness
         bright = self.bus.get("plasma_brightness", 0.0)
         phase = self.bus.get("orbit_phase", 0.0)
-        wobble = 6 * math.sin(phase * 6.28)
+        r_dphi = self.bus.get("r_dphi_m", 0.0)
+        # Map ~0.3–0.5 m → ellipse half-width in px
+        half_w = 35 + 120 * max(0.0, min(1.0, (r_dphi - 0.25) / 0.30)) if r_dphi > 0.05 else 50
+        half_h = half_w * 0.42
+        n1 = self.bus.get("mode_n1", 0.0)
+        wobble = (8 + 40 * n1) * math.sin(phase * 6.28)
         blob = QRectF(
-            vessel.center().x() - 50 + wobble,
-            vessel.center().y() - 22,
-            100,
-            44,
+            vessel.center().x() - half_w + wobble,
+            vessel.center().y() - half_h,
+            2 * half_w,
+            2 * half_h,
         )
         glow = QColor(40, 200, 160, int(40 + 180 * bright))
         p.setBrush(QBrush(glow))
         p.setPen(Qt.PenStyle.NoPen)
         p.drawEllipse(blob)
+        # Separatrix hint
+        if r_dphi > 0.05:
+            p.setPen(QPen(QColor(120, 220, 190, 120), 1, Qt.PenStyle.DashLine))
+            p.setBrush(Qt.BrushStyle.NoBrush)
+            p.drawEllipse(blob.adjusted(-4, -3, 4, 3))
 
         # NBI arrow
         p.setPen(QPen(QColor(100, 180, 255), 3))

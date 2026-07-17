@@ -61,6 +61,27 @@ STREAM_META: dict[str, str] = {
     "apu_bootstrap_s": "s",
     "preprod_remaining_s": "s",
     "batt_charge_C": "",
+    "chart_zoom_t0": "s",  # stripchart zoom anchor at plasma start
+    "plasma_playback": "",  # 1 during slow-mo shot
+    # Lab-shot diagnostics (C-2W paper-style theater)
+    "shot_t_ms": "ms",
+    "shot_duration_s": "s",
+    "shot_tau": "",
+    "r_dphi_m": "m",
+    "phi_p_mWb": "mWb",
+    "n_e_19": "1e19/m3",
+    "E_tot_kJ": "kJ",
+    "E_th_kJ": "kJ",
+    "T_e_avg_keV": "keV",
+    "T_e_max_keV": "keV",
+    "T_e_core_keV": "keV",
+    "T_e_edge_keV": "keV",
+    "P_NBI_MW": "MW",
+    "bias_kV": "kV",
+    "bias_kA": "kA",
+    "mode_n1": "",
+    "mode_n2": "",
+    "omega_imp_krad_s": "krad/s",
 }
 
 

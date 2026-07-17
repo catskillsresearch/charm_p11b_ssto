@@ -1,10 +1,11 @@
-"""Quasi-steady magnetic compact plugin (FRC / ST theater)."""
+"""Magnetic compact plugin: lab-shot FRC diagnostics or continuous plant books."""
 
 from __future__ import annotations
 
 import math
 
 from simulator.plant.balance import close_plant_books, rider_channel
+from simulator.plant.shot_diagnostics import idle_shot_diagnostics, publish_frc_shot_diagnostics
 from simulator.plant.streams import StreamBus
 from simulator.plugins.base import ArchitecturePlugin
 
@@ -37,23 +38,33 @@ class MagneticCompactPlugin(ArchitecturePlugin):
 
         state["plasma_on"] = 1.0
         state["t_flattop"] += dt
-        # Fueling raises density; ash poisons
+
+        # Lab single-shot: paper-style FRC diagnostics over the NBI window
+        if cfg.operation_mode == "lab_shot":
+            t_end = bus.get("shot_duration_s") or 0.040
+            publish_frc_shot_diagnostics(
+                bus, cfg, t_shot_s=state["t_flattop"], t_shot_end_s=t_end
+            )
+            bus.set("twin_health", 1.0)
+            bus.set("energy_residual", 0.0)
+            bus.set("shot_phase", state["t_flattop"] / max(t_end, 1e-9))
+            bus.set("blast", 0.0)
+            bus.set("orbit_phase", math.fmod(state["t_flattop"] * 40.0, 1.0))
+            bus.set("Z_eff", cfg.Z_eff)
+            bus.set("magnet_SOC", 0.7)
+            bus.set("store_SOC", 0.7)
+            return state
+
+        # Continuous / plant theater books
         state["n_e"] = min(3.0, 0.5 + 0.4 * cfg.fueling_H + 0.3 * cfg.fueling_B11)
         state["ash_He"] += 0.02 * cfg.driver_power_MW * dt
         poison = min(0.7, state["ash_He"] / 40.0)
         Z = cfg.Z_eff + 1.8 * poison
-
-        # Temperature from driver + nonthermal assist
         state["T_i"] = 8.0 + 2.2 * cfg.driver_power_MW * (0.7 + 0.5 * cfg.nonthermal)
         state["T_e"] = max(4.0, state["T_i"] * (0.55 + 0.2 * (1.0 - cfg.nonthermal)))
 
-        coeffs = {
-            "fusion_scale": 1.0,
-            "couple_scale": 1.0,
-            "rad_scale": 1.0,
-        }
+        coeffs = {"fusion_scale": 1.0, "couple_scale": 1.0, "rad_scale": 1.0}
         coeffs = self.apply_mixin_patches(coeffs, bus)
-
         P_i_to_e, P_rad = rider_channel(
             T_i=state["T_i"],
             T_e=state["T_e"],
@@ -63,9 +74,6 @@ class MagneticCompactPlugin(ArchitecturePlugin):
         )
         P_i_to_e *= coeffs["couple_scale"]
         P_rad *= coeffs["rad_scale"]
-
-        # Fusion yield: research FRC devices do not report plant Q>1.
-        # TAE Norman/C-2W is NBI-sustained plasma physics (Q≪1); keep yield tiny.
         reactivity = max(0.2, (state["T_i"] / 25.0) ** 1.5 * state["n_e"] ** 1.3)
         P_f = (
             0.55
@@ -76,44 +84,28 @@ class MagneticCompactPlugin(ArchitecturePlugin):
             * (1.0 - 0.55 * poison)
             * (0.7 + 0.15 * cfg.B_T)
         )
-        if cfg.slug in {"tae", "helion", "pfs-pfrc"}:
-            P_f *= 1e-6  # wall-lock: no published engineering Q>1 on these paths
-        elif cfg.slug in {"enn", "pale-blue-charm", "lhd-nifs"}:
-            P_f *= 1e-4  # still Q≪1 vs NBI/aux; not plant breakeven
+        if cfg.slug in {"enn", "pale-blue-charm"}:
+            P_f *= 1e-4
 
-        # Magnet store
         state["magnet_SOC"] = min(
             1.0, max(0.15, state["magnet_SOC"] + dt * (0.02 * cfg.B_T - 0.01))
         )
         recharge = 0.4 * cfg.B_T + 0.1 * cfg.driver_power_MW
-
         books = close_plant_books(
             P_f=P_f,
             P_driver=cfg.driver_power_MW,
             P_i_to_e=P_i_to_e,
             P_rad=P_rad,
             transport_frac=0.35,
-            dec_eta=0.35 if "frc" in cfg.confinement.lower() or cfg.slug == "tae" else 0.15,
+            dec_eta=0.35 if "frc" in cfg.confinement.lower() else 0.15,
             thermal_eta=0.35,
             house_base_MW=1.2 + 0.3 * cfg.B_T,
             store_recharge_MW=recharge,
         )
-
         self._publish(bus, cfg, state, books, Z)
-
-        # Research-shot windows are short (e.g. TAE ~40 ms); skip long-flattop theater trips
-        if state["t_flattop"] > 2.0:
-            if P_rad > 1.6 * max(P_f, 0.5):
-                bus.alarm(bus.get("t"), "warn", "RIDER", "Radiation exceeds fusion — Rider (Q≪1)")
-            if Z > 3.2:
-                bus.alarm(bus.get("t"), "warn", "ZEFF", f"Z_eff elevated ({Z:.2f})")
-            if state["ash_He"] > 55.0:
-                bus.alarm(bus.get("t"), "warn", "ASH", "Helium ash accumulating")
-
-        # Twin health
         bus.set("twin_health", max(0.0, 1.0 - books.energy_residual * 3.0))
         bus.set("energy_residual", books.energy_residual)
-        bus.set("plasma_brightness", min(1.0, P_f / 5.0))
+        bus.set("plasma_brightness", min(1.0, max(0.15, 1.0 - poison)))
         bus.set("shot_phase", 0.0)
         bus.set("blast", 0.0)
         return state
@@ -131,6 +123,7 @@ class MagneticCompactPlugin(ArchitecturePlugin):
             "plasma_brightness",
         ):
             bus.set(k, 0.0)
+        idle_shot_diagnostics(bus)
         bus.set("magnet_SOC", state.get("magnet_SOC", 0.6))
         bus.set("store_SOC", state.get("magnet_SOC", 0.6))
         bus.set("twin_health", 1.0)

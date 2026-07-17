@@ -48,6 +48,11 @@ class CommissionState:
 
 
 def sequences_for_slug(slug: str) -> list[CommissionStage]:
+    from simulator.plant.operation_mode import mode_for_slug
+
+    # Continuous plant architectures use APU/operator loop — no single-shot commission
+    if mode_for_slug(slug) == "continuous_plant":
+        return []
     return dict(_SEQUENCES).get(slug, [])
 
 
@@ -152,11 +157,24 @@ def apply_commission_tick(
     if stage is None:
         return clock_t, False, dt
 
-    # Plasma / shot window only — keep short realtime (e.g. 40 ms NBI)
+    # Plasma / shot window: honest sim duration (e.g. 40 ms) but play back over
+    # several wall-clock seconds so the operator can see powers/Q before Shot end.
+    playback_wall_s = max(stage.duration_s, 8.0)  # ≥8 s wall for short research shots
     remaining = max(0.0, stage.duration_s - comm.stage_elapsed_s)
-    step = min(dt, remaining) if remaining > 0 else dt
-    if stage.duration_s > 0 and remaining <= 0:
-        step = min(dt, stage.duration_s)
+    if comm.stage_elapsed_s <= 0:
+        bus.set("chart_zoom_t0", 0.0)  # shot charts use shot_t_ms, not wall t
+        bus.set("shot_duration_s", stage.duration_s)
+        bus.alarm(
+            clock_t,
+            "info",
+            "SHOT",
+            f"{stage.label}: {stage.duration_s*1000:g} ms sim · "
+            f"~{playback_wall_s:g}s slow-mo playback · {stage.source}",
+        )
+
+    # Each UI tick (~dt wall) advances this much plant time
+    sim_per_wall = stage.duration_s / playback_wall_s
+    step = min(remaining, max(sim_per_wall * dt, 1e-9))
 
     bus.set("t", clock_t)
     comm.stage_elapsed_s += step
@@ -167,6 +185,7 @@ def apply_commission_tick(
     bus.set("preprod_remaining_s", rem)
     bus.set("apu_bootstrap_s", stage.duration_s)
     bus.set("apu_ramp", min(1.0, comm.stage_elapsed_s / max(stage.duration_s, 1e-12)))
+    bus.set("plasma_playback", 1.0)
 
     if comm.stage_elapsed_s + 1e-12 >= stage.duration_s:
         bus.alarm(clock_t, "info", "STAGE", f"Completed: {stage.label}")
@@ -175,6 +194,7 @@ def apply_commission_tick(
         bus.alarm(clock_t, "info", "SHOT", f"Plasma/NBI window ended. {src}")
         comm.shot_complete = True
         comm.done = True
+        bus.set("plasma_playback", 0.0)
 
     return clock_t, True, step
 
@@ -210,10 +230,10 @@ _SEQUENCES: dict[str, list[CommissionStage]] = {
             aux_MW=1.0,
             energy_kWh=12.0,
             time_warp=True,
-            batt_powered=True,
+            batt_powered=False,  # lab: facility / grid interconnect
             source=(
-                "Editorial ready-hall arm (~2 min, time-warped in UI). C-2W magnets are "
-                "copper/pulsed-coil systems (Gota et al., Nucl. Fusion) — not SC cryo."
+                "Editorial ready-hall arm (~2 min, time-warped). Lab mode assumes Duke-style "
+                "grid power — kWh logged on facility bus only. Copper/pulsed coils (Gota et al.)."
             ),
         ),
         CommissionStage(
@@ -221,11 +241,11 @@ _SEQUENCES: dict[str, list[CommissionStage]] = {
             label="NBI-sustained FRC flattop",
             duration_s=0.040,
             plasma=True,
-            batt_powered=True,
+            batt_powered=False,
             source=(
                 "Gota et al. C-2W/Norman: sustainment up to ~40 ms, NB-pulse-limited; "
-                "NBI electrical ~13–20 MW. Not continuous plant power. No published plant "
-                "Q>1 — net-energy targets are future Copernicus/Da Vinci roadmap claims."
+                "NBI electrical ~13–20 MW from facility. Not continuous plant power. "
+                "No published plant Q>1."
             ),
         ),
     ],

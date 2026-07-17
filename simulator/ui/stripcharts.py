@@ -20,6 +20,7 @@ class StripChartPanel(QWidget):
         layout.addWidget(self.plot)
 
         self._curves: dict[str, pg.PlotDataItem] = {}
+        self._plots: list[pg.PlotItem] = []
         specs = [
             ("power MW", ["P_f", "P_driver", "P_rad", "P_net"], "MW"),
             ("gain (Q=1 dashed)", ["Q_plasma", "Q_eng", "Q_plant", "Q_ref"], "Q"),
@@ -47,6 +48,7 @@ class StripChartPanel(QWidget):
             plt.addLegend(offset=(8, 8))
             if row < len(specs) - 1:
                 plt.hideAxis("bottom")
+            self._plots.append(plt)
             for name in names:
                 pen = pg.mkPen(colors.get(name, "#fff"), width=1.5)
                 if name == "Q_ref":
@@ -63,3 +65,16 @@ class StripChartPanel(QWidget):
             n = min(len(t), len(y))
             if n >= 2:
                 curve.setData(t[-n:], y[-n:])
+
+        # After long commission warps, zoom to the shot window (or last ~30 s)
+        t0 = bus.get("chart_zoom_t0")
+        t_end = t[-1]
+        if t0 > 0 and t_end >= t0:
+            pad = max(0.02, 0.25 * max(t_end - t0, 1e-3))
+            x0, x1 = t0 - pad, t_end + pad
+        elif t_end - t[0] > 60:
+            x0, x1 = t_end - 30.0, t_end + 0.5
+        else:
+            return
+        for plt in self._plots:
+            plt.setXRange(x0, x1, padding=0.0)

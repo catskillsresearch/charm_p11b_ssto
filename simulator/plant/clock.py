@@ -164,21 +164,22 @@ class PlantClock:
                 self.commission, self.site, self.bus, self.dt, self.t
             )
             self.state = self.plugin.step(self.state, self.bus, step_dt, plasma)
+            lab = self.config.operation_mode == "lab_shot"
             if not plasma:
                 gate_pre_production(self.bus, self.config, 0.0)
-                cur = self.commission.current
-                disp = stage_power_MW(cur) if cur and cur.batt_powered else 0.0
-                # Prep electrical already applied inside commission; site_io publishes only
-                step_site_io(
-                    self.site,
-                    self.config,
-                    self.bus,
-                    dt=step_dt,
-                    running=True,
-                    force_need_MW=disp,
-                    skip_fuel=True,
-                )
-            else:
+                if not lab:
+                    cur = self.commission.current
+                    disp = stage_power_MW(cur) if cur and cur.batt_powered else 0.0
+                    step_site_io(
+                        self.site,
+                        self.config,
+                        self.bus,
+                        dt=step_dt,
+                        running=True,
+                        force_need_MW=disp,
+                        skip_fuel=True,
+                    )
+            elif not lab:
                 step_site_io(
                     self.site,
                     self.config,

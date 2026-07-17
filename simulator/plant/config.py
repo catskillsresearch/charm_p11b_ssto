@@ -30,6 +30,8 @@ class PlantConfig:
     Z_eff: float = 1.5
     fuel_mode: str = "p11b"  # p11b | dt_learning
     novel_tag: str | None = None
+    # lab_shot = single-shot experiment UI; continuous_plant = APU/operator UI
+    operation_mode: str = "lab_shot"
     # Plant envelope (from plant_spec / defaults)
     footprint_m2: float = 100.0
     vessel_length_m: float = 5.0

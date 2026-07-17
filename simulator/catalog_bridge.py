@@ -6,6 +6,7 @@ import sqlite3
 from pathlib import Path
 
 from simulator.plant.config import PlantConfig
+from simulator.plant.operation_mode import mode_for_slug
 
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = ROOT / "data" / "p11b_catalog.sqlite"
@@ -127,6 +128,7 @@ def config_from_slug(slug: str, **knob_overrides: object) -> PlantConfig:
         Z_eff=float(defaults["Z_eff"]),
         fuel_mode=str(defaults["fuel_mode"]),
         novel_tag=defaults.get("novel_tag"),  # type: ignore[arg-type]
+        operation_mode=mode_for_slug(slug, family),
         footprint_m2=float(spec.get("footprint_m2") or 100.0),
         vessel_length_m=float(spec.get("vessel_length_m") or 5.0),
         vessel_diameter_m=float(spec.get("vessel_diameter_m") or 2.0),

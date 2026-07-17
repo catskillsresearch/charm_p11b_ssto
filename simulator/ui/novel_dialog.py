@@ -19,6 +19,7 @@ from simulator.catalog_bridge import (
     nearest_family_for_qualifiers,
 )
 from simulator.plant.config import PlantConfig
+from simulator.plant.operation_mode import mode_for_slug
 
 ROOT = Path(__file__).resolve().parents[2]
 NOVEL_PATH = ROOT / "data" / "novel_twins.json"
@@ -157,6 +158,7 @@ class NovelDialog(QDialog):
             hedp_degenerate_host=hedp,
             mixins={"degenerate_boron": False},
             novel_tag=tag,
+            operation_mode=mode_for_slug(tag, family),
             nonthermal=0.6,
             spec_notes="Novel qualifier combo — envelope is family-default editorial.",
             spec_data_quality="aspirational",
