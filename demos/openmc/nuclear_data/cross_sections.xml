@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<cross_sections>
+  <library materials="B10" path="ENDFB-7.1-NNDC_B10.h5" type="neutron"/>
+  <library materials="B11" path="ENDFB-7.1-NNDC_B11.h5" type="neutron"/>
+  <library materials="C0" path="ENDFB-7.1-NNDC_C0.h5" type="neutron"/>
+  <library materials="Cr52" path="ENDFB-7.1-NNDC_Cr52.h5" type="neutron"/>
+  <library materials="Fe54" path="ENDFB-7.1-NNDC_Fe54.h5" type="neutron"/>
+  <library materials="Fe56" path="ENDFB-7.1-NNDC_Fe56.h5" type="neutron"/>
+  <library materials="Fe57" path="ENDFB-7.1-NNDC_Fe57.h5" type="neutron"/>
+  <library materials="Fe58" path="ENDFB-7.1-NNDC_Fe58.h5" type="neutron"/>
+  <library materials="H1" path="ENDFB-7.1-NNDC_H1.h5" type="neutron"/>
+  <library materials="Mn55" path="ENDFB-7.1-NNDC_Mn55.h5" type="neutron"/>
+  <library materials="Ni58" path="ENDFB-7.1-NNDC_Ni58.h5" type="neutron"/>
+  <library materials="Ni60" path="ENDFB-7.1-NNDC_Ni60.h5" type="neutron"/>
+  <library materials="O16" path="ENDFB-7.1-NNDC_O16.h5" type="neutron"/>
+  <library materials="U234" path="ENDFB-7.1-NNDC_U234.h5" type="neutron"/>
+  <library materials="U235" path="ENDFB-7.1-NNDC_U235.h5" type="neutron"/>
+  <library materials="U238" path="ENDFB-7.1-NNDC_U238.h5" type="neutron"/>
+  <library materials="Zr90" path="ENDFB-7.1-NNDC_Zr90.h5" type="neutron"/>
+  <library materials="Zr91" path="ENDFB-7.1-NNDC_Zr91.h5" type="neutron"/>
+  <library materials="Zr92" path="ENDFB-7.1-NNDC_Zr92.h5" type="neutron"/>
+  <library materials="Zr94" path="ENDFB-7.1-NNDC_Zr94.h5" type="neutron"/>
+  <library materials="Zr96" path="ENDFB-7.1-NNDC_Zr96.h5" type="neutron"/>
+  <library materials="c_H_in_H2O" path="ENDFB-7.1-NNDC_c_H_in_H2O.h5" type="thermal"/>
+</cross_sections>
