@@ -11,16 +11,110 @@ July 22, 2026
 
 ## Abstract
 
-We specify an SSTO spaceplane that flies Space Shuttle–style operations—including a Shuttle-class cargo bay—from a municipal airport to ISS altitude LEO, powered by a continuous CHARM \(p\text{-}^{11}\mathrm{B}\) plant with direct energy conversion (DEC). Flight regimes use free air, then scarce air, then carried water. Each design step is written as a closed set of equations. We guesstimate the reactor mass hole, constrain water as a function of dry mass and vacuum \(\Delta v\), impose a \(1\,\mathrm{GW}\) plant with space restart and DEC, and solve a reference all-up mass. Combined-cycle engine maps and CHARM size/performance constraints follow.
+We specify a single-stage-to-orbit (SSTO) spaceplane that flies Space Shuttle–style operations—including a Shuttle-class cargo bay—from a municipal airport to International Space Station (ISS) altitude in low Earth orbit (LEO), powered by a continuous Chambered Aneutronic Rotating Mirror (CHARM) \(p\text{-}^{11}\mathrm{B}\) plant [1] with direct energy conversion (DEC). Flight regimes use free air, then scarce air, then carried water. Each design step is written as a closed set of equations. We guesstimate the reactor mass hole, constrain water as a function of dry mass and vacuum \(\Delta v\), impose a \(1\,\mathrm{GW}\) plant with space restart and DEC, and solve a reference all-up mass. Combined-cycle engine maps and CHARM size/performance constraints follow.
 
 ---
 
-## 1. Design goals (the plane)
+## 1. Vehicle vision
+
+Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real cargo bay, a single-deck crew module, and a continuous CHARM \(p\text{-}^{11}\mathrm{B}\) plant driving a combined-cycle engine (free air → scarce air → carried water). The figures below are the vehicle picture; the equations that close the mass and energy budgets follow.
+
+### Interior floorplan and exterior profile
+
+Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [14,21], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **$L \approx 52\,\mathrm{m}$**. ECLSS = **Environmental Control and Life Support System**. Depth $\approx 6.5$–$7\,\mathrm{m}$, span $\approx 28\,\mathrm{m}$.
+
+Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of one station map (nose left, length $52\,\mathrm{m}$): crew/ECLSS $0$–$11\,\mathrm{m}$ (flight deck + six seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only—no outer side door); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell payload-bay doors); flight battery $33.3$–$35.5\,\mathrm{m}$; $p\text{-}^{11}\mathrm{B}$ fuel $35.5$–$37.5\,\mathrm{m}$; CHARM $37.5$–$45\,\mathrm{m}$; water $45$–$49\,\mathrm{m}$; combined-cycle engine $49$–$52\,\mathrm{m}$. The floorplan is a top-down cutaway (no landing gear). The profile shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors. Both views are driven from the same geometry so stations stay consistent if the layout expands.
+
+<!-- figure-landscape -->
+![Vehicle floor plan.](research/figures/charm_ssto_interior_floorplan.png)
+
+<!-- figure-landscape -->
+![Vehicle profile view.](research/figures/charm_ssto_exterior_profile.png)
+
+### CHARM power plant
+
+<!-- mermaid-caption: CHARM power-plant schematic -->
+```mermaid
+flowchart TB
+  subgraph fuels ["Fuel containers"]
+    Hp["H / proton feed"]
+    B11["¹¹B feed"]
+  end
+  subgraph charm ["CHARM chambers"]
+    Boron["Rotating boron chamber"]
+    RF1["RF / ponderomotive wall"]
+    Fus["Proton fusion cell"]
+    RF2["RF wall"]
+    Ash["Ash / heat-exchange chamber"]
+    Boron --> RF1 --> Fus --> RF2 --> Ash
+  end
+  subgraph aux ["Island auxiliaries"]
+    Mag["Mirror magnets + PSU"]
+    RFU["RF units"]
+    Rot["Rotation drive"]
+    Cryo["Cryo + coolant bath"]
+    Vac["Vacuum / controls"]
+    DEC["DEC / wave couplers"]
+  end
+  subgraph store ["Electrical store"]
+    Cart["Ground cart Earth only"]
+    Bat["Flight battery 2 t"]
+  end
+  Hp --> Fus
+  B11 --> Boron
+  Mag --- charm
+  RFU --- RF1
+  RFU --- RF2
+  Rot --- Boron
+  Ash --> DEC
+  DEC --> Bus["1 GW electrical bus"]
+  Cart -.-> Mag
+  Cart -.-> RFU
+  Bat -.-> Mag
+  Bat -.-> RFU
+  Bus --> Eng["Combined-cycle engine"]
+  Cryo --- charm
+  Vac --- charm
+```
+
+### Profile stations
+
+<!-- mermaid-caption: Profile view (to scale) -->
+```mermaid
+flowchart TD
+  subgraph profile ["Profile stations +x"]
+    N["Nose gear"]
+    C2["Crew + ECLSS/O2"]
+    A2["Large airlock"]
+    B2["Cargo 18.3 m"]
+    BAT2["Battery"]
+    F2["p/11B tanks"]
+    R2["CHARM"]
+    W2["H2O"]
+    E2["Engine"]
+    MG["Main gear"]
+    N --- C2
+    C2 --- A2
+    A2 --- B2
+    B2 --- BAT2
+    B2 --- MG
+    BAT2 --- F2
+    F2 --- R2
+    R2 --- W2
+    W2 --- E2
+  end
+```
+
+---
+
+## 2. Design goals (the plane)
+
+Table: Design goals for the plane.
 
 | ID | Goal | Statement |
 |----|------|-----------|
 | G1 | **SSTO** | Single stage from runway to ISS-class LEO; no discarded boosters or external tank |
-| G2 | **Shuttle style** | Orbiter-like airframe: wing–body, TPS, runway landing, gear, control surfaces; crew systems (toilet, ECLSS, food) |
+| G2 | **Shuttle style** | Orbiter-like airframe: wing–body, thermal protection system (TPS), runway landing, gear, control surfaces; crew systems (toilet, ECLSS, food) |
 | G2b | **Single-deck crew** | Flatten Shuttle cabin to one deck: flight deck; six reclining seats; O₂/N₂ + ECLSS; luggage; forward/side ground door; large aft airlock into bay |
 | G2c | **Length** | Stretch OML as needed for airlock, ECLSS tanks, battery, and fusion-fuel tanks—reference \(L \approx 52\,\mathrm{m}\) |
 | G3 | **Shuttle cargo bay** | Usable bay \(\approx 18.3\,\mathrm{m}\times 4.6\,\mathrm{m}\) class for payload—not filled with reactors |
@@ -35,7 +129,9 @@ We specify an SSTO spaceplane that flies Space Shuttle–style operations—incl
 
 ---
 
-## 2. Constants and symbols
+## 3. Constants and symbols
+
+Table: Physical constants and reference symbols.
 
 | Symbol | Meaning | Reference value |
 |--------|---------|-----------------|
@@ -49,6 +145,8 @@ We specify an SSTO spaceplane that flies Space Shuttle–style operations—incl
 
 Masses (all kg):
 
+Table: Mass symbol definitions.
+
 | Symbol | Meaning |
 |--------|---------|
 | \(m_{\mathrm{af}}\) | Airframe primary: fuselage, wings, TPS (excl. gear/controls) |
@@ -57,8 +155,8 @@ Masses (all kg):
 | \(m_{\mathrm{crew}}\) | Crew cabin systems: ECLSS, O₂/N₂ tanks, pressure control, toilet, galley, food, luggage, airlock fittings |
 | \(m_{\mathrm{str}}\) | \(m_{\mathrm{af}}+m_{\mathrm{gear}}+m_{\mathrm{ctrl}}+m_{\mathrm{crew}}\) |
 | \(m_{\mathrm{eng}}\) | Combined-cycle engine + inlets + nozzles + ducts |
-| \(m_{\mathrm{C}}\) | CHARM island (chambers, magnets, RF, DEC, local shield, cryo, bath) |
-| \(m_{\mathrm{bat}}\) | Flight battery / APU (restart + hotel) |
+| \(m_{\mathrm{C}}\) | CHARM island (chambers, magnets, radio-frequency (RF), DEC, local shield, cryo, bath) |
+| \(m_{\mathrm{bat}}\) | Flight battery / auxiliary power unit (APU) (restart + hotel) |
 | \(m_{\mathrm{f}}\) | \(p\text{-}^{11}\mathrm{B}\) fuel |
 | \(m_{\mathrm{w}}\) | Water carried at takeoff (vacuum reaction mass) |
 | \(m_{\mathrm{dry}}\) | All mass except water |
@@ -67,9 +165,9 @@ Masses (all kg):
 
 ---
 
-## 3. MWh budget: Shuttle-class mass to ISS LEO
+## 4. MWh budget: Shuttle-class mass to ISS LEO
 
-### 3.1 Ideal orbital specific energy
+### 4.1 Ideal orbital specific energy
 
 \[
 r = R_E + h_{\mathrm{ISS}},\qquad
@@ -93,7 +191,7 @@ v_{\mathrm{orb}} \approx 7.67\,\mathrm{km/s},\qquad
 \Delta\varepsilon \approx 9.19\,\mathrm{kWh/kg}.
 \]
 
-### 3.2 Orbital energy of the inserted vehicle
+### 4.2 Orbital energy of the inserted vehicle
 
 Everything that arrives at ISS altitude is still aboard (SSTO):
 
@@ -107,13 +205,15 @@ In MWh:
 E_{\mathrm{orb}}^{\mathrm{(MWh)}} = m_{\mathrm{ins}}\cdot\frac{\Delta\varepsilon}{3.6\times 10^9}.
 \]
 
+Table: Orbital energy for representative inserted masses.
+
 | \(m_{\mathrm{ins}}\) | \(E_{\mathrm{orb}}\) | \(E_{\mathrm{orb}}\) |
 |----------------------|----------------------|----------------------|
 | \(100\,\mathrm{t}\) (orbiter+cargo class) | \(3.31\,\mathrm{TJ}\) | **\(920\,\mathrm{MWh}\)** |
 | \(150\,\mathrm{t}\) | \(4.97\,\mathrm{TJ}\) | **\(1380\,\mathrm{MWh}\)** |
 | \(200\,\mathrm{t}\) | \(6.62\,\mathrm{TJ}\) | **\(1840\,\mathrm{MWh}\)** |
 
-### 3.3 Source energy (plant must supply)
+### 4.3 Source energy (plant must supply)
 
 Air-breathing and rocket/plasma paths leave energy in the wake and fight drag/gravity. Define a mission multiplier \(\kappa_E \ge 1\):
 
@@ -152,9 +252,11 @@ So a \(1\,\mathrm{GW}\) CHARM bus is an **energy-throughput** match for Shuttle-
 
 ---
 
-## 4. Flight regimes: free air → scarce air → water
+## 5. Flight regimes: free air → scarce air → water
 
 Define cutoff speed \(v_{\mathrm{ab}}\) and altitude \(h_{\mathrm{ab}}\) where intakes seal and water thrust begins.
+
+Table: Flight regimes and reaction-mass path.
 
 | Regime | Density | Reaction mass | Plant → thrust path |
 |--------|---------|---------------|---------------------|
@@ -188,7 +290,7 @@ P_{\mathrm{jet}} = \frac{1}{2}\,T\,v_e.
 
 ---
 
-## 5. Water mass as a function of whole dry mass
+## 6. Water mass as a function of whole dry mass
 
 Water is used only in R3. Let
 
@@ -253,6 +355,8 @@ Exhaust speed from specific impulse:
 v_e = I_{\mathrm{sp}} g_0.
 \]
 
+Table: Water mass fraction versus vacuum $\Delta v$ and $I_{\mathrm{sp}}$.
+
 | \(\Delta v_{\mathrm{vac}}\) | \(I_{\mathrm{sp}}\) | \(v_e\) | \(\mu\) | \(m_{\mathrm{w}}/m_{\mathrm{dry}}\) |
 |-----------------------------|---------------------|---------|---------|----------------------------------|
 | \(4\,\mathrm{km/s}\) | \(2000\,\mathrm{s}\) | \(19.6\,\mathrm{km/s}\) | \(1.226\) | \(0.226\) |
@@ -262,9 +366,9 @@ v_e = I_{\mathrm{sp}} g_0.
 
 ---
 
-## 6. Vehicle sizing equations
+## 7. Vehicle sizing equations
 
-### 6.1 Structure, crew, gear, controls, and bay
+### 7.1 Structure, crew, gear, controls, and bay
 
 Cargo bay geometry (goal G3):
 
@@ -282,7 +386,7 @@ Payload density check:
 
 (compatible with mixed cargo; bay remains payload volume).
 
-**Crew (Shuttle functions, single deck).** Forward **flight deck**: commander and pilot **facing forward** into windows and a full control-panel wall [14,21]. Living volume: **six seats** with moderate nap recline; **waste collection system**; **galley/food**; **crew luggage / personal stowage**; **ECLSS** with explicit **oxygen and nitrogen / pressure-control tankage** (not a token rack). **Forward/port crew door (side hatch)** for terrestrial ingress only. **Airlock** oversized vs a suit-closet: dual-hatch volume on the aft cabin bulkhead facing the **cargo bay**, sized for suited egress (Shuttle middeck airlock pattern, not undersized) [21].
+**Crew (Shuttle functions, single deck).** Forward **flight deck**: commander and pilot **facing forward** into windows and a full control-panel wall [14,21]. Living volume: **six seats** with moderate nap recline; **waste collection system (WCS)**; **galley/food**; **crew luggage / personal stowage**; **ECLSS** with explicit **oxygen and nitrogen / pressure-control tankage** (not a token rack). **Forward/port crew door (side hatch)** for terrestrial ingress only. **Airlock** oversized vs a suit-closet: dual-hatch volume on the aft cabin bulkhead facing the **cargo bay**, sized for suited egress (Shuttle middeck airlock pattern, not undersized) [21].
 
 **Landing gear and control surfaces** are explicit mass lines (not buried only in a lump “structure” number):
 
@@ -309,7 +413,7 @@ V_{\mathrm{C}} \le V_{\mathrm{island}}^{\max}
 \quad\text{(guesstimate for pancaked Shuttle envelope)}.
 \]
 
-### 6.2 CHARM mass hole
+### 7.2 CHARM mass hole
 
 Define island specific power on the **electrical bus**:
 
@@ -318,6 +422,8 @@ Define island specific power on the **electrical bus**:
 \quad\Rightarrow\quad
 \boxed{m_{\mathrm{C}} = \frac{P_{\star}}{\alpha_{\mathrm{C}}}.}
 \]
+
+Table: CHARM island mass versus specific power at $1\,\mathrm{GW}$.
 
 | \(\alpha_{\mathrm{C}}\) | \(m_{\mathrm{C}}\) at \(P_{\star}=1\,\mathrm{GW}\) | Comment |
 |------------------------|--------------------------------------------------|---------|
@@ -336,7 +442,7 @@ V_{\mathrm{C}} = \frac{P_{\star}}{\bar{p}_{\mathrm{C}}}.
 
 For \(V_{\mathrm{C}} \le 120\,\mathrm{m}^3\): \(\bar{p}_{\mathrm{C}} \ge 8.3\,\mathrm{MW/m}^3\) bus-averaged over the island—severe packaging.
 
-### 6.3 Engine and battery holes
+### 7.3 Engine and battery holes
 
 \[
 m_{\mathrm{eng}} = 1.5\times 10^4\,\mathrm{kg}
@@ -353,7 +459,7 @@ m_{\mathrm{f}} = 5.0\times 10^2\,\mathrm{kg}
 \quad(p\text{-}^{11}\mathrm{B}\text{ inventory; energy-rich)}.
 \]
 
-### 6.4 Closed dry / wet mass
+### 7.4 Closed dry / wet mass
 
 \[
 \boxed{
@@ -374,7 +480,7 @@ m_{\mathrm{ins}}
 
 ---
 
-## 7. Solved reference vehicle (all-up mass)
+## 8. Solved reference vehicle (all-up mass)
 
 **Freeze:**
 
@@ -414,6 +520,8 @@ m_{\mathrm{ins}} &= 196.1\,\mathrm{t}.
 
 **Mass bill (reference):**
 
+Table: Reference vehicle mass bill.
+
 | Item | Mass |
 |------|------|
 | Airframe + TPS (longer OML) | \(72.0\,\mathrm{t}\) |
@@ -440,6 +548,8 @@ t_{\mathrm{src}}(1\,\mathrm{GW}) = 5.4\,\mathrm{h}.
 
 **Sensitivity (same \(\Delta v_{\mathrm{vac}}, I_{\mathrm{sp}}\); \(m_{\mathrm{str}}\) fixed):**
 
+Table: Sensitivity of dry and wet mass to specific power.
+
 | \(\alpha_{\mathrm{C}}\) | \(m_{\mathrm{C}}\) | \(m_{\mathrm{dry}}\) | \(m_{\mathrm{w}}\) | \(m_0\) |
 |------------------------|--------------------|----------------------|--------------------|---------|
 | \(10\,\mathrm{kW/kg}\) | \(100\,\mathrm{t}\) | \(229\,\mathrm{t}\) | \(52\,\mathrm{t}\) | \(281\,\mathrm{t}\) |
@@ -450,11 +560,11 @@ Municipal takeoff weight \(\sim 210\)–\(280\,\mathrm{t}\) is heavy vs airliner
 
 ---
 
-## 8. Constraints on the CHARM power plant
+## 9. Constraints on the CHARM power plant
 
 Summarize as a requirement vector \(\mathcal{R}_{\mathrm{C}}\):
 
-### 8.1 Power and mass
+### 10.1 Power and mass
 
 \[
 \boxed{
@@ -476,7 +586,7 @@ V_{\mathrm{C}} \le 120\,\mathrm{m}^3,\qquad
 \bar{p}_{\mathrm{C}} = P_{\star}/V_{\mathrm{C}} \ge 8\,\mathrm{MW/m}^3.
 \]
 
-### 8.2 Fuel and ash
+### 10.2 Fuel and ash
 
 \[
 \dot{N}_{p{}^{11}\mathrm{B}}
@@ -487,7 +597,7 @@ m_{\mathrm{f}}(t_{\mathrm{mission}}) \ll m_{\mathrm{w}}.
 
 Ash (He) strained per CHARM multi-chamber design; DEC captures charged-product free energy.
 
-### 8.3 DEC
+### 10.3 DEC
 
 \[
 P_{\mathrm{bus}} = \eta_{\mathrm{DEC}} P_{\alpha,\mathrm{ordered}}
@@ -503,7 +613,7 @@ Thermal reject (X-ray, wall, inefficiencies) must be dumped to:
 - island bath → compact turbine, and/or  
 - radiators only after exo-atmospheric (limited area).
 
-### 8.4 Restartable in space
+### 10.4 Restartable in space
 
 \[
 E_{\mathrm{restart}} \le \eta_{\mathrm{bat}} m_{\mathrm{bat}} e_{\mathrm{bat}},
@@ -518,7 +628,7 @@ with \(m_{\mathrm{bat}} = 2\,\mathrm{t}\) reference and \(e_{\mathrm{bat}} \sim 
 
 Doctrine: continuous burn nominally; pilot-string kindling from \(m_{\mathrm{bat}}\) if segmented; glide if relight fails.
 
-### 8.5 Continuous operation / no beam farm
+### 10.5 Continuous operation / no beam farm
 
 Recirculating power is RF walls, rotation, magnets, vacuum, cryo:
 
@@ -527,17 +637,19 @@ P_{\mathrm{recirc}} = f_{\mathrm{r}} P_{\mathrm{fusion}},\qquad
 P_{\mathrm{bus}} = (1 - f_{\mathrm{r}})\,P_{\mathrm{fusion,net\,to\,bus}}.
 \]
 
-Design intent: \(f_{\mathrm{r}}\) small enough that \(1\,\mathrm{GW}\) **bus** does not require multi-MW neutral beams.
+Design intent: \(f_{\mathrm{r}}\) small enough that \(1\,\mathrm{GW}\) **bus** does not require multi-MW neutral-beam injection (NBI).
 
-### 8.6 Municipal and flight safety
+### 9.6 Municipal and flight safety
 
 - No tritium breeding inventory.  
 - Shield so that ramp and cabin doses meet civil constraints with plant running in fan mode.  
 - Single-string plant: accept engine-out ≡ plant-out → glide.
 
-### 8.7 How CHARM is lit (and how much energy)
+### 9.7 How CHARM is lit (and how much energy)
 
 CHARM is **not** lit with a neutral-beam farm. Published architecture lights a **rotating open-field mirror** with **species-separated chambers** and **RF / ponderomotive walls** [1,8,9]. A practical light-off sequence for this vehicle is:
+
+Table: CHARM light-off sequence.
 
 | Step | Action | Power plant elements |
 |------|--------|----------------------|
@@ -549,7 +661,7 @@ CHARM is **not** lit with a neutral-beam farm. Published architecture lights a *
 | 5 | Establish fusion cell; route alphas to **heat-exchange / DEC** | DEC electrodes / wave couplers |
 | 6 | Disconnect cart; bus takes hotel + propulsion | Continuous burn doctrine |
 
-**Energy scale (engineering estimate — CHARM papers do not publish a flight kWh BOM):**
+**Energy scale (engineering estimate — CHARM papers do not publish a flight kWh bill of materials (BOM)):**
 
 Magnet + RF + rotation spin-up for a segmented \(1\,\mathrm{GW}\) island is treated as **\(50\)–\(200\,\mathrm{kWh}\)** class to first useful plasma (seconds–minutes of MW-class RF/magnet draw), not **MWh-class beams**. That is why
 
@@ -558,23 +670,25 @@ E_{\mathrm{restart}} \le 300\text{–}500\,\mathrm{kWh}
 \quad(m_{\mathrm{bat}} = 2\,\mathrm{t})
 \]
 
-is booked for **on-orbit relight**, while **first light on Earth** uses the ground cart. One-way RF walls can be energetically expensive if overused [1]; the vehicle CONOPS keeps barriers as needed for separation, not as a continuous full-power sink that eats the \(1\,\mathrm{GW}\) bus.
+is booked for **on-orbit relight**, while **first light on Earth** uses the ground cart. One-way RF walls can be energetically expensive if overused [1]; the vehicle concept of operations (CONOPS) keeps barriers as needed for separation, not as a continuous full-power sink that eats the \(1\,\mathrm{GW}\) bus.
 
 **Pilot-string kindling:** battery (or cart) lights a fraction of chambers → DEC/RF bus cascades the rest.
 
 ---
 
-## 9. Combined-cycle engine (detail)
+## 10. Combined-cycle engine (detail)
 
 One propulsion string with mode variable \(\sigma \in \{1,2,3,4\}\).
 
 ### 9.1 Mode map
 
+Table: Combined-cycle engine mode map.
+
 | \(\sigma\) | Name | Mach / ambient | Mass flow | Thrust model (0D) |
 |------------|------|----------------|-----------|-------------------|
 | 1 | Electric fan | \(0 \le M \lesssim 0.9\) | \(\dot{m}_{\mathrm{air}}\) | \(T = \eta_{\mathrm{f}} P_{\mathrm{bus}} / v_{\mathrm{jet}}\) |
 | 2 | Thermal ram | \(0.9 \lesssim M \lesssim 5\) | ram \(\dot{m}_{\mathrm{air}}(M,\rho)\) | heat addition \(\Delta h = \eta_{\mathrm{h}} P_{\mathrm{th}}/\dot{m}\) |
-| 3 | Plasma / MHD | \(M \gtrsim 5\), scarce \(\rho\) | small \(\dot{m}_{\mathrm{air}}\) | \(T = \eta_{\mathrm{MHD}} P_{\mathrm{bus}} / v_{\mathrm{eff}}\) |
+| 3 | Plasma / magnetohydrodynamic (MHD) | \(M \gtrsim 5\), scarce \(\rho\) | small \(\dot{m}_{\mathrm{air}}\) | \(T = \eta_{\mathrm{MHD}} P_{\mathrm{bus}} / v_{\mathrm{eff}}\) |
 | 4 | Water plasma | intakes sealed | \(\dot{m}_{\mathrm{w}}\) | \(T = \dot{m}_{\mathrm{w}} v_e\), \(P_{\mathrm{jet}}=\tfrac12\dot{m}_{\mathrm{w}} v_e^2\) |
 
 Switching laws (schematic):
@@ -628,7 +742,7 @@ Peak \(P_{\mathrm{need}}\) near mid-hypersonic climb sets the \(1\,\mathrm{GW}\)
 P_{\mathrm{bus,4}}(t) \ge \frac{1}{2\eta_{\mathrm{jet}}} \dot{m}_{\mathrm{w}} v_e^2.
 \]
 
-At \(T = 100\,\mathrm{kN}\), \(v_e = 20\,\mathrm{km/s}\): \(P_{\mathrm{jet}} = 1\,\mathrm{GW}\) — vacuum thrust is power-limited; insertion is a **long burn**, not a Shuttle SSME sprint.
+At \(T = 100\,\mathrm{kN}\), \(v_e = 20\,\mathrm{km/s}\): \(P_{\mathrm{jet}} = 1\,\mathrm{GW}\) — vacuum thrust is power-limited; insertion is a **long burn**, not a Space Shuttle Main Engine (SSME) sprint.
 
 ### 9.5 Physical envelope
 
@@ -640,18 +754,15 @@ At \(T = 100\,\mathrm{kN}\), \(v_e = 20\,\mathrm{km/s}\): \(P_{\mathrm{jet}} = 1
 
 ---
 
-## 10. Vehicle layout schematics
+## 11. Layout details
 
-Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [14,21], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **\(L \approx 52\,\mathrm{m}\)** (was \(45\,\mathrm{m}\)): the extra length pays for O₂/N₂ tankage, luggage, a larger airlock, and dedicated **flight-battery** and **\(p\text{-}^{11}\mathrm{B}\)/proton fuel-tank** bays forward of CHARM. ECLSS = **Environmental Control and Life Support System**. The **interior floorplan omits landing gear** (gear remains on the exterior profile and in the mass bill). Depth \(\approx 6.5\)–\(7\,\mathrm{m}\), span \(\approx 28\,\mathrm{m}\).
+Station map for the vision figures in §1. The **top-down bay connectivity** diagram is a reading aid for the floorplan; gear remains on the exterior profile only.
 
-### 10.1 Top-down floorplan
-
-<!-- AI graphic: caption = research/figures/prompts/charm_ssto_interior_floorplan.prompt.txt -->
-![@prompt](research/figures/charm_ssto_interior_floorplan.png)
+Table: Longitudinal station and bay layout.
 
 | Station (m) | Bay | Contents |
 |-------------|-----|----------|
-| \(0\)–\(11\) | Crew module | Forward-facing CDR/PLT + flight deck; four more nap-recline seats (six total); WCS; galley; **luggage stowage**; **ECLSS + O₂/N₂ / pressure tanks** |
+| \(0\)–\(11\) | Crew module | Forward-facing commander (CDR) / pilot (PLT) + flight deck; four more nap-recline seats (six total); WCS; galley; **luggage stowage**; **ECLSS + O₂/N₂ / pressure tanks** |
 | \(-\) | Ground door | **Forward/port crew door (side hatch)** — terrestrial ingress only |
 | \(11\)–\(15\) | Airlock | **Suited-crew airlock** (\(\sim 2.5\,\mathrm{m}\) class clear), aft bulkhead facing **into cargo bay** |
 | \(15\)–\(33.3\) | Cargo | \(18.3\,\mathrm{m}\times 4.6\,\mathrm{m}\) payload bay (no reactors) |
@@ -664,6 +775,7 @@ Crew volume flattens the **Space Shuttle crew module** from two decks to **one**
 
 **Doors (Shuttle pattern).** (1) **Side/forward crew door** — runway/ground only; (2) **airlock** — on-orbit cabin ↔ cargo bay / vacuum for suited operations [21].
 
+<!-- mermaid-caption: Top-down floorplan -->
 ```mermaid
 flowchart LR
   subgraph crew ["Crew module"]
@@ -688,80 +800,12 @@ flowchart LR
   crew --> AL --> B --> BAT --> FUEL --> R --> W --> E
 ```
 
-### 10.2 CHARM power-plant schematic
-
-```mermaid
-flowchart TB
-  subgraph fuels ["Fuel containers"]
-    Hp["H / proton feed"]
-    B11["¹¹B feed"]
-  end
-  subgraph charm ["CHARM chambers"]
-    Boron["Rotating boron chamber"]
-    RF1["RF / ponderomotive wall"]
-    Fus["Proton fusion cell"]
-    RF2["RF wall"]
-    Ash["Ash / heat-exchange chamber"]
-    Boron --> RF1 --> Fus --> RF2 --> Ash
-  end
-  subgraph aux ["Island auxiliaries"]
-    Mag["Mirror magnets + PSU"]
-    RFU["RF units"]
-    Rot["Rotation drive"]
-    Cryo["Cryo + coolant bath"]
-    Vac["Vacuum / controls"]
-    DEC["DEC / wave couplers"]
-  end
-  subgraph store ["Electrical store"]
-    Cart["Ground cart Earth only"]
-    Bat["Flight battery 2 t"]
-  end
-  Hp --> Fus
-  B11 --> Boron
-  Mag --- charm
-  RFU --- RF1
-  RFU --- RF2
-  Rot --- Boron
-  Ash --> DEC
-  DEC --> Bus["1 GW electrical bus"]
-  Cart -.-> Mag
-  Cart -.-> RFU
-  Bat -.-> Mag
-  Bat -.-> RFU
-  Bus --> Eng["Combined-cycle engine"]
-  Cryo --- charm
-  Vac --- charm
-```
-
-### 10.3 Profile view (to scale)
-
-Exterior OML target **\(L \approx 52\,\mathrm{m}\)** to match the stretched floorplan. Landing gear is shown on the **profile** figure (not on the interior floorplan).
-
-<!-- AI graphic: caption = research/figures/prompts/charm_ssto_exterior_profile.prompt.txt -->
-![@prompt](research/figures/charm_ssto_exterior_profile.png)
-
-```mermaid
-flowchart LR
-  subgraph profile ["Profile stations +x"]
-    direction LR
-    N["Nose gear"]
-    C2["Crew + ECLSS/O₂"]
-    A2["Large airlock"]
-    B2["Cargo 18.3 m"]
-    BAT2["Battery"]
-    F2["p/¹¹B tanks"]
-    R2["CHARM"]
-    W2["H₂O"]
-    E2["Engine"]
-    MG["Main gear"]
-    N --- C2 --- A2 --- B2 --- BAT2 --- F2 --- R2 --- W2 --- E2
-    B2 --- MG
-  end
-```
 
 ---
 
-## 11. Systems checklist (equations → constraints)
+## 12. Systems checklist (equations → constraints)
+
+Table: Systems checklist: equations to constraints.
 
 | Step | Governing relations | Binding output |
 |------|---------------------|----------------|
@@ -777,32 +821,36 @@ flowchart LR
 
 ---
 
-## 12. Imputed CHARM plant specs, gap to present design, and unobtainiums
+## 13. Imputed CHARM plant specs, gap to present design, and unobtainiums
 
-### 12.1 Specs this vehicle imputes to CHARM
+### 13.1 Specs this vehicle imputes to CHARM
 
 The SSTO solve does not invent new plasma physics; it **back-solves** a power island that must fit the airframe. Reference imputed plant:
+
+Table: Imputed CHARM plant requirements for this SSTO.
 
 | Quantity | Imputed requirement | Source in this note |
 |----------|---------------------|---------------------|
 | Fuel | Continuous \(p\text{-}^{11}\mathrm{B}\) | G8; §2 |
-| Architecture | Multi-chamber rotating mirror; species separation; ash strain; DEC | §2, §8, §10.2; [1,8–11] |
+| Architecture | Multi-chamber rotating mirror; species separation; ash strain; DEC | §3, §9, §1; [1,8–11] |
 | Electrical bus peak | \(P_{\star} = 1\,\mathrm{GW}\) | G9; Phase B/C power |
-| Mission source energy | \(\sim 5\,\mathrm{GWh}\) class per ascent (\(\kappa_E\sim 3\)) | §3, §7 |
+| Mission source energy | \(\sim 5\,\mathrm{GWh}\) class per ascent (\(\kappa_E\sim 3\)) | §4, §8 |
 | Island mass | \(m_{\mathrm{C}} \approx 67\,\mathrm{t}\) | \(\alpha_{\mathrm{C}} = 15\,\mathrm{kW/kg}\) |
-| Specific power (bus) | \(\alpha_{\mathrm{C}} \ge 15\,\mathrm{kW/kg}\) (floor \(\sim 10\,\mathrm{kW/kg}\)) | §6.2, §8.1 |
+| Specific power (bus) | \(\alpha_{\mathrm{C}} \ge 15\,\mathrm{kW/kg}\) (floor \(\sim 10\,\mathrm{kW/kg}\)) | §7.2, §9.1 |
 | Island volume | \(V_{\mathrm{C}} \lesssim 120\,\mathrm{m}^3\) | Fuselage bay aft of cargo |
 | Volumetric power | \(\bar{p}_{\mathrm{C}} \gtrsim 8\,\mathrm{MW/m}^3\) | \(P_{\star}/V_{\mathrm{C}}\) |
-| DEC | \(\eta_{\mathrm{DEC}} \sim 0.4\)–\(0.7\) on ordered \(\alpha\) / wave channel | §8.3 |
-| Aux heating | RF + rotation + magnets; **no** multi-MW NBI farm | §8.5, §8.7 |
-| Light-off energy | \(\sim 50\)–\(200\,\mathrm{kWh}\) to useful plasma (est.) | §8.7 |
-| Space restart | Pilot-string from \(\sim 2\,\mathrm{t}\) battery (\(\sim 300\)–\(500\,\mathrm{kWh}\)) | §5, §8.4 |
+| DEC | \(\eta_{\mathrm{DEC}} \sim 0.4\)–\(0.7\) on ordered \(\alpha\) / wave channel | §9.3 |
+| Aux heating | RF + rotation + magnets; **no** multi-MW NBI farm | §9.5, §9.7 |
+| Light-off energy | \(\sim 50\)–\(200\,\mathrm{kWh}\) to useful plasma (est.) | §9.7 |
+| Space restart | Pilot-string from \(\sim 2\,\mathrm{t}\) battery (\(\sim 300\)–\(500\,\mathrm{kWh}\)) | §6, §9.4 |
 | Duty | Continuous burn through climb/insert; throttleable bus | §5 |
-| Environment | Flight loads, TPS-adjacent thermal, municipal dose with fan-mode plant | G6, §8.6 |
+| Environment | Flight loads, TPS-adjacent thermal, municipal dose with fan-mode plant | G6, §9.6 |
 
-### 12.2 Where published CHARM stands today
+### 13.2 Where published CHARM stands today
 
-Relative to that invoice, the Fisch / ARPA-E / Pale Blue line today is a **physics and IP program**, not a flight power plant [1,2]:
+Relative to that invoice, the Fisch / Advanced Research Projects Agency–Energy (ARPA-E) / Pale Blue line today is a **physics and intellectual-property (IP) program**, not a flight power plant [1,2]:
+
+Table: Gap between present CHARM and vehicle need.
 
 | Gate | Present CHARM (public) | Vehicle need |
 |------|------------------------|--------------|
@@ -810,13 +858,13 @@ Relative to that invoice, the Fisch / ARPA-E / Pale Blue line today is a **physi
 | Chambering | Architecture + patent filings for separated reactants, ponderomotive walls, open-trap HV, differential confinement [1,8–11] | Must work **together** in one island |
 | Lawson / \(Q\) | Component studies and 0D balances; **integrated self-consistent power-positive reactor not demonstrated** [1] | Net bus power after recirculating RF/rotation |
 | Hardware | No public GW-class (or even pilot) CHARM machine; software-first / early company path | Flyable \(67\,\mathrm{t}\) island |
-| DEC | Themes in theory and open-trap HV patents [1,10] | Flight-qualified \(\eta_{\mathrm{DEC}}\) at GW |
+| DEC | Themes in theory and open-trap high-voltage (HV) patents [1,10] | Flight-qualified \(\eta_{\mathrm{DEC}}\) at GW |
 | Mass / volume | Not published as \(\mathrm{kW/kg}\) or \(\mathrm{MW/m}^3\) plant envelopes | \(15\,\mathrm{kW/kg}\), \(\gtrsim 8\,\mathrm{MW/m}^3\) |
 | Operations | Lab/site thinking | Continuous ascent, g-load, restart, airport licensing |
 
 **Gap in one line:** CHARM has a credible **aneutronic architecture story**; this vehicle needs a **closed, flight-packaged, gigawatt, high specific-power product** that does not yet exist on paper as an engineered BOM.
 
-### 12.3 Unobtainiums in the gap
+### 13.3 Unobtainiums in the gap
 
 Call a requirement **unobtainium** if it is not implied by present CHARM results and would break the SSTO close if false. Ranked for this airframe:
 
@@ -831,27 +879,27 @@ Call a requirement **unobtainium** if it is not implied by present CHARM results
 
 Items 1–5 are **physics/architecture unobtainiums** shared with any CHARM plant. Items 6–8 are **aerospace packing and CONOPS unobtainiums** imposed by SSTO. If 1–5 fail, no amount of airframe cleverness saves the mission; if 1–5 hold but 6–8 fail, CHARM may still be a ground plant while this spaceplane does not close.
 
-### 12.4 How to read the rest of this paper
+### 13.4 How to read the rest of this paper
 
-Sections 1–11 are a **requirements mirror** held up to CHARM: they say what a successful bottle must look like to fly Shuttle-class cargo from a municipal runway to ISS altitude. They are **not** a claim that Pale Blue / Princeton has those numbers. Closing the gap is future plasma physics, materials, and packaging work—tracked against the unobtainium list above.
+Sections 1–12 are a **requirements mirror** held up to CHARM: they say what a successful bottle must look like to fly Shuttle-class cargo from a municipal runway to ISS altitude. They are **not** a claim that Pale Blue / Princeton has those numbers. Closing the gap is future plasma physics, materials, and packaging work—tracked against the unobtainium list above.
 
 ---
 
-## 13. Conclusion
+## 14. Conclusion
 
-Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. The pressurized nose is **lengthened (\(\approx 52\,\mathrm{m}\) OML)** so the cabin can hold a real **ECLSS with O₂/N₂**, **luggage**, a **suited-size airlock** into the bay, plus visible **battery** and **fusion-fuel tank** bays. Crew: **forward-facing flight deck**, **six nap-recline seats**, **ground crew door**, **aft airlock into cargo**. **Landing gear (\(4\,\mathrm{t}\))** and **control surfaces (\(3\,\mathrm{t}\))** sit in the mass bill (gear drawn on the profile, not the floorplan). The MWh budget is linear in inserted mass: about **\(9.2\,\mathrm{kWh}\) per kg** orbital, times \(\kappa_E\sim 2\)–\(4\) at the CHARM bus. Water scales only with **dry mass** and vacuum \(\Delta v/I_{\mathrm{sp}}\). Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**, with CHARM as a **\(67\,\mathrm{t}\), \(\lesssim 120\,\mathrm{m}^3\)** island using **DEC**, lit by **magnets + RF + rotation** (\(50\)–\(200\,\mathrm{kWh}\) class light-off; space restart from a \(2\,\mathrm{t}\) battery), and a **single combined-cycle engine** spanning fan → ram/plasma → water jet. Layout figures (§10) show planform, plant, and profile. Those are the numbers the in-silico CHARM plant and engine maps must satisfy.
+Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. The pressurized nose is **lengthened (\(\approx 52\,\mathrm{m}\) OML)** so the cabin can hold a real **ECLSS with O₂/N₂**, **luggage**, a **suited-size airlock** into the bay, plus visible **battery** and **fusion-fuel tank** bays. Crew: **forward-facing flight deck**, **six nap-recline seats**, **ground crew door**, **aft airlock into cargo**. **Landing gear (\(4\,\mathrm{t}\))** and **control surfaces (\(3\,\mathrm{t}\))** sit in the mass bill (gear drawn on the profile, not the floorplan). The MWh budget is linear in inserted mass: about **\(9.2\,\mathrm{kWh}\) per kg** orbital, times \(\kappa_E\sim 2\)–\(4\) at the CHARM bus. Water scales only with **dry mass** and vacuum \(\Delta v/I_{\mathrm{sp}}\). Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**, with CHARM as a **\(67\,\mathrm{t}\), \(\lesssim 120\,\mathrm{m}^3\)** island using **DEC**, lit by **magnets + RF + rotation** (\(50\)–\(200\,\mathrm{kWh}\) class light-off; space restart from a \(2\,\mathrm{t}\) battery), and a **single combined-cycle engine** spanning fan → ram/plasma → water jet. Vision figures (§1) show planform, plant, and profile. Those are the numbers the in-silico CHARM plant and engine maps must satisfy.
 
 ---
 
 ## Acknowledgments
 
-CHARM denotes the chambered aneutronic rotating-mirror architecture developed in the Princeton / ARPA-E economical \(p\text{-}^{11}\mathrm{B}\) program and discussed toward Pale Blue Fusion. This vehicle sketch is an independent systems exercise and does not speak for that program.
+CHARM denotes the chambered aneutronic rotating-mirror architecture developed at Princeton Plasma Physics Laboratory (PPPL) under the ARPA-E economical \(p\text{-}^{11}\mathrm{B}\) program [1]–[11] and discussed toward Pale Blue Fusion. This vehicle sketch is an independent systems exercise and does not speak for that program.
 
 ---
 
 ## References
 
-[1] N. J. Fisch et al., “Why pB11?” ARPA-E Fusion Annual Meeting slides (Day2\_08\_Fisch.pdf), Aug. 2025. [Online]. Available: https://arpa-e.energy.gov/sites/default/files/2025-08/Day2_08_Fisch.pdf
+[1] N. J. Fisch et al. (Princeton Plasma Physics Laboratory), “Why pB11?” ARPA-E Fusion Annual Meeting slides (Day2\_08\_Fisch.pdf), Aug. 2025. Primary public overview of the Chambered Aneutronic Rotating Mirror (CHARM) / chambered rotating-mirror \(p\text{-}^{11}\mathrm{B}\) architecture. [Online]. Available: https://arpa-e.energy.gov/sites/default/files/2025-08/Day2_08_Fisch.pdf
 
 [2] Advanced Research Projects Agency–Energy (ARPA-E), “Economical Proton-Boron11 Fusion,” Award No. DE-AR0001554, OPEN 2021.
 

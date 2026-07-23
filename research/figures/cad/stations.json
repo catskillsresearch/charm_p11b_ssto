@@ -1,0 +1,99 @@
+{
+  "name": "CATSKILLS-SSTO",
+  "length_m": 52.0,
+  "fuselage_width_m": 5.2,
+  "fuselage_height_m": 6.5,
+  "bay_width_m": 4.6,
+  "bay_height_m": 4.6,
+  "wingspan_m": 28.0,
+  "stations": [
+    {
+      "id": "crew",
+      "x0": 0.0,
+      "x1": 11.0,
+      "label": "CREW / ECLSS",
+      "color": [
+        0.75,
+        0.82,
+        0.9
+      ]
+    },
+    {
+      "id": "airlock",
+      "x0": 11.0,
+      "x1": 15.0,
+      "label": "AIRLOCK \u2192 BAY",
+      "color": [
+        0.85,
+        0.8,
+        0.7
+      ]
+    },
+    {
+      "id": "cargo",
+      "x0": 15.0,
+      "x1": 33.3,
+      "label": "CARGO BAY 18.3\u00d74.6 m",
+      "color": [
+        0.88,
+        0.88,
+        0.9
+      ]
+    },
+    {
+      "id": "battery",
+      "x0": 33.3,
+      "x1": 35.5,
+      "label": "FLIGHT BATTERY",
+      "color": [
+        0.55,
+        0.7,
+        0.55
+      ]
+    },
+    {
+      "id": "fuel",
+      "x0": 35.5,
+      "x1": 37.5,
+      "label": "p/\u00b9\u00b9B FUEL",
+      "color": [
+        0.7,
+        0.65,
+        0.85
+      ]
+    },
+    {
+      "id": "charm",
+      "x0": 37.5,
+      "x1": 45.0,
+      "label": "CHARM",
+      "color": [
+        0.9,
+        0.55,
+        0.45
+      ]
+    },
+    {
+      "id": "water",
+      "x0": 45.0,
+      "x1": 49.0,
+      "label": "WATER",
+      "color": [
+        0.45,
+        0.65,
+        0.9
+      ]
+    },
+    {
+      "id": "engine",
+      "x0": 49.0,
+      "x1": 52.0,
+      "label": "ENGINE",
+      "color": [
+        0.4,
+        0.4,
+        0.45
+      ]
+    }
+  ]
+}

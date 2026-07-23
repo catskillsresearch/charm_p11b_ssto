@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CATSKILLS-SSTO assembly outliner</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    window.__mermaid = mermaid;
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "neutral",
+      securityLevel: "loose",
+      flowchart: { curve: "basis", htmlLabels: true, nodeSpacing: 30, rankSpacing: 40 },
+    });
+    window.dispatchEvent(new Event("mermaid-ready"));
+  </script>
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Assembly outliner</h1>
+      <p class="sub">Grey = contains · teal = connects · dashed blue = collection · collapsed mates proxy to their assembly</p>
+    </div>
+    <div class="actions">
+      <button type="button" id="btn-collapse-all" title="Collapse everything">Collapse all</button>
+      <button type="button" id="btn-expand-one" title="Expand one level under root">Expand top level</button>
+      <button type="button" id="btn-expand-all" title="Expand everything">Expand all</button>
+    </div>
+  </header>
+  <main>
+    <aside id="tree-pane" aria-label="Part hierarchy"></aside>
+    <section id="diagram-pane" aria-label="Diagram">
+      <div id="mermaid-wrap">
+        <pre id="mermaid-src" class="mermaid"></pre>
+      </div>
+      <p id="status" class="status"></p>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

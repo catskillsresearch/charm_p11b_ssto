@@ -1,0 +1,496 @@
+{
+  "meta": {
+    "name": "CATSKILLS-SSTO",
+    "source": "arxiv.md §1, §7.1, §11",
+    "assembly_truth": "assembly.json",
+    "role_of_this_file": "TEMPORARY OpenVSP build binding (builders + xform checks). Geometry/topology/hierarchy lives in assembly.json — not here.",
+    "doctrine": "Shuttle-style orbiter OML; crew capsule and airlock are drop-in modules mated at ports."
+  },
+  "oml": {
+    "length_m": 52.0,
+    "fuselage_height_m": 6.5,
+    "fuselage_height_range_m": [6.5, 7.0],
+    "fuselage_width_m": 5.2,
+    "wingspan_m": 28.0,
+    "tess_u": 33,
+    "tess_w": 25,
+    "scale_from_orbiter": {
+      "length": 1.396,
+      "span": 1.177,
+      "comment": "Anisotropic: longer pressurized nose + aft plant; bay clear length held at 18.3 m."
+    }
+  },
+  "stations_m": [
+    {
+      "id": "crew",
+      "x0": 0.0,
+      "x1": 11.0,
+      "label": "CREW / ECLSS",
+      "contents": [
+        "flight_deck_forward_facing",
+        "six_nap_recline_seats",
+        "ECLSS",
+        "O2_N2_tankage",
+        "WCS",
+        "galley_food",
+        "luggage_stowage",
+        "port_ground_only_side_hatch"
+      ],
+      "color": [0.75, 0.82, 0.90]
+    },
+    {
+      "id": "airlock",
+      "x0": 11.0,
+      "x1": 15.0,
+      "label": "AIRLOCK → BAY",
+      "contents": [
+        "suited_airlock_volume",
+        "hatch_cabin_airlock",
+        "hatch_airlock_bay",
+        "no_outer_side_door"
+      ],
+      "color": [0.85, 0.80, 0.70]
+    },
+    {
+      "id": "cargo",
+      "x0": 15.0,
+      "x1": 33.3,
+      "label": "CARGO BAY 18.3×4.6 m",
+      "bay_length_m": 18.3,
+      "bay_width_m": 4.6,
+      "bay_height_m": 4.6,
+      "payload_kg": 24400,
+      "contents": ["usable_payload_only", "no_reactors"],
+      "color": [0.88, 0.88, 0.90]
+    },
+    {
+      "id": "battery",
+      "x0": 33.3,
+      "x1": 35.5,
+      "label": "FLIGHT BATTERY",
+      "contents": ["flight_battery_APU"],
+      "color": [0.55, 0.70, 0.55]
+    },
+    {
+      "id": "fuel",
+      "x0": 35.5,
+      "x1": 37.5,
+      "label": "p/¹¹B FUEL",
+      "contents": ["proton_B11_feed_tanks", "plumbing"],
+      "color": [0.70, 0.65, 0.85]
+    },
+    {
+      "id": "charm",
+      "x0": 37.5,
+      "x1": 45.0,
+      "label": "CHARM",
+      "contents": ["reactor_island"],
+      "volume_m3_max": 120,
+      "mass_t_ref": 67,
+      "color": [0.90, 0.55, 0.45]
+    },
+    {
+      "id": "water",
+      "x0": 45.0,
+      "x1": 49.0,
+      "label": "WATER",
+      "contents": ["vacuum_reaction_mass_tankage"],
+      "color": [0.45, 0.65, 0.90]
+    },
+    {
+      "id": "engine",
+      "x0": 49.0,
+      "x1": 52.0,
+      "label": "ENGINE",
+      "contents": ["combined_cycle_nacelle", "variable_inlet", "shared_nozzle", "airlock_shutters"],
+      "color": [0.40, 0.40, 0.45]
+    }
+  ],
+  "parts": [
+    {
+      "id": "fuse_oml",
+      "enabled": true,
+      "name": "Fuselage OML + TPS belly",
+      "builder": "fuse_oml",
+      "mass_line": "m_af",
+      "mass_kg": 72000,
+      "paper": "§7.1 airframe+TPS; profile white upper / dark TPS belly",
+      "openvsp": {
+        "type": "FUSELAGE",
+        "name": "FUSE_OML",
+        "flat_belly_max_width_loc": -0.38,
+        "loft_note": "Cross-sections placed at station boundaries + nose/aft shaping; bay OML wider than 4.6 m clear."
+      }
+    },
+    {
+      "id": "plbd",
+      "enabled": true,
+      "name": "Payload bay doors (top clamshell, closed)",
+      "builder": "plbd",
+      "mass_line": "m_af",
+      "paper": "§1 / §11 top clamshell PLBDs; closed on profile",
+      "openvsp": {
+        "type": "WING",
+        "name_prefix": "PLBD",
+        "thickness_chord": 0.04,
+        "chord_m": 2.4,
+        "span_each_m": 2.15,
+        "closed": true
+      }
+    },
+    {
+      "id": "main_wing",
+      "enabled": true,
+      "name": "Double-delta main wing",
+      "builder": "main_wing",
+      "mass_line": "m_af",
+      "paper": "G2; span ≈28 m",
+      "openvsp": {
+        "type": "WING",
+        "name": "MAIN_WING",
+        "span_m": 28.0,
+        "planform": "double_delta",
+        "inner_span_frac": 0.42,
+        "inner_sweep_deg": 52.0,
+        "outer_sweep_deg": 28.0,
+        "root_chord_m": 18.5,
+        "kink_chord_m": 7.2,
+        "tip_chord_m": 2.4,
+        "dihedral_inner_deg": 1.0,
+        "dihedral_outer_deg": 2.5,
+        "x_le_offset_from_cargo_m": -1.5,
+        "z_frac_of_fuse_h": -0.42,
+        "thick_root": 0.12,
+        "thick_kink": 0.10,
+        "thick_tip": 0.08
+      }
+    },
+    {
+      "id": "elevons",
+      "enabled": true,
+      "name": "Elevons",
+      "builder": "elevons",
+      "mass_line": "m_ctrl",
+      "paper": "§7.1 m_ctrl; §11 wings/controls",
+      "openvsp": {
+        "type": "SS_CONTROL",
+        "parent": "MAIN_WING",
+        "eta_start": 0.45,
+        "eta_end": 0.96,
+        "chord_frac": 0.22,
+        "le_flag": 0
+      }
+    },
+    {
+      "id": "vertical_fin",
+      "enabled": true,
+      "name": "Vertical stabilizer",
+      "builder": "vertical_fin",
+      "mass_line": "m_af",
+      "paper": "G2 Shuttle-style fin",
+      "openvsp": {
+        "type": "WING",
+        "name": "VERTICAL_FIN",
+        "span_m": 7.2,
+        "root_chord_m": 8.0,
+        "tip_chord_m": 2.6,
+        "sweep_deg": 42.0,
+        "x_m": 44.5,
+        "z_frac_of_fuse_h": 0.48,
+        "thick_root": 0.11,
+        "thick_tip": 0.08
+      }
+    },
+    {
+      "id": "rudder_speedbrake",
+      "enabled": true,
+      "name": "Rudder / speed-brake",
+      "builder": "rudder_speedbrake",
+      "mass_line": "m_ctrl",
+      "paper": "§7.1 elevons, rudder, speed-brake equiv.",
+      "openvsp": {
+        "type": "SS_CONTROL",
+        "parent": "VERTICAL_FIN",
+        "eta_start": 0.15,
+        "eta_end": 0.95,
+        "chord_frac": 0.28,
+        "le_flag": 0
+      }
+    },
+    {
+      "id": "body_flap",
+      "enabled": true,
+      "name": "Body flap",
+      "builder": "body_flap",
+      "mass_line": "m_ctrl",
+      "paper": "§7.1 speed-brake / body flap equiv.; profile callout",
+      "openvsp": {
+        "type": "WING",
+        "name": "BODY_FLAP",
+        "span_m": 4.8,
+        "root_chord_m": 2.2,
+        "tip_chord_m": 2.0,
+        "sweep_deg": 0.0,
+        "x_m": 48.5,
+        "z_frac_of_fuse_h": -0.52
+      }
+    },
+    {
+      "id": "oms_pods",
+      "enabled": true,
+      "name": "OMS / RCS pod fairings (airframe only)",
+      "builder": "oms_pods",
+      "mass_line": "m_af",
+      "paper": "Visual Shuttle cue; propulsion is combined-cycle in engine station — pods are fairings only",
+      "openvsp": {
+        "type": "POD",
+        "name_prefix": "OMS_POD",
+        "length_m": 6.5,
+        "fine_ratio": 4.5,
+        "x_m": 43.0,
+        "y_m": 2.6,
+        "z_frac_of_fuse_h": 0.15
+      }
+    },
+    {
+      "id": "nose_gear",
+      "enabled": true,
+      "name": "Nose landing gear (placeholder strut)",
+      "builder": "nose_gear",
+      "mass_line": "m_gear",
+      "paper": "§1 profile extended gear; §7.1 m_gear=4 t total; not on floorplan",
+      "figure": "profile_only",
+      "openvsp": {
+        "type": "POD",
+        "name": "NOSE_GEAR",
+        "length_m": 2.8,
+        "fine_ratio": 8.0,
+        "x_m": 8.5,
+        "z_m": -4.2,
+        "rotate_x_deg": 90.0
+      }
+    },
+    {
+      "id": "main_gear",
+      "enabled": true,
+      "name": "Main landing gear L/R (placeholder struts)",
+      "builder": "main_gear",
+      "mass_line": "m_gear",
+      "paper": "§1 / §7.1; municipal runway ops G6",
+      "figure": "profile_only",
+      "openvsp": {
+        "type": "POD",
+        "name_prefix": "MAIN_GEAR",
+        "length_m": 3.4,
+        "fine_ratio": 7.0,
+        "x_m": 30.0,
+        "y_m": 3.2,
+        "z_m": -4.5,
+        "rotate_x_deg": 90.0
+      }
+    },
+    {
+      "id": "crew_hatch",
+      "enabled": true,
+      "name": "Port ground-only side hatch",
+      "builder": "crew_hatch",
+      "mass_line": "m_crew",
+      "paper": "§1, §11; terrestrial ingress only",
+      "openvsp": {
+        "type": "POD",
+        "name": "CREW_HATCH",
+        "length_m": 1.6,
+        "fine_ratio": 3.5,
+        "x_m": 6.5,
+        "y_m": -2.7,
+        "z_m": 0.2
+      }
+    },
+    {
+      "id": "airlock_hatches",
+      "enabled": true,
+      "name": "Airlock bulkhead markers (cabin↔AL, AL↔bay)",
+      "builder": "airlock_hatches",
+      "mass_line": "m_crew",
+      "paper": "§1, §11; no outer side door on airlock",
+      "openvsp": {
+        "type": "POD",
+        "name_prefix": "AIRLOCK_BH",
+        "length_m": 0.35,
+        "fine_ratio": 1.2,
+        "diameter_hint_m": 2.2
+      }
+    },
+    {
+      "id": "engine_nacelle",
+      "enabled": true,
+      "name": "Combined-cycle nacelle + nozzle",
+      "builder": "engine_nacelle",
+      "mass_line": "m_eng",
+      "paper": "§11 engine 49–52 m; §7.9 combined-cycle notes",
+      "openvsp": {
+        "type": "POD",
+        "name": "ENGINE_NACELLE",
+        "length_m": 3.2,
+        "fine_ratio": 2.8,
+        "station": "engine",
+        "z_m": -0.4
+      }
+    },
+    {
+      "id": "inlets",
+      "enabled": true,
+      "name": "Variable inlets + reentry shutters",
+      "builder": "inlets",
+      "mass_line": "m_eng",
+      "paper": "§7.9 airlock shutters for R3/reentry",
+      "openvsp": {
+        "type": "POD",
+        "name_prefix": "INLET",
+        "length_m": 3.0,
+        "fine_ratio": 5.0,
+        "x_m": 34.0,
+        "y_m": 2.4,
+        "z_m": -1.8
+      }
+    }
+  ],
+  "mass_bill_kg": {
+    "m_af": 72000,
+    "m_gear": 4000,
+    "m_ctrl": 3000,
+    "m_crew": 8500,
+    "m_str": 87500,
+    "comment": "From §7.1 / closing table; geometry driver uses stations/oml first — masses are for annotation and later MDAO."
+  },
+  "figure_rules": {
+    "floorplan": "top-down cutaway; station colors; no landing gear",
+    "profile": "side OML; TPS belly; gear extended; port hatch; PLBDs closed"
+  },
+  "frames": {
+    "vehicle": {
+      "units": "m",
+      "origin": "nose tip",
+      "x": "aft_positive_along_keel",
+      "y": "starboard_positive",
+      "z": "up_positive",
+      "comment": "Matches OpenVSP body axes used by build_ssto_openvsp.py"
+    }
+  },
+  "constraints": [
+    {
+      "id": "fuse_exists",
+      "type": "geom_exists",
+      "geom": "FUSE_OML",
+      "why": "All exterior parts attach to the fuselage OML"
+    },
+    {
+      "id": "wing_child_of_fuse",
+      "type": "parent",
+      "child": "MAIN_WING",
+      "parent": "FUSE_OML",
+      "why": "Wing is not a free-floating vehicle"
+    },
+    {
+      "id": "wing_right_side_up",
+      "type": "xform_bounds",
+      "geom": "MAIN_WING",
+      "X_Rel_Rotation_deg": {"min": -5, "max": 5},
+      "Y_Rel_Rotation_deg": {"min": -8, "max": 8},
+      "Z_Rel_Rotation_deg": {"min": -5, "max": 5},
+      "why": "Reject upside-down or yawed-on-backwards wing installs"
+    },
+    {
+      "id": "wing_low_midbody",
+      "type": "xform_bounds",
+      "geom": "MAIN_WING",
+      "X_Rel_Location_m": {"min": 12.0, "max": 18.0},
+      "Z_Rel_Location_m": {"max": -1.0},
+      "why": "LE near cargo start; low wing (Z below fuse centerline)"
+    },
+    {
+      "id": "wing_sweep_aft",
+      "type": "parm_bounds",
+      "geom": "MAIN_WING",
+      "parms": [
+        {"name": "Sweep", "group": "XSec_1", "min": 25, "max": 70},
+        {"name": "Sweep", "group": "XSec_2", "min": 15, "max": 45}
+      ],
+      "why": "Positive quarter-chord sweep = LE aft; catches mirrored/backwards sections"
+    },
+    {
+      "id": "wing_span_matches_oml",
+      "type": "parm_bounds",
+      "geom": "MAIN_WING",
+      "parms": [
+        {"name": "TotalSpan", "group": "WingGeom", "min": 26.0, "max": 30.0}
+      ],
+      "why": "Span ≈ oml.wingspan_m (28 m)"
+    },
+    {
+      "id": "fin_child_of_fuse",
+      "type": "parent",
+      "child": "VERTICAL_FIN",
+      "parent": "FUSE_OML",
+      "why": "Fin attached to aft fuselage"
+    },
+    {
+      "id": "fin_is_vertical",
+      "type": "xform_bounds",
+      "geom": "VERTICAL_FIN",
+      "X_Rel_Rotation_deg": {"min": 85, "max": 95},
+      "Z_Rel_Location_m": {"min": 2.0},
+      "why": "Fin stood up on upper OML — not a second horizontal wing"
+    },
+    {
+      "id": "fin_aft",
+      "type": "xform_bounds",
+      "geom": "VERTICAL_FIN",
+      "X_Rel_Location_m": {"min": 40.0, "max": 50.0},
+      "why": "Vertical stabilizer over CHARM/water/engine region"
+    },
+    {
+      "id": "body_flap_under_aft",
+      "type": "xform_bounds",
+      "geom": "BODY_FLAP",
+      "X_Rel_Location_m": {"min": 46.0, "max": 51.0},
+      "Z_Rel_Location_m": {"max": -2.0},
+      "why": "Body flap under aft fuse / engine face"
+    },
+    {
+      "id": "crew_hatch_port_forward",
+      "type": "xform_bounds",
+      "geom": "CREW_HATCH",
+      "X_Rel_Location_m": {"min": 4.0, "max": 11.0},
+      "Y_Rel_Location_m": {"max": -2.0},
+      "why": "Ground-only hatch on port crew module — not starboard, not mid-bay"
+    },
+    {
+      "id": "nose_gear_below_crew",
+      "type": "xform_bounds",
+      "geom": "NOSE_GEAR",
+      "X_Rel_Location_m": {"min": 5.0, "max": 12.0},
+      "Z_Rel_Location_m": {"max": -2.5},
+      "why": "Nose gear extends below forward fuselage"
+    },
+    {
+      "id": "engine_in_engine_station",
+      "type": "xform_bounds",
+      "geom": "ENGINE_NACELLE",
+      "X_Rel_Location_m": {"min": 48.0, "max": 52.0},
+      "why": "Combined-cycle nacelle in engine station (49–52 m)"
+    },
+    {
+      "id": "no_wing_as_fin",
+      "type": "forbid_xform",
+      "geom": "MAIN_WING",
+      "X_Rel_Rotation_deg_near": {"value": 90, "tol": 15},
+      "why": "Main wing must not be installed as a vertical surface"
+    }
+  ],
+  "export": {
+    "vsp3": "catskills_ssto.vsp3",
+    "shell_stl": "catskills_ssto.stl",
+    "blender_next": "Import shell_stl as exterior volume; keep vehicle_spec stations for interior placement; do not remodel OML in Blender."
+  }
+}

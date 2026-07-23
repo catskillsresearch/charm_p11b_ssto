@@ -116,7 +116,9 @@ def strip_html_comments(text: str) -> str:
     def repl(match: re.Match[str]) -> str:
         body = match.group(0)
         if re.match(
-            r"<!--\s*mermaid-(caption|landscape|label)\b", body, re.IGNORECASE
+            r"<!--\s*(mermaid-(caption|landscape|label)|figure-(landscape|caption))\b",
+            body,
+            re.IGNORECASE,
         ):
             return body
         return ""
@@ -133,6 +135,58 @@ def strip_title_line(text: str) -> str:
     if text.startswith("# "):
         return text[text.find("\n") + 1 :].lstrip("\n")
     return text
+
+
+def strip_markdown_author_block(text: str) -> str:
+    """Remove front-matter author/date lines already emitted by ``\\maketitle``.
+
+    ``arxiv.md`` keeps a human-readable byline for GitHub; the TeX title page
+    already has author, affiliation, ORCID, and date — do not repeat them after LoF/LoT.
+    """
+    lines = text.splitlines(keepends=True)
+    i = 0
+    while i < len(lines) and not lines[i].strip():
+        i += 1
+    if i >= len(lines):
+        return text
+    # Expect bold name, then company / ORCID / email / date, optional ---.
+    if not re.match(r"^\*\*.+\*\*\s*$", lines[i].strip()):
+        return text
+    j = i + 1
+    while j < len(lines):
+        s = lines[j].strip()
+        if not s:
+            j += 1
+            continue
+        if s in {"---", "***", "___"}:
+            j += 1
+            break
+        if s.startswith("## "):
+            break
+        # byline / meta lines
+        if (
+            re.match(r"^\*\*.+\*\*", s)
+            or "ORCID" in s
+            or "@" in s
+            or re.match(
+                r"^(January|February|March|April|May|June|July|August|"
+                r"September|October|November|December)\b",
+                s,
+            )
+            or re.match(r"^\d{4}-\d{2}-\d{2}", s)
+            or "Catskills" in s
+            or "Research" in s
+        ):
+            j += 1
+            continue
+        break
+    while j < len(lines) and not lines[j].strip():
+        j += 1
+    if j < len(lines) and lines[j].strip() in {"---", "***", "___"}:
+        j += 1
+    while j < len(lines) and not lines[j].strip():
+        j += 1
+    return "".join(lines[j:])
 
 
 def extract_abstract(text: str) -> tuple[str, str]:
@@ -264,9 +318,9 @@ def latex_escape_plain(text: str) -> str:
 def resolve_image_caption(alt: str, src_name: str) -> tuple[str, str]:
     """Return ``(short_loftitle, caption_tex)``.
 
-    If ``alt`` is ``@prompt`` (or empty with a sibling prompt file), load
-    ``research/figures/prompts/<stem>.prompt.txt`` and use it as the full caption
-    (self-documenting AI graphic). Short LoF title is the stem.
+    Brief alt text is the printed caption. ``@prompt`` means: use a short human
+    title for LoF/caption; the full generation prompt belongs in the prose that
+    introduces the figure (not in ``\\caption``).
     """
     stem = Path(src_name).stem
     prompt_path = PROMPTS_DIR / f"{stem}.prompt.txt"
@@ -274,16 +328,16 @@ def resolve_image_caption(alt: str, src_name: str) -> tuple[str, str]:
     use_prompt = alt_stripped in {"@prompt", "@prompt.txt", ""} and prompt_path.is_file()
     if alt_stripped.startswith("@prompt:") and prompt_path.is_file():
         use_prompt = True
+    # Default brief titles when alt is ``@prompt``.
+    short_titles = {
+        "charm_ssto_interior_floorplan": "Vehicle floor plan.",
+        "charm_ssto_exterior_profile": "Vehicle profile view.",
+    }
     if use_prompt:
-        prompt = prompt_path.read_text(encoding="utf-8")
-        short = stem.replace("_", " ")
-        body = latex_escape_plain(prompt)
-        caption = (
-            r"\textbf{AI image prompt (source artifact).} "
-            + body
-        )
-        return short, caption
-    return "", caption_md_to_latex(github_math_to_tex(alt_stripped))
+        short = short_titles.get(stem) or (stem.replace("_", " ").capitalize() + ".")
+        return short, short
+    caption = caption_md_to_latex(github_math_to_tex(alt_stripped))
+    return "", caption
 
 
 def caption_md_to_latex(caption: str) -> str:
@@ -311,11 +365,16 @@ def replace_markdown_images(text: str) -> tuple[str, dict[str, str]]:
 
     Captions may contain ``]`` (e.g. ``[89]``), so parsing keys off the path marker
     rather than a naive ``[^\\]]*`` alt match.
+
+    Preceding ``<!-- figure-landscape -->`` wraps the float in ``pdflscape``.
     """
     placeholders: dict[str, str] = {}
     parts: list[str] = []
     pos = 0
     idx = 0
+    landscape_re = re.compile(
+        r"<!--\s*figure-landscape\s*-->\s*$", re.IGNORECASE | re.MULTILINE
+    )
     while True:
         marker_at = text.find(MD_IMAGE_MARKER, pos)
         if marker_at < 0:
@@ -348,11 +407,23 @@ def replace_markdown_images(text: str) -> tuple[str, dict[str, str]]:
         short, caption_tex = resolve_image_caption(alt, src_name)
         stem = Path(src_name).stem
         slug = re.sub(r"[^a-z0-9]+", "-", stem.lower()).strip("-") or str(idx + 1)
+        # Landscape if comment appears in the preceding few lines.
+        prefix = text[max(0, start - 200) : start]
+        landscape = bool(landscape_re.search(prefix))
+        # Drop the landscape comment from emitted markdown.
+        emit_prefix = text[pos:start]
+        emit_prefix = landscape_re.sub("", emit_prefix)
         key = f"ASSETINCLUDE{idx:03d}"
         placeholders[key] = figure_latex(
-            rel, caption_tex, f"fig:{slug}", short_caption=short or None
+            rel,
+            caption_tex,
+            f"fig:{slug}",
+            landscape=landscape,
+            short_caption=(
+                short if short and short.rstrip(".") != caption_tex.rstrip(".") else None
+            ),
         )
-        parts.append(text[pos:start])
+        parts.append(emit_prefix)
         parts.append(f"\n\n{key}\n\n")
         pos = path_end + 1
         idx += 1
@@ -1058,6 +1129,53 @@ def rebuild_table_sister_fuels(latex: str) -> str:
     return latex[:wrap_start] + new_table + latex[lt_end:]
 
 
+def label_captioned_longtables(latex: str) -> str:
+    """Ensure every longtable ``\\caption{...}`` has a ``\\label{tab:...}`` for LoT/refs."""
+
+    def slugify(caption: str) -> str:
+        plain = re.sub(r"\\[a-zA-Z]+\{([^}]*)\}", r"\1", caption)
+        plain = re.sub(r"[\\{}$^_]", "", plain)
+        slug = re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-")[:48]
+        return slug or "table"
+
+    used: set[str] = set(re.findall(r"\\label\{(tab:[^}]+)\}", latex))
+
+    def repl_block(block: str) -> str:
+        def repl(match: re.Match[str]) -> str:
+            cap = match.group(1)
+            after = match.group(2)
+            if r"\label{tab:" in after[:120]:
+                return match.group(0)
+            # Already has any label immediately after caption.
+            if re.match(r"\\label\{", after.lstrip()):
+                return match.group(0)
+            base = "tab:" + slugify(cap)
+            label = base
+            n = 2
+            while label in used:
+                label = f"{base}-{n}"
+                n += 1
+            used.add(label)
+            return f"\\caption{{{cap}}}\\label{{{label}}}{after}"
+
+        return re.sub(
+            r"\\caption\{((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)\}"
+            r"(\\tabularnewline|\\\\)",
+            repl,
+            block,
+            count=1,
+        )
+
+    parts: list[str] = []
+    pos = 0
+    for m in re.finditer(r"\\begin\{longtable\}.*?\\end\{longtable\}", latex, re.DOTALL):
+        parts.append(latex[pos : m.start()])
+        parts.append(repl_block(m.group(0)))
+        pos = m.end()
+    parts.append(latex[pos:])
+    return "".join(parts)
+
+
 def promote_remaining_survey_tables(latex: str) -> str:
     """Turn leftover ``\\label{tab:…}`` + longtable into captioned longtables.
 
@@ -1163,6 +1281,7 @@ def cleanup_pandoc_latex(latex: str) -> str:
     latex = rebuild_table_legal_footprint(latex)
     latex = rebuild_table_plant_odds(latex)
     latex = promote_remaining_survey_tables(latex)
+    latex = label_captioned_longtables(latex)
     latex = re.sub(r"\n{3,}", "\n\n", latex)
     return latex
 
@@ -1268,6 +1387,7 @@ def main(argv: list[str] | None = None) -> int:
 
     raw = SRC.read_text(encoding="utf-8")
     body = strip_title_line(raw)
+    body = strip_markdown_author_block(body)
     body = apply_prose_ascii_fallbacks(body)
     body = strip_html_comments(body)
     abstract_md, body = extract_abstract(body)

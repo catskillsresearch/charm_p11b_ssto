@@ -242,3 +242,17 @@ zenodo.tex
 *.toc
 # Readable PDFs may be committed optionally; default ignore local latex churn:
 # zenodo.pdf and arxiv.pdf are build products — commit deliberately if desired
+
+# OpenVSP official distribution (downloaded; not on PyPI)
+third_party/*.deb
+third_party/openvsp/*.deb
+third_party/openvsp/opt/
+third_party/openvsp/sysdeps/
+
+# Regenerable / local CAD scratch
+research/figures/cad/*.stl
+research/figures/cad/*.blend
+research/figures/cad/*.blend1
+research/figures/cad/cache/
+research/figures/cad/__pycache__/
+.vsptime

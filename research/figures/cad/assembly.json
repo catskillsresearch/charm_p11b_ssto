@@ -1,0 +1,1539 @@
+{
+  "meta": {
+    "name": "CATSKILLS-SSTO",
+    "source": "arxiv.md \u00a71, \u00a77.1, \u00a711; assembly doctrine discussion",
+    "units": "m",
+    "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
+    "architecture": "Fuselage assembly = cradle boat + nose gear + left/right aft steering pods. Crew capsule = pressure vessel + side hatch + forward steering. Airlock = pressure vessel + doors + air tank + cycle gadgets. Cargo bay = skid + doors. Fusion engine bay = skid + doors + aft plant + tail. Wing on belly saddle.",
+    "skids": "Cargo bay and fusion engine bay are skid+door packages that drop into open wells; pull out for service."
+  },
+  "frame": {
+    "id": "vehicle",
+    "origin": "nose_tip",
+    "x": "aft_positive_along_keel",
+    "y": "starboard_positive",
+    "z": "up_positive"
+  },
+  "envelope": {
+    "length_m": 52.0,
+    "width_m": 5.2,
+    "height_m": 6.5,
+    "wingspan_m": 28.0
+  },
+  "root": {
+    "id": "vehicle",
+    "label": "Whole vehicle",
+    "kind": "assembly",
+    "children": [
+      {
+        "id": "fuselage",
+        "label": "Fuselage",
+        "kind": "assembly",
+        "note": "Structural boat: open cradle plus the pieces that permanently live on it \u2014 nose landing gear and the two aft space-steering pods. Forward steering is on the crew capsule, not here.",
+        "children": [
+          {
+            "id": "fuselage_cradle",
+            "label": "Fuselage cradle",
+            "kind": "cradle",
+            "form": "open_boat",
+            "note": "Open boat / long cradle. Drop-in wells for crew, airlock, cargo bay, fusion engine bay. Belly wing saddle + nose-gear saddle. Aft steering pods bolt to this cradle; forward steering rides on the crew capsule.",
+            "size": {
+              "length_m": 52.0,
+              "width_m": 5.2,
+              "height_m": 6.5
+            },
+            "ports": [
+              {
+                "id": "crew_bay",
+                "xyz": [
+                  5.5,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "module_seat",
+                "note": "Open forward well for crew capsule drop-in"
+              },
+              {
+                "id": "airlock_bay",
+                "xyz": [
+                  13.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "module_seat",
+                "note": "Open well for airlock drop-in"
+              },
+              {
+                "id": "cargo_bay_seat",
+                "xyz": [
+                  24.15,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "module_seat",
+                "note": "Open mid-body well; Cargo Bay (skid+doors) drops in as one unit"
+              },
+              {
+                "id": "engine_bay_seat",
+                "xyz": [
+                  48.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "module_seat",
+                "note": "Open aft well; Fusion Engine Bay (skid+doors+tail) drops in as one unit"
+              },
+              {
+                "id": "wing_saddle",
+                "xyz": [
+                  22.0,
+                  0.0,
+                  -3.1
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "role": "mono_wing_mate",
+                "shape": "flattened_pinch",
+                "note": "Belly saddle / pinch for one-piece wing",
+                "size_m": {
+                  "length_m": 18.5,
+                  "width_m": 5.2,
+                  "depth_m": 0.6
+                }
+              },
+              {
+                "id": "nose_gear_saddle",
+                "xyz": [
+                  8.5,
+                  0.0,
+                  -3.2
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "role": "gear_saddle",
+                "shape": "dimple_saddle",
+                "note": "Local saddle / dimple in the fuselage cradle belly. Nose landing gear bolts up into this hardpoint (same idea as the wing saddle, smaller).",
+                "size_m": {
+                  "length_m": 1.2,
+                  "width_m": 0.8,
+                  "depth_m": 0.25
+                }
+              },
+              {
+                "id": "left_aft_steering_pod_mount",
+                "xyz": [
+                  43.0,
+                  -2.85,
+                  1.6
+                ],
+                "normal": [
+                  0,
+                  -1,
+                  0
+                ]
+              },
+              {
+                "id": "right_aft_steering_pod_mount",
+                "xyz": [
+                  43.0,
+                  2.85,
+                  1.6
+                ],
+                "normal": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "id": "nose_landing_gear",
+            "label": "Nose landing gear",
+            "kind": "landing_gear",
+            "size": {
+              "strut_length_m": 2.8
+            },
+            "ports": [
+              {
+                "id": "saddle_mate",
+                "xyz": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "gear_saddle",
+                "note": "Bolts to fuselage nose_gear_saddle dimple"
+              }
+            ],
+            "note": "Isolated nose wheel. Bolts to a saddle/dimple on the fuselage cradle belly \u2014 not buried in a closed well as primary structure language."
+          },
+          {
+            "id": "left_aft_steering_pod",
+            "label": "Left aft steering pod",
+            "kind": "thruster_pod",
+            "placement": "aft fuselage, left of tail fin (Shuttle OMS/RCS pod)",
+            "size": {
+              "shuttle_oms_engines": 1,
+              "shuttle_jets": {
+                "primary": 12,
+                "vernier": 2
+              },
+              "length_m": 6.5
+            },
+            "ports": [
+              {
+                "id": "attach",
+                "xyz": [
+                  43.0,
+                  -2.85,
+                  1.6
+                ],
+                "normal": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ],
+            "note": "Shuttle-style left aft OMS/RCS pod; bolts to fuselage cradle."
+          },
+          {
+            "id": "right_aft_steering_pod",
+            "label": "Right aft steering pod",
+            "kind": "thruster_pod",
+            "placement": "aft fuselage, right of tail fin (Shuttle OMS/RCS pod)",
+            "size": {
+              "shuttle_oms_engines": 1,
+              "shuttle_jets": {
+                "primary": 12,
+                "vernier": 2
+              },
+              "length_m": 6.5
+            },
+            "ports": [
+              {
+                "id": "attach",
+                "xyz": [
+                  43.0,
+                  2.85,
+                  1.6
+                ],
+                "normal": [
+                  0,
+                  -1,
+                  0
+                ]
+              }
+            ],
+            "note": "Shuttle-style right aft OMS/RCS pod; bolts to fuselage cradle."
+          }
+        ]
+      },
+      {
+        "id": "crew_capsule",
+        "label": "Crew capsule",
+        "kind": "assembly",
+        "drop_in": true,
+        "envelope": {
+          "x0": 0.0,
+          "x1": 11.0,
+          "width_m": 5.2,
+          "height_m": 6.5
+        },
+        "note": "Drop-in collection: pressure vessel (with interior) plus side hatch and forward steering module bolted to the vessel. Drops into the forward cradle well.",
+        "children": [
+          {
+            "id": "pressure_vessel",
+            "label": "Pressure vessel",
+            "kind": "pressure_vessel",
+            "form": "crew_dragon_like",
+            "envelope": {
+              "x0": 0.0,
+              "x1": 11.0,
+              "width_m": 5.2,
+              "height_m": 6.5
+            },
+            "note": "Physical pressurized shell of the crew capsule. Holds flight deck and living cabin. Side hatch and forward steering module bolt onto this vessel; they are siblings in the capsule collection, not interior furnishings.",
+            "ports": [
+              {
+                "id": "cradle_mount",
+                "xyz": [
+                  5.5,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "role": "module_seat"
+              },
+              {
+                "id": "hatch_aft",
+                "xyz": [
+                  11.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  1,
+                  0,
+                  0
+                ],
+                "role": "pressure_hatch"
+              },
+              {
+                "id": "side_hatch_port",
+                "xyz": [
+                  6.5,
+                  -2.7,
+                  0.2
+                ],
+                "normal": [
+                  0,
+                  -1,
+                  0
+                ],
+                "role": "ground_hatch"
+              },
+              {
+                "id": "forward_steering_mount",
+                "xyz": [
+                  0.5,
+                  0.0,
+                  1.2
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "steering_mount",
+                "note": "Nose hardpoint on pressure vessel for forward steering module"
+              }
+            ],
+            "children": [
+              {
+                "id": "flight_deck",
+                "label": "Flight deck",
+                "kind": "compartment",
+                "envelope": {
+                  "x0": 0.0,
+                  "x1": 4.0
+                },
+                "children": [
+                  {
+                    "id": "captain_chair",
+                    "label": "Captain's chair (left, faces forward)",
+                    "kind": "seat",
+                    "size": {
+                      "width_m": 0.55,
+                      "depth_m": 0.7,
+                      "facing": "forward"
+                    },
+                    "ports": [
+                      {
+                        "id": "deck_mount",
+                        "role": "floor_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "pilot_chair",
+                    "label": "Pilot's chair (right, faces forward)",
+                    "kind": "seat",
+                    "size": {
+                      "width_m": 0.55,
+                      "depth_m": 0.7,
+                      "facing": "forward"
+                    },
+                    "ports": [
+                      {
+                        "id": "deck_mount",
+                        "role": "floor_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "glare_shield",
+                    "label": "Instrument panel / glare shield",
+                    "kind": "furnishing",
+                    "ports": [
+                      {
+                        "id": "fwd_attach",
+                        "role": "bulkhead_mount"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "crew_compartment",
+                "label": "Living / systems cabin",
+                "kind": "compartment",
+                "envelope": {
+                  "x0": 4.0,
+                  "x1": 11.0
+                },
+                "children": [
+                  {
+                    "id": "seat_row",
+                    "label": "Four nap seats",
+                    "kind": "seat_group",
+                    "count": 4,
+                    "size": {
+                      "facing": "forward",
+                      "recline": "nap"
+                    },
+                    "ports": [
+                      {
+                        "id": "deck_mount",
+                        "role": "floor_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "wcs",
+                    "label": "Toilet",
+                    "kind": "furnishing",
+                    "ports": [
+                      {
+                        "id": "deck_mount",
+                        "role": "floor_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "galley",
+                    "label": "Galley / food station",
+                    "kind": "furnishing",
+                    "ports": [
+                      {
+                        "id": "deck_mount",
+                        "role": "floor_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "luggage",
+                    "label": "Luggage lockers",
+                    "kind": "furnishing",
+                    "ports": [
+                      {
+                        "id": "deck_mount",
+                        "role": "floor_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "eclss_rack",
+                    "label": "Life-support rack",
+                    "kind": "system_rack",
+                    "ports": [
+                      {
+                        "id": "deck_mount",
+                        "role": "floor_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "o2_tankage",
+                    "label": "Oxygen tanks (inside cabin only)",
+                    "kind": "tank",
+                    "constraint": "inside_pressurized_volume_only",
+                    "ports": [
+                      {
+                        "id": "rack_mount",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "n2_tankage",
+                    "label": "Nitrogen tanks (inside cabin only)",
+                    "kind": "tank",
+                    "constraint": "inside_pressurized_volume_only",
+                    "ports": [
+                      {
+                        "id": "rack_mount",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "side_hatch",
+            "label": "Left-side ground hatch (runway only)",
+            "kind": "hatch",
+            "size": {
+              "shape": "oval_shuttle",
+              "role": "terrestrial_ingress_only"
+            },
+            "ports": [
+              {
+                "id": "skin",
+                "role": "skin_cutout"
+              },
+              {
+                "id": "forbid_space",
+                "role": "not_vacuum_rated_outer"
+              }
+            ],
+            "note": "Left-side ground hatch cut into the pressure-vessel skin. Runway ingress only \u2014 not vacuum-rated as an outer space hatch."
+          },
+          {
+            "id": "forward_steering_module",
+            "label": "Forward steering module (nose)",
+            "kind": "thruster_module",
+            "placement": "nose, forward of flight-deck windows",
+            "size": {
+              "shuttle_jets": {
+                "primary": 14,
+                "vernier": 2
+              },
+              "length_m": 2.2
+            },
+            "ports": [
+              {
+                "id": "vessel_mate",
+                "xyz": [
+                  0.5,
+                  0.0,
+                  1.2
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "role": "module_mount",
+                "note": "Bolts to pressure-vessel nose hardpoint"
+              }
+            ],
+            "note": "Hedgehog of small space-steering jets on the pressure-vessel nose (Crew Dragon\u2013style). Bolts to the vessel; not inside the pressurized volume."
+          }
+        ]
+      },
+      {
+        "id": "airlock",
+        "label": "Airlock",
+        "kind": "assembly",
+        "drop_in": true,
+        "envelope": {
+          "x0": 11.0,
+          "x1": 15.0,
+          "width_m": 2.5,
+          "height_m": 2.5
+        },
+        "note": "Drop-in collection: pressure vessel (suited standing room) plus the two pressure doors, air tank, and pressurization gadgets. Hatches only to crew and cargo \u2014 submarine / ISS style.",
+        "children": [
+          {
+            "id": "airlock_pressure_vessel",
+            "label": "Pressure vessel",
+            "kind": "pressure_vessel",
+            "form": "suited_standing_chamber",
+            "size": {
+              "clear_m": 2.5,
+              "occupancy": "about two suited people"
+            },
+            "envelope": {
+              "x0": 11.0,
+              "x1": 15.0,
+              "width_m": 2.5,
+              "height_m": 2.5
+            },
+            "constraints": [
+              "no_outer_side_door",
+              "hatches_only_cabin_and_bay"
+            ],
+            "note": "Suited standing chamber (~2 people). Physical pressurized shell of the airlock. Doors, air tank, and cycle gadgets bolt to this vessel.",
+            "ports": [
+              {
+                "id": "cradle_mount",
+                "xyz": [
+                  13.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "role": "module_seat"
+              },
+              {
+                "id": "hatch_fwd",
+                "xyz": [
+                  11.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  -1,
+                  0,
+                  0
+                ],
+                "role": "pressure_hatch"
+              },
+              {
+                "id": "hatch_aft",
+                "xyz": [
+                  15.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  1,
+                  0,
+                  0
+                ],
+                "role": "pressure_hatch"
+              },
+              {
+                "id": "tank_mount",
+                "role": "equipment_mount",
+                "note": "Hardpoint for repress/depress air tank"
+              },
+              {
+                "id": "cycle_pack_mount",
+                "role": "equipment_mount",
+                "note": "Hardpoint for valves, pump, gauges"
+              }
+            ]
+          },
+          {
+            "id": "hatch_cabin_al",
+            "label": "Door between cabin and airlock",
+            "kind": "hatch",
+            "ports": [
+              {
+                "id": "ring",
+                "role": "pressure_hatch"
+              }
+            ],
+            "note": "Pressure door on the forward face of the airlock pressure vessel (crew side)."
+          },
+          {
+            "id": "hatch_al_bay",
+            "label": "Door between airlock and cargo bay",
+            "kind": "hatch",
+            "ports": [
+              {
+                "id": "ring",
+                "role": "pressure_hatch"
+              }
+            ],
+            "note": "Pressure door on the aft face of the airlock pressure vessel (cargo-bay side)."
+          },
+          {
+            "id": "airlock_air_tank",
+            "label": "Air tank (press / depress)",
+            "kind": "tank",
+            "note": "Stores air to repressurize the chamber after vacuum; accepts dump/bleed during depress.",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "equipment_mount"
+              }
+            ]
+          },
+          {
+            "id": "airlock_cycle_pack",
+            "label": "Pressurization gadgets",
+            "kind": "equipment",
+            "note": "Valves, pump/equalizer, gauges, and controls to pressurize and unpressurize the chamber (ISS / submarine airlock style).",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "equipment_mount"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cargo_bay",
+        "label": "Cargo bay",
+        "kind": "assembly",
+        "drop_in": true,
+        "form": "skid_with_doors",
+        "note": "Drop-in collection: cargo skid plus its own left/right doors. The fuselage cradle is open here \u2014 doors are not fuselage skin; they come with the bay.",
+        "envelope": {
+          "x0": 15.0,
+          "x1": 33.3,
+          "width_m": 4.6,
+          "height_m": 4.6
+        },
+        "ports": [
+          {
+            "id": "cradle_mount",
+            "xyz": [
+              24.15,
+              0.0,
+              0.0
+            ],
+            "normal": [
+              0,
+              0,
+              -1
+            ],
+            "role": "module_seat"
+          },
+          {
+            "id": "hatch_fwd",
+            "xyz": [
+              15.0,
+              0.0,
+              0.0
+            ],
+            "normal": [
+              -1,
+              0,
+              0
+            ],
+            "role": "pressure_hatch"
+          },
+          {
+            "id": "hatch_aft",
+            "xyz": [
+              33.3,
+              0.0,
+              0.0
+            ],
+            "normal": [
+              1,
+              0,
+              0
+            ],
+            "role": "pressure_hatch"
+          }
+        ],
+        "children": [
+          {
+            "id": "cargo_skid",
+            "label": "Cargo skid",
+            "kind": "payload_module",
+            "form": "semi_circular_skid",
+            "size": {
+              "length_m": 18.3,
+              "width_m": 4.6,
+              "height_m": 4.6,
+              "payload_kg": 24400,
+              "form": "semi-circular skid / half-capsule"
+            },
+            "note": "Pull-out cargo skid; doors are siblings in this bay, not on the boat.",
+            "ports": [
+              {
+                "id": "bay_frame",
+                "role": "internal"
+              }
+            ]
+          },
+          {
+            "id": "left_cargo_door",
+            "label": "Left cargo door",
+            "kind": "door",
+            "ports": [
+              {
+                "id": "hinge",
+                "role": "roof_hinge"
+              }
+            ]
+          },
+          {
+            "id": "right_cargo_door",
+            "label": "Right cargo door",
+            "kind": "door",
+            "ports": [
+              {
+                "id": "hinge",
+                "role": "roof_hinge"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "fusion_engine_bay",
+        "label": "Fusion engine bay",
+        "kind": "assembly",
+        "drop_in": true,
+        "form": "skid_with_doors_and_tail",
+        "note": "Drop-in collection: fusion engine skid, bay doors, aft plant (CHARM/fuel/water/battery), and tail assembly as one package. Fuselage is open here \u2014 doors belong to this bay, not the boat.",
+        "envelope": {
+          "x0": 33.3,
+          "x1": 52.0
+        },
+        "ports": [
+          {
+            "id": "cradle_mount",
+            "xyz": [
+              48.0,
+              0.0,
+              0.0
+            ],
+            "normal": [
+              0,
+              0,
+              -1
+            ],
+            "role": "module_seat"
+          },
+          {
+            "id": "hatch_fwd",
+            "xyz": [
+              33.3,
+              0.0,
+              0.0
+            ],
+            "normal": [
+              -1,
+              0,
+              0
+            ],
+            "role": "pressure_hatch"
+          }
+        ],
+        "children": [
+          {
+            "id": "fusion_engine_skid",
+            "label": "Fusion engine skid",
+            "kind": "propulsion_module",
+            "form": "semi_circular_skid",
+            "drop_in": true,
+            "note": "Semi-circular skid with combined-cycle / fusion drive, inlets, nozzle \u2014 pulls out for service.",
+            "ports": [
+              {
+                "id": "bay_frame",
+                "role": "internal"
+              },
+              {
+                "id": "nozzle",
+                "xyz": [
+                  52.0,
+                  0.0,
+                  -0.4
+                ],
+                "normal": [
+                  1,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "children": [
+              {
+                "id": "nacelle",
+                "label": "Engine housing",
+                "kind": "fairing"
+              },
+              {
+                "id": "variable_inlets",
+                "label": "Air inlets with close-off shutters",
+                "kind": "inlet"
+              },
+              {
+                "id": "shared_nozzle",
+                "label": "Shared exhaust nozzle",
+                "kind": "nozzle"
+              }
+            ]
+          },
+          {
+            "id": "engine_bay_doors",
+            "label": "Fusion engine bay doors",
+            "kind": "assembly",
+            "children": [
+              {
+                "id": "left_engine_bay_door",
+                "label": "Left engine bay door",
+                "kind": "door",
+                "ports": [
+                  {
+                    "id": "hinge",
+                    "role": "roof_hinge"
+                  }
+                ]
+              },
+              {
+                "id": "right_engine_bay_door",
+                "label": "Right engine bay door",
+                "kind": "door",
+                "ports": [
+                  {
+                    "id": "hinge",
+                    "role": "roof_hinge"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "aft_plant",
+            "label": "Aft plant (CHARM, fuel, water, battery)",
+            "kind": "assembly",
+            "note": "Rides in the fusion engine bay drop-in for maintainability.",
+            "children": [
+              {
+                "id": "flight_battery",
+                "label": "Flight battery",
+                "kind": "equipment",
+                "envelope": {
+                  "x0": 33.3,
+                  "x1": 35.5
+                },
+                "ports": [
+                  {
+                    "id": "keel_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              },
+              {
+                "id": "fuel_tanks",
+                "label": "Fusion fuel tanks (proton / boron-11)",
+                "kind": "tank",
+                "envelope": {
+                  "x0": 35.5,
+                  "x1": 37.5
+                },
+                "ports": [
+                  {
+                    "id": "keel_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              },
+              {
+                "id": "charm",
+                "label": "CHARM fusion plant",
+                "kind": "equipment",
+                "envelope": {
+                  "x0": 37.5,
+                  "x1": 45.0
+                },
+                "size": {
+                  "volume_m3_max": 120,
+                  "mass_t_ref": 67
+                },
+                "ports": [
+                  {
+                    "id": "keel_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              },
+              {
+                "id": "water_tanks",
+                "label": "Water tanks (space propellant)",
+                "kind": "tank",
+                "envelope": {
+                  "x0": 45.0,
+                  "x1": 49.0
+                },
+                "ports": [
+                  {
+                    "id": "keel_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "tail_assembly",
+            "label": "Tail assembly",
+            "kind": "assembly",
+            "children": [
+              {
+                "id": "tail_fin",
+                "label": "Tail fin",
+                "kind": "lifting_surface",
+                "size": {
+                  "span_m": 7.2,
+                  "root_chord_m": 8.0,
+                  "tip_chord_m": 2.6,
+                  "sweep_deg": 42.0
+                },
+                "ports": [
+                  {
+                    "id": "root",
+                    "normal": [
+                      0,
+                      0,
+                      -1
+                    ]
+                  },
+                  {
+                    "id": "rudder_hinge",
+                    "role": "control_hinge"
+                  }
+                ],
+                "children": [
+                  {
+                    "id": "rudder",
+                    "label": "Rudder / speed brake",
+                    "kind": "control_surface",
+                    "size": {
+                      "chord_frac": {
+                        "min": 0.2,
+                        "nom": 0.28,
+                        "max": 0.35
+                      }
+                    },
+                    "ports": [
+                      {
+                        "id": "hinge",
+                        "role": "control_hinge"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "body_flap",
+                "label": "Body flap under the tail",
+                "kind": "control_surface",
+                "size": {
+                  "span_m": 4.8,
+                  "chord_m": 2.2
+                },
+                "ports": [
+                  {
+                    "id": "hinge",
+                    "normal": [
+                      0,
+                      0,
+                      1
+                    ]
+                  }
+                ],
+                "note": "Shuttle body flap under the aft fuselage."
+              }
+            ],
+            "ports": [
+              {
+                "id": "bay_attach",
+                "role": "integral"
+              }
+            ],
+            "note": "Integral with the fusion engine bay \u2014 not a separate bolt-on to the boat. Fin, rudder/speed brake, body flap ship with the aft propulsion drop-in."
+          }
+        ]
+      },
+      {
+        "id": "wing",
+        "label": "Wing",
+        "kind": "assembly",
+        "form": "mono_wing",
+        "note": "Collection: mono-wing body, elevons, and main landing gear. The physical wing bolts to the fuselage cradle belly saddle.",
+        "size": {
+          "span_m": {
+            "min": 26.0,
+            "nom": 28.0,
+            "max": 30.0
+          },
+          "root_chord_m": 18.5,
+          "kink_chord_m": 7.2,
+          "tip_chord_m": 2.4,
+          "planform": "double_delta",
+          "inner_sweep_deg": {
+            "min": 25,
+            "nom": 52,
+            "max": 70
+          },
+          "outer_sweep_deg": {
+            "min": 15,
+            "nom": 28,
+            "max": 45
+          }
+        },
+        "ports": [
+          {
+            "id": "saddle_mate",
+            "xyz": [
+              22.0,
+              0.0,
+              0.0
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "role": "mono_wing_mate",
+            "note": "Wing body upper face \u2192 fuselage belly saddle"
+          }
+        ],
+        "children": [
+          {
+            "id": "wing_body",
+            "label": "Mono-wing body",
+            "kind": "lifting_surface",
+            "note": "Single left\u2013right wing structure / wing box.",
+            "ports": [
+              {
+                "id": "saddle_mate",
+                "role": "mono_wing_mate",
+                "note": "Mates to fuselage wing_saddle"
+              },
+              {
+                "id": "left_elevon_hinge",
+                "role": "control_hinge"
+              },
+              {
+                "id": "right_elevon_hinge",
+                "role": "control_hinge"
+              },
+              {
+                "id": "left_main_gear_mount",
+                "label": "Left gear mount point",
+                "role": "gear_mount",
+                "xyz": [
+                  28.0,
+                  -3.2,
+                  -0.4
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ]
+              },
+              {
+                "id": "right_main_gear_mount",
+                "label": "Right gear mount point",
+                "role": "gear_mount",
+                "xyz": [
+                  28.0,
+                  3.2,
+                  -0.4
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ]
+              }
+            ]
+          },
+          {
+            "id": "left_elevon",
+            "label": "Left elevon",
+            "kind": "control_surface",
+            "note": "Shuttle-style elevon (combined roll/pitch). Trailing edge of left wing.",
+            "ports": [
+              {
+                "id": "hinge",
+                "role": "control_hinge"
+              }
+            ]
+          },
+          {
+            "id": "right_elevon",
+            "label": "Right elevon",
+            "kind": "control_surface",
+            "note": "Shuttle-style elevon (combined roll/pitch). Trailing edge of right wing.",
+            "ports": [
+              {
+                "id": "hinge",
+                "role": "control_hinge"
+              }
+            ]
+          },
+          {
+            "id": "main_landing_gear",
+            "label": "Main landing gear",
+            "kind": "assembly",
+            "note": "Optional sub-kit: left and right main gear joined as one assembly, then mated to the wing mount points \u2014 or each leg mated alone. Shuttle mains live in the wing, not the fuselage belly.",
+            "children": [
+              {
+                "id": "left_main_landing_gear",
+                "label": "Left main landing gear",
+                "kind": "landing_gear",
+                "ports": [
+                  {
+                    "id": "attach",
+                    "role": "gear_mount"
+                  }
+                ]
+              },
+              {
+                "id": "right_main_landing_gear",
+                "label": "Right main landing gear",
+                "kind": "landing_gear",
+                "ports": [
+                  {
+                    "id": "attach",
+                    "role": "gear_mount"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "joints": [
+    {
+      "id": "j_crew_dropin",
+      "a": "pressure_vessel.cradle_mount",
+      "b": "fuselage_cradle.crew_bay",
+      "type": "module_seat",
+      "note": "Crew capsule pressure vessel drops into forward cradle well"
+    },
+    {
+      "id": "j_airlock_dropin",
+      "a": "airlock_pressure_vessel.cradle_mount",
+      "b": "fuselage_cradle.airlock_bay",
+      "type": "module_seat",
+      "note": "Airlock pressure vessel drops into cradle well"
+    },
+    {
+      "id": "j_cargo_bay_dropin",
+      "a": "cargo_bay.cradle_mount",
+      "b": "fuselage_cradle.cargo_bay_seat",
+      "type": "module_seat",
+      "note": "Entire Cargo Bay (skid + doors) drops into open mid cradle"
+    },
+    {
+      "id": "j_fusion_bay_dropin",
+      "a": "fusion_engine_bay.cradle_mount",
+      "b": "fuselage_cradle.engine_bay_seat",
+      "type": "module_seat",
+      "note": "Entire Fusion Engine Bay (skid + doors + tail) drops into open aft cradle"
+    },
+    {
+      "id": "j_crew_to_airlock",
+      "a": "pressure_vessel.hatch_aft",
+      "b": "airlock_pressure_vessel.hatch_fwd",
+      "type": "pressure_hatch",
+      "coincident": true,
+      "note": "Pressure door interface: crew pressure vessel \u2194 airlock pressure vessel"
+    },
+    {
+      "id": "j_airlock_to_cargo",
+      "a": "airlock_pressure_vessel.hatch_aft",
+      "b": "cargo_bay.hatch_fwd",
+      "type": "pressure_hatch",
+      "coincident": true,
+      "note": "Pressure door interface: airlock pressure vessel \u2194 cargo bay"
+    },
+    {
+      "id": "j_cargo_to_fusion",
+      "a": "cargo_bay.hatch_aft",
+      "b": "fusion_engine_bay.hatch_fwd",
+      "type": "pressure_hatch",
+      "coincident": true,
+      "note": "Chamber join along the boat"
+    },
+    {
+      "id": "j_left_cargo_door",
+      "a": "left_cargo_door.hinge",
+      "b": "cargo_bay",
+      "type": "revolute",
+      "axis": "x",
+      "note": "Door is part of Cargo Bay, not fuselage"
+    },
+    {
+      "id": "j_right_cargo_door",
+      "a": "right_cargo_door.hinge",
+      "b": "cargo_bay",
+      "type": "revolute",
+      "axis": "x"
+    },
+    {
+      "id": "j_cargo_skid_in_bay",
+      "a": "cargo_skid.bay_frame",
+      "b": "cargo_bay",
+      "type": "fixed",
+      "note": "Skid is the floor of the cargo bay package"
+    },
+    {
+      "id": "j_left_engine_door",
+      "a": "left_engine_bay_door.hinge",
+      "b": "fusion_engine_bay",
+      "type": "revolute",
+      "axis": "x",
+      "note": "Door is part of Fusion Engine Bay, not fuselage"
+    },
+    {
+      "id": "j_right_engine_door",
+      "a": "right_engine_bay_door.hinge",
+      "b": "fusion_engine_bay",
+      "type": "revolute",
+      "axis": "x"
+    },
+    {
+      "id": "j_engine_skid_in_bay",
+      "a": "fusion_engine_skid.bay_frame",
+      "b": "fusion_engine_bay",
+      "type": "fixed"
+    },
+    {
+      "id": "j_tail_integral",
+      "a": "tail_assembly.bay_attach",
+      "b": "fusion_engine_bay",
+      "type": "fixed",
+      "note": "Tail is integral to fusion engine bay drop-in"
+    },
+    {
+      "id": "j_wing_saddle",
+      "a": "wing.saddle_mate",
+      "b": "fuselage_cradle.wing_saddle",
+      "type": "fixed",
+      "note": "Wing bolts to belly saddle on the boat"
+    },
+    {
+      "id": "j_left_elevon",
+      "a": "left_elevon.hinge",
+      "b": "wing_body.left_elevon_hinge",
+      "type": "revolute",
+      "axis": "span"
+    },
+    {
+      "id": "j_right_elevon",
+      "a": "right_elevon.hinge",
+      "b": "wing_body.right_elevon_hinge",
+      "type": "revolute",
+      "axis": "span"
+    },
+    {
+      "id": "j_left_main_gear",
+      "a": "left_main_landing_gear.attach",
+      "b": "wing_body.left_main_gear_mount",
+      "type": "revolute",
+      "axis": "y"
+    },
+    {
+      "id": "j_right_main_gear",
+      "a": "right_main_landing_gear.attach",
+      "b": "wing_body.right_main_gear_mount",
+      "type": "revolute",
+      "axis": "y"
+    },
+    {
+      "id": "j_nose_gear",
+      "a": "nose_landing_gear.saddle_mate",
+      "b": "fuselage_cradle.nose_gear_saddle",
+      "type": "fixed",
+      "note": "Nose gear bolts to fuselage belly saddle/dimple"
+    },
+    {
+      "id": "j_side_hatch",
+      "a": "side_hatch.skin",
+      "b": "pressure_vessel.side_hatch_port",
+      "type": "skin_cutout",
+      "note": "Side hatch cut into pressure-vessel skin"
+    },
+    {
+      "id": "j_captain",
+      "a": "captain_chair.deck_mount",
+      "b": "flight_deck",
+      "type": "floor_mount"
+    },
+    {
+      "id": "j_pilot",
+      "a": "pilot_chair.deck_mount",
+      "b": "flight_deck",
+      "type": "floor_mount"
+    },
+    {
+      "id": "j_left_aft_steering",
+      "a": "left_aft_steering_pod.attach",
+      "b": "fuselage_cradle.left_aft_steering_pod_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_right_aft_steering",
+      "a": "right_aft_steering_pod.attach",
+      "b": "fuselage_cradle.right_aft_steering_pod_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_rudder",
+      "a": "rudder.hinge",
+      "b": "tail_fin.rudder_hinge",
+      "type": "revolute",
+      "axis": "span"
+    },
+    {
+      "id": "j_body_flap",
+      "a": "body_flap.hinge",
+      "b": "tail_assembly",
+      "type": "revolute",
+      "axis": "y"
+    },
+    {
+      "id": "j_forward_steering",
+      "a": "forward_steering_module.vessel_mate",
+      "b": "pressure_vessel.forward_steering_mount",
+      "type": "fixed",
+      "note": "Forward steering hedgehog bolts to pressure-vessel nose"
+    },
+    {
+      "id": "j_hatch_cabin_al",
+      "a": "hatch_cabin_al.ring",
+      "b": "airlock_pressure_vessel.hatch_fwd",
+      "type": "pressure_hatch",
+      "note": "Forward door bolted to airlock pressure vessel"
+    },
+    {
+      "id": "j_hatch_al_bay",
+      "a": "hatch_al_bay.ring",
+      "b": "airlock_pressure_vessel.hatch_aft",
+      "type": "pressure_hatch",
+      "note": "Aft door bolted to airlock pressure vessel"
+    },
+    {
+      "id": "j_airlock_air_tank",
+      "a": "airlock_air_tank.mount",
+      "b": "airlock_pressure_vessel.tank_mount",
+      "type": "fixed",
+      "note": "Air tank bolted to airlock pressure vessel"
+    },
+    {
+      "id": "j_airlock_cycle_pack",
+      "a": "airlock_cycle_pack.mount",
+      "b": "airlock_pressure_vessel.cycle_pack_mount",
+      "type": "fixed",
+      "note": "Pressurization gadgets bolted to airlock pressure vessel"
+    }
+  ],
+  "stations": [
+    {
+      "id": "crew",
+      "part": "crew_capsule",
+      "x0": 0.0,
+      "x1": 11.0,
+      "label": "CREW CAPSULE",
+      "color": [
+        0.75,
+        0.82,
+        0.9
+      ]
+    },
+    {
+      "id": "airlock",
+      "part": "airlock",
+      "x0": 11.0,
+      "x1": 15.0,
+      "label": "AIRLOCK",
+      "color": [
+        0.85,
+        0.8,
+        0.7
+      ]
+    },
+    {
+      "id": "cargo",
+      "part": "cargo_bay",
+      "x0": 15.0,
+      "x1": 33.3,
+      "label": "CARGO BAY",
+      "color": [
+        0.88,
+        0.88,
+        0.9
+      ]
+    },
+    {
+      "id": "battery",
+      "part": "flight_battery",
+      "x0": 33.3,
+      "x1": 35.5,
+      "label": "FLIGHT BATTERY",
+      "color": [
+        0.55,
+        0.7,
+        0.55
+      ]
+    },
+    {
+      "id": "fuel",
+      "part": "fuel_tanks",
+      "x0": 35.5,
+      "x1": 37.5,
+      "label": "p/\u00b9\u00b9B FUEL",
+      "color": [
+        0.7,
+        0.65,
+        0.85
+      ]
+    },
+    {
+      "id": "charm",
+      "part": "charm",
+      "x0": 37.5,
+      "x1": 45.0,
+      "label": "CHARM",
+      "color": [
+        0.9,
+        0.55,
+        0.45
+      ]
+    },
+    {
+      "id": "water",
+      "part": "water_tanks",
+      "x0": 45.0,
+      "x1": 49.0,
+      "label": "WATER",
+      "color": [
+        0.45,
+        0.65,
+        0.9
+      ]
+    },
+    {
+      "id": "engine",
+      "part": "fusion_engine_skid",
+      "x0": 49.0,
+      "x1": 52.0,
+      "label": "FUSION ENGINE",
+      "color": [
+        0.4,
+        0.4,
+        0.45
+      ]
+    }
+  ]
+}

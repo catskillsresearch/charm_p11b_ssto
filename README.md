@@ -161,9 +161,8 @@ See [`research/figures/CREDITS.md`](research/figures/CREDITS.md) and
 ## CHARM SSTO note (Zenodo)
 
 Systems note: [`arxiv.md`](arxiv.md) → `make zenodo` → [`dist/zenodo_submit.zip`](dist/zenodo_submit.zip).
-See [`ZENODO.md`](ZENODO.md). AI figures use prompt artifacts under
-`research/figures/prompts/` (PDF captions = full prompts; `make ai-stamp` after
-Cursor GenerateImage tweaks).
+See [`ZENODO.md`](ZENODO.md). Vehicle floorplan/profile figures are OpenVSP CAD
+from `research/figures/cad/` (`make install-openvsp` once, then `make cad-figures`).
 
 ## Installation
 

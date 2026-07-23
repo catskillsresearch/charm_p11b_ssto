@@ -1,1 +1,14 @@
-NASA-style top-down engineering floorplan ONLY (no landing gear drawn), elongated SSTO ~52m, blueprint gray/white. Delta wing outline with elevons/rudder labeled lightly. Forward CREW MODULE: CDR and PLT facing forward at FLIGHT DECK control panel; four more reclining nap seats (six total); WASTE COLLECTION SYSTEM (toilet); GALLEY; LUGGAGE / PERSONAL STOWAGE lockers; ECLSS rack; OXYGEN TANKS and N2/pressure control bottles clearly labeled; FORWARD CREW DOOR / SIDE HATCH on port for terrestrial ingress. Large AIRLOCK ~2.5m square suitable for two suited crew, aft bulkhead facing into CARGO BAY with dual hatches. CARGO BAY 18.3×4.6 m. Then FLIGHT BATTERY bay (~2 t). Then p-11B / PROTON FUEL TANKS (small volume, labeled). Then CHARM REACTOR BAY. WATER TANKS. COMBINED-CYCLE ENGINE. Title CATSKILLS-SSTO FLOORPLAN. Scale bar ~52 m. No wheels, no gear trucks. Clean callouts.
+SHARED STATION MAP (must match the companion side-profile drawing exactly): CATSKILLS-SSTO top-down engineering FLOORPLAN, nose LEFT, aft RIGHT, length ~52 m, blueprint gray/white, delta wing outline lightly. NO landing gear drawn.
+
+STATIONS left→right:
+(1) CREW MODULE 0–11 m: flight deck CDR+PLT facing FORWARD (nose); four more forward-facing nap seats (six total); WCS; GALLEY; LUGGAGE lockers; ECLSS rack; O2 and N2 pressure tanks INSIDE the pressurized cabin only (underfloor or aft crew rack)—NEVER external pods, NEVER outside the hull, NEVER on the wing.
+(2) PORT FORWARD CREW SIDE HATCH only for TERRESTRIAL/ground ingress—circular/oval Shuttle-style side hatch in the crew-module skin; NOT an airlock; NOT opening to space.
+(3) AIRLOCK 11–15 m (~2.5 m square, two suited crew): INTERNAL volume on the aft crew bulkhead. Hatches ONLY: cabin↔airlock and airlock↔CARGO BAY. Airlock does NOT open to outside atmosphere/space through the side of the fuselage. Aft face of airlock opens INTO the cargo bay (Shuttle middeck→payload bay pattern).
+(4) CARGO BAY 15–33.3 m (18.3×4.6 m): empty payload volume; show bay centerline and left/right PAYLOAD BAY DOOR hinge lines along the top of the fuselage (Shuttle-style clamshell doors over the bay)—doors are the ROOF of the bay, not side doors.
+(5) FLIGHT BATTERY 33.3–35.5 m (~2 t).
+(6) p-11B / PROTON FUEL TANKS 35.5–37.5 m (small, internal).
+(7) CHARM REACTOR 37.5–45 m.
+(8) WATER TANKS 45–49 m.
+(9) COMBINED-CYCLE ENGINE 49–52 m.
+
+Title CATSKILLS-SSTO FLOORPLAN. Scale bar ~52 m. Clean callouts. No external O2/N2 bottles on the side.

@@ -33,6 +33,18 @@ mypy = "^1.18"
 pytest = "^8.4"
 ruff = "^0.12"
 
+# OpenVSP is not on PyPI. The Python API ships inside the official Ubuntu .deb
+# from https://openvsp.org/download.php (see scripts/install_openvsp.sh).
+[tool.poetry.group.openvsp]
+optional = true
+
+[tool.poetry.group.openvsp.dependencies]
+openvsp_config = { path = "third_party/openvsp/opt/OpenVSP/python/openvsp_config", develop = true }
+utilities = { path = "third_party/openvsp/opt/OpenVSP/python/utilities", develop = true }
+degen_geom = { path = "third_party/openvsp/opt/OpenVSP/python/degen_geom", develop = true }
+openvsp = { path = "third_party/openvsp/opt/OpenVSP/python/openvsp", develop = true }
+matplotlib = ">=3.8,<4.0"
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

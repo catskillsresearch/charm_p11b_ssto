@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Full rebuild: AI figures (cached) + arxiv.md → zenodo.tex, figures, zenodo.pdf, zip
+# Full rebuild: CAD figures + arxiv.md → zenodo.tex, figures, zenodo.pdf, zip
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "==> AI figures from prompts (skip remote regen unless stale + AI_IMAGE_CMD)"
-make ai-figures
+echo "==> CAD vehicle figures (Blender)"
+make cad-figures
 
 echo "==> Generating zenodo.tex and figures"
 python3 scripts/build_arxiv_tex.py --target zenodo

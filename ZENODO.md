@@ -10,20 +10,21 @@
 ## Build
 
 ```bash
-make zenodo                 # AI figures (cached) + zenodo.pdf + dist/zenodo_submit.zip
-make ai-stamp               # after Cursor GenerateImage tweaks: stamp prompt↔PNG hashes
-FORCE_AI_FIGURES=1 AI_IMAGE_CMD='...' make ai-figures   # optional remote regen
+make zenodo                 # CAD figures + zenodo.pdf + dist/zenodo_submit.zip
+make install-openvsp        # once: official OpenVSP .deb + Poetry API
+make cad-figures            # rebuild floorplan/profile via OpenVSP
 ```
 
-### AI figures (self-documenting)
+### Vehicle figures (CAD)
 
 | Artifact | Role |
 |----------|------|
-| `research/figures/prompts/<stem>.prompt.txt` | Full generation prompt (= PDF caption via `![@prompt](...)`) |
-| `research/figures/<stem>.png` | Cached raster (committed) |
-| `research/figures/<stem>.ai.meta` | SHA-256 of prompt that produced the PNG |
+| `research/figures/cad/stations.json` | Shared station map (length / bay extents) |
+| `research/figures/cad/build_ssto_openvsp.py` | OpenVSP driver (`.vsp3` + top/side orthographics) |
+| `research/figures/cad/stations.json` | Shared station / OML truth |
+| `research/figures/charm_ssto_*.png` | Paper assets (committed; rebuild with `make cad-figures`) |
 
-Mermaid diagrams still render on every TeX build (with their own `.meta` cache under `figures/`). AI PNGs regenerate **only** when the prompt hash is stale **and** `AI_IMAGE_CMD` is set—so paper builds stay fast while you iterate prompts in Cursor.
+Mermaid diagrams still render on every TeX build (with their own `.meta` cache under `figures/`).
 
 ## Upload
 
