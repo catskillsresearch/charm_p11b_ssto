@@ -4,15 +4,16 @@ An open-source, general-purpose simulation framework for proton–boron-11
 (`p–¹¹B`) fusion architectures.
 
 The long-term goal is an application that provides useful, transparent
-**digital twins** of the major reactor architectures cataloged in
-[`pb11.md`](pb11.md). A model should reproduce the defining geometry,
-controls, operating sequence, plasma assumptions, diagnostics, losses, and
-energy-conversion path of its source architecture as accurately as public data
-allows.
+**digital twins** of the major reactor architectures cataloged in the companion
+SoA survey
+([`pb11_fusion_soa_2026`](https://github.com/catskillsresearch/pb11_fusion_soa_2026)).
+A model should reproduce the defining geometry, controls, operating sequence,
+plasma assumptions, diagnostics, losses, and energy-conversion path of its
+source architecture as accurately as public data allows.
 
-This repository is currently a **documentation-first scaffold**. It contains
-the state-of-the-art survey and its research archive, but no simulator
-implementation yet.
+This repository is currently a **documentation-first scaffold** plus an
+operator-twin theater. The architecture catalog lives in the sibling survey
+repo; this tree keeps the research archive and simulator scaffolding.
 
 ## Why this project
 
@@ -43,7 +44,7 @@ rather than hide them behind unrelated one-off demonstrations.
 
 ## Architecture scope
 
-The initial scope follows the catalog in [`pb11.md`](pb11.md):
+The initial scope follows the catalog in the SoA survey:
 
 - **Magnetic confinement**
   - spherical torus and related closed magnetic systems;
@@ -109,8 +110,8 @@ literature assumptions, fitted parameters, and speculative extrapolations.
 - **Honest limitations.** No model should imply demonstrated reactor
   performance where only component experiments or conceptual studies exist.
 
-The feasibility gates in [`pb11.md`](pb11.md)—fuel data, kinetics, radiation,
-ash, Lawson/engineering gain, confinement, materials, breeding where relevant,
+The feasibility gates in the SoA survey—fuel data, kinetics, radiation, ash,
+Lawson/engineering gain, confinement, materials, breeding where relevant,
 technology maturity, in-silico iteration, and hardware iteration—provide the
 initial comparison rubric.
 
@@ -137,16 +138,19 @@ committing the project to a particular solver design.
 
 ```text
 .
-├── pb11.md              State-of-the-art survey and architecture catalog
+├── arxiv.md             CHARM p-11B SSTO systems note (Zenodo source)
 ├── data/                SQLite catalog + operator presets
 ├── simulator/           0-order operator twin (PySide6 survey theater)
-├── scripts/             Catalog build / browse / digital-twin picker
+├── scripts/             Catalog / Zenodo / paper build tooling
 ├── research/            Survey research materials and figure provenance
 ├── pyproject.toml       Python/Poetry project definition
 ├── poetry.lock          Reproducible dependency resolution
 ├── LICENSE              Apache License 2.0
 └── NOTICE               Attribution and third-party-material notice
 ```
+
+Architecture catalog source (not vendored here): sibling
+`../pb11_fusion_soa_2026/arxiv.md`, or set `PB11_SURVEY_MD`.
 
 The files under `research/` were copied verbatim from the survey repository.
 They may include third-party material. Their inclusion documents sources and

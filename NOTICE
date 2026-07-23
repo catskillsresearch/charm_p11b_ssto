@@ -24,16 +24,17 @@ Apache License 2.0 apply.
 
 THIRD-PARTY RESEARCH MATERIALS
 
-The research/ directory and portions of pb11.md cite, describe, link to, or
-archive material created by third parties. Those materials remain subject to
-their respective copyrights, licenses, attribution requirements, and terms of
-use. Their presence in this repository is for research provenance and
-documentation and does not imply endorsement or grant rights beyond those
-provided by the applicable rights holder.
+The research/ directory cites, describes, links to, or archives material
+created by third parties. Those materials remain subject to their respective
+copyrights, licenses, attribution requirements, and terms of use. Their
+presence in this repository is for research provenance and documentation and
+does not imply endorsement or grant rights beyond those provided by the
+applicable rights holder.
 
-See research/figures/CREDITS.md and the citations in pb11.md for source and
-provenance information. When redistributing or publishing third-party
-materials, users must review and comply with the original terms.
+See research/figures/CREDITS.md and the companion SoA survey
+(catskillsresearch/pb11_fusion_soa_2026) for source and provenance
+information. When redistributing or publishing third-party materials, users
+must review and comply with the original terms.
 
 No license is granted to use the trade names, trademarks, service marks, or
 product names of Catskills Research Company or any referenced organization,

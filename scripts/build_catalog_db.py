@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
-"""Build a normalized SQLite catalog from pb11.md survey tables and references."""
+"""Build a normalized SQLite catalog from the SoA survey tables and references.
+
+Default source is the sibling survey repo ``pb11_fusion_soa_2026/arxiv.md``
+(override with ``PB11_SURVEY_MD``). That file is not vendored in this repo.
+"""
 
 from __future__ import annotations
 
+import os
 import re
 import sqlite3
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "data" / "schema.sql"
-SOURCE = ROOT / "pb11.md"
+SOURCE = Path(
+    os.environ.get(
+        "PB11_SURVEY_MD",
+        str(ROOT.parent / "pb11_fusion_soa_2026" / "arxiv.md"),
+    )
+)
 DB_PATH = ROOT / "data" / "p11b_catalog.sqlite"
 
 # ---------------------------------------------------------------------------
