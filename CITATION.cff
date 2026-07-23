@@ -1,0 +1,35 @@
+# Citation File Format — GitHub “Cite this repository” only.
+# Authoritative Zenodo metadata: .zenodo.json
+
+cff-version: 1.2.0
+title: "SSTO fusion powered spaceplane using CHARM architecture with p-11B fuel"
+message: "If you use this report, please cite it as below."
+type: report
+authors:
+  - family-names: Ericson
+    given-names: Lars Warren
+    affiliation: Catskills Research Company
+    orcid: "https://orcid.org/0000-0001-8299-9361"
+abstract: >-
+  Systems-level in-silico sketch of a single-stage-to-orbit spaceplane powered by a
+  continuous CHARM proton–boron-11 plant with direct energy conversion, Shuttle-class
+  cargo, and municipal-runway ops to ISS-altitude LEO.
+keywords:
+  - CHARM
+  - p-11B fusion
+  - SSTO
+  - spaceplane
+  - aneutronic fusion
+repository-code: "https://github.com/catskillsresearch/p11b"
+license: Apache-2.0
+version: 0.1.0
+date-released: 2026-07-23
+preferred-citation:
+  type: report
+  title: "SSTO fusion powered spaceplane using CHARM architecture with p-11B fuel"
+  authors:
+    - family-names: Ericson
+      given-names: Lars Warren
+  year: 2026
+  version: 0.1.0
+  notes: "Deposit zenodo.pdf on Zenodo for a DOI; source lives on GitHub."

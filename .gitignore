@@ -226,3 +226,19 @@ demos/.envs/
 demos/output/
 demos/openmc/nuclear_data/*.h5
 demos/vendor/
+
+# Zenodo / paper build (from arxiv.md)
+arxiv.tex
+zenodo.tex
+/figures/
+# Keep research/figures/ (source PNGs + prompts); ignore only build output above
+*.aux
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+*.toc
+# Readable PDFs may be committed optionally; default ignore local latex churn:
+# zenodo.pdf and arxiv.pdf are build products — commit deliberately if desired

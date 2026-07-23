@@ -1,0 +1,169 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{authblk}
+
+% Survey tables use ordinary LaTeX numbering; prose refs use \autoref{tab:…} / \S\ref{sec:…}.
+\captionsetup{font=small,labelfont=bf,labelsep=space}
+\newcommand{\surveycaption}[1]{\caption{#1}}
+\newcommand{\surveycaptionof}[1]{\captionof{table}{#1}}
+\newcommand{\surveycaptioncont}[1]{\caption*{#1}}
+\newcommand{\secref}[1]{\S\ref{#1}}
+\newcommand{\secrefrange}[2]{\S\ref{#1}--\ref{#2}}
+\newcommand{\secrefranges}[2]{\S\S\ref{#1}--\ref{#2}}
+\newcommand{\figref}[1]{Figure~\ref{#1}}
+
+% Compact scorecard glyphs (● / ◐ / ○) — avoid wide text fallbacks like "(half)"
+\newcommand{\gateF}{\ensuremath{\bullet}}
+\newcommand{\gateP}{\ensuremath{\odot}}
+\newcommand{\gateW}{\ensuremath{\circ}}
+\newcommand{\gateNA}{--}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{calc}
+\usepackage{newunicodechar}
+\usepackage{listings}
+\usepackage{soul}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue!40!black,citecolor=blue!40!black,urlcolor=blue!40!black]{hyperref}
+
+\let\origtextunderscore\_
+\renewcommand{\_}{\origtextunderscore\allowbreak}
+
+\lstdefinestyle{codebox}{
+  basicstyle=\footnotesize\ttfamily,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  upquote=true,
+  extendedchars=true,
+  inputencoding=utf8,
+  literate=
+    {§}{{\S}}1
+    {α}{{\ensuremath{\alpha}}}1
+    {β}{{\ensuremath{\beta}}}1
+    {γ}{{\ensuremath{\gamma}}}1
+    {σ}{{\ensuremath{\sigma}}}1
+    {τ}{{\ensuremath{\tau}}}1
+    {μ}{{\ensuremath{\mu}}}1
+    {κ}{{\ensuremath{\kappa}}}1
+    {→}{{\ensuremath{\rightarrow}}}1
+    {←}{{\ensuremath{\leftarrow}}}1
+    {↔}{{\ensuremath{\leftrightarrow}}}1
+    {⇒}{{\ensuremath{\Rightarrow}}}1
+    {≠}{{\ensuremath{\neq}}}1
+    {≤}{{\ensuremath{\leq}}}1
+    {≥}{{\ensuremath{\geq}}}1
+    {≈}{{\ensuremath{\approx}}}1
+    {≃}{{\ensuremath{\simeq}}}1
+    {≳}{{\ensuremath{\gtrsim}}}1
+    {≲}{{\ensuremath{\lesssim}}}1
+    {·}{{\ensuremath{\cdot}}}1
+    {×}{{\ensuremath{\times}}}1
+    {—}{{\textemdash}}1
+    {–}{{\textendash}}1
+    {…}{{\ldots}}1
+    {●}{{\gateF{}}}1
+    {◐}{{\gateP{}}}1
+    {○}{{\gateW{}}}1
+    {¹}{{\textsuperscript{1}}}1
+    {²}{{\textsuperscript{2}}}1
+    {³}{{\textsuperscript{3}}}1
+    {⁴}{{\textsuperscript{4}}}1
+}
+\lstset{style=codebox}
+
+% Prose Unicode (pdfLaTeX)
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{κ}{\ensuremath{\kappa}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{ν}{\ensuremath{\nu}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{χ}{\ensuremath{\chi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≃}{\ensuremath{\simeq}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≳}{\ensuremath{\gtrsim}}
+\newunicodechar{≲}{\ensuremath{\lesssim}}
+\newunicodechar{·}{\textperiodcentered{}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{—}{\textemdash{}}
+\newunicodechar{–}{\textendash{}}
+\newunicodechar{…}{\ldots}
+\newunicodechar{§}{\S}
+\newunicodechar{●}{\gateF{}}
+\newunicodechar{◐}{\gateP{}}
+\newunicodechar{○}{\gateW{}}
+\newunicodechar{†}{\dag}
+\newunicodechar{‡}{\ddag}
+\newunicodechar{¶}{\P}
+\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{²}{\textsuperscript{2}}
+\newunicodechar{³}{\textsuperscript{3}}
+\newunicodechar{⁴}{\textsuperscript{4}}
+\newunicodechar{⁵}{\textsuperscript{5}}
+\newunicodechar{⁶}{\textsuperscript{6}}
+\newunicodechar{⁷}{\textsuperscript{7}}
+\newunicodechar{⁸}{\textsuperscript{8}}
+\newunicodechar{⁹}{\textsuperscript{9}}
+\newunicodechar{⁰}{\textsuperscript{0}}
+\newunicodechar{₁}{\textsubscript{1}}
+\newunicodechar{₂}{\textsubscript{2}}
+\newunicodechar{₃}{\textsubscript{3}}
+\newunicodechar{₄}{\textsubscript{4}}
+\newunicodechar{ₙ}{\textsubscript{n}}
+\newunicodechar{ᵢ}{\textsubscript{i}}
+\newunicodechar{★}{\ensuremath{\star}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{′}{\ensuremath{^{\prime}}}
+\newunicodechar{″}{\ensuremath{^{\prime\prime}}}
+\newunicodechar{ö}{\"o}
+\newunicodechar{é}{\'{e}}
+\newunicodechar{á}{\'{a}}
+\newunicodechar{ü}{\"u}
+\newunicodechar{ä}{\"a}
+\newunicodechar{ñ}{\~{n}}
+\newunicodechar{ç}{\c{c}}
+\newunicodechar{“}{``}
+\newunicodechar{”}{''}
+\newunicodechar{‘}{`}
+\newunicodechar{’}{'}

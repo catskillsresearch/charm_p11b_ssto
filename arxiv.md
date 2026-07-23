@@ -646,7 +646,8 @@ Crew volume flattens the **Space Shuttle crew module** from two decks to **one**
 
 ### 10.1 Top-down floorplan
 
-![CATSKILLS-SSTO interior floorplan: ECLSS/O₂, luggage, large aft airlock, battery and fusion-fuel tanks; no landing gear](research/figures/charm_ssto_interior_floorplan.png)
+<!-- AI graphic: caption = research/figures/prompts/charm_ssto_interior_floorplan.prompt.txt -->
+![@prompt](research/figures/charm_ssto_interior_floorplan.png)
 
 | Station (m) | Bay | Contents |
 |-------------|-----|----------|
@@ -736,7 +737,8 @@ flowchart TB
 
 Exterior OML target **\(L \approx 52\,\mathrm{m}\)** to match the stretched floorplan. Landing gear is shown on the **profile** figure (not on the interior floorplan).
 
-![CATSKILLS-SSTO exterior profile with nose/main landing gear, control surfaces, and labeled bays](research/figures/charm_ssto_exterior_profile.png)
+<!-- AI graphic: caption = research/figures/prompts/charm_ssto_exterior_profile.prompt.txt -->
+![@prompt](research/figures/charm_ssto_exterior_profile.png)
 
 ```mermaid
 flowchart LR

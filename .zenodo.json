@@ -1,0 +1,62 @@
+{
+  "title": "SSTO fusion powered spaceplane using CHARM architecture with p-11B fuel",
+  "upload_type": "publication",
+  "publication_type": "report",
+  "access_right": "open",
+  "language": "eng",
+  "version": "0.1.0",
+  "description": "Systems-level in-silico sketch of a single-stage-to-orbit spaceplane powered by a continuous CHARM proton–boron-11 plant with direct energy conversion: Shuttle-class cargo bay, municipal-runway ops to ISS-altitude LEO, free/scarce air then tanked water propulsion, mass–energy budget, and imputed CHARM flight specs versus present design gaps. Readable PDF: zenodo.pdf. Source: https://github.com/catskillsresearch/p11b",
+  "creators": [
+    {
+      "name": "Ericson, Lars Warren",
+      "affiliation": "Catskills Research Company",
+      "orcid": "0000-0001-8299-9361"
+    }
+  ],
+  "keywords": [
+    "CHARM",
+    "p-11B fusion",
+    "aneutronic fusion",
+    "SSTO",
+    "spaceplane",
+    "direct energy conversion",
+    "technical report"
+  ],
+  "subjects": [
+    {
+      "term": "Nuclear fusion",
+      "identifier": "http://id.loc.gov/authorities/subjects/sh85092995",
+      "scheme": "url"
+    },
+    {
+      "term": "Fusion reactors",
+      "identifier": "http://id.loc.gov/authorities/subjects/sh85052597",
+      "scheme": "url"
+    },
+    {
+      "term": "Plasma (Ionized gases)",
+      "identifier": "http://id.loc.gov/authorities/subjects/sh85103050",
+      "scheme": "url"
+    },
+    {
+      "term": "Space vehicles--Propulsion systems",
+      "identifier": "http://id.loc.gov/authorities/subjects/sh85125990",
+      "scheme": "url"
+    },
+    {
+      "term": "Aerospace planes",
+      "identifier": "http://id.loc.gov/authorities/subjects/sh85001325",
+      "scheme": "url"
+    }
+  ],
+  "license": "cc-by-4.0",
+  "notes": "Primary readable artifact is zenodo.pdf. Markdown source is arxiv.md. AI layout figures are documented by prompt artifacts under research/figures/prompts/. Prepared with LLM assistance; verify before scientific or policy use.",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/catskillsresearch/p11b",
+      "relation": "isSupplementedBy",
+      "scheme": "url",
+      "resource_type": "software"
+    }
+  ]
+}
