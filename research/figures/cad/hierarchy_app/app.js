@@ -97,7 +97,6 @@
       const { node } = byId.get(id);
       const label = node.label || id;
       if (isCollection(node)) {
-        // Stadium shape = organizational collection, not hardware
         lines.push(`  ${id}(["${esc(label)}"])`);
         collectionIds.push(id);
       } else {
@@ -113,7 +112,7 @@
     }
 
     for (const id of visible) {
-      const { node, parentId } = byId.get(id);
+      const { parentId } = byId.get(id);
       if (parentId && vis.has(parentId) && vis.has(id)) {
         lines.push(`  ${parentId} --> ${id}`);
         nContain += 1;
@@ -132,21 +131,19 @@
       duct: "duct to",
       keel_mount: "keel-mounted aft of",
       floor_mount: "bolted to floor of",
+      umbilical: "power cable",
+      power_cable: "power cable",
     };
     for (const j of assembly.joints || []) {
       const aReal = j.a.split(".")[0];
       const bReal = j.b.split(".")[0];
       if (aReal === bReal) continue;
-      // Proxy either end up to the nearest visible ancestor so a collapsed
-      // neighbor still shows outbound joints (e.g. crew ↔ airlock door).
       const aDisp = nearestVisible(aReal, vis);
       const bDisp = nearestVisible(bReal, vis);
       if (!aDisp || !bDisp || aDisp === bDisp) continue;
       const key = [aReal, bReal, j.type].sort().join("|");
       if (seen.has(key)) continue;
       seen.add(key);
-      // Keep labels short: "sits inside", "pressure door", "bolted to"
-      // (proxied mates are implied by which collapsed assemblies the arrow joins)
       const edgeLabel = jointWords[j.type] || j.type;
       lines.push(`  ${aDisp} ==>|${escEdgeLabel(edgeLabel)}| ${bDisp}`);
       nConnect += 1;

@@ -18,6 +18,8 @@ flowchart TB
   fuselage --> left_aft_steering_pod
   right_aft_steering_pod["Right aft steering pod"]
   fuselage --> right_aft_steering_pod
+  body_flap["Body flap"]
+  fuselage --> body_flap
   crew_capsule(["Crew capsule"])
   vehicle --> crew_capsule
   pressure_vessel["Pressure vessel"]
@@ -70,40 +72,62 @@ flowchart TB
   cargo_bay --> left_cargo_door
   right_cargo_door["Right cargo door"]
   cargo_bay --> right_cargo_door
-  fusion_engine_bay(["Fusion engine bay"])
-  vehicle --> fusion_engine_bay
-  fusion_engine_skid["Fusion engine skid"]
-  fusion_engine_bay --> fusion_engine_skid
-  nacelle["Engine housing"]
-  fusion_engine_skid --> nacelle
-  variable_inlets["Air inlets with close-off shutters"]
-  fusion_engine_skid --> variable_inlets
-  shared_nozzle["Shared exhaust nozzle"]
-  fusion_engine_skid --> shared_nozzle
-  engine_bay_doors(["Fusion engine bay doors"])
-  fusion_engine_bay --> engine_bay_doors
-  left_engine_bay_door["Left engine bay door"]
-  engine_bay_doors --> left_engine_bay_door
-  right_engine_bay_door["Right engine bay door"]
-  engine_bay_doors --> right_engine_bay_door
-  aft_plant(["Aft plant (CHARM, fuel, water, battery)"])
-  fusion_engine_bay --> aft_plant
+  charm_power_plant(["Fusion electric plant"])
+  vehicle --> charm_power_plant
+  fusion_plant_skid(["Fusion plant skid"])
+  charm_power_plant --> fusion_plant_skid
+  charm_skid["Skid structure"]
+  fusion_plant_skid --> charm_skid
+  left_fusion_plant_door["Left fusion plant bay door"]
+  fusion_plant_skid --> left_fusion_plant_door
+  right_fusion_plant_door["Right fusion plant bay door"]
+  fusion_plant_skid --> right_fusion_plant_door
   flight_battery["Flight battery"]
-  aft_plant --> flight_battery
+  charm_power_plant --> flight_battery
   fuel_tanks["Fusion fuel tanks (proton / boron-11)"]
-  aft_plant --> fuel_tanks
-  charm["CHARM fusion plant"]
-  aft_plant --> charm
+  charm_power_plant --> fuel_tanks
+  charm["CHARM"]
+  charm_power_plant --> charm
+  dec["DEC"]
+  charm_power_plant --> dec
+  mirror_magnets["Mirror magnets + PSU"]
+  charm_power_plant --> mirror_magnets
+  rf_units["RF units"]
+  charm_power_plant --> rf_units
+  cryo_bath["Cryo + coolant bath"]
+  charm_power_plant --> cryo_bath
+  combined_cycle_engine(["Combined-cycle engine"])
+  vehicle --> combined_cycle_engine
+  engine_skid(["Engine skid"])
+  combined_cycle_engine --> engine_skid
+  combined_cycle_engine_skid["Skid structure"]
+  engine_skid --> combined_cycle_engine_skid
+  left_engine_bay_door["Left engine bay door"]
+  engine_skid --> left_engine_bay_door
+  right_engine_bay_door["Right engine bay door"]
+  engine_skid --> right_engine_bay_door
   water_tanks["Water tanks (space propellant)"]
-  aft_plant --> water_tanks
+  combined_cycle_engine --> water_tanks
+  nacelle["Engine housing / nacelle"]
+  combined_cycle_engine --> nacelle
+  variable_inlets["Air inlets with close-off shutters"]
+  combined_cycle_engine --> variable_inlets
+  shared_nozzle["Shared exhaust nozzle"]
+  combined_cycle_engine --> shared_nozzle
+  water_injector["Water injector"]
+  combined_cycle_engine --> water_injector
+  water_ionizer["Water ionizer / plasma accelerator"]
+  combined_cycle_engine --> water_ionizer
+  propulsion_bus_coupler["Propulsion bus coupler"]
+  combined_cycle_engine --> propulsion_bus_coupler
   tail_assembly(["Tail assembly"])
-  fusion_engine_bay --> tail_assembly
-  tail_fin["Tail fin"]
-  tail_assembly --> tail_fin
-  rudder["Rudder / speed brake"]
-  tail_fin --> rudder
-  body_flap["Body flap under the tail"]
-  tail_assembly --> body_flap
+  vehicle --> tail_assembly
+  vertical_stabilizer["Vertical stabilizer"]
+  tail_assembly --> vertical_stabilizer
+  left_rudder_speedbrake["Left rudder / speed-brake panel"]
+  tail_assembly --> left_rudder_speedbrake
+  right_rudder_speedbrake["Right rudder / speed-brake panel"]
+  tail_assembly --> right_rudder_speedbrake
   wing(["Wing"])
   vehicle --> wing
   wing_body["Mono-wing body"]
@@ -118,25 +142,21 @@ flowchart TB
   main_landing_gear --> left_main_landing_gear
   right_main_landing_gear["Right main landing gear"]
   main_landing_gear --> right_main_landing_gear
-  class vehicle,fuselage,crew_capsule,airlock,cargo_bay,fusion_engine_bay,engine_bay_doors,aft_plant,tail_assembly,wing,main_landing_gear collection
-  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,right_aft_steering_pod,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,side_hatch,forward_steering_module,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,fusion_engine_skid,nacelle,variable_inlets,shared_nozzle,left_engine_bay_door,right_engine_bay_door,flight_battery,fuel_tanks,charm,water_tanks,tail_fin,rudder,body_flap,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
+  class vehicle,fuselage,crew_capsule,airlock,cargo_bay,charm_power_plant,fusion_plant_skid,combined_cycle_engine,engine_skid,tail_assembly,wing,main_landing_gear collection
+  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,right_aft_steering_pod,body_flap,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,side_hatch,forward_steering_module,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,charm_skid,left_fusion_plant_door,right_fusion_plant_door,flight_battery,fuel_tanks,charm,dec,mirror_magnets,rf_units,cryo_bath,combined_cycle_engine_skid,left_engine_bay_door,right_engine_bay_door,water_tanks,nacelle,variable_inlets,shared_nozzle,water_injector,water_ionizer,propulsion_bus_coupler,vertical_stabilizer,left_rudder_speedbrake,right_rudder_speedbrake,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
 
   %% Connections (ports / joints)
   pressure_vessel ==>|drops into| fuselage_cradle
   airlock_pressure_vessel ==>|drops into| fuselage_cradle
-  cargo_bay ==>|drops into| fuselage_cradle
-  fusion_engine_bay ==>|drops into| fuselage_cradle
+  cargo_skid ==>|drops into| fuselage_cradle
   pressure_vessel ==>|pressure hatch| airlock_pressure_vessel
-  airlock_pressure_vessel ==>|pressure hatch| cargo_bay
-  cargo_bay ==>|pressure hatch| fusion_engine_bay
-  left_cargo_door ==>|hinged to| cargo_bay
-  right_cargo_door ==>|hinged to| cargo_bay
-  cargo_skid ==>|bolted to| cargo_bay
-  left_engine_bay_door ==>|hinged to| fusion_engine_bay
-  right_engine_bay_door ==>|hinged to| fusion_engine_bay
-  fusion_engine_skid ==>|bolted to| fusion_engine_bay
-  tail_assembly ==>|bolted to| fusion_engine_bay
-  wing ==>|bolted to| fuselage_cradle
+  airlock_pressure_vessel ==>|pressure hatch| cargo_skid
+  left_cargo_door ==>|hinged to| cargo_skid
+  right_cargo_door ==>|hinged to| cargo_skid
+  left_engine_bay_door ==>|hinged to| combined_cycle_engine_skid
+  right_engine_bay_door ==>|hinged to| combined_cycle_engine_skid
+  vertical_stabilizer ==>|bolted to| fuselage_cradle
+  wing_body ==>|bolted to| fuselage_cradle
   left_elevon ==>|hinged to| wing_body
   right_elevon ==>|hinged to| wing_body
   left_main_landing_gear ==>|hinged to| wing_body
@@ -147,12 +167,34 @@ flowchart TB
   pilot_chair ==>|bolted to floor of| flight_deck
   left_aft_steering_pod ==>|bolted to| fuselage_cradle
   right_aft_steering_pod ==>|bolted to| fuselage_cradle
-  rudder ==>|hinged to| tail_fin
-  body_flap ==>|hinged to| tail_assembly
+  left_rudder_speedbrake ==>|hinged to| vertical_stabilizer
+  right_rudder_speedbrake ==>|hinged to| vertical_stabilizer
+  body_flap ==>|hinged to| fuselage_cradle
   forward_steering_module ==>|bolted to| pressure_vessel
   hatch_cabin_al ==>|pressure hatch| airlock_pressure_vessel
   hatch_al_bay ==>|pressure hatch| airlock_pressure_vessel
   airlock_air_tank ==>|bolted to| airlock_pressure_vessel
   airlock_cycle_pack ==>|bolted to| airlock_pressure_vessel
-  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
-  linkStyle 55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f
+  water_tanks ==>|duct to| water_injector
+  water_injector ==>|bolted to| combined_cycle_engine_skid
+  water_ionizer ==>|bolted to| combined_cycle_engine_skid
+  propulsion_bus_coupler ==>|bolted to| combined_cycle_engine_skid
+  charm_skid ==>|drops into| fuselage_cradle
+  combined_cycle_engine_skid ==>|drops into| fuselage_cradle
+  dec ==>|power cable| propulsion_bus_coupler
+  flight_battery ==>|bolted to| charm_skid
+  fuel_tanks ==>|bolted to| charm_skid
+  water_tanks ==>|bolted to| combined_cycle_engine_skid
+  charm ==>|duct to| dec
+  charm ==>|bolted to| charm_skid
+  dec ==>|bolted to| charm_skid
+  left_fusion_plant_door ==>|hinged to| charm_skid
+  right_fusion_plant_door ==>|hinged to| charm_skid
+  nacelle ==>|bolted to| combined_cycle_engine_skid
+  variable_inlets ==>|bolted to| combined_cycle_engine_skid
+  shared_nozzle ==>|bolted to| combined_cycle_engine_skid
+  mirror_magnets ==>|bolted to| charm_skid
+  rf_units ==>|bolted to| charm_skid
+  cryo_bath ==>|bolted to| charm_skid
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
+  linkStyle 67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f

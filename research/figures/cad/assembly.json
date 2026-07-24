@@ -4,8 +4,8 @@
     "source": "arxiv.md \u00a71, \u00a77.1, \u00a711; assembly doctrine discussion",
     "units": "m",
     "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
-    "architecture": "Fuselage assembly = cradle boat + nose gear + left/right aft steering pods. Crew capsule = pressure vessel + side hatch + forward steering. Airlock = pressure vessel + doors + air tank + cycle gadgets. Cargo bay = skid + doors. Fusion engine bay = skid + doors + aft plant + tail. Wing on belly saddle.",
-    "skids": "Cargo bay and fusion engine bay are skid+door packages that drop into open wells; pull out for service."
+    "architecture": "Drop-ins each with own skid and bay doors: cargo, Fusion electric plant, combined-cycle engine. Plant \u2194 engine by power cable (DEC \u2192 bus coupler). Tail bolts to fuselage around the engine nozzle cutout; nozzle belongs to the engine only.",
+    "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages."
   },
   "frame": {
     "id": "vehicle",
@@ -29,14 +29,14 @@
         "id": "fuselage",
         "label": "Fuselage",
         "kind": "assembly",
-        "note": "Structural boat: open cradle plus the pieces that permanently live on it \u2014 nose landing gear and the two aft space-steering pods. Forward steering is on the crew capsule, not here.",
+        "note": "Structural boat: open cradle plus the pieces that permanently live on it \u2014 nose landing gear and the two aft space-steering pods. Forward steering is on the crew capsule, not here. Includes the Shuttle-style body flap on the aft belly.",
         "children": [
           {
             "id": "fuselage_cradle",
             "label": "Fuselage cradle",
             "kind": "cradle",
             "form": "open_boat",
-            "note": "Open boat / long cradle. Drop-in wells for crew, airlock, cargo bay, fusion engine bay. Belly wing saddle + nose-gear saddle. Aft steering pods bolt to this cradle; forward steering rides on the crew capsule.",
+            "note": "Open boat / long cradle. Drop-in wells for crew, airlock, cargo bay, CHARM power plant, and combined-cycle engine. Belly wing saddle + nose-gear saddle. Aft steering pods bolt to this cradle; forward steering rides on the crew capsule.",
             "size": {
               "length_m": 52.0,
               "width_m": 5.2,
@@ -89,9 +89,9 @@
                 "note": "Open mid-body well; Cargo Bay (skid+doors) drops in as one unit"
               },
               {
-                "id": "engine_bay_seat",
+                "id": "charm_plant_seat",
                 "xyz": [
-                  48.0,
+                  39.15,
                   0.0,
                   0.0
                 ],
@@ -101,7 +101,22 @@
                   1
                 ],
                 "role": "module_seat",
-                "note": "Open aft well; Fusion Engine Bay (skid+doors+tail) drops in as one unit"
+                "note": "Open well for Fusion electric plant drop-in (~33.3\u201345 m)"
+              },
+              {
+                "id": "engine_bay_seat",
+                "xyz": [
+                  48.5,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "module_seat",
+                "note": "Open aft well for combined-cycle engine drop-in (~45\u201352 m, with water + tail)"
               },
               {
                 "id": "wing_saddle",
@@ -170,6 +185,36 @@
                   1,
                   0
                 ]
+              },
+              {
+                "id": "tail_mount",
+                "xyz": [
+                  50.5,
+                  0.0,
+                  1.2
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ],
+                "role": "tail_root",
+                "note": "Aft hardpoint for vertical stabilizer. Bolts around the engine nozzle cutout \u2014 nozzle pokes out underneath; Tail does not attach to the nozzle."
+              },
+              {
+                "id": "body_flap_hinge",
+                "xyz": [
+                  50.0,
+                  0.0,
+                  -2.8
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "role": "control_hinge",
+                "note": "Body flap hinge on aft cradle belly"
               }
             ]
           },
@@ -258,6 +303,26 @@
               }
             ],
             "note": "Shuttle-style right aft OMS/RCS pod; bolts to fuselage cradle."
+          },
+          {
+            "id": "body_flap",
+            "label": "Body flap",
+            "kind": "control_surface",
+            "size": {
+              "span_m": 4.8,
+              "chord_m": 2.2
+            },
+            "ports": [
+              {
+                "id": "hinge",
+                "normal": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "note": "Shuttle-style single body flap on the aft fuselage belly \u2014 pitch trim and engine-bell thermal shield on entry. Hinged to the fuselage cradle, not part of the Tail assembly."
           }
         ]
       },
@@ -701,50 +766,7 @@
           "width_m": 4.6,
           "height_m": 4.6
         },
-        "ports": [
-          {
-            "id": "cradle_mount",
-            "xyz": [
-              24.15,
-              0.0,
-              0.0
-            ],
-            "normal": [
-              0,
-              0,
-              -1
-            ],
-            "role": "module_seat"
-          },
-          {
-            "id": "hatch_fwd",
-            "xyz": [
-              15.0,
-              0.0,
-              0.0
-            ],
-            "normal": [
-              -1,
-              0,
-              0
-            ],
-            "role": "pressure_hatch"
-          },
-          {
-            "id": "hatch_aft",
-            "xyz": [
-              33.3,
-              0.0,
-              0.0
-            ],
-            "normal": [
-              1,
-              0,
-              0
-            ],
-            "role": "pressure_hatch"
-          }
-        ],
+        "ports": [],
         "children": [
           {
             "id": "cargo_skid",
@@ -758,11 +780,45 @@
               "payload_kg": 24400,
               "form": "semi-circular skid / half-capsule"
             },
-            "note": "Pull-out cargo skid; doors are siblings in this bay, not on the boat.",
+            "note": "Pull-out cargo skid \u2014 the physical cargo bay. Doors hinge to this skid; skid sits in the fuselage cradle well. No pressure door aft \u2014 EVA into the open CHARM / engine wells for maintenance.",
             "ports": [
               {
-                "id": "bay_frame",
-                "role": "internal"
+                "id": "cradle_mount",
+                "xyz": [
+                  24.15,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "role": "module_seat"
+              },
+              {
+                "id": "hatch_fwd",
+                "xyz": [
+                  15.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  -1,
+                  0,
+                  0
+                ],
+                "role": "pressure_hatch"
+              },
+              {
+                "id": "left_door_hinge",
+                "role": "roof_hinge",
+                "note": "Left cargo door hinge line"
+              },
+              {
+                "id": "right_door_hinge",
+                "role": "roof_hinge",
+                "note": "Right cargo door hinge line"
               }
             ]
           },
@@ -791,96 +847,338 @@
         ]
       },
       {
-        "id": "fusion_engine_bay",
-        "label": "Fusion engine bay",
+        "id": "charm_power_plant",
+        "label": "Fusion electric plant",
         "kind": "assembly",
         "drop_in": true,
-        "form": "skid_with_doors_and_tail",
-        "note": "Drop-in collection: fusion engine skid, bay doors, aft plant (CHARM/fuel/water/battery), and tail assembly as one package. Fuselage is open here \u2014 doors belong to this bay, not the boat.",
+        "form": "power_skid",
         "envelope": {
           "x0": 33.3,
-          "x1": 52.0
+          "x1": 45.0
         },
-        "ports": [
-          {
-            "id": "cradle_mount",
-            "xyz": [
-              48.0,
-              0.0,
-              0.0
-            ],
-            "normal": [
-              0,
-              0,
-              -1
-            ],
-            "role": "module_seat"
-          },
-          {
-            "id": "hatch_fwd",
-            "xyz": [
-              33.3,
-              0.0,
-              0.0
-            ],
-            "normal": [
-              -1,
-              0,
-              0
-            ],
-            "role": "pressure_hatch"
-          }
-        ],
+        "note": "Drop-in electric power plant: fusion plant skid (structure + bay doors) plus battery, p/\u00b9\u00b9B fuel, CHARM, DEC, and island auxiliaries. Separate cradle from the combined-cycle engine; linked mainly by a power cable.",
         "children": [
           {
-            "id": "fusion_engine_skid",
-            "label": "Fusion engine skid",
-            "kind": "propulsion_module",
-            "form": "semi_circular_skid",
+            "id": "fusion_plant_skid",
+            "label": "Fusion plant skid",
+            "kind": "assembly",
             "drop_in": true,
-            "note": "Semi-circular skid with combined-cycle / fusion drive, inlets, nozzle \u2014 pulls out for service.",
-            "ports": [
-              {
-                "id": "bay_frame",
-                "role": "internal"
-              },
-              {
-                "id": "nozzle",
-                "xyz": [
-                  52.0,
-                  0.0,
-                  -0.4
-                ],
-                "normal": [
-                  1,
-                  0,
-                  0
-                ]
-              }
-            ],
+            "note": "Collection: skid structure plus its left/right bay doors. Expand to see doors; plant equipment lives on the Fusion electric plant beside this skid.",
             "children": [
               {
-                "id": "nacelle",
-                "label": "Engine housing",
-                "kind": "fairing"
+                "id": "charm_skid",
+                "label": "Skid structure",
+                "kind": "power_module",
+                "form": "semi_circular_skid",
+                "note": "Physical drop-in frame. Bay doors hinge here; plant equipment bolts here. Sits in the fuselage cradle well.",
+                "envelope": {
+                  "x0": 33.3,
+                  "x1": 45.0
+                },
+                "ports": [
+                  {
+                    "id": "cradle_mount",
+                    "xyz": [
+                      39.15,
+                      0.0,
+                      0.0
+                    ],
+                    "normal": [
+                      0,
+                      0,
+                      -1
+                    ],
+                    "role": "module_seat"
+                  },
+                  {
+                    "id": "battery_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "fuel_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "charm_mount",
+                    "role": "keel_mount",
+                    "note": "CHARM hardpoint"
+                  },
+                  {
+                    "id": "dec_mount",
+                    "role": "keel_mount",
+                    "note": "DEC hardpoint"
+                  },
+                  {
+                    "id": "left_door_hinge",
+                    "role": "roof_hinge",
+                    "note": "Plant bay door hinge (left)"
+                  },
+                  {
+                    "id": "right_door_hinge",
+                    "role": "roof_hinge",
+                    "note": "Plant bay door hinge (right)"
+                  },
+                  {
+                    "id": "magnets_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "rf_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "cryo_mount",
+                    "role": "keel_mount"
+                  }
+                ]
               },
               {
-                "id": "variable_inlets",
-                "label": "Air inlets with close-off shutters",
-                "kind": "inlet"
+                "id": "left_fusion_plant_door",
+                "label": "Left fusion plant bay door",
+                "kind": "door",
+                "note": "Hinged to fusion plant skid (not fuselage).",
+                "ports": [
+                  {
+                    "id": "hinge",
+                    "role": "roof_hinge"
+                  }
+                ]
               },
               {
-                "id": "shared_nozzle",
-                "label": "Shared exhaust nozzle",
-                "kind": "nozzle"
+                "id": "right_fusion_plant_door",
+                "label": "Right fusion plant bay door",
+                "kind": "door",
+                "note": "Hinged to fusion plant skid (not fuselage).",
+                "ports": [
+                  {
+                    "id": "hinge",
+                    "role": "roof_hinge"
+                  }
+                ]
               }
             ]
           },
           {
-            "id": "engine_bay_doors",
-            "label": "Fusion engine bay doors",
+            "id": "flight_battery",
+            "label": "Flight battery",
+            "kind": "equipment",
+            "envelope": {
+              "x0": 33.3,
+              "x1": 35.5
+            },
+            "ports": [
+              {
+                "id": "keel_mount",
+                "role": "keel_mount"
+              }
+            ]
+          },
+          {
+            "id": "fuel_tanks",
+            "label": "Fusion fuel tanks (proton / boron-11)",
+            "kind": "tank",
+            "envelope": {
+              "x0": 35.5,
+              "x1": 37.5
+            },
+            "ports": [
+              {
+                "id": "keel_mount",
+                "role": "keel_mount"
+              }
+            ],
+            "note": "Proton / boron-11 feed for CHARM."
+          },
+          {
+            "id": "charm",
+            "label": "CHARM",
+            "kind": "equipment",
+            "note": "Chambered Aneutronic Rotating Mirror core (multi-chamber string). Ordered alphas \u2192 DEC. Not a thruster.",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "internal"
+              },
+              {
+                "id": "ash_to_dec",
+                "role": "energy_path"
+              }
+            ],
+            "size": {
+              "volume_m3_max": 120,
+              "mass_t_ref": 67
+            },
+            "envelope": {
+              "x0": 37.5,
+              "x1": 45.0
+            }
+          },
+          {
+            "id": "dec",
+            "label": "DEC",
+            "kind": "equipment",
+            "note": "Direct energy conversion. Plant electrical product. Power cable to propulsion bus coupler starts here.",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "internal"
+              },
+              {
+                "id": "ash_in",
+                "role": "energy_path"
+              },
+              {
+                "id": "bus_out",
+                "role": "power",
+                "note": "Electrical bus feed \u2014 power cable to propulsion bus coupler"
+              }
+            ]
+          },
+          {
+            "id": "mirror_magnets",
+            "label": "Mirror magnets + PSU",
+            "kind": "equipment",
+            "note": "CHARM island magnets and power supplies (paper plant schematic).",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "keel_mount"
+              }
+            ]
+          },
+          {
+            "id": "rf_units",
+            "label": "RF units",
+            "kind": "equipment",
+            "note": "RF / ponderomotive wall drivers for CHARM chambers.",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "keel_mount"
+              }
+            ]
+          },
+          {
+            "id": "cryo_bath",
+            "label": "Cryo + coolant bath",
+            "kind": "equipment",
+            "note": "Cryogenics and coolant bath for the fusion island.",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "keel_mount"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "combined_cycle_engine",
+        "label": "Combined-cycle engine",
+        "kind": "assembly",
+        "drop_in": true,
+        "form": "engine_skid_with_doors",
+        "envelope": {
+          "x0": 45.0,
+          "x1": 52.0
+        },
+        "note": "Drop-in: engine skid (structure + bay doors) plus water tanks and propulsion hardware. Power from Fusion electric plant via cable (DEC \u2192 bus coupler). Nozzle clears under Tail; Tail is a separate fuselage-mounted assembly.",
+        "children": [
+          {
+            "id": "engine_skid",
+            "label": "Engine skid",
             "kind": "assembly",
+            "drop_in": true,
+            "note": "Collection: skid structure plus its left/right bay doors. Expand to see doors; propulsion hardware lives on the Combined-cycle engine beside this skid.",
             "children": [
+              {
+                "id": "combined_cycle_engine_skid",
+                "label": "Skid structure",
+                "kind": "propulsion_module",
+                "form": "semi_circular_skid",
+                "drop_in": true,
+                "note": "Physical drop-in propulsion frame. Bay doors hinge here; engine hardware bolts here. Sits in the aft fuselage cradle well. Nozzle exits under Tail.",
+                "ports": [
+                  {
+                    "id": "nozzle",
+                    "xyz": [
+                      52.0,
+                      0.0,
+                      -0.4
+                    ],
+                    "normal": [
+                      1,
+                      0,
+                      0
+                    ]
+                  },
+                  {
+                    "id": "cradle_mount",
+                    "xyz": [
+                      48.5,
+                      0.0,
+                      0.0
+                    ],
+                    "normal": [
+                      0,
+                      0,
+                      -1
+                    ],
+                    "role": "module_seat"
+                  },
+                  {
+                    "id": "left_door_hinge",
+                    "role": "roof_hinge",
+                    "note": "Left engine-bay door hinge"
+                  },
+                  {
+                    "id": "right_door_hinge",
+                    "role": "roof_hinge",
+                    "note": "Right engine-bay door hinge"
+                  },
+                  {
+                    "id": "injector_mount",
+                    "role": "engine_mount",
+                    "note": "Water injector hardpoint"
+                  },
+                  {
+                    "id": "ionizer_mount",
+                    "role": "engine_mount",
+                    "note": "Ionizer / plasma accelerator hardpoint"
+                  },
+                  {
+                    "id": "bus_coupler_mount",
+                    "role": "engine_mount",
+                    "note": "Bus coupler hardpoint"
+                  },
+                  {
+                    "id": "bus_in",
+                    "role": "power",
+                    "note": "Receives CHARM DEC bus via power cable"
+                  },
+                  {
+                    "id": "water_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "nacelle_mount",
+                    "role": "engine_mount"
+                  },
+                  {
+                    "id": "inlet_mount",
+                    "role": "engine_mount"
+                  },
+                  {
+                    "id": "nozzle_mount",
+                    "role": "engine_mount"
+                  }
+                ],
+                "children": [],
+                "envelope": {
+                  "x0": 45.0,
+                  "x1": 52.0
+                }
+              },
               {
                 "id": "left_engine_bay_door",
                 "label": "Left engine bay door",
@@ -890,7 +1188,8 @@
                     "id": "hinge",
                     "role": "roof_hinge"
                   }
-                ]
+                ],
+                "note": "Hinged to combined-cycle engine skid (not fuselage)."
               },
               {
                 "id": "right_engine_bay_door",
@@ -901,162 +1200,195 @@
                     "id": "hinge",
                     "role": "roof_hinge"
                   }
-                ]
+                ],
+                "note": "Hinged to combined-cycle engine skid (not fuselage)."
               }
             ]
           },
           {
-            "id": "aft_plant",
-            "label": "Aft plant (CHARM, fuel, water, battery)",
-            "kind": "assembly",
-            "note": "Rides in the fusion engine bay drop-in for maintainability.",
-            "children": [
-              {
-                "id": "flight_battery",
-                "label": "Flight battery",
-                "kind": "equipment",
-                "envelope": {
-                  "x0": 33.3,
-                  "x1": 35.5
-                },
-                "ports": [
-                  {
-                    "id": "keel_mount",
-                    "role": "keel_mount"
-                  }
-                ]
-              },
-              {
-                "id": "fuel_tanks",
-                "label": "Fusion fuel tanks (proton / boron-11)",
-                "kind": "tank",
-                "envelope": {
-                  "x0": 35.5,
-                  "x1": 37.5
-                },
-                "ports": [
-                  {
-                    "id": "keel_mount",
-                    "role": "keel_mount"
-                  }
-                ]
-              },
-              {
-                "id": "charm",
-                "label": "CHARM fusion plant",
-                "kind": "equipment",
-                "envelope": {
-                  "x0": 37.5,
-                  "x1": 45.0
-                },
-                "size": {
-                  "volume_m3_max": 120,
-                  "mass_t_ref": 67
-                },
-                "ports": [
-                  {
-                    "id": "keel_mount",
-                    "role": "keel_mount"
-                  }
-                ]
-              },
-              {
-                "id": "water_tanks",
-                "label": "Water tanks (space propellant)",
-                "kind": "tank",
-                "envelope": {
-                  "x0": 45.0,
-                  "x1": 49.0
-                },
-                "ports": [
-                  {
-                    "id": "keel_mount",
-                    "role": "keel_mount"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "tail_assembly",
-            "label": "Tail assembly",
-            "kind": "assembly",
-            "children": [
-              {
-                "id": "tail_fin",
-                "label": "Tail fin",
-                "kind": "lifting_surface",
-                "size": {
-                  "span_m": 7.2,
-                  "root_chord_m": 8.0,
-                  "tip_chord_m": 2.6,
-                  "sweep_deg": 42.0
-                },
-                "ports": [
-                  {
-                    "id": "root",
-                    "normal": [
-                      0,
-                      0,
-                      -1
-                    ]
-                  },
-                  {
-                    "id": "rudder_hinge",
-                    "role": "control_hinge"
-                  }
-                ],
-                "children": [
-                  {
-                    "id": "rudder",
-                    "label": "Rudder / speed brake",
-                    "kind": "control_surface",
-                    "size": {
-                      "chord_frac": {
-                        "min": 0.2,
-                        "nom": 0.28,
-                        "max": 0.35
-                      }
-                    },
-                    "ports": [
-                      {
-                        "id": "hinge",
-                        "role": "control_hinge"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "id": "body_flap",
-                "label": "Body flap under the tail",
-                "kind": "control_surface",
-                "size": {
-                  "span_m": 4.8,
-                  "chord_m": 2.2
-                },
-                "ports": [
-                  {
-                    "id": "hinge",
-                    "normal": [
-                      0,
-                      0,
-                      1
-                    ]
-                  }
-                ],
-                "note": "Shuttle body flap under the aft fuselage."
-              }
-            ],
+            "id": "water_tanks",
+            "label": "Water tanks (space propellant)",
+            "kind": "tank",
+            "envelope": {
+              "x0": 45.0,
+              "x1": 49.0
+            },
             "ports": [
               {
-                "id": "bay_attach",
-                "role": "integral"
+                "id": "keel_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "engine_feed",
+                "role": "propellant_feed",
+                "note": "To water injector"
               }
             ],
-            "note": "Integral with the fusion engine bay \u2014 not a separate bolt-on to the boat. Fin, rudder/speed brake, body flap ship with the aft propulsion drop-in."
+            "note": "Carried water = R3 reaction mass. Lives on the engine drop-in (not the CHARM plant). Fed to the water injector; ionized in the engine."
+          },
+          {
+            "id": "nacelle",
+            "label": "Engine housing / nacelle",
+            "kind": "fairing",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              }
+            ]
+          },
+          {
+            "id": "variable_inlets",
+            "label": "Air inlets with close-off shutters",
+            "kind": "inlet",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              }
+            ]
+          },
+          {
+            "id": "shared_nozzle",
+            "label": "Shared exhaust nozzle",
+            "kind": "nozzle",
+            "note": "Combined-cycle exhaust. Pokes aft under the Tail assembly / through the cradle tail cutout. Tail bolts to the fuselage around this nozzle; Tail does not own or joint to the nozzle.",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              }
+            ]
+          },
+          {
+            "id": "water_injector",
+            "label": "Water injector",
+            "kind": "injector",
+            "note": "Meters carried water into the thruster for R3 (vacuum). Fed from water tanks.",
+            "ports": [
+              {
+                "id": "feed",
+                "role": "propellant_feed"
+              },
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              }
+            ]
+          },
+          {
+            "id": "water_ionizer",
+            "label": "Water ionizer / plasma accelerator",
+            "kind": "plasma_source",
+            "note": "Where water is ionized and accelerated for the water-plasma jet (R3). Bus power \u2192 exhaust kinetic energy. Not part of the CHARM chamber string.",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              },
+              {
+                "id": "bus",
+                "role": "power"
+              }
+            ]
+          },
+          {
+            "id": "propulsion_bus_coupler",
+            "label": "Propulsion bus coupler",
+            "kind": "equipment",
+            "note": "Engine-side end of the CHARM power cable / bus. Feeds fan, heater, MHD, and water-ionizer modes.",
+            "ports": [
+              {
+                "id": "bus_in",
+                "role": "power"
+              },
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              }
+            ]
           }
         ]
+      },
+      {
+        "id": "tail_assembly",
+        "label": "Tail assembly",
+        "kind": "assembly",
+        "children": [
+          {
+            "id": "vertical_stabilizer",
+            "label": "Vertical stabilizer",
+            "kind": "lifting_surface",
+            "size": {
+              "span_m": 7.2,
+              "root_chord_m": 8.0,
+              "tip_chord_m": 2.6,
+              "sweep_deg": 42.0
+            },
+            "note": "Physical fin. Roots to fuselage cradle around the engine nozzle clearance. No joint to the nozzle \u2014 the nozzle belongs to the combined-cycle engine.",
+            "ports": [
+              {
+                "id": "root",
+                "normal": [
+                  0,
+                  0,
+                  -1
+                ],
+                "note": "Roots to fuselage cradle"
+              },
+              {
+                "id": "left_rudder_hinge",
+                "role": "control_hinge",
+                "note": "Left split-rudder / speed-brake panel hinge"
+              },
+              {
+                "id": "right_rudder_hinge",
+                "role": "control_hinge",
+                "note": "Right split-rudder / speed-brake panel hinge"
+              }
+            ]
+          },
+          {
+            "id": "left_rudder_speedbrake",
+            "label": "Left rudder / speed-brake panel",
+            "kind": "control_surface",
+            "note": "Shuttle-style split rudder panel. Together with the right panel: same deflection = yaw; open like a book = speed brake.",
+            "size": {
+              "chord_frac": {
+                "min": 0.2,
+                "nom": 0.28,
+                "max": 0.35
+              }
+            },
+            "ports": [
+              {
+                "id": "hinge",
+                "role": "control_hinge"
+              }
+            ]
+          },
+          {
+            "id": "right_rudder_speedbrake",
+            "label": "Right rudder / speed-brake panel",
+            "kind": "control_surface",
+            "note": "Shuttle-style split rudder panel. Together with the left panel: same deflection = yaw; open like a book = speed brake.",
+            "size": {
+              "chord_frac": {
+                "min": 0.2,
+                "nom": 0.28,
+                "max": 0.35
+              }
+            },
+            "ports": [
+              {
+                "id": "hinge",
+                "role": "control_hinge"
+              }
+            ]
+          }
+        ],
+        "ports": [],
+        "note": "Vertical stabilizer + split rudder panels. Bolted to the fuselage cradle around the top of the engine nozzle opening. Does not own or connect to the nozzle."
       },
       {
         "id": "wing",
@@ -1085,23 +1417,7 @@
             "max": 45
           }
         },
-        "ports": [
-          {
-            "id": "saddle_mate",
-            "xyz": [
-              22.0,
-              0.0,
-              0.0
-            ],
-            "normal": [
-              0,
-              0,
-              1
-            ],
-            "role": "mono_wing_mate",
-            "note": "Wing body upper face \u2192 fuselage belly saddle"
-          }
-        ],
+        "ports": [],
         "children": [
           {
             "id": "wing_body",
@@ -1112,7 +1428,17 @@
               {
                 "id": "saddle_mate",
                 "role": "mono_wing_mate",
-                "note": "Mates to fuselage wing_saddle"
+                "note": "Wing body upper face \u2192 fuselage belly saddle",
+                "xyz": [
+                  22.0,
+                  0.0,
+                  0.0
+                ],
+                "normal": [
+                  0,
+                  0,
+                  1
+                ]
               },
               {
                 "id": "left_elevon_hinge",
@@ -1229,17 +1555,10 @@
     },
     {
       "id": "j_cargo_bay_dropin",
-      "a": "cargo_bay.cradle_mount",
+      "a": "cargo_skid.cradle_mount",
       "b": "fuselage_cradle.cargo_bay_seat",
       "type": "module_seat",
-      "note": "Entire Cargo Bay (skid + doors) drops into open mid cradle"
-    },
-    {
-      "id": "j_fusion_bay_dropin",
-      "a": "fusion_engine_bay.cradle_mount",
-      "b": "fuselage_cradle.engine_bay_seat",
-      "type": "module_seat",
-      "note": "Entire Fusion Engine Bay (skid + doors + tail) drops into open aft cradle"
+      "note": "Cargo skid drops into open mid cradle"
     },
     {
       "id": "j_crew_to_airlock",
@@ -1252,75 +1571,56 @@
     {
       "id": "j_airlock_to_cargo",
       "a": "airlock_pressure_vessel.hatch_aft",
-      "b": "cargo_bay.hatch_fwd",
+      "b": "cargo_skid.hatch_fwd",
       "type": "pressure_hatch",
       "coincident": true,
-      "note": "Pressure door interface: airlock pressure vessel \u2194 cargo bay"
-    },
-    {
-      "id": "j_cargo_to_fusion",
-      "a": "cargo_bay.hatch_aft",
-      "b": "fusion_engine_bay.hatch_fwd",
-      "type": "pressure_hatch",
-      "coincident": true,
-      "note": "Chamber join along the boat"
+      "note": "Pressure door: airlock vessel \u2194 cargo skid"
     },
     {
       "id": "j_left_cargo_door",
       "a": "left_cargo_door.hinge",
-      "b": "cargo_bay",
+      "b": "cargo_skid.left_door_hinge",
       "type": "revolute",
       "axis": "x",
-      "note": "Door is part of Cargo Bay, not fuselage"
+      "note": "Left cargo door hinged to cargo skid"
     },
     {
       "id": "j_right_cargo_door",
       "a": "right_cargo_door.hinge",
-      "b": "cargo_bay",
+      "b": "cargo_skid.right_door_hinge",
       "type": "revolute",
-      "axis": "x"
-    },
-    {
-      "id": "j_cargo_skid_in_bay",
-      "a": "cargo_skid.bay_frame",
-      "b": "cargo_bay",
-      "type": "fixed",
-      "note": "Skid is the floor of the cargo bay package"
+      "axis": "x",
+      "note": "Right cargo door hinged to cargo skid"
     },
     {
       "id": "j_left_engine_door",
       "a": "left_engine_bay_door.hinge",
-      "b": "fusion_engine_bay",
+      "b": "combined_cycle_engine_skid.left_door_hinge",
       "type": "revolute",
       "axis": "x",
-      "note": "Door is part of Fusion Engine Bay, not fuselage"
+      "note": "Left engine-bay door hinged to fusion engine skid"
     },
     {
       "id": "j_right_engine_door",
       "a": "right_engine_bay_door.hinge",
-      "b": "fusion_engine_bay",
+      "b": "combined_cycle_engine_skid.right_door_hinge",
       "type": "revolute",
-      "axis": "x"
+      "axis": "x",
+      "note": "Right engine-bay door hinged to fusion engine skid"
     },
     {
-      "id": "j_engine_skid_in_bay",
-      "a": "fusion_engine_skid.bay_frame",
-      "b": "fusion_engine_bay",
-      "type": "fixed"
-    },
-    {
-      "id": "j_tail_integral",
-      "a": "tail_assembly.bay_attach",
-      "b": "fusion_engine_bay",
+      "id": "j_tail",
+      "a": "vertical_stabilizer.root",
+      "b": "fuselage_cradle.tail_mount",
       "type": "fixed",
-      "note": "Tail is integral to fusion engine bay drop-in"
+      "note": "Vertical stabilizer roots to fuselage cradle"
     },
     {
       "id": "j_wing_saddle",
-      "a": "wing.saddle_mate",
+      "a": "wing_body.saddle_mate",
       "b": "fuselage_cradle.wing_saddle",
       "type": "fixed",
-      "note": "Wing bolts to belly saddle on the boat"
+      "note": "Mono-wing body bolts to belly saddle on the boat"
     },
     {
       "id": "j_left_elevon",
@@ -1389,18 +1689,28 @@
       "type": "fixed"
     },
     {
-      "id": "j_rudder",
-      "a": "rudder.hinge",
-      "b": "tail_fin.rudder_hinge",
+      "id": "j_left_rudder",
+      "a": "left_rudder_speedbrake.hinge",
+      "b": "vertical_stabilizer.left_rudder_hinge",
       "type": "revolute",
-      "axis": "span"
+      "axis": "span",
+      "note": "Left rudder/speed-brake panel hinged to vertical stabilizer"
+    },
+    {
+      "id": "j_right_rudder",
+      "a": "right_rudder_speedbrake.hinge",
+      "b": "vertical_stabilizer.right_rudder_hinge",
+      "type": "revolute",
+      "axis": "span",
+      "note": "Right rudder/speed-brake panel hinged to vertical stabilizer"
     },
     {
       "id": "j_body_flap",
       "a": "body_flap.hinge",
-      "b": "tail_assembly",
+      "b": "fuselage_cradle.body_flap_hinge",
       "type": "revolute",
-      "axis": "y"
+      "axis": "y",
+      "note": "Body flap hinged to aft fuselage cradle"
     },
     {
       "id": "j_forward_steering",
@@ -1436,6 +1746,147 @@
       "b": "airlock_pressure_vessel.cycle_pack_mount",
       "type": "fixed",
       "note": "Pressurization gadgets bolted to airlock pressure vessel"
+    },
+    {
+      "id": "j_water_to_injector",
+      "a": "water_tanks.engine_feed",
+      "b": "water_injector.feed",
+      "type": "duct",
+      "note": "Water propellant feed on the engine drop-in"
+    },
+    {
+      "id": "j_injector_on_engine",
+      "a": "water_injector.mount",
+      "b": "combined_cycle_engine_skid.injector_mount",
+      "type": "fixed",
+      "note": "Water injector mounted on combined-cycle engine"
+    },
+    {
+      "id": "j_ionizer_on_engine",
+      "a": "water_ionizer.mount",
+      "b": "combined_cycle_engine_skid.ionizer_mount",
+      "type": "fixed",
+      "note": "Water ionizer / plasma accelerator on combined-cycle engine"
+    },
+    {
+      "id": "j_bus_coupler_on_engine",
+      "a": "propulsion_bus_coupler.mount",
+      "b": "combined_cycle_engine_skid.bus_coupler_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_charm_dropin",
+      "a": "charm_skid.cradle_mount",
+      "b": "fuselage_cradle.charm_plant_seat",
+      "type": "module_seat",
+      "note": "Fusion electric plant drops into its own cradle well"
+    },
+    {
+      "id": "j_engine_dropin",
+      "a": "combined_cycle_engine_skid.cradle_mount",
+      "b": "fuselage_cradle.engine_bay_seat",
+      "type": "module_seat",
+      "note": "Combined-cycle engine drops into its own aft cradle well"
+    },
+    {
+      "id": "j_power_cable",
+      "a": "dec.bus_out",
+      "b": "propulsion_bus_coupler.bus_in",
+      "type": "power_cable",
+      "note": "Power cable: DEC \u2192 propulsion bus coupler"
+    },
+    {
+      "id": "j_battery_on_charm_skid",
+      "a": "flight_battery.keel_mount",
+      "b": "charm_skid.battery_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_fuel_on_charm_skid",
+      "a": "fuel_tanks.keel_mount",
+      "b": "charm_skid.fuel_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_water_on_engine_skid",
+      "a": "water_tanks.keel_mount",
+      "b": "combined_cycle_engine_skid.water_mount",
+      "type": "fixed",
+      "note": "Water tanks ride on the engine drop-in"
+    },
+    {
+      "id": "j_charm_to_dec",
+      "a": "charm.ash_to_dec",
+      "b": "dec.ash_in",
+      "type": "duct",
+      "note": "Ordered fusion products / ash path CHARM \u2192 DEC"
+    },
+    {
+      "id": "j_charm_on_skid",
+      "a": "charm.mount",
+      "b": "charm_skid.charm_mount",
+      "type": "fixed",
+      "note": "CHARM bolted to fusion plant skid"
+    },
+    {
+      "id": "j_dec_on_skid",
+      "a": "dec.mount",
+      "b": "charm_skid.dec_mount",
+      "type": "fixed",
+      "note": "DEC bolted to fusion plant skid"
+    },
+    {
+      "id": "j_left_fusion_plant_door",
+      "a": "left_fusion_plant_door.hinge",
+      "b": "charm_skid.left_door_hinge",
+      "type": "revolute",
+      "axis": "x",
+      "note": "Left fusion plant bay door hinged to plant skid"
+    },
+    {
+      "id": "j_right_fusion_plant_door",
+      "a": "right_fusion_plant_door.hinge",
+      "b": "charm_skid.right_door_hinge",
+      "type": "revolute",
+      "axis": "x",
+      "note": "Right fusion plant bay door hinged to plant skid"
+    },
+    {
+      "id": "j_nacelle_on_engine",
+      "a": "nacelle.mount",
+      "b": "combined_cycle_engine_skid.nacelle_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_inlets_on_engine",
+      "a": "variable_inlets.mount",
+      "b": "combined_cycle_engine_skid.inlet_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_nozzle_on_engine",
+      "a": "shared_nozzle.mount",
+      "b": "combined_cycle_engine_skid.nozzle_mount",
+      "type": "fixed",
+      "note": "Nozzle on engine skid; exits under Tail without joining Tail"
+    },
+    {
+      "id": "j_magnets_on_plant",
+      "a": "mirror_magnets.mount",
+      "b": "charm_skid.magnets_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_rf_on_plant",
+      "a": "rf_units.mount",
+      "b": "charm_skid.rf_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_cryo_on_plant",
+      "a": "cryo_bath.mount",
+      "b": "charm_skid.cryo_mount",
+      "type": "fixed"
     }
   ],
   "stations": [
@@ -1525,7 +1976,7 @@
     },
     {
       "id": "engine",
-      "part": "fusion_engine_skid",
+      "part": "combined_cycle_engine_skid",
       "x0": 49.0,
       "x1": 52.0,
       "label": "FUSION ENGINE",

@@ -25,6 +25,7 @@ JOINT_WORDS = {
     "floor_mount": "bolted to floor of",
     "aligns_with": "aligns with",
     "umbilical": "umbilical to",
+    "power_cable": "power cable",
 }
 
 
