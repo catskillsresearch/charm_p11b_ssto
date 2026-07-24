@@ -6,12 +6,13 @@
     "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
     "architecture": "Drop-ins each with own skid and bay doors: cargo, Fusion electric plant, combined-cycle engine. Plant \u2194 engine by power cable (DEC \u2192 bus coupler). Tail bolts to fuselage around the engine nozzle cutout; nozzle belongs to the engine only.",
     "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages.",
-    "rev": "2026-07-24-edf-to-nozzle",
+    "rev": "2026-07-24-stage-sizing",
     "outliner_check": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "charm_cad": "CHARM expands to left fusion chamber | heat exchange chamber | right fusion chamber + central axis \u2014 match Fisch multi-chamber centrifugal mirror figure.",
     "packaging": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "ash_handling": "interim_bay_pollution: He ash after DEC \u2192 fusion_plant_bay_atmosphere; not freeze/liquefy hazard; replace with buffer+purge later.",
-    "engine_stages": "1=EDF, 2=microwave air plasma (Ye 2020), 3=water microwave plasma (Nakagawa 2019 lineage)"
+    "engine_stages": "1=EDF, 2=microwave air plasma (Ye 2020), 3=water microwave plasma (Nakagawa 2019 lineage)",
+    "engine_sizing": "P1=65MW P2=P3=995MW meng=15t mw=44t Isp=2000s"
   },
   "frame": {
     "id": "vehicle",
@@ -1736,7 +1737,7 @@
           "x0": 45.0,
           "x1": 52.0
         },
-        "note": "Drop-in three-stage electric combined-cycle: (1) electric ducted fan, (2) microwave air plasma jet [Ye AIP Adv 2020], (3) water microwave plasma thruster [Nakagawa Acta Astronaut. 2019 lineage]. Power only via cable from Fusion electric plant (DEC \u2192 bus coupler).",
+        "note": "Three-stage electric CC: P1*\u224865 MW, P2*=P3*\u2248995 MW. meng=15 t budget (EDF 5 + air-plasma 4.4 + water 3.1 + shared 2.5). Power cable from fusion plant only.",
         "children": [
           {
             "id": "engine_skid",
@@ -1875,7 +1876,7 @@
             "id": "stage1_edf",
             "label": "Stage-1 electric ducted fan",
             "kind": "equipment",
-            "note": "Municipal / dense-air thrust: high-bypass electric ducted fan driven from the bus. No combustor / no turbine core. Bypass exhaust ducts to the shared nozzle (stages 2\u20133 use the plasma path into the same nozzle).",
+            "note": "Stage 1: P1*\u224865 MW at m0=240 t (T/W=0.25, v_to=80 m/s, \u03b71=0.72). Mass budget \u22485.0 t (HEMM-class \u03b1_mot~16 kW/kg [Jansen 2018]). Free air reaction mass.",
             "ports": [
               {
                 "id": "mount",
@@ -1899,7 +1900,7 @@
             "id": "stage2_air_plasma",
             "label": "Stage-2 microwave air plasma jet",
             "kind": "assembly",
-            "note": "Ye et al. (AIP Advances 2020) architecture at flight scale: compress ingested air, couple high-power microwaves, expand hot air plasma in shared nozzle. Built as an engine subassembly before skid integration.",
+            "note": "Stage 2: P2*\u2248995 MW sizes P_star. Electrothermal T/P\u22480.83 N/kW (not Ye 28 N/kW). Mass budget \u22484.4 t \u21d2 packaging unobtainium ~230 kW/kg. Free air.",
             "children": [
               {
                 "id": "stage2_frame",
@@ -1990,7 +1991,7 @@
             "id": "stage3_water_plasma_rack",
             "label": "Stage-3 water plasma rack",
             "kind": "assembly",
-            "note": "Separately buildable stage-3 package: vaporizer + microwave water-plasma thruster. Bolts to engine skid; uses carried water tanks.",
+            "note": "Stage 3: P3*\u2248995 MW \u2192 T3\u224856 kN at Isp=2000 s, \u03b7_jet=0.55. Water mw\u224844 t for \u0394v=4 km/s. Mass budget \u22483.1 t. Lit: Nakagawa water MW ion; Komatsu water MPD; Brandenburg water MET.",
             "children": [
               {
                 "id": "stage3_frame",
@@ -2072,7 +2073,7 @@
                 "note": "To water injector"
               }
             ],
-            "note": "Carried water = stage-3 reaction mass only. On the engine drop-in (not CHARM). Fed to injector \u2192 vaporizer \u2192 stage-3 thruster."
+            "note": "Stage-3 reaction mass only. Reference mw\u224844.3 t at Isp=2000 s (166 t if Isp=665 s demo; 27 t if Isp=3150 s MPD-class)."
           },
           {
             "id": "water_injector",

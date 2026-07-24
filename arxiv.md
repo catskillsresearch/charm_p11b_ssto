@@ -447,8 +447,10 @@ For \(V_{\mathrm{C}} \le 120\,\mathrm{m}^3\): \(\bar{p}_{\mathrm{C}} \ge 8.3\,\m
 ### 7.3 Engine and battery holes
 
 \[
-m_{\mathrm{eng}} = 1.5\times 10^4\,\mathrm{kg}
-\quad\text{(single combined-cycle string guesstimate)},
+m_{\mathrm{eng}}
+  = m_{\mathrm{EDF}} + m_{\mu\mathrm{air}} + m_{\mathrm{wth}} + m_{\mathrm{shared}}
+  = 1.5\times 10^4\,\mathrm{kg}
+\quad\text{(reference packaging hole; closed in §10.6)},
 \]
 
 \[
@@ -458,7 +460,7 @@ m_{\mathrm{bat}} = 2.0\times 10^3\,\mathrm{kg}
 
 \[
 m_{\mathrm{f}} = 5.0\times 10^2\,\mathrm{kg}
-\quad(p\text{-}^{11}\mathrm{B}\text{ inventory; energy-rich)}.
+\quad(p\text{-}^{11}\mathrm{B}+\mathrm{H}\text{ inventory; water dominates expendables; §10.6)}.
 \]
 
 ### 7.4 Closed dry / wet mass
@@ -531,7 +533,7 @@ Table: Reference vehicle mass bill.
 | Control surfaces + actuators | \(3.0\,\mathrm{t}\) |
 | Crew systems (ECLSS, O₂/N₂, WCS, galley, food, luggage, airlock) | \(8.5\,\mathrm{t}\) |
 | Payload (cargo bay) | \(24.4\,\mathrm{t}\) |
-| Combined-cycle engine | \(15.0\,\mathrm{t}\) |
+| Combined-cycle engine (EDF \(5.0\) + air-plasma \(4.4\) + water thruster \(3.1\) + shared \(2.5\)) | \(15.0\,\mathrm{t}\) |
 | CHARM island | \(66.7\,\mathrm{t}\) |
 | Flight battery | \(2.0\,\mathrm{t}\) |
 | \(p\text{-}^{11}\mathrm{B}\) / proton fuel (+ tankage) | \(0.5\,\mathrm{t}\) |
@@ -680,98 +682,178 @@ is booked for **on-orbit relight**, while **first light on Earth** uses the grou
 
 ## 10. Combined-cycle engine (detail)
 
-One propulsion string with stage index \(\sigma \in \{1,2,3\}\).
+One propulsion string with stage index \(\sigma \in \{1,2,3\}\). Plant couples **only** by power cable. Stages 1–2 burn **free air** (reaction mass not carried). Stage 3 burns **carried water**. Fusion fuel \(m_{\mathrm{f}}\) is not propellant for the nozzle.
 
-### 9.1 Stage map
+### 10.1 Stage map and literature anchors
 
-Table: Combined-cycle engine stages (no scramjet).
+Table: Stages, reaction mass, and primary literature (one family each — not a survey).
 
-| \(\sigma\) | Name | Ambient | Mass flow | Thrust model (0D) | Lit. anchor |
-|------------|------|---------|-----------|-------------------|-------------|
-| 1 | Electric ducted fan | Dense air, low \(M\) | \(\dot{m}_{\mathrm{air}}\) | \(T = \eta_{\mathrm{f}} P_{\mathrm{bus}} / v_{\mathrm{jet}}\) | EDF / fan jet |
-| 2 | Microwave air plasma jet | Climb / scarce air | \(\dot{m}_{\mathrm{air}}\) (compressed) | electrothermal jet [23] | Ye et al. [23] |
-| 3 | Water plasma thruster | Intakes sealed | \(\dot{m}_{\mathrm{w}}\) | \(T=\dot{m}_{\mathrm{w}} v_e\), \(P_{\mathrm{jet}}=\tfrac12\dot{m}_{\mathrm{w}} v_e^2\) | Nakagawa et al. [24] |
+| \(\sigma\) | Name | Reaction mass | Primary lit. | What we take from it |
+|------------|------|---------------|--------------|----------------------|
+| 1 | Electric ducted fan | Free air | NASA HEMM megawatt motor [25] | \(\alpha_{\mathrm{mot}}\sim 16\,\mathrm{kW/kg}\) (EM mass), \(\eta_{\mathrm{m}}\gtrsim 0.98\) stretch / \(0.90\) system |
+| 2 | Microwave air plasma jet | Free compressed air | Ye et al. microwave air plasma [23]; efficiency comment [26] | **Architecture** (magnetron → compressed-air plasma duct). Do **not** use Ye’s \(28\,\mathrm{N/kW}\) thrust claim — control-volume comment shows stagnation-pressure artifact [26] |
+| 3 | Water plasma thruster | Carried \(\mathrm{H_2O}\) | Nakagawa water microwave ion thruster [24]; water MPD high-\(I_{\mathrm{sp}}\) path [27]; water MET [28] | Water + microwave/EM plasma is real [24], [28]. Demo \(I_{\mathrm{sp}}\sim 400\)–\(665\,\mathrm{s}\) (gridded) [24]; water-MPD \(I_{\mathrm{sp}}\sim 3000\,\mathrm{s}\) class at low \(\eta\) [27]. Vehicle reference uses \(I_{\mathrm{sp}}=2000\,\mathrm{s}\) as a mid stretch (§10.6) |
 
-Switching laws (schematic):
+Switching:
 
 \[
 \sigma =
 \begin{cases}
 1 & \rho > \rho_{12},\ M < M_{12},\\
 2 & \rho > \rho_{\mathrm{seal}},\ M \ge M_{12},\\
-3 & \rho \le \rho_{\mathrm{seal}}\ \text{or intakes commanded sealed}.
+3 & \rho \le \rho_{\mathrm{seal}}\ \text{or intakes sealed}.
 \end{cases}
 \]
 
-**Stage 2 mechanism (locked):** high-power microwave source(s) couple into a duct of **compressed ingested air**, ionizing/heating it to a hot plasma (\(\gtrsim 10^3\,\mathrm{^\circ C}\) class in lab hardware) that expands through the shared nozzle — pure electric “thermal jet,” not a combustion scramjet [23].  
-**Stage 3 mechanism (locked):** carried water is vaporized, then microwave-discharged into an \(\mathrm{H_2O}\) plasma and accelerated (ion / electrothermal family demonstrated with water propellant [24]). Smallsat demos are \(\mu\mathrm{N}\)–class; this vehicle **keeps the propellant + microwave-plasma architecture** and sizes thrust from the GW bus (scale-up is an unobtainium — §13).
+### 10.2 Performance constants (frozen for sizing)
 
-### 9.2 Stage 1 — electric ducted fan (municipal)
+Table: Frozen stage constants (literature-anchored; packaging \(\alpha\) are design holes like \(\alpha_{\mathrm{C}}\)).
 
-\[
-P_{\mathrm{fan}} = \eta_{\mathrm{m}}^{-1} T\,v_{\mathrm{to}},
-\qquad
-T \ge (T/W)_{\min} m_0 g_0.
-\]
+| Symbol | Stage | Meaning | Freeze |
+|--------|-------|---------|--------|
+| \(\eta_{\mathrm{m}}\) | 1 | Motor + drive electrical efficiency | \(0.90\) [25] |
+| \(\eta_{\mathrm{prop}}\) | 1 | Fan propulsive efficiency (\(T v / P_{\mathrm{shaft}}\)) | \(0.80\) |
+| \(\eta_1=\eta_{\mathrm{m}}\eta_{\mathrm{prop}}\) | 1 | Bus → \(T v\) | \(0.72\) |
+| \((T/W)_{\min}\) | 1 | Takeoff thrust / weight | \(0.25\) |
+| \(v_{\mathrm{to}}\) | 1 | Takeoff / early climb reference speed | \(80\,\mathrm{m/s}\) |
+| \(k_{\mathrm{fan}}\) | 1 | Fan+duct+inverter mass / EM motor mass | \(1.35\) |
+| \(\alpha_{\mathrm{mot}}\) | 1 | Motor specific power (EM) | \(16\,\mathrm{kW/kg}\) [25] |
+| \(\eta_{\mu}\) | 2 | Bus → microwave power in plasma | \(0.55\) |
+| \(\eta_{\mathrm{j},2}\) | 2 | Plasma enthalpy → directed jet | \(0.45\) |
+| \(v_{\mathrm{j},2}\) | 2 | Reference jet speed (electrothermal) | \(600\,\mathrm{m/s}\) |
+| \(\eta_{\mathrm{jet}}\) | 3 | Bus → jet kinetic power | \(0.55\) (stretch vs water-MPD demo \(\sim 0.07\)–\(0.11\) [27]) |
+| \(I_{\mathrm{sp}}\) | 3 | Vacuum specific impulse (reference) | \(2000\,\mathrm{s}\) |
+| \(v_e=I_{\mathrm{sp}}g_0\) | 3 | Exhaust speed | \(19.61\,\mathrm{km/s}\) |
+| \(P_{\mathrm{hotel}}\) | all | Hotel / plant recirculating floor | \(5\,\mathrm{MW}\) |
+| \(C_{\mathrm{cap}}\) | 1–2 | Inlet capture coefficient | \(\le 1\) (free air; not a carried mass) |
 
-For \((T/W)_{\min} = 0.25\), \(m_0 = 240\,\mathrm{t}\), \(v_{\mathrm{to}} = 80\,\mathrm{m/s}\), \(\eta_{\mathrm{m}} = 0.85\):
+**Reaction-mass utilization:**
+- Stages 1–2: utilization of **carried** propellant is zero (air is free). Inlet capture \(C_{\mathrm{cap}}\) only limits available \(\dot{m}_{\mathrm{air}}\).
+- Stage 3: mass accounting assumes all loaded water is expelled (\(u_{\mathrm{w}}=1\)); power conversion is \(\eta_{\mathrm{jet}}\) (not all bus power becomes \({\tfrac12}\dot{m}v_e^2\)).
 
-\[
-T \approx 0.57\,\mathrm{MN},\qquad
-P_{\mathrm{fan}} \approx 54\,\mathrm{MW}
-\]
-
-—well below \(P_{\star}\); municipal segment is **not** the power driver.
-
-### 9.3 Stage 2 — microwave air plasma jet
-
-Ingested air is compressed (ram +/or electric compressor), then heated/ionized by microwave power \(P_{\mu}\) in an applicator duct [23]:
-
-\[
-\dot{m}_{\mathrm{air}} = \rho\,A_{\mathrm{i}}\,v\,C_{\mathrm{cap}},
-\qquad
-\Delta h = \frac{\eta_{\mu} P_{\mu}}{\dot{m}_{\mathrm{air}}},
-\qquad
-v_{\mathrm{j,2}} \approx \sqrt{2\,\Delta h}\ \text{(ideal electrothermal)},
-\]
+### 10.3 Stage 1 — power and mass
 
 \[
-T_2 \approx \eta_{\mathrm{j,2}}\,\dot{m}_{\mathrm{air}}\,v_{\mathrm{j,2}},
-\qquad
-P_{\mu} \le P_{\mathrm{bus}} - P_{\mathrm{hotel}}.
+\boxed{
+T_1 \ge (T/W)_{\min}\,m_0 g_0,\qquad
+P_1 = \frac{T_1\,v_{\mathrm{to}}}{\eta_1},\qquad
+m_{\mathrm{EDF}} = k_{\mathrm{fan}}\frac{P_1}{\alpha_{\mathrm{mot}}}.
+}
 \]
 
-Ram drag and net climb power still bound the bus:
+At reference \(m_0=240\,\mathrm{t}\):
+
+\[
+T_1 \approx 589\,\mathrm{kN},\qquad
+P_1 \approx 65\,\mathrm{MW},\qquad
+m_{\mathrm{EDF}}\approx 5.5\,\mathrm{t}
+\ \text{(HEMM-class \(\alpha_{\mathrm{mot}}\); within the \(15\,\mathrm{t}\) engine budget)}.
+\]
+
+Municipal segment is **not** the \(P_{\star}\) driver.
+
+### 10.4 Stage 2 — power and mass (electrothermal, not Ye’s N/kW)
+
+Energy-consistent thrust-to-power (comment [26] kills super-unity claims):
+
+\[
+\boxed{
+\frac{T_2}{P_2}
+  = \frac{2\,\eta_{\mu}\,\eta_{\mathrm{j},2}}{v_{\mathrm{j},2}}
+  \approx 0.825\,\mathrm{N/kW}
+\quad(v_{\mathrm{j},2}=600\,\mathrm{m/s}).
+}
+\]
+
+(Ye’s reported \(\sim 28\,\mathrm{N/kW}\) [23] would imply \(\gg 100\%\) efficiency and is discarded [26].)
+
+\[
+\dot{m}_{\mathrm{air}} = \rho A_{\mathrm{i}} v\,C_{\mathrm{cap}},\qquad
+\Delta h = \frac{\eta_{\mu} P_2}{\dot{m}_{\mathrm{air}}},\qquad
+P_2 \le P_{\star} - P_{\mathrm{hotel}}.
+\]
+
+Climb still sets the bus:
 
 \[
 D_{\mathrm{ram}} = \tfrac12\rho v^2 C_D S,\qquad
-P_{\mathrm{need}} \approx \frac{(D_{\mathrm{ram}} - T_{\mathrm{excess}})\,v}{\eta_{\mathrm{p}}}.
+P_{\mathrm{need}} \approx \frac{(D_{\mathrm{ram}}-T_{\mathrm{excess}})v}{\eta_{\mathrm{p}}}.
 \]
 
-Peak \(P_{\mathrm{need}}\) near mid–high-altitude climb sets the \(1\,\mathrm{GW}\) requirement (design goal G9). Lab microwave air-plasma jets are kW-class [23]; flight scale is an array / high-power source problem (thermal materials + magnetron/solid-state MW farm), not a different physics story.
+**Freeze for sizing:** \(P_2^{\star} = P_{\star}-P_{\mathrm{hotel}} = 995\,\mathrm{MW}\) → \(T_2 \approx 821\,\mathrm{kN}\) at the \(v_{\mathrm{j},2}\) freeze (order-of; real trajectory integrates \(\rho(h),M\)).
 
-### 9.4 Stage 3 — water plasma thruster
+### 10.5 Stage 3 — water, power, and \(I_{\mathrm{sp}}\) cases
 
 \[
-\dot{m}_{\mathrm{w}}(t) = \frac{T(t)}{v_e},\qquad
-\int_0^{t_{\mathrm{vac}}} \dot{m}_{\mathrm{w}}\,\mathrm{d}t = m_{\mathrm{w}},
+\boxed{
+T_3 = \frac{2\,\eta_{\mathrm{jet}} P_3}{v_e},\qquad
+\dot{m}_{\mathrm{w}} = \frac{T_3}{v_e},\qquad
+P_3 \le P_{\star}-P_{\mathrm{hotel}},
+}
 \]
 
 \[
-P_{\mathrm{bus,3}}(t) \ge \frac{1}{2\eta_{\mathrm{jet}}} \dot{m}_{\mathrm{w}} v_e^2.
+m_{\mathrm{w}} = m_{\mathrm{dry}}\bigl(e^{\Delta v_{\mathrm{vac}}/v_e}-1\bigr)
+\quad(u_{\mathrm{w}}=1).
 \]
 
-Water path (architecture from [24], power from CHARM bus): tank → feed pump → injector/vaporizer → microwave water-plasma source → accelerator / nozzle. At \(T = 100\,\mathrm{kN}\), \(v_e = 20\,\mathrm{km/s}\): \(P_{\mathrm{jet}} = 1\,\mathrm{GW}\) — vacuum thrust is power-limited; insertion is a **long burn**, not a Space Shuttle Main Engine (SSME) sprint.
+With \(P_3=995\,\mathrm{MW}\), \(\eta_{\mathrm{jet}}=0.55\), \(I_{\mathrm{sp}}=2000\,\mathrm{s}\):
 
-### 9.5 Physical envelope
+\[
+T_3 \approx 56\,\mathrm{kN},\qquad
+\dot{m}_{\mathrm{w}} \approx 2.85\,\mathrm{kg/s}.
+\]
 
-- One rectangular / axisymmetric nacelle blended to wing root or aft fuselage.  
-- Variable inlet with **close-off shutters** for stage 3 and reentry.  
-- **Shared nozzle** for stages 2–3; fan bypass duct for stage 1.  
-- Stage-2 microwave applicator + stage-3 water-plasma source share the bus coupler; water tanks on the engine skid.  
-- Magnetic bearings / dry lubrication where vacuum survival matters.  
-- \(m_{\mathrm{eng}} = 15\,\mathrm{t}\) reference includes EDF motors, microwave sources/applicators, water feed/pumps, plasma duct, and structure.
+Table: Water store versus stage-3 $I_{\mathrm{sp}}$ at fixed $m_{\mathrm{dry}}=196\,\mathrm{t}$, $\Delta v_{\mathrm{vac}}=4\,\mathrm{km/s}$.
 
+| \(I_{\mathrm{sp}}\) | Anchor | \(m_{\mathrm{w}}\) | \(m_0\) | Note |
+|--------------------|--------|------------------|---------|------|
+| \(665\,\mathrm{s}\) | Nakagawa water ion demo [24] | \(166\,\mathrm{t}\) | \(362\,\mathrm{t}\) | Architecture real; SSTO water brutal |
+| \(2000\,\mathrm{s}\) | **Reference stretch** | \(44\,\mathrm{t}\) | \(240\,\mathrm{t}\) | Between gridded water and water-MPD \(I_{\mathrm{sp}}\) |
+| \(3150\,\mathrm{s}\) | Water MPD class [27] | \(27\,\mathrm{t}\) | \(223\,\mathrm{t}\) | Demo \(\eta\) much lower than our \(\eta_{\mathrm{jet}}\) freeze |
+
+Path: tanks → pump/injector → vaporizer → microwave/EM plasma → shared nozzle [24], [27], [28].
+
+### 10.6 Closed solve: powers, component masses, fuels
+
+**Power ratings (required outputs):**
+
+\[
+\boxed{
+\begin{aligned}
+P_1^{\star} &\approx 65\,\mathrm{MW}
+ && \text{(stage 1 at \(m_0=240\,\mathrm{t}\))},\\
+P_2^{\star} &= 995\,\mathrm{MW}
+ && \text{(stage 2 sizes \(P_{\star}\))},\\
+P_3^{\star} &= 995\,\mathrm{MW}
+ && \text{(stage 3 vacuum; \(T_3\sim 56\,\mathrm{kN}\))}.
+\end{aligned}
+}
+\]
+
+**Engine mass budget** (reference hole \(m_{\mathrm{eng}}=15\,\mathrm{t}\)):
+
+Table: Engine component mass allocation and implied packaging specific power.
+
+| Component | Mass | Sized to | Implied \(\alpha = P/m\) |
+|-----------|------|----------|---------------------------|
+| Stage-1 EDF (motor+fan+duct) | \(5.0\,\mathrm{t}\) | \(P_1^{\star}\) | \(\sim 13\,\mathrm{kW/kg}\) (near HEMM [25] after \(k_{\mathrm{fan}}\)) |
+| Stage-2 MW farm + applicator + precompress | \(4.4\,\mathrm{t}\) | \(P_2^{\star}\) | \(\sim 230\,\mathrm{kW/kg}\) (**packaging unobtainium**) |
+| Stage-3 thruster head + vaporizer/feed | \(3.1\,\mathrm{t}\) | \(P_3^{\star}\) | \(\sim 320\,\mathrm{kW/kg}\) (**packaging unobtainium**) |
+| Shared nacelle / nozzle / inlets / bus coupler | \(2.5\,\mathrm{t}\) | structure | — |
+| **Engine total** | **\(15\,\mathrm{t}\)** | §8 freeze | — |
+
+If stage-2/3 hardware were packaged at a more literal \(\alpha_{\mu}\sim 8\,\mathrm{kW/kg}\), \(m_{\mathrm{eng}}\) would jump to \(\mathcal{O}(100\,\mathrm{t})\) and GLOW to \(\sim 400\,\mathrm{t}\). The \(15\,\mathrm{t}\) engine line is therefore a **same-class hole as \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\)** — called out in §13 — while **power** and **water** closes are on firmer ground.
+
+**Fusion fuel (not nozzle propellant):** mission bus energy \(E_{\mathrm{src}}=\kappa_E m_{\mathrm{ins}}\Delta\varepsilon\). Stoichiometric \(p\text{-}^{11}\mathrm{B}\) rest-mass for that energy is \(\ll 1\,\mathrm{kg}\) at ideal conversion; with chain efficiency \(\sim 0.25\) still \(\sim 1\,\mathrm{kg}\). Freeze \(m_{\mathrm{f}}=0.5\,\mathrm{t}\) covers tankage, residuals, and margin — **water dominates expendables**.
+
+**Vacuum burn time** at constant \(T_3\): \(t_3 \approx m_{\mathrm{w}}/\dot{m}_{\mathrm{w}} \approx 4.3\,\mathrm{h}\) — long insertion, consistent with power-limited electric thrust.
+
+### 10.7 Physical envelope
+
+- One nacelle; variable inlets with shutters; shared nozzle (stages 2–3 plasma path; stage-1 bypass into same aft exhaust).  
+- Water tanks on the engine skid; MW farm shared in packaging intent between stages 2 and 3.  
+- \(m_{\mathrm{eng}}=15\,\mathrm{t}\) reference as in §10.6.
 ---
 
 ## 11. Layout details
@@ -837,7 +919,7 @@ Table: Systems checklist: equations to constraints.
 | CHARM | \(m_{\mathrm{C}}=P_{\star}/\alpha_{\mathrm{C}}\), DEC, restart | **\(67\,\mathrm{t}\) @ \(15\,\mathrm{kW/kg}\)** |
 | Light-off | Magnets + RF + rotation; no NBI | **\(50\)–\(200\,\mathrm{kWh}\)** est.; cart / \(2\,\mathrm{t}\) battery |
 | Solve | \(m_0 = m_{\mathrm{dry}} e^{\Delta v_{\mathrm{vac}}/v_e}\) | **\(m_0 \approx 240\,\mathrm{t}\)**; **\(L \approx 52\,\mathrm{m}\)** |
-| Engine | Stage map \(\sigma\in\{1,2,3\}\); \(P_{\mathrm{fan}}\ll P_{\star}\); \(P_{\mathrm{jet}}=\tfrac12 T v_e\) | \(1\,\mathrm{GW}\) sizes stages 2–3 [23], [24] |
+| Engine | \(P_1^{\star}\!\approx\!65\,\mathrm{MW}\); \(P_2^{\star}\!=\!P_3^{\star}\!\approx\!995\,\mathrm{MW}\); \(m_{\mathrm{w}}(I_{\mathrm{sp}})\) | §10.6; lit [23]–[28] |
 
 ---
 
@@ -895,9 +977,11 @@ Call a requirement **unobtainium** if it is not implied by present CHARM results
 5. **Ultra-high DC / open-field electrode structures** that survive \(\alpha\) and X-ray loads while feeding a GW bus [10].  
 6. **Flight specific power** \(\alpha_{\mathrm{C}} \sim 15\,\mathrm{kW/kg}\) **and** \(\bar{p}_{\mathrm{C}} \gtrsim 8\,\mathrm{MW/m}^3\) including magnets, RF, shield, cryo, and structure — beyond any published CHARM packaging study.  
 7. **Continuous GW-class operation** through a multi-hour ascent with vibration, thrust-vector loads, and thermal transients — not part of the present ARPA-E scope.  
-8. **Pilot-string light-off / space restart** at \(50\)–\(200\,\mathrm{kWh}\) class — engineering estimate only; not a CHARM experimental result.
+8. **Pilot-string light-off / space restart** at \(50\)–\(200\,\mathrm{kWh}\) class — engineering estimate only; not a CHARM experimental result.  
+9. **Stage-2/3 thruster packaging** at \(\sim 200\)–\(300\,\mathrm{kW/kg}\) inside a \(15\,\mathrm{t}\) engine (§10.6) — HEMM-class stage 1 is nearer [25]; microwave air / water plasma at GW in a few tonnes is not [23], [24], [26], [27].  
+10. **Stage-3** \(I_{\mathrm{sp}}\sim 2000\,\mathrm{s}\) **at** \(\eta_{\mathrm{jet}}\sim 0.55\) on water — between demonstrated water-ion \(I_{\mathrm{sp}}\) [24] and water-MPD \(I_{\mathrm{sp}}\) at much lower \(\eta\) [27].
 
-Items 1–5 are **physics/architecture unobtainiums** shared with any CHARM plant. Items 6–8 are **aerospace packing and CONOPS unobtainiums** imposed by SSTO. If 1–5 fail, no amount of airframe cleverness saves the mission; if 1–5 hold but 6–8 fail, CHARM may still be a ground plant while this spaceplane does not close.
+Items 1–5 are **physics/architecture unobtainiums** shared with any CHARM plant. Items 6–10 are **aerospace packing / propulsion unobtainiums** imposed by SSTO. If 1–5 fail, no amount of airframe cleverness saves the mission; if 1–5 hold but 6–10 fail, CHARM may still be a ground plant while this spaceplane does not close.
 
 ### 13.4 How to read the rest of this paper
 
@@ -965,7 +1049,15 @@ CHARM denotes the chambered aneutronic rotating-mirror architecture developed at
 
 [23] D. Ye, J. Li, and J. Tang, “Jet propulsion by microwave air plasma in the atmosphere,” *AIP Advances*, vol. 10, no. 5, Art. no. 055002, 2020, doi: 10.1063/5.0005814. (Stage-2 anchor: magnetron → compressed-air microwave plasma jet.)
 
-[24] Y. Nakagawa, H. Koizumi, H. Kawahara, and K. Komurasaki, “Performance characterization of a miniature microwave discharge ion thruster operated with water,” *Acta Astronautica*, vol. 157, pp. 294–299, 2019, doi: 10.1016/j.actaastro.2018.12.031. (Stage-3 architecture lineage: water propellant + microwave plasma; smallsat scale — vehicle sizes from GW bus.)
+[24] Y. Nakagawa, H. Koizumi, H. Kawahara, and K. Komurasaki, “Performance characterization of a miniature microwave discharge ion thruster operated with water,” *Acta Astronautica*, vol. 157, pp. 294–299, 2019, doi: 10.1016/j.actaastro.2018.12.031. (Stage-3 architecture: water + microwave plasma; demo \(I_{\mathrm{sp}}\sim 665\,\mathrm{s}\), \(\mu\mathrm{N}\) thrust.)
+
+[25] R. H. Jansen et al., “High Efficiency Megawatt Motor conceptual design,” AIAA Propulsion and Energy Forum, 2018 (NASA/TM / NTRS). (Stage-1: \(\gtrsim 16\,\mathrm{kW/kg}\) EM mass, \(\eta\gtrsim 0.98\) stretch for MW-class motors.)
+
+[26] Comment on Ye et al., “Jet propulsion by microwave air plasma in the atmosphere,” *AIP Advances*, vol. 10, 2020, doi: 10.1063/5.0013575. (Stage-2: Ye’s \(\sim 28\,\mathrm{N/kW}\) is stagnation pressure, not jet thrust — use electrothermal \(T/P=2\eta/v_{\mathrm{j}}\).)
+
+[27] D. Komatsu, K. Nishii, and A. Kakami, “Study on electrodes design for MPD thruster using water propellant,” *Trans. JSASS*, vol. 68, 2025, doi: 10.2322/tjsass.68.108. (Stage-3 high-\(I_{\mathrm{sp}}\) water-MPD path: \(\sim 3150\,\mathrm{s}\) class at \(\eta\sim 0.07\)–\(0.11\), \(\sim 5\,\mathrm{mN/kW}\).)
+
+[28] J. E. Brandenburg, J. Kline, and D. Sullivan, “The microwave electro-thermal (MET) thruster using water vapor propellant,” *IEEE Trans. Plasma Sci.*, vol. 33, no. 2, pp. 776–782, 2005, doi: 10.1109/TPS.2005.845252. (Stage-3 water MET / electrothermal lineage; \(I_{\mathrm{sp}}\gtrsim 800\,\mathrm{s}\) reported class.)
 
 ---
 
