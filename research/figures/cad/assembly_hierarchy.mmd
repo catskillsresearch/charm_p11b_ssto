@@ -82,20 +82,76 @@ flowchart TB
   fusion_plant_skid --> left_fusion_plant_door
   right_fusion_plant_door["Right fusion plant bay door"]
   fusion_plant_skid --> right_fusion_plant_door
-  flight_battery["Flight battery"]
-  charm_power_plant --> flight_battery
-  fuel_tanks["Fusion fuel tanks (proton / boron-11)"]
-  charm_power_plant --> fuel_tanks
-  charm["CHARM"]
+  fusion_plant_bay_atmosphere["Fusion plant bay atmosphere"]
+  fusion_plant_skid --> fusion_plant_bay_atmosphere
+  charm(["CHARM"])
   charm_power_plant --> charm
+  charm_backbone["CHARM backbone / strongback"]
+  charm --> charm_backbone
+  charm_chamber_string(["Chamber string"])
+  charm --> charm_chamber_string
+  left_fusion_chamber["Left fusion chamber"]
+  charm_chamber_string --> left_fusion_chamber
+  heat_exchange_chamber["Heat exchange chamber"]
+  charm_chamber_string --> heat_exchange_chamber
+  right_fusion_chamber["Right fusion chamber"]
+  charm_chamber_string --> right_fusion_chamber
+  charm_axis["Central axis / shaft"]
+  charm_chamber_string --> charm_axis
+  charm_magnet_rack(["Magnet rack"])
+  charm --> charm_magnet_rack
+  charm_magnet_rack_frame["Magnet rack frame"]
+  charm_magnet_rack --> charm_magnet_rack_frame
+  mirror_magnets["Mirror magnets"]
+  charm_magnet_rack --> mirror_magnets
+  magnet_cryostats["Magnet cryostats / cold heads"]
+  charm_magnet_rack --> magnet_cryostats
+  charm_rf_rack(["RF rack"])
+  charm --> charm_rf_rack
+  charm_rf_rack_frame["RF rack frame"]
+  charm_rf_rack --> charm_rf_rack_frame
+  rf_launchers["RF launchers / neck antennas"]
+  charm_rf_rack --> rf_launchers
+  rf_amps["RF amplifier modules"]
+  charm_rf_rack --> rf_amps
+  charm_drive_rack(["Rotation drive rack"])
+  charm --> charm_drive_rack
+  charm_drive_rack_frame["Rotation drive rack frame"]
+  charm_drive_rack --> charm_drive_rack_frame
+  rotation_drive["Rotation drive"]
+  charm_drive_rack --> rotation_drive
+  charm_thermal_rack(["Thermal rack"])
+  charm --> charm_thermal_rack
+  charm_thermal_rack_frame["Thermal rack frame"]
+  charm_thermal_rack --> charm_thermal_rack_frame
+  coolant_bath["Coolant bath"]
+  charm_thermal_rack --> coolant_bath
   dec["DEC"]
   charm_power_plant --> dec
-  mirror_magnets["Mirror magnets + PSU"]
-  charm_power_plant --> mirror_magnets
-  rf_units["RF units"]
-  charm_power_plant --> rf_units
-  cryo_bath["Cryo + coolant bath"]
-  charm_power_plant --> cryo_bath
+  magnet_psu_bay(["Magnet PSU bay"])
+  charm_power_plant --> magnet_psu_bay
+  magnet_psu_bay_frame["Magnet PSU bay frame"]
+  magnet_psu_bay --> magnet_psu_bay_frame
+  magnet_psu["Magnet PSU"]
+  magnet_psu_bay --> magnet_psu
+  cryo_compressor_bay(["Cryo compressor bay"])
+  charm_power_plant --> cryo_compressor_bay
+  cryo_compressor_bay_frame["Cryo compressor bay frame"]
+  cryo_compressor_bay --> cryo_compressor_bay_frame
+  cryocooler["Cryo compressor plant"]
+  cryo_compressor_bay --> cryocooler
+  fuel_services(["Fuel services"])
+  charm_power_plant --> fuel_services
+  fuel_services_frame["Fuel services frame"]
+  fuel_services --> fuel_services_frame
+  proton_tank["Proton tank"]
+  fuel_services --> proton_tank
+  boron11_container["Boron-11 container"]
+  fuel_services --> boron11_container
+  boron11_injector["Boron-11 solid fuel injector"]
+  fuel_services --> boron11_injector
+  flight_battery["Flight battery"]
+  charm_power_plant --> flight_battery
   combined_cycle_engine(["Combined-cycle engine"])
   vehicle --> combined_cycle_engine
   engine_skid(["Engine skid"])
@@ -142,8 +198,8 @@ flowchart TB
   main_landing_gear --> left_main_landing_gear
   right_main_landing_gear["Right main landing gear"]
   main_landing_gear --> right_main_landing_gear
-  class vehicle,fuselage,crew_capsule,airlock,cargo_bay,charm_power_plant,fusion_plant_skid,combined_cycle_engine,engine_skid,tail_assembly,wing,main_landing_gear collection
-  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,right_aft_steering_pod,body_flap,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,side_hatch,forward_steering_module,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,charm_skid,left_fusion_plant_door,right_fusion_plant_door,flight_battery,fuel_tanks,charm,dec,mirror_magnets,rf_units,cryo_bath,combined_cycle_engine_skid,left_engine_bay_door,right_engine_bay_door,water_tanks,nacelle,variable_inlets,shared_nozzle,water_injector,water_ionizer,propulsion_bus_coupler,vertical_stabilizer,left_rudder_speedbrake,right_rudder_speedbrake,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
+  class vehicle,fuselage,crew_capsule,airlock,cargo_bay,charm_power_plant,fusion_plant_skid,charm,charm_chamber_string,charm_magnet_rack,charm_rf_rack,charm_drive_rack,charm_thermal_rack,magnet_psu_bay,cryo_compressor_bay,fuel_services,combined_cycle_engine,engine_skid,tail_assembly,wing,main_landing_gear collection
+  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,right_aft_steering_pod,body_flap,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,side_hatch,forward_steering_module,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,charm_skid,left_fusion_plant_door,right_fusion_plant_door,fusion_plant_bay_atmosphere,charm_backbone,left_fusion_chamber,heat_exchange_chamber,right_fusion_chamber,charm_axis,charm_magnet_rack_frame,mirror_magnets,magnet_cryostats,charm_rf_rack_frame,rf_launchers,rf_amps,charm_drive_rack_frame,rotation_drive,charm_thermal_rack_frame,coolant_bath,dec,magnet_psu_bay_frame,magnet_psu,cryo_compressor_bay_frame,cryocooler,fuel_services_frame,proton_tank,boron11_container,boron11_injector,flight_battery,combined_cycle_engine_skid,left_engine_bay_door,right_engine_bay_door,water_tanks,nacelle,variable_inlets,shared_nozzle,water_injector,water_ionizer,propulsion_bus_coupler,vertical_stabilizer,left_rudder_speedbrake,right_rudder_speedbrake,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
 
   %% Connections (ports / joints)
   pressure_vessel ==>|drops into| fuselage_cradle
@@ -183,18 +239,66 @@ flowchart TB
   combined_cycle_engine_skid ==>|drops into| fuselage_cradle
   dec ==>|power cable| propulsion_bus_coupler
   flight_battery ==>|bolted to| charm_skid
-  fuel_tanks ==>|bolted to| charm_skid
   water_tanks ==>|bolted to| combined_cycle_engine_skid
-  charm ==>|duct to| dec
-  charm ==>|bolted to| charm_skid
   dec ==>|bolted to| charm_skid
   left_fusion_plant_door ==>|hinged to| charm_skid
   right_fusion_plant_door ==>|hinged to| charm_skid
   nacelle ==>|bolted to| combined_cycle_engine_skid
   variable_inlets ==>|bolted to| combined_cycle_engine_skid
   shared_nozzle ==>|bolted to| combined_cycle_engine_skid
-  mirror_magnets ==>|bolted to| charm_skid
-  rf_units ==>|bolted to| charm_skid
-  cryo_bath ==>|bolted to| charm_skid
-  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
-  linkStyle 67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f
+  flight_battery ==>|startup power| rotation_drive
+  boron11_container ==>|solid feed| boron11_injector
+  flight_battery ==>|startup power| magnet_psu
+  flight_battery ==>|startup power| cryocooler
+  left_fusion_chamber ==>|necks into| heat_exchange_chamber
+  right_fusion_chamber ==>|necks into| heat_exchange_chamber
+  charm_axis ==>|bolted to| heat_exchange_chamber
+  charm_axis ==>|bolted to| left_fusion_chamber
+  charm_axis ==>|bolted to| right_fusion_chamber
+  heat_exchange_chamber ==>|alphas to DEC| dec
+  proton_tank ==>|feed line| left_fusion_chamber
+  proton_tank ==>|feed line| right_fusion_chamber
+  boron11_injector ==>|feed line| left_fusion_chamber
+  boron11_injector ==>|feed line| right_fusion_chamber
+  mirror_magnets ==>|magnet leads to| left_fusion_chamber
+  mirror_magnets ==>|magnet leads to| right_fusion_chamber
+  fuel_services_frame ==>|bolted to| charm_skid
+  proton_tank ==>|bolted to| fuel_services_frame
+  boron11_container ==>|bolted to| fuel_services_frame
+  boron11_injector ==>|bolted to| fuel_services_frame
+  magnet_cryostats ==>|bolted to| mirror_magnets
+  rf_launchers ==>|bolted to| left_fusion_chamber
+  rf_launchers ==>|bolted to| right_fusion_chamber
+  rf_launchers ==>|rf_wall| left_fusion_chamber
+  rf_launchers ==>|rf_wall| right_fusion_chamber
+  rf_amps ==>|waveguides to| rf_launchers
+  coolant_bath ==>|coolant loop| heat_exchange_chamber
+  cryocooler ==>|cryo_line| magnet_cryostats
+  cryocooler ==>|cryo_line| coolant_bath
+  magnet_psu ==>|powers| mirror_magnets
+  magnet_psu_bay_frame ==>|bolted to| charm_skid
+  magnet_psu ==>|bolted to| magnet_psu_bay_frame
+  cryo_compressor_bay_frame ==>|bolted to| charm_skid
+  cryocooler ==>|bolted to| cryo_compressor_bay_frame
+  charm_backbone ==>|bolted to| charm_skid
+  left_fusion_chamber ==>|bolted to| charm_backbone
+  heat_exchange_chamber ==>|bolted to| charm_backbone
+  right_fusion_chamber ==>|bolted to| charm_backbone
+  charm_axis ==>|bolted to| charm_backbone
+  charm_magnet_rack_frame ==>|bolted to| charm_backbone
+  charm_rf_rack_frame ==>|bolted to| charm_backbone
+  charm_drive_rack_frame ==>|bolted to| charm_backbone
+  charm_thermal_rack_frame ==>|bolted to| charm_backbone
+  mirror_magnets ==>|bolted to| charm_magnet_rack_frame
+  magnet_cryostats ==>|bolted to| charm_magnet_rack_frame
+  rf_launchers ==>|bolted to| charm_rf_rack_frame
+  rf_amps ==>|bolted to| charm_rf_rack_frame
+  rotation_drive ==>|bolted to| charm_drive_rack_frame
+  coolant_bath ==>|bolted to| charm_thermal_rack_frame
+  mirror_magnets ==>|bolted to| left_fusion_chamber
+  mirror_magnets ==>|bolted to| right_fusion_chamber
+  rotation_drive ==>|rotation drive| charm_axis
+  dec ==>|he_ash_dump| fusion_plant_bay_atmosphere
+  fusion_plant_bay_atmosphere ==>|contains| charm_skid
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
+  linkStyle 95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f

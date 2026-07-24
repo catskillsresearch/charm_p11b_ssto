@@ -133,6 +133,18 @@
       floor_mount: "bolted to floor of",
       umbilical: "power cable",
       power_cable: "power cable",
+      alpha_path: "alphas to DEC",
+      rf_feed: "waveguides to",
+      waveguide: "waveguides to",
+      magnet_bus: "magnet leads to",
+      magnet_power: "powers",
+      coolant_loop: "coolant loop",
+      cryo_cool: "cools",
+      fuel_feed: "feed to",
+      solid_feed: "solid feed to",
+      startup_power: "startup power",
+      rotation_drive: "rotation drive",
+      chamber_neck: "necks into",
     };
     for (const j of assembly.joints || []) {
       const aReal = j.a.split(".")[0];
@@ -288,20 +300,62 @@
   document.getElementById("btn-collapse-all").onclick = collapseAll;
   document.getElementById("btn-expand-one").onclick = expandTop;
   document.getElementById("btn-expand-all").onclick = expandAll;
+  document.getElementById("btn-reload").onclick = () => boot({ preserveExpand: true });
 
-  async function boot() {
-    const res = await fetch("../assembly.json");
+  async function boot(opts = {}) {
+    const preserveExpand = !!opts.preserveExpand;
+    const prevExpanded = preserveExpand ? new Set(expanded) : null;
+    const prevSelected = preserveExpand ? selected : null;
+
+    const res = await fetch(`../assembly.json?t=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) throw new Error(`Failed to load assembly.json (${res.status})`);
     assembly = await res.json();
     byId.clear();
     indexTree(assembly.root);
-    // Start fully collapsed — only the whole vehicle row (and empty diagram of just root)
+
     expanded.clear();
-    selected = assembly.root.id;
+    if (prevExpanded) {
+      for (const id of prevExpanded) {
+        if (byId.has(id) && hasChildren(byId.get(id).node)) expanded.add(id);
+      }
+    }
+    if (!expanded.size) {
+      // Start fully collapsed — only the whole vehicle row
+    }
+    selected =
+      prevSelected && byId.has(prevSelected) ? prevSelected : assembly.root.id;
+
+    const plant = [...byId.values()].find(
+      (e) => e.node.id === "charm_power_plant",
+    )?.node;
+    const plantBits = (plant?.children || []).map((c) => c.label).join(", ");
 
     const start = () => {
       renderTree();
       renderDiagram();
+      const nFunc = (assembly.joints || []).filter((j) =>
+        [
+          "alpha_path",
+          "waveguide",
+          "fuel_feed",
+          "solid_feed",
+          "magnet_power",
+          "magnet_bus",
+          "cryo_cool",
+          "coolant_loop",
+          "startup_power",
+          "rotation_drive",
+          "power_cable",
+        ].includes(j.type),
+      ).length;
+      const rev = assembly.meta?.rev || "unversioned";
+      const revEl = document.getElementById("data-rev");
+      if (revEl) {
+        revEl.textContent =
+          `Data rev ${rev} · ${nFunc} functional links · Fusion plant: ${plantBits || "(missing)"}`;
+      }
+      statusEl.textContent =
+        `${statusEl.textContent} · loaded ${new Date().toLocaleTimeString()} · rev ${rev}`;
     };
     if (window.__mermaid) start();
     else window.addEventListener("mermaid-ready", start, { once: true });

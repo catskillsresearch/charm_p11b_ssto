@@ -5,7 +5,12 @@
     "units": "m",
     "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
     "architecture": "Drop-ins each with own skid and bay doors: cargo, Fusion electric plant, combined-cycle engine. Plant \u2194 engine by power cable (DEC \u2192 bus coupler). Tail bolts to fuselage around the engine nozzle cutout; nozzle belongs to the engine only.",
-    "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages."
+    "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages.",
+    "rev": "2026-07-24-he-ash-bay",
+    "outliner_check": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
+    "charm_cad": "CHARM expands to left fusion chamber | heat exchange chamber | right fusion chamber + central axis \u2014 match Fisch multi-chamber centrifugal mirror figure.",
+    "packaging": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
+    "ash_handling": "interim_bay_pollution: He ash after DEC \u2192 fusion_plant_bay_atmosphere; not freeze/liquefy hazard; replace with buffer+purge later."
   },
   "frame": {
     "id": "vehicle",
@@ -856,21 +861,21 @@
           "x0": 33.3,
           "x1": 45.0
         },
-        "note": "Drop-in electric power plant: fusion plant skid (structure + bay doors) plus battery, p/\u00b9\u00b9B fuel, CHARM, DEC, and island auxiliaries. Separate cradle from the combined-cycle engine; linked mainly by a power cable.",
+        "note": "Fusion plant: skid + finished CHARM island (with its own sub-racks) + Magnet PSU bay + cryo compressor bay + fuel + DEC + battery.",
         "children": [
           {
             "id": "fusion_plant_skid",
             "label": "Fusion plant skid",
             "kind": "assembly",
             "drop_in": true,
-            "note": "Collection: skid structure plus its left/right bay doors. Expand to see doors; plant equipment lives on the Fusion electric plant beside this skid.",
+            "note": "Drop-in frame + bay doors + bay volume. INTERIM: He ash from DEC is allowed to pollute this bay atmosphere until a proper dump/purge is designed.",
             "children": [
               {
                 "id": "charm_skid",
                 "label": "Skid structure",
                 "kind": "power_module",
                 "form": "semi_circular_skid",
-                "note": "Physical drop-in frame. Bay doors hinge here; plant equipment bolts here. Sits in the fuselage cradle well.",
+                "note": "Skid rails. Seats: CHARM island mounts, Magnet PSU bay, cryo compressor bay, fuel services, DEC, flight battery.",
                 "envelope": {
                   "x0": 33.3,
                   "x1": 45.0
@@ -895,15 +900,6 @@
                     "role": "keel_mount"
                   },
                   {
-                    "id": "fuel_mount",
-                    "role": "keel_mount"
-                  },
-                  {
-                    "id": "charm_mount",
-                    "role": "keel_mount",
-                    "note": "CHARM hardpoint"
-                  },
-                  {
                     "id": "dec_mount",
                     "role": "keel_mount",
                     "note": "DEC hardpoint"
@@ -919,16 +915,40 @@
                     "note": "Plant bay door hinge (right)"
                   },
                   {
-                    "id": "magnets_mount",
+                    "id": "left_fusion_mount",
                     "role": "keel_mount"
                   },
                   {
-                    "id": "rf_mount",
+                    "id": "right_fusion_mount",
                     "role": "keel_mount"
                   },
                   {
-                    "id": "cryo_mount",
+                    "id": "heat_exchange_mount",
                     "role": "keel_mount"
+                  },
+                  {
+                    "id": "charm_axis_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "fuel_services_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "magnet_psu_bay_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "cryo_compressor_bay_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "charm_island_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "bay_volume",
+                    "role": "bay_volume"
                   }
                 ]
               },
@@ -955,6 +975,731 @@
                     "role": "roof_hinge"
                   }
                 ]
+              },
+              {
+                "id": "fusion_plant_bay_atmosphere",
+                "label": "Fusion plant bay atmosphere",
+                "kind": "volume",
+                "note": "INTERIM ash sink: after DEC takes the energy, He ash is dumped into the sealed fusion-plant bay volume (pollutes the bay). Not a finished design \u2014 no dedicated vent hole yet; later replace with controlled buffer \u2192 ground/orbit purge. He will not freeze/liquefy when the bay is eventually opened.",
+                "ports": [
+                  {
+                    "id": "ash_in",
+                    "role": "he_ash_dump"
+                  },
+                  {
+                    "id": "bay_boundary",
+                    "role": "bay_volume"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "charm",
+            "label": "CHARM",
+            "kind": "assembly",
+            "form": "charm_machine_with_subracks",
+            "note": "CHARM assembly = backbone + chamber string + four CHARM-owned sub-racks (Magnet, RF, Rotation drive, Thermal). Each rack is built separately and bolted into CHARM before the finished island integrates into the fusion plant skid.",
+            "envelope": {
+              "x0": 37.5,
+              "x1": 45.0
+            },
+            "size": {
+              "volume_m3_max": 120,
+              "mass_t_ref": 67
+            },
+            "children": [
+              {
+                "id": "charm_backbone",
+                "label": "CHARM backbone / strongback",
+                "kind": "structure",
+                "note": "Machine strongback that the chamber string and CHARM-owned sub-racks bolt to. Built first; racks integrate onto it; finished CHARM island then seats on the plant skid.",
+                "ports": [
+                  {
+                    "id": "skid_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "left_chamber_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "hex_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "right_chamber_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "axis_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "magnet_rack_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "rf_rack_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "drive_rack_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "thermal_rack_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              },
+              {
+                "id": "charm_chamber_string",
+                "label": "Chamber string",
+                "kind": "assembly",
+                "note": "Vacuum vessel string: left fusion | heat exchange | right fusion + central axis. Primary CHARM build article; Magnet / RF / Drive / Thermal racks bolt onto this + backbone.",
+                "children": [
+                  {
+                    "id": "left_fusion_chamber",
+                    "label": "Left fusion chamber",
+                    "kind": "chamber",
+                    "form": "centrifugal_mirror_bulb",
+                    "note": "CHARM outer fusion chamber (port). Boron centrifugally trapped on the outer wall; p-\u00b9\u00b9B fusion region. Hot He / hot protons flow inward to the heat-exchange chamber.",
+                    "ports": [
+                      {
+                        "id": "mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "neck_inboard",
+                        "role": "chamber_neck",
+                        "note": "Toward heat-exchange chamber"
+                      },
+                      {
+                        "id": "proton_in",
+                        "role": "fuel_feed"
+                      },
+                      {
+                        "id": "boron_in",
+                        "role": "fuel_feed"
+                      },
+                      {
+                        "id": "plug",
+                        "role": "end_plug"
+                      },
+                      {
+                        "id": "magnet_bus",
+                        "role": "magnet_bus"
+                      },
+                      {
+                        "id": "rf_wall",
+                        "role": "waveguide",
+                        "note": "Ponderomotive wall at neck"
+                      },
+                      {
+                        "id": "magnet_coil_mount",
+                        "role": "magnet_coil_mount",
+                        "note": "Coil seat on chamber OD"
+                      },
+                      {
+                        "id": "rf_launcher_mount",
+                        "role": "rf_launcher_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "heat_exchange_chamber",
+                    "label": "Heat exchange chamber",
+                    "kind": "chamber",
+                    "form": "central_cylinder",
+                    "note": "Central CHARM chamber. Receives hot He and hot protons from both fusion chambers; He extracted with waves; energy path toward DEC. Cold He / cold proton returns as on the Fisch slide.",
+                    "ports": [
+                      {
+                        "id": "mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "neck_left",
+                        "role": "chamber_neck"
+                      },
+                      {
+                        "id": "neck_right",
+                        "role": "chamber_neck"
+                      },
+                      {
+                        "id": "alpha_out",
+                        "role": "alpha_path",
+                        "note": "Ash / charged-product face to DEC collector"
+                      },
+                      {
+                        "id": "shaft_bore",
+                        "role": "rotation_axis"
+                      },
+                      {
+                        "id": "cryo_loop",
+                        "role": "coolant_loop"
+                      },
+                      {
+                        "id": "rf_amp_mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "bath_mount",
+                        "role": "keel_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "right_fusion_chamber",
+                    "label": "Right fusion chamber",
+                    "kind": "chamber",
+                    "form": "centrifugal_mirror_bulb",
+                    "note": "CHARM outer fusion chamber (starboard). Mirror of the left chamber \u2014 same centrifugal boron trap and fusion role.",
+                    "ports": [
+                      {
+                        "id": "mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "neck_inboard",
+                        "role": "chamber_neck"
+                      },
+                      {
+                        "id": "proton_in",
+                        "role": "fuel_feed"
+                      },
+                      {
+                        "id": "boron_in",
+                        "role": "fuel_feed"
+                      },
+                      {
+                        "id": "plug",
+                        "role": "end_plug"
+                      },
+                      {
+                        "id": "magnet_bus",
+                        "role": "magnet_bus"
+                      },
+                      {
+                        "id": "rf_wall",
+                        "role": "waveguide"
+                      },
+                      {
+                        "id": "magnet_coil_mount",
+                        "role": "magnet_coil_mount",
+                        "note": "Coil seat on chamber OD"
+                      },
+                      {
+                        "id": "rf_launcher_mount",
+                        "role": "rf_launcher_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "charm_axis",
+                    "label": "Central axis / shaft",
+                    "kind": "structure",
+                    "note": "Common rotation / alignment axis through left fusion \u2014 heat exchange \u2014 right fusion (plugs at both ends on the Fisch CHARM figure).",
+                    "ports": [
+                      {
+                        "id": "mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "drive_in",
+                        "role": "rotation_drive"
+                      },
+                      {
+                        "id": "left_plug",
+                        "role": "end_plug"
+                      },
+                      {
+                        "id": "right_plug",
+                        "role": "end_plug"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "charm_magnet_rack",
+                "label": "Magnet rack",
+                "kind": "assembly",
+                "form": "charm_subrack",
+                "note": "CHARM-owned sub-rack: mirror coils + on-coil cryostats/cold heads. Built as a unit, bolted onto the CHARM backbone around the fusion chambers. Power leads come later from the skid Magnet PSU; cryogen from the skid compressor.",
+                "children": [
+                  {
+                    "id": "charm_magnet_rack_frame",
+                    "label": "Magnet rack frame",
+                    "kind": "structure",
+                    "note": "Separately buildable frame; bolts to CHARM backbone at magnet_rack_mount.",
+                    "ports": [
+                      {
+                        "id": "charm_mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "gear_mount",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "mirror_magnets",
+                    "label": "Mirror magnets",
+                    "kind": "equipment",
+                    "note": "Mirror / chamber field coils \u2014 live in the CHARM Magnet rack, seated on the fusion chamber ODs.",
+                    "ports": [
+                      {
+                        "id": "mount_left",
+                        "role": "magnet_coil_mount"
+                      },
+                      {
+                        "id": "mount_right",
+                        "role": "magnet_coil_mount"
+                      },
+                      {
+                        "id": "power_in",
+                        "role": "magnet_power"
+                      },
+                      {
+                        "id": "field_left",
+                        "role": "magnet_bus"
+                      },
+                      {
+                        "id": "field_right",
+                        "role": "magnet_bus"
+                      },
+                      {
+                        "id": "cryostat_mount",
+                        "role": "cryostat_mount"
+                      },
+                      {
+                        "id": "rack_mate",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "magnet_cryostats",
+                    "label": "Magnet cryostats / cold heads",
+                    "kind": "equipment",
+                    "note": "Cryostat jackets and cold heads \u2014 part of the CHARM Magnet rack (what is cryocooled).",
+                    "ports": [
+                      {
+                        "id": "coil_mate",
+                        "role": "cryostat_mount"
+                      },
+                      {
+                        "id": "cryogen_in",
+                        "role": "cryo_line"
+                      },
+                      {
+                        "id": "rack_mate",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "charm_rf_rack",
+                "label": "RF rack",
+                "kind": "assembly",
+                "form": "charm_subrack",
+                "note": "CHARM-owned sub-rack: neck RF launchers + adjacent amplifier modules. Built separately, bolted into CHARM at the chamber necks before plant integration.",
+                "children": [
+                  {
+                    "id": "charm_rf_rack_frame",
+                    "label": "RF rack frame",
+                    "kind": "structure",
+                    "note": "Separately buildable frame; bolts to CHARM backbone at rf_rack_mount.",
+                    "ports": [
+                      {
+                        "id": "charm_mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "gear_mount",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "rf_launchers",
+                    "label": "RF launchers / neck antennas",
+                    "kind": "equipment",
+                    "note": "Ponderomotive / one-way RF wall launchers at the necks \u2014 owned by the CHARM RF rack.",
+                    "ports": [
+                      {
+                        "id": "mount_left",
+                        "role": "rf_launcher_mount"
+                      },
+                      {
+                        "id": "mount_right",
+                        "role": "rf_launcher_mount"
+                      },
+                      {
+                        "id": "rf_in",
+                        "role": "waveguide"
+                      },
+                      {
+                        "id": "wall_left",
+                        "role": "rf_wall"
+                      },
+                      {
+                        "id": "wall_right",
+                        "role": "rf_wall"
+                      },
+                      {
+                        "id": "rack_mate",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "rf_amps",
+                    "label": "RF amplifier modules",
+                    "kind": "equipment",
+                    "note": "RF amp modules in the CHARM RF rack, short-waveguided to the neck launchers.",
+                    "ports": [
+                      {
+                        "id": "mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "rf_out",
+                        "role": "waveguide",
+                        "note": "Waveguide flange toward CHARM"
+                      },
+                      {
+                        "id": "startup_in",
+                        "role": "startup_power"
+                      },
+                      {
+                        "id": "rack_mate",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "charm_drive_rack",
+                "label": "Rotation drive rack",
+                "kind": "assembly",
+                "form": "charm_subrack",
+                "note": "CHARM-owned sub-rack: rotation / ExB drive hardware. Built separately, bolted to the CHARM axis / backbone \u2014 not a skid cabinet.",
+                "children": [
+                  {
+                    "id": "charm_drive_rack_frame",
+                    "label": "Rotation drive rack frame",
+                    "kind": "structure",
+                    "note": "Separately buildable frame; bolts to CHARM backbone at drive_rack_mount.",
+                    "ports": [
+                      {
+                        "id": "charm_mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "gear_mount",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "rotation_drive",
+                    "label": "Rotation drive",
+                    "kind": "equipment",
+                    "note": "Rotation / ExB drive \u2014 gear in the CHARM Rotation drive rack, couples into the central axis.",
+                    "ports": [
+                      {
+                        "id": "mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "drive_out",
+                        "role": "rotation_drive"
+                      },
+                      {
+                        "id": "startup_in",
+                        "role": "startup_power"
+                      },
+                      {
+                        "id": "rack_mate",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "charm_thermal_rack",
+                "label": "Thermal rack",
+                "kind": "assembly",
+                "form": "charm_subrack",
+                "note": "CHARM-owned sub-rack: local coolant bath and on-machine thermal plumbing at the HEX. Built separately and bolted into CHARM; fed by the skid cryo compressor bay.",
+                "children": [
+                  {
+                    "id": "charm_thermal_rack_frame",
+                    "label": "Thermal rack frame",
+                    "kind": "structure",
+                    "note": "Separately buildable frame; bolts to CHARM backbone at thermal_rack_mount.",
+                    "ports": [
+                      {
+                        "id": "charm_mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "gear_mount",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "coolant_bath",
+                    "label": "Coolant bath",
+                    "kind": "equipment",
+                    "note": "Local coolant / thermal bath \u2014 owned by the CHARM Thermal rack, looped to the HEX and magnet cryostats.",
+                    "ports": [
+                      {
+                        "id": "mount",
+                        "role": "keel_mount"
+                      },
+                      {
+                        "id": "cold_in",
+                        "role": "cryo_cool"
+                      },
+                      {
+                        "id": "loop",
+                        "role": "coolant_loop"
+                      },
+                      {
+                        "id": "cryogen_from_compressor",
+                        "role": "cryo_line"
+                      },
+                      {
+                        "id": "rack_mate",
+                        "role": "rack_mount"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "dec",
+            "label": "DEC",
+            "kind": "equipment",
+            "note": "Direct energy conversion: alpha / charged-product collector and wave couplers. Takes ordered alpha energy onto the electrical bus. Remaining neutral He ash is INTERIM-dumped into the fusion plant bay atmosphere (careless placeholder \u2014 not a flight ash system).",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "alpha_collector",
+                "role": "alpha_path",
+                "note": "Collector / wave-coupler face toward CHARM ash chamber"
+              },
+              {
+                "id": "bus_out",
+                "role": "power",
+                "note": "1 GW-class electrical bus \u2192 propulsion bus coupler"
+              },
+              {
+                "id": "he_ash_out",
+                "role": "he_ash_dump",
+                "note": "Neutral He ash after energy extraction \u2014 currently dumped to plant bay (interim)"
+              }
+            ]
+          },
+          {
+            "id": "magnet_psu_bay",
+            "label": "Magnet PSU bay",
+            "kind": "assembly",
+            "note": "Skid power-electronics bay for the Magnet PSU. Coils are on CHARM.",
+            "children": [
+              {
+                "id": "magnet_psu_bay_frame",
+                "label": "Magnet PSU bay frame",
+                "kind": "structure",
+                "ports": [
+                  {
+                    "id": "skid_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "gear_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              },
+              {
+                "id": "magnet_psu",
+                "label": "Magnet PSU",
+                "kind": "equipment",
+                "note": "Magnet power supply electronics (current / quench protection). 'Magnet services' means this cabinet \u2014 NOT the magnets. Coils + cryostats stay on CHARM; thick leads run from this PSU to the coils.",
+                "ports": [
+                  {
+                    "id": "mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "power_out",
+                    "role": "magnet_power"
+                  },
+                  {
+                    "id": "startup_in",
+                    "role": "startup_power"
+                  },
+                  {
+                    "id": "skid_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "cryo_compressor_bay",
+            "label": "Cryo compressor bay",
+            "kind": "assembly",
+            "note": "Skid compressor plant. Cold heads live on CHARM magnets.",
+            "children": [
+              {
+                "id": "cryo_compressor_bay_frame",
+                "label": "Cryo compressor bay frame",
+                "kind": "structure",
+                "ports": [
+                  {
+                    "id": "skid_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "gear_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              },
+              {
+                "id": "cryocooler",
+                "label": "Cryo compressor plant",
+                "kind": "equipment",
+                "note": "Helium / cryogen COMPRESSOR and oil management \u2014 the noisy plant package on the skid. It does NOT cryocool the magnets by itself; short cryogen lines feed the magnet cold heads and bath on the CHARM island.",
+                "ports": [
+                  {
+                    "id": "mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "cold_out",
+                    "role": "cryo_cool"
+                  },
+                  {
+                    "id": "startup_in",
+                    "role": "startup_power"
+                  },
+                  {
+                    "id": "skid_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "fuel_services",
+            "label": "Fuel services",
+            "kind": "assembly",
+            "note": "Plant consumables bay on the skid: proton tank, \u00b9\u00b9B container, solid injector. Feeds both fusion chambers; not inside the vacuum core.",
+            "children": [
+              {
+                "id": "fuel_services_frame",
+                "label": "Fuel services frame",
+                "kind": "structure",
+                "ports": [
+                  {
+                    "id": "skid_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "proton_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "boron_container_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "boron_injector_mount",
+                    "role": "keel_mount"
+                  }
+                ]
+              },
+              {
+                "id": "proton_tank",
+                "label": "Proton tank",
+                "kind": "tank",
+                "form": "gas_H2",
+                "envelope": {
+                  "x0": 35.5,
+                  "x1": 37.5
+                },
+                "note": "Gaseous H\u2082 / proton feedstock. Plumbing line to CHARM proton injector.",
+                "ports": [
+                  {
+                    "id": "keel_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "fuel_feed",
+                    "note": "H\u2082 / proton line to CHARM"
+                  }
+                ]
+              },
+              {
+                "id": "boron11_container",
+                "label": "Boron-11 container",
+                "kind": "tank",
+                "form": "solid_pellet_or_powder",
+                "envelope": {
+                  "x0": 36.3,
+                  "x1": 36.9
+                },
+                "note": "Solid \u00b9\u00b9B store (pellets/powder). Feeds the solid-fuel injector \u2014 not piped as a gas.",
+                "ports": [
+                  {
+                    "id": "keel_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "solid_feed"
+                  }
+                ]
+              },
+              {
+                "id": "boron11_injector",
+                "label": "Boron-11 solid fuel injector",
+                "kind": "injector",
+                "note": "Meters / vaporizes / ionizes solid \u00b9\u00b9B into the CHARM rotating boron chamber. This is the wire from boron store into CHARM.",
+                "ports": [
+                  {
+                    "id": "mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "solid_in",
+                    "role": "solid_feed"
+                  },
+                  {
+                    "id": "charm_out",
+                    "role": "fuel_feed"
+                  }
+                ]
               }
             ]
           },
@@ -970,105 +1715,13 @@
               {
                 "id": "keel_mount",
                 "role": "keel_mount"
-              }
-            ]
-          },
-          {
-            "id": "fuel_tanks",
-            "label": "Fusion fuel tanks (proton / boron-11)",
-            "kind": "tank",
-            "envelope": {
-              "x0": 35.5,
-              "x1": 37.5
-            },
-            "ports": [
+              },
               {
-                "id": "keel_mount",
-                "role": "keel_mount"
+                "id": "startup_out",
+                "role": "startup_power"
               }
             ],
-            "note": "Proton / boron-11 feed for CHARM."
-          },
-          {
-            "id": "charm",
-            "label": "CHARM",
-            "kind": "equipment",
-            "note": "Chambered Aneutronic Rotating Mirror core (multi-chamber string). Ordered alphas \u2192 DEC. Not a thruster.",
-            "ports": [
-              {
-                "id": "mount",
-                "role": "internal"
-              },
-              {
-                "id": "ash_to_dec",
-                "role": "energy_path"
-              }
-            ],
-            "size": {
-              "volume_m3_max": 120,
-              "mass_t_ref": 67
-            },
-            "envelope": {
-              "x0": 37.5,
-              "x1": 45.0
-            }
-          },
-          {
-            "id": "dec",
-            "label": "DEC",
-            "kind": "equipment",
-            "note": "Direct energy conversion. Plant electrical product. Power cable to propulsion bus coupler starts here.",
-            "ports": [
-              {
-                "id": "mount",
-                "role": "internal"
-              },
-              {
-                "id": "ash_in",
-                "role": "energy_path"
-              },
-              {
-                "id": "bus_out",
-                "role": "power",
-                "note": "Electrical bus feed \u2014 power cable to propulsion bus coupler"
-              }
-            ]
-          },
-          {
-            "id": "mirror_magnets",
-            "label": "Mirror magnets + PSU",
-            "kind": "equipment",
-            "note": "CHARM island magnets and power supplies (paper plant schematic).",
-            "ports": [
-              {
-                "id": "mount",
-                "role": "keel_mount"
-              }
-            ]
-          },
-          {
-            "id": "rf_units",
-            "label": "RF units",
-            "kind": "equipment",
-            "note": "RF / ponderomotive wall drivers for CHARM chambers.",
-            "ports": [
-              {
-                "id": "mount",
-                "role": "keel_mount"
-              }
-            ]
-          },
-          {
-            "id": "cryo_bath",
-            "label": "Cryo + coolant bath",
-            "kind": "equipment",
-            "note": "Cryogenics and coolant bath for the fusion island.",
-            "ports": [
-              {
-                "id": "mount",
-                "role": "keel_mount"
-              }
-            ]
+            "note": "Flight battery (~2 t): on-orbit relight / hotel \u2014 magnets + RF (+ rotation) kindling. First light on Earth uses the ground cart (not carried)."
           }
         ]
       },
@@ -1793,7 +2446,7 @@
       "a": "dec.bus_out",
       "b": "propulsion_bus_coupler.bus_in",
       "type": "power_cable",
-      "note": "Power cable: DEC \u2192 propulsion bus coupler"
+      "note": "Plant product leaves here: DEC electrical bus \u2192 propulsion bus coupler (not a cable to the plant skid)"
     },
     {
       "id": "j_battery_on_charm_skid",
@@ -1802,31 +2455,11 @@
       "type": "fixed"
     },
     {
-      "id": "j_fuel_on_charm_skid",
-      "a": "fuel_tanks.keel_mount",
-      "b": "charm_skid.fuel_mount",
-      "type": "fixed"
-    },
-    {
       "id": "j_water_on_engine_skid",
       "a": "water_tanks.keel_mount",
       "b": "combined_cycle_engine_skid.water_mount",
       "type": "fixed",
       "note": "Water tanks ride on the engine drop-in"
-    },
-    {
-      "id": "j_charm_to_dec",
-      "a": "charm.ash_to_dec",
-      "b": "dec.ash_in",
-      "type": "duct",
-      "note": "Ordered fusion products / ash path CHARM \u2192 DEC"
-    },
-    {
-      "id": "j_charm_on_skid",
-      "a": "charm.mount",
-      "b": "charm_skid.charm_mount",
-      "type": "fixed",
-      "note": "CHARM bolted to fusion plant skid"
     },
     {
       "id": "j_dec_on_skid",
@@ -1871,22 +2504,355 @@
       "note": "Nozzle on engine skid; exits under Tail without joining Tail"
     },
     {
-      "id": "j_magnets_on_plant",
-      "a": "mirror_magnets.mount",
-      "b": "charm_skid.magnets_mount",
+      "id": "j_battery_to_rotation",
+      "a": "flight_battery.startup_out",
+      "b": "rotation_drive.startup_in",
+      "type": "startup_power",
+      "note": "Flight-battery kindling power to rotation drive (relight)"
+    },
+    {
+      "id": "j_boron_container_to_injector",
+      "a": "boron11_container.outlet",
+      "b": "boron11_injector.solid_in",
+      "type": "solid_feed",
+      "note": "Solid \u00b9\u00b9B: container \u2192 injector"
+    },
+    {
+      "id": "j_battery_to_magnet_psu",
+      "a": "flight_battery.startup_out",
+      "b": "magnet_psu.startup_in",
+      "type": "startup_power",
+      "note": "Battery kindling \u2192 magnet PSU"
+    },
+    {
+      "id": "j_battery_to_cryocooler",
+      "a": "flight_battery.startup_out",
+      "b": "cryocooler.startup_in",
+      "type": "startup_power",
+      "note": "Battery kindling \u2192 cryocooler (as needed for relight)"
+    },
+    {
+      "id": "j_left_fusion_to_hex",
+      "a": "left_fusion_chamber.neck_inboard",
+      "b": "heat_exchange_chamber.neck_left",
+      "type": "chamber_neck",
+      "note": "Left fusion chamber necks into central heat-exchange chamber"
+    },
+    {
+      "id": "j_right_fusion_to_hex",
+      "a": "right_fusion_chamber.neck_inboard",
+      "b": "heat_exchange_chamber.neck_right",
+      "type": "chamber_neck",
+      "note": "Right fusion chamber necks into central heat-exchange chamber"
+    },
+    {
+      "id": "j_axis_through_charm",
+      "a": "charm_axis.mount",
+      "b": "heat_exchange_chamber.shaft_bore",
+      "type": "fixed",
+      "note": "Central axis through the three-chamber string"
+    },
+    {
+      "id": "j_axis_left_plug",
+      "a": "charm_axis.left_plug",
+      "b": "left_fusion_chamber.plug",
       "type": "fixed"
     },
     {
-      "id": "j_rf_on_plant",
-      "a": "rf_units.mount",
-      "b": "charm_skid.rf_mount",
+      "id": "j_axis_right_plug",
+      "a": "charm_axis.right_plug",
+      "b": "right_fusion_chamber.plug",
       "type": "fixed"
     },
     {
-      "id": "j_cryo_on_plant",
-      "a": "cryo_bath.mount",
-      "b": "charm_skid.cryo_mount",
+      "id": "j_hex_alphas_to_dec",
+      "a": "heat_exchange_chamber.alpha_out",
+      "b": "dec.alpha_collector",
+      "type": "alpha_path",
+      "note": "He / charged products extracted in heat-exchange chamber \u2192 DEC collector"
+    },
+    {
+      "id": "j_proton_to_left_fusion",
+      "a": "proton_tank.outlet",
+      "b": "left_fusion_chamber.proton_in",
+      "type": "fuel_feed"
+    },
+    {
+      "id": "j_proton_to_right_fusion",
+      "a": "proton_tank.outlet",
+      "b": "right_fusion_chamber.proton_in",
+      "type": "fuel_feed"
+    },
+    {
+      "id": "j_boron_to_left_fusion",
+      "a": "boron11_injector.charm_out",
+      "b": "left_fusion_chamber.boron_in",
+      "type": "fuel_feed",
+      "note": "Solid \u00b9\u00b9B injector \u2192 left fusion chamber (centrifugal trap)"
+    },
+    {
+      "id": "j_boron_to_right_fusion",
+      "a": "boron11_injector.charm_out",
+      "b": "right_fusion_chamber.boron_in",
+      "type": "fuel_feed",
+      "note": "Solid \u00b9\u00b9B injector \u2192 right fusion chamber (centrifugal trap)"
+    },
+    {
+      "id": "j_magnets_field_left",
+      "a": "mirror_magnets.field_left",
+      "b": "left_fusion_chamber.magnet_bus",
+      "type": "magnet_bus"
+    },
+    {
+      "id": "j_magnets_field_right",
+      "a": "mirror_magnets.field_right",
+      "b": "right_fusion_chamber.magnet_bus",
+      "type": "magnet_bus"
+    },
+    {
+      "id": "j_fuel_frame_on_skid",
+      "a": "fuel_services_frame.skid_mount",
+      "b": "charm_skid.fuel_services_mount",
       "type": "fixed"
+    },
+    {
+      "id": "j_proton_on_fuel_frame",
+      "a": "proton_tank.keel_mount",
+      "b": "fuel_services_frame.proton_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_boron_c_on_fuel_frame",
+      "a": "boron11_container.keel_mount",
+      "b": "fuel_services_frame.boron_container_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_boron_i_on_fuel_frame",
+      "a": "boron11_injector.mount",
+      "b": "fuel_services_frame.boron_injector_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_cryostats_on_magnets",
+      "a": "magnet_cryostats.coil_mate",
+      "b": "mirror_magnets.cryostat_mount",
+      "type": "fixed",
+      "note": "Cold heads / cryostats on the magnet coils"
+    },
+    {
+      "id": "j_rf_launcher_left",
+      "a": "rf_launchers.mount_left",
+      "b": "left_fusion_chamber.rf_launcher_mount",
+      "type": "fixed",
+      "note": "Left neck RF launcher on chamber"
+    },
+    {
+      "id": "j_rf_launcher_right",
+      "a": "rf_launchers.mount_right",
+      "b": "right_fusion_chamber.rf_launcher_mount",
+      "type": "fixed",
+      "note": "Right neck RF launcher on chamber"
+    },
+    {
+      "id": "j_rf_launcher_wall_left",
+      "a": "rf_launchers.wall_left",
+      "b": "left_fusion_chamber.rf_wall",
+      "type": "rf_wall"
+    },
+    {
+      "id": "j_rf_launcher_wall_right",
+      "a": "rf_launchers.wall_right",
+      "b": "right_fusion_chamber.rf_wall",
+      "type": "rf_wall"
+    },
+    {
+      "id": "j_rf_amps_to_launchers",
+      "a": "rf_amps.rf_out",
+      "b": "rf_launchers.rf_in",
+      "type": "waveguide",
+      "note": "Short waveguide: amps \u2192 neck launchers"
+    },
+    {
+      "id": "j_bath_to_hex",
+      "a": "coolant_bath.loop",
+      "b": "heat_exchange_chamber.cryo_loop",
+      "type": "coolant_loop"
+    },
+    {
+      "id": "j_compressor_to_cryostats",
+      "a": "cryocooler.cold_out",
+      "b": "magnet_cryostats.cryogen_in",
+      "type": "cryo_line",
+      "note": "Compressor plant \u2192 magnet cold heads"
+    },
+    {
+      "id": "j_compressor_to_bath",
+      "a": "cryocooler.cold_out",
+      "b": "coolant_bath.cryogen_from_compressor",
+      "type": "cryo_line",
+      "note": "Compressor plant also feeds local bath"
+    },
+    {
+      "id": "j_psu_to_magnets",
+      "a": "magnet_psu.power_out",
+      "b": "mirror_magnets.power_in",
+      "type": "magnet_power",
+      "note": "Magnet PSU \u2192 coils on CHARM"
+    },
+    {
+      "id": "j_psu_bay_on_skid",
+      "a": "magnet_psu_bay_frame.skid_mount",
+      "b": "charm_skid.magnet_psu_bay_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_psu_in_bay",
+      "a": "magnet_psu.skid_mount",
+      "b": "magnet_psu_bay_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_cryo_bay_on_skid",
+      "a": "cryo_compressor_bay_frame.skid_mount",
+      "b": "charm_skid.cryo_compressor_bay_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_cryo_in_bay",
+      "a": "cryocooler.skid_mount",
+      "b": "cryo_compressor_bay_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_charm_backbone_on_skid",
+      "a": "charm_backbone.skid_mount",
+      "b": "charm_skid.charm_island_mount",
+      "type": "fixed",
+      "note": "Finished CHARM island seats on plant skid via backbone"
+    },
+    {
+      "id": "j_left_on_backbone",
+      "a": "left_fusion_chamber.mount",
+      "b": "charm_backbone.left_chamber_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_hex_on_backbone",
+      "a": "heat_exchange_chamber.mount",
+      "b": "charm_backbone.hex_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_right_on_backbone",
+      "a": "right_fusion_chamber.mount",
+      "b": "charm_backbone.right_chamber_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_axis_on_backbone",
+      "a": "charm_axis.mount",
+      "b": "charm_backbone.axis_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_magnet_rack_on_charm",
+      "a": "charm_magnet_rack_frame.charm_mount",
+      "b": "charm_backbone.magnet_rack_mount",
+      "type": "fixed",
+      "note": "Magnet rack \u2192 CHARM backbone"
+    },
+    {
+      "id": "j_rf_rack_on_charm",
+      "a": "charm_rf_rack_frame.charm_mount",
+      "b": "charm_backbone.rf_rack_mount",
+      "type": "fixed",
+      "note": "RF rack \u2192 CHARM backbone"
+    },
+    {
+      "id": "j_drive_rack_on_charm",
+      "a": "charm_drive_rack_frame.charm_mount",
+      "b": "charm_backbone.drive_rack_mount",
+      "type": "fixed",
+      "note": "Rotation drive rack \u2192 CHARM backbone"
+    },
+    {
+      "id": "j_thermal_rack_on_charm",
+      "a": "charm_thermal_rack_frame.charm_mount",
+      "b": "charm_backbone.thermal_rack_mount",
+      "type": "fixed",
+      "note": "Thermal rack \u2192 CHARM backbone"
+    },
+    {
+      "id": "j_magnets_in_magnet_rack",
+      "a": "mirror_magnets.rack_mate",
+      "b": "charm_magnet_rack_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_cryostats_in_magnet_rack",
+      "a": "magnet_cryostats.rack_mate",
+      "b": "charm_magnet_rack_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_launchers_in_rf_rack",
+      "a": "rf_launchers.rack_mate",
+      "b": "charm_rf_rack_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_amps_in_rf_rack",
+      "a": "rf_amps.rack_mate",
+      "b": "charm_rf_rack_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_rot_in_drive_rack",
+      "a": "rotation_drive.rack_mate",
+      "b": "charm_drive_rack_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_bath_in_thermal_rack",
+      "a": "coolant_bath.rack_mate",
+      "b": "charm_thermal_rack_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_magnets_on_left_chamber",
+      "a": "mirror_magnets.mount_left",
+      "b": "left_fusion_chamber.magnet_coil_mount",
+      "type": "fixed",
+      "note": "Coil OD seat on left chamber (Magnet rack \u2194 chamber string)"
+    },
+    {
+      "id": "j_magnets_on_right_chamber",
+      "a": "mirror_magnets.mount_right",
+      "b": "right_fusion_chamber.magnet_coil_mount",
+      "type": "fixed",
+      "note": "Coil OD seat on right chamber"
+    },
+    {
+      "id": "j_rotation_to_axis",
+      "a": "rotation_drive.drive_out",
+      "b": "charm_axis.drive_in",
+      "type": "rotation_drive",
+      "note": "Drive rack couples into CHARM axis"
+    },
+    {
+      "id": "j_dec_he_to_bay",
+      "a": "dec.he_ash_out",
+      "b": "fusion_plant_bay_atmosphere.ash_in",
+      "type": "he_ash_dump",
+      "note": "INTERIM: He ash pollutes fusion plant bay. Replace later with buffer + ground/orbit purge (no new hull vent required if bay purge paths exist)."
+    },
+    {
+      "id": "j_bay_atm_in_skid",
+      "a": "fusion_plant_bay_atmosphere.bay_boundary",
+      "b": "charm_skid.bay_volume",
+      "type": "contains",
+      "note": "Bay atmosphere is the free volume inside the fusion plant skid envelope"
     }
   ],
   "stations": [
@@ -1940,7 +2906,7 @@
     },
     {
       "id": "fuel",
-      "part": "fuel_tanks",
+      "part": "proton_tank",
       "x0": 35.5,
       "x1": 37.5,
       "label": "p/\u00b9\u00b9B FUEL",

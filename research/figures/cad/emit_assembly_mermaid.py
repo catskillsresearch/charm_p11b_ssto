@@ -26,6 +26,18 @@ JOINT_WORDS = {
     "aligns_with": "aligns with",
     "umbilical": "umbilical to",
     "power_cable": "power cable",
+    "alpha_path": "alphas to DEC",
+    "rf_feed": "waveguides to",
+    "waveguide": "waveguides to",
+    "magnet_bus": "magnet leads to",
+    "magnet_power": "powers",
+    "coolant_loop": "coolant loop",
+    "cryo_cool": "cools",
+    "fuel_feed": "feed line",
+    "solid_feed": "solid feed",
+    "startup_power": "startup power",
+    "rotation_drive": "rotation drive",
+    "chamber_neck": "necks into",
 }
 
 

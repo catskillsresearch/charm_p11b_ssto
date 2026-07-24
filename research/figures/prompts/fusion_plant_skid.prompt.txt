@@ -1,0 +1,22 @@
+ENGLISH PACKAGING BRIEF — Fusion electric plant drop-in (CHARM-owned sub-racks)
+
+Build order: CHARM sub-racks are built separately → bolted into the CHARM assembly → finished CHARM island drops into the fusion plant skid.
+
+LABEL THE CORE EXACTLY: "CHARM (Chambered Aneutronic Rotating Mirror)" — never invent another expansion.
+
+CHARM ASSEMBLY (machine island on a backbone / strongback):
+- Chamber string: left fusion | heat exchange | right fusion + central axis.
+- Four CHARM-owned sub-racks (separate build articles, bolted into CHARM — NOT skid cabinets):
+  1. Magnet rack — mirror coils + on-coil cryostats/cold heads (what is cryocooled).
+  2. RF rack — neck launchers + adjacent amp modules (short waveguides).
+  3. Rotation drive rack — drive hardware coupling into the axis ends.
+  4. Thermal rack — local coolant bath at the HEX.
+
+SKID PLANT SERVICES (outside CHARM; integrate after the island is built):
+- Magnet PSU bay — power electronics only (feeds coils by cable).
+- Cryo compressor bay — noisy compressor; lines to magnet cold heads on the CHARM Magnet rack.
+- Fuel services — proton tank, boron-11, injector.
+- DEC — mated at HEX ash face.
+- Flight battery — startup / relight.
+
+VISUAL: Dense CHARM island with four distinct sub-racks hard-mounted on the machine; only PSU, compressor, fuel, DEC, battery sit as skid packages. Industrial, cable/hose linked, no identical server-farm rack row. Hangar lighting.
