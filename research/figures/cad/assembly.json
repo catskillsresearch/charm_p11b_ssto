@@ -6,13 +6,14 @@
     "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
     "architecture": "Drop-ins each with own skid and bay doors: cargo, Fusion electric plant, combined-cycle engine. Plant \u2194 engine by power cable (DEC \u2192 bus coupler). Tail bolts to fuselage around the engine nozzle cutout; nozzle belongs to the engine only.",
     "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages.",
-    "rev": "2026-07-24-stage-sizing",
+    "rev": "2026-07-24-figure-ssot",
     "outliner_check": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "charm_cad": "CHARM expands to left fusion chamber | heat exchange chamber | right fusion chamber + central axis \u2014 match Fisch multi-chamber centrifugal mirror figure.",
     "packaging": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "ash_handling": "interim_bay_pollution: He ash after DEC \u2192 fusion_plant_bay_atmosphere; not freeze/liquefy hazard; replace with buffer+purge later.",
     "engine_stages": "1=EDF, 2=microwave air plasma (Ye 2020), 3=water microwave plasma (Nakagawa 2019 lineage)",
-    "engine_sizing": "P1=65MW P2=P3=995MW meng=15t mw=44t Isp=2000s"
+    "engine_sizing": "P1=65MW P2=P3=995MW meng=15t mw=44t Isp=2000s",
+    "figure_ssot": "Paper mermaid figures must match this assembly.json; ground cart / vacuum pack / plant bus added from paper schematic."
   },
   "frame": {
     "id": "vehicle",
@@ -951,6 +952,14 @@
                   {
                     "id": "bay_volume",
                     "role": "bay_volume"
+                  },
+                  {
+                    "id": "vacuum_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "bus_mount",
+                    "role": "keel_mount"
                   }
                 ]
               },
@@ -1148,6 +1157,10 @@
                       {
                         "id": "bath_mount",
                         "role": "keel_mount"
+                      },
+                      {
+                        "id": "vacuum_port",
+                        "role": "vacuum"
                       }
                     ]
                   },
@@ -1518,6 +1531,26 @@
             ]
           },
           {
+            "id": "plant_electrical_bus",
+            "label": "Plant electrical bus (1 GW)",
+            "kind": "equipment",
+            "note": "Named plant-side bus after DEC. Flight product power leaves via power cable to the propulsion bus coupler on the engine skid.",
+            "ports": [
+              {
+                "id": "dec_in",
+                "role": "power"
+              },
+              {
+                "id": "bus_out",
+                "role": "power"
+              },
+              {
+                "id": "skid_mount",
+                "role": "keel_mount"
+              }
+            ]
+          },
+          {
             "id": "magnet_psu_bay",
             "label": "Magnet PSU bay",
             "kind": "assembly",
@@ -1608,6 +1641,26 @@
                     "role": "keel_mount"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "id": "vacuum_controls",
+            "label": "Vacuum / controls pack",
+            "kind": "equipment",
+            "note": "Roughing/turbo vacuum, gauges, and local plant controls for the chamber string. Bolts to the fusion plant skid; pumps the CHARM vacuum envelope.",
+            "ports": [
+              {
+                "id": "skid_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "vacuum_line",
+                "role": "vacuum"
+              },
+              {
+                "id": "bus",
+                "role": "power"
               }
             ]
           },
@@ -1724,6 +1777,23 @@
               }
             ],
             "note": "Flight battery (~2 t): on-orbit relight / hotel \u2014 magnets + RF (+ rotation) kindling. First light on Earth uses the ground cart (not carried)."
+          },
+          {
+            "id": "ground_cart",
+            "label": "Ground cart (Earth only)",
+            "kind": "equipment",
+            "flight": false,
+            "note": "Airport / pad umbilical cart for first light. Not carried. Supplies startup power to Magnet PSU / RF / cryo on the ground; flight relight uses the flight battery.",
+            "ports": [
+              {
+                "id": "startup_out",
+                "role": "startup_power"
+              },
+              {
+                "id": "pad_umbilical",
+                "role": "ground_umbilical"
+              }
+            ]
           }
         ]
       },
@@ -2634,10 +2704,10 @@
     },
     {
       "id": "j_power_cable",
-      "a": "dec.bus_out",
+      "a": "plant_electrical_bus.bus_out",
       "b": "propulsion_bus_coupler.bus_in",
       "type": "power_cable",
-      "note": "Plant product leaves here: DEC electrical bus \u2192 propulsion bus coupler (not a cable to the plant skid)"
+      "note": "Plant bus \u2192 propulsion bus coupler (power cable)"
     },
     {
       "id": "j_battery_on_charm_skid",
@@ -3176,6 +3246,53 @@
       "b": "stage1_edf.air_in",
       "type": "air_path",
       "note": "Inlets \u2192 stage-1 EDF"
+    },
+    {
+      "id": "j_dec_to_plant_bus",
+      "a": "dec.bus_out",
+      "b": "plant_electrical_bus.dec_in",
+      "type": "power",
+      "note": "DEC \u2192 plant electrical bus"
+    },
+    {
+      "id": "j_plant_bus_on_skid",
+      "a": "plant_electrical_bus.skid_mount",
+      "b": "charm_skid.bus_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_vacuum_on_skid",
+      "a": "vacuum_controls.skid_mount",
+      "b": "charm_skid.vacuum_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_vacuum_to_chambers",
+      "a": "vacuum_controls.vacuum_line",
+      "b": "heat_exchange_chamber.vacuum_port",
+      "type": "vacuum",
+      "note": "Vacuum pack serves chamber string (proxy port on HEX)"
+    },
+    {
+      "id": "j_cart_to_magnet_psu",
+      "a": "ground_cart.startup_out",
+      "b": "magnet_psu.startup_in",
+      "type": "startup_power",
+      "note": "Ground cart kindling (Earth only)"
+    },
+    {
+      "id": "j_cart_to_rf",
+      "a": "ground_cart.startup_out",
+      "b": "rf_amps.startup_in",
+      "type": "startup_power",
+      "note": "Ground cart kindling (Earth only)"
+    },
+    {
+      "id": "j_cart_to_cryo",
+      "a": "ground_cart.startup_out",
+      "b": "cryocooler.startup_in",
+      "type": "startup_power",
+      "note": "Ground cart kindling (Earth only)"
     }
   ],
   "stations": [

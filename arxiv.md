@@ -23,7 +23,7 @@ Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real c
 
 Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [14,21], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **$L \approx 52\,\mathrm{m}$**. ECLSS = **Environmental Control and Life Support System**. Depth $\approx 6.5$–$7\,\mathrm{m}$, span $\approx 28\,\mathrm{m}$.
 
-Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of one station map (nose left, length $52\,\mathrm{m}$): crew/ECLSS $0$–$11\,\mathrm{m}$ (flight deck + six seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only—no outer side door); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell payload-bay doors); flight battery $33.3$–$35.5\,\mathrm{m}$; $p\text{-}^{11}\mathrm{B}$ fuel $35.5$–$37.5\,\mathrm{m}$; CHARM $37.5$–$45\,\mathrm{m}$; water $45$–$49\,\mathrm{m}$; combined-cycle engine $49$–$52\,\mathrm{m}$. The floorplan is a top-down cutaway (no landing gear). The profile shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors. Both views are driven from the same geometry so stations stay consistent if the layout expands.
+Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell doors); **fusion electric plant** $33.3$–$45\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, fuel services $35.5$–$37.5\,\mathrm{m}$, CHARM island $37.5$–$45\,\mathrm{m}$); **combined-cycle engine** $45$–$52\,\mathrm{m}$ (water tanks $45$–$49\,\mathrm{m}$ on the engine skid, stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}) is 1–1 with that JSON tree. The floorplan is a top-down cutaway (no landing gear). The profile shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
 
 <!-- figure-landscape -->
 ![Vehicle floor plan.](research/figures/charm_ssto_interior_floorplan.png)
@@ -31,77 +31,101 @@ Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior
 <!-- figure-landscape -->
 ![Vehicle profile view.](research/figures/charm_ssto_exterior_profile.png)
 
-### CHARM power plant
+### Fusion electric plant (assembly SSOT)
 
-<!-- mermaid-caption: CHARM power-plant schematic -->
+Schematic below is drawn from `research/figures/cad/assembly.json` (same tree as the interactive outliner). Boxes are plant parts/collections, not a separate physics cartoon.
+
+<!-- mermaid-caption: Fusion electric plant (assembly.json) -->
 ```mermaid
 flowchart TB
-  subgraph fuels ["Fuel containers"]
-    Hp["H / proton feed"]
-    B11["¹¹B feed"]
-  end
-  subgraph charm ["CHARM chambers"]
-    Boron["Rotating boron chamber"]
-    RF1["RF / ponderomotive wall"]
-    Fus["Proton fusion cell"]
-    RF2["RF wall"]
-    Ash["Ash / heat-exchange chamber"]
-    Boron --> RF1 --> Fus --> RF2 --> Ash
-  end
-  subgraph aux ["Island auxiliaries"]
-    Mag["Mirror magnets + PSU"]
-    RFU["RF units"]
-    Rot["Rotation drive"]
-    Cryo["Cryo + coolant bath"]
-    Vac["Vacuum / controls"]
-    DEC["DEC / wave couplers"]
-  end
-  subgraph store ["Electrical store"]
-    Cart["Ground cart Earth only"]
+  subgraph plant ["Fusion electric plant"]
+    subgraph skid ["Fusion plant skid"]
+      Skid["Skid structure"]
+      BayAtm["Bay atmosphere<br/>interim He ash"]
+      Skid --- BayAtm
+    end
+    subgraph charm ["CHARM"]
+      BB["Backbone / strongback"]
+      subgraph chambers ["Chamber string"]
+        L["Left fusion chamber"]
+        HEX["Heat exchange chamber"]
+        R["Right fusion chamber"]
+        Axis["Central axis / shaft"]
+        L --- HEX --- R
+        Axis --- HEX
+      end
+      MagR["Magnet rack<br/>coils + cryostats"]
+      RfR["RF rack<br/>launchers + amps"]
+      DrR["Rotation drive rack"]
+      ThR["Thermal rack<br/>coolant bath"]
+      BB --- chambers
+      BB --- MagR
+      BB --- RfR
+      BB --- DrR
+      BB --- ThR
+    end
+    DEC["DEC"]
+    Bus["Plant electrical bus 1 GW"]
+    PSU["Magnet PSU bay"]
+    Cryo["Cryo compressor bay"]
+    Vac["Vacuum / controls pack"]
+    subgraph fuel ["Fuel services"]
+      Hp["Proton tank"]
+      B11["Boron-11 container"]
+      Inj["Solid fuel injector"]
+      Hp --- B11 --- Inj
+    end
     Bat["Flight battery 2 t"]
+    Cart["Ground cart Earth only"]
   end
-  Hp --> Fus
-  B11 --> Boron
-  Mag --- charm
-  RFU --- RF1
-  RFU --- RF2
-  Rot --- Boron
-  Ash --> DEC
-  DEC --> Bus["1 GW electrical bus"]
-  Cart -.-> Mag
-  Cart -.-> RFU
-  Bat -.-> Mag
-  Bat -.-> RFU
-  Bus --> Eng["Combined-cycle engine"]
-  Cryo --- charm
-  Vac --- charm
+  Eng["Combined-cycle engine<br/>propulsion bus coupler"]
+  skid --- charm
+  HEX -->|alphas| DEC
+  DEC --> Bus
+  Bus -->|power cable| Eng
+  MagR --- PSU
+  ThR --- Cryo
+  Inj -->|solid feed| L
+  Inj -->|solid feed| R
+  Hp -->|feed| L
+  Hp -->|feed| R
+  DEC -->|He ash interim| BayAtm
+  Cart -.->|startup| PSU
+  Cart -.->|startup| RfR
+  Bat -.->|startup| PSU
+  Bat -.->|startup| RfR
+  Bat -.->|startup| DrR
+  Vac --- HEX
 ```
 
 ### Profile stations
 
-<!-- mermaid-caption: Profile view (to scale) -->
+Stations match assembly envelopes: crew \(0\)–\(11\,\mathrm{m}\), airlock \(11\)–\(15\,\mathrm{m}\), cargo \(15\)–\(33.3\,\mathrm{m}\), fusion plant \(33.3\)–\(45\,\mathrm{m}\) (battery + fuel + CHARM on one skid), engine \(45\)–\(52\,\mathrm{m}\) (water tanks on engine skid).
+
+<!-- mermaid-caption: Profile stations from assembly envelopes -->
 ```mermaid
 flowchart TD
-  subgraph profile ["Profile stations +x"]
-    N["Nose gear"]
-    C2["Crew + ECLSS/O2"]
-    A2["Large airlock"]
-    B2["Cargo 18.3 m"]
-    BAT2["Battery"]
-    F2["p/11B tanks"]
-    R2["CHARM"]
-    W2["H2O"]
-    E2["Engine"]
-    MG["Main gear"]
-    N --- C2
-    C2 --- A2
-    A2 --- B2
-    B2 --- BAT2
+  subgraph profile ["Profile stations +x from assembly.json"]
+    N["Nose gear<br/>fuselage"]
+    C2["Crew capsule<br/>0–11 m"]
+    A2["Airlock<br/>11–15 m"]
+    B2["Cargo bay<br/>15–33.3 m"]
+    FP["Fusion electric plant<br/>33.3–45 m"]
+    BAT2["Flight battery<br/>on plant skid"]
+    F2["Fuel services<br/>on plant skid"]
+    R2["CHARM island<br/>on plant skid"]
+    ENG["Combined-cycle engine<br/>45–52 m"]
+    W2["Water tanks<br/>on engine skid"]
+    E2["Stages 1–3 + nozzle"]
+    MG["Main gear<br/>wing"]
+    N --- C2 --- A2 --- B2 --- FP
+    FP --- BAT2
+    FP --- F2
+    FP --- R2
+    FP --- ENG
+    ENG --- W2
+    ENG --- E2
     B2 --- MG
-    BAT2 --- F2
-    F2 --- R2
-    R2 --- W2
-    W2 --- E2
   end
 ```
 
@@ -877,29 +901,42 @@ Table: Longitudinal station and bay layout.
 
 **Doors (Shuttle pattern).** (1) **Side/forward crew door** — runway/ground only; (2) **airlock** — on-orbit cabin ↔ cargo bay / vacuum for suited operations [21].
 
-<!-- mermaid-caption: Top-down floorplan -->
+<!-- mermaid-caption: Top-down floorplan from assembly.json -->
 ```mermaid
 flowchart LR
-  subgraph crew ["Crew module"]
+  subgraph crew ["Crew capsule"]
     FD["Flight deck<br/>CDR/PLT forward"]
-    SE["Six seats<br/>nap recline"]
-    LUG["Luggage stowage"]
-    WCS["WCS toilet"]
-    GAL["Galley + food"]
-    ECLSS["ECLSS + O₂/N₂<br/>pressure tanks"]
-    DOOR["Ground crew door<br/>port/forward"]
+    SE["Four nap seats + deck"]
+    LUG["Luggage lockers"]
+    WCS["Toilet"]
+    GAL["Galley"]
+    ECLSS["ECLSS + O₂/N₂<br/>inside cabin"]
+    DOOR["Left-side ground hatch"]
     FD --- SE --- LUG
     SE --- WCS --- GAL --- ECLSS
     DOOR --- SE
   end
-  AL["Large airlock<br/>suited egress<br/>faces cargo bay"]
-  B["Cargo bay 18.3 m"]
-  BAT["Flight battery"]
-  FUEL["p / ¹¹B fuel tanks"]
-  R["CHARM bay"]
-  W["Water tanks"]
-  E["Engine"]
-  crew --> AL --> B --> BAT --> FUEL --> R --> W --> E
+  AL["Airlock<br/>cabin↔bay hatches"]
+  B["Cargo bay<br/>skid + bay doors"]
+  subgraph FP ["Fusion electric plant skid"]
+    BAT["Flight battery"]
+    FUEL["Fuel services<br/>H / ¹¹B / injector"]
+    R["CHARM<br/>chambers + sub-racks"]
+    DEC2["DEC + plant bus"]
+    BAT --- FUEL --- R --- DEC2
+  end
+  subgraph ENG ["Combined-cycle engine skid"]
+    W["Water tanks"]
+    S1["Stage-1 EDF"]
+    S2["Stage-2 air plasma"]
+    S3["Stage-3 water plasma"]
+    NZ["Shared nozzle"]
+    W --- S3
+    S1 --- NZ
+    S2 --- NZ
+    S3 --- NZ
+  end
+  crew --> AL --> B --> FP --> ENG
 ```
 
 
