@@ -6,6 +6,19 @@
   const CONTAIN = "#9a9a9a";
   const CONNECT = "#0d7a6f";
 
+  /**
+   * Soft fills for neighboring expanded siblings (and their descendant parts).
+   * Distinct enough to pick out stage-1 / 2 / 3 without adding subgraph boxes.
+   */
+  const SIBLING_TINTS = [
+    { fill: "#e4f0e2", stroke: "#4f7a48", text: "#1e3320" }, // sage
+    { fill: "#e2f1f4", stroke: "#3d6f7c", text: "#1a3036" }, // teal mist
+    { fill: "#f5efe3", stroke: "#8a6e42", text: "#3a2e18" }, // sand
+    { fill: "#f3e8e8", stroke: "#8a5558", text: "#3a1e20" }, // rose dust
+    { fill: "#eceedf", stroke: "#6a7a40", text: "#2a3218" }, // olive
+    { fill: "#ebe8f2", stroke: "#5a5578", text: "#242038" }, // slate lilac
+  ];
+
   /** @type {any} */
   let assembly = null;
   /** @type {Map<string, any>} */
@@ -81,34 +94,94 @@
     return null;
   }
 
+  /**
+   * Color neighboring siblings under the same expanded parent differently;
+   * descendants inherit the nearest tinted ancestor so a whole stage reads as one wash.
+   * @returns {Map<string, number>}
+   */
+  function computeSiblingTints(visible) {
+    const vis = new Set(visible);
+    /** @type {Map<string, number>} */
+    const tintRoot = new Map();
+    /** @type {Map<string, string[]>} */
+    const kidsByParent = new Map();
+
+    for (const id of visible) {
+      const { parentId } = byId.get(id);
+      if (!parentId || !vis.has(parentId)) continue;
+      if (!kidsByParent.has(parentId)) kidsByParent.set(parentId, []);
+      kidsByParent.get(parentId).push(id);
+    }
+
+    for (const kids of kidsByParent.values()) {
+      if (kids.length < 2) continue;
+      kids.forEach((id, i) => {
+        tintRoot.set(id, i % SIBLING_TINTS.length);
+      });
+    }
+
+    /** @type {Map<string, number>} */
+    const tintOf = new Map();
+    for (const id of visible) {
+      let cur = id;
+      while (cur) {
+        if (tintRoot.has(cur)) {
+          tintOf.set(id, tintRoot.get(cur));
+          break;
+        }
+        const entry = byId.get(cur);
+        if (!entry || entry.parentId == null) break;
+        cur = entry.parentId;
+      }
+    }
+    return tintOf;
+  }
+
   function buildMermaid(visible) {
     const vis = new Set(visible);
+    const tintOf = computeSiblingTints(visible);
     const lines = [
       "flowchart TB",
       `  linkStyle default stroke:${CONTAIN},stroke-width:1.5px`,
       "  classDef collection fill:#e7eef8,stroke:#5a6f8c,stroke-width:1.8px,stroke-dasharray:6 4,color:#243447",
       "  classDef part fill:#ffffff,stroke:#333,stroke-width:1.5px,color:#222",
     ];
+    SIBLING_TINTS.forEach((t, i) => {
+      lines.push(
+        `  classDef tint${i}c fill:${t.fill},stroke:${t.stroke},stroke-width:1.8px,stroke-dasharray:6 4,color:${t.text}`,
+      );
+      lines.push(
+        `  classDef tint${i}p fill:${t.fill},stroke:${t.stroke},stroke-width:1.5px,color:${t.text}`,
+      );
+    });
+
     let nContain = 0;
-    const collectionIds = [];
-    const partIds = [];
+    /** @type {Map<string, string[]>} className -> ids */
+    const classBuckets = new Map();
+
+    function bucket(cls, id) {
+      if (!classBuckets.has(cls)) classBuckets.set(cls, []);
+      classBuckets.get(cls).push(id);
+    }
 
     for (const id of visible) {
       const { node } = byId.get(id);
       const label = node.label || id;
-      if (isCollection(node)) {
+      const coll = isCollection(node);
+      if (coll) {
         lines.push(`  ${id}(["${esc(label)}"])`);
-        collectionIds.push(id);
       } else {
         lines.push(`  ${id}["${esc(label)}"]`);
-        partIds.push(id);
+      }
+      const ti = tintOf.get(id);
+      if (ti != null) {
+        bucket(coll ? `tint${ti}c` : `tint${ti}p`, id);
+      } else {
+        bucket(coll ? "collection" : "part", id);
       }
     }
-    if (collectionIds.length) {
-      lines.push(`  class ${collectionIds.join(",")} collection`);
-    }
-    if (partIds.length) {
-      lines.push(`  class ${partIds.join(",")} part`);
+    for (const [cls, ids] of classBuckets) {
+      lines.push(`  class ${ids.join(",")} ${cls}`);
     }
 
     for (const id of visible) {
@@ -183,6 +256,7 @@
   function renderTree() {
     treePane.innerHTML = "";
     const root = document.createElement("div");
+    const tintOf = computeSiblingTints(collectVisibleIds());
 
     function addRow(node, depth) {
       const row = document.createElement("div");
@@ -192,6 +266,12 @@
         (collection ? " collection" : "") +
         (node.id === selected ? " selected" : "");
       row.style.paddingLeft = `${0.25 + depth * 0.9}rem`;
+      const ti = tintOf.get(node.id);
+      if (ti != null) {
+        const t = SIBLING_TINTS[ti];
+        row.style.borderLeft = `3px solid ${t.stroke}`;
+        row.dataset.tint = String(ti);
+      }
 
       const twisty = document.createElement("span");
       twisty.className = "twisty" + (hasChildren(node) ? "" : " leaf");

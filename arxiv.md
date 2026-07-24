@@ -11,13 +11,13 @@ July 22, 2026
 
 ## Abstract
 
-We specify a single-stage-to-orbit (SSTO) spaceplane that flies Space Shuttle–style operations—including a Shuttle-class cargo bay—from a municipal airport to International Space Station (ISS) altitude in low Earth orbit (LEO), powered by a continuous Chambered Aneutronic Rotating Mirror (CHARM) \(p\text{-}^{11}\mathrm{B}\) plant [1] with direct energy conversion (DEC). Flight regimes use free air, then scarce air, then carried water. Each design step is written as a closed set of equations. We guesstimate the reactor mass hole, constrain water as a function of dry mass and vacuum \(\Delta v\), impose a \(1\,\mathrm{GW}\) plant with space restart and DEC, and solve a reference all-up mass. Combined-cycle engine maps and CHARM size/performance constraints follow.
+We specify a single-stage-to-orbit (SSTO) spaceplane that flies Space Shuttle–style operations—including a Shuttle-class cargo bay—from a municipal airport to International Space Station (ISS) altitude in low Earth orbit (LEO), powered by a continuous Chambered Aneutronic Rotating Mirror (CHARM) \(p\text{-}^{11}\mathrm{B}\) plant [1] with direct energy conversion (DEC). Flight regimes use three electric stages: ducted fan on free air, microwave air plasma on climb, then carried-water plasma with intakes sealed. Each design step is written as a closed set of equations. We guesstimate the reactor mass hole, constrain water as a function of dry mass and vacuum \(\Delta v\), impose a \(1\,\mathrm{GW}\) plant with space restart and DEC, and solve a reference all-up mass. Combined-cycle engine maps and CHARM size/performance constraints follow.
 
 ---
 
 ## 1. Vehicle vision
 
-Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real cargo bay, a single-deck crew module, and a continuous CHARM \(p\text{-}^{11}\mathrm{B}\) plant driving a combined-cycle engine (free air → scarce air → carried water). The figures below are the vehicle picture; the equations that close the mass and energy budgets follow.
+Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real cargo bay, a single-deck crew module, and a continuous CHARM \(p\text{-}^{11}\mathrm{B}\) plant driving a three-stage combined-cycle engine (electric ducted fan → microwave air plasma → water plasma). The figures below are the vehicle picture; the equations that close the mass and energy budgets follow.
 
 ### Interior floorplan and exterior profile
 
@@ -252,34 +252,36 @@ So a \(1\,\mathrm{GW}\) CHARM bus is an **energy-throughput** match for Shuttle-
 
 ---
 
-## 5. Flight regimes: free air → scarce air → water
+## 5. Flight regimes: three electric stages
 
-Define cutoff speed \(v_{\mathrm{ab}}\) and altitude \(h_{\mathrm{ab}}\) where intakes seal and water thrust begins.
+One propulsion string, three stages. No scramjet claim. Plant couples only by **power cable** (DEC → bus).
 
-Table: Flight regimes and reaction-mass path.
+Table: Combined-cycle stages (reaction mass and thruster family).
 
-| Regime | Density | Reaction mass | Plant → thrust path |
-|--------|---------|---------------|---------------------|
-| **R1 Free air** | Troposphere / lower stratosphere | **Free** ingested air | Electricity → fan / bypass |
-| **R2 Scarce air** | Upper atmosphere | **Free** ram air | Electricity + heat → ram / plasma accelerator |
-| **R3 Vacuum** | Exo-atmosphere / LEO insert | **Carried water** | Electricity / DEC → water plasma jet |
+| Stage | Ambient | Reaction mass | Thruster family (anchor lit.) |
+|-------|---------|---------------|-------------------------------|
+| **1** Municipal / dense air | Free air | Ingested air | Electric ducted fan (EDF) |
+| **2** Climb / scarce air | Free air | Ingested + compressed air | Microwave **air** plasma jet [23] |
+| **3** Vacuum / LEO insert | Intakes sealed | Carried **water** | Microwave **water** plasma thruster lineage [24] |
+
+Cutoff: intakes seal at density/Mach command \(\rho\le\rho_{\mathrm{seal}}\) (or crew/auto seal for reentry); stage 3 begins.
 
 Energy split (schematic):
 
 \[
 E_{\mathrm{src}}
-  = E_{\mathrm{R1}} + E_{\mathrm{R2}} + E_{\mathrm{R3}} + E_{\mathrm{hotel}} + E_{\mathrm{loss}}.
+  = E_{1} + E_{2} + E_{3} + E_{\mathrm{hotel}} + E_{\mathrm{loss}}.
 \]
 
-With free reaction mass in R1–R2, plant energy primarily raises vehicle mechanical energy and pays drag:
+With free reaction mass in stages 1–2, plant energy primarily raises vehicle mechanical energy and pays drag:
 
 \[
 P_{\mathrm{prop}}(t) \approx \frac{D(t)\,v(t)}{\eta_{\mathrm{p}}(t)},
 \qquad
-\int P_{\mathrm{prop}}\,\mathrm{d}t \subset E_{\mathrm{R1}}+E_{\mathrm{R2}}.
+\int P_{\mathrm{prop}}\,\mathrm{d}t \subset E_{1}+E_{2}.
 \]
 
-In R3, jet power for exhaust speed \(v_e\) and mass flow \(\dot{m}_{\mathrm{w}}\) is
+In stage 3, jet power for exhaust speed \(v_e\) and water mass flow \(\dot{m}_{\mathrm{w}}\) is
 
 \[
 P_{\mathrm{jet}} = \frac{1}{2}\,\dot{m}_{\mathrm{w}} v_e^2,\qquad
@@ -292,7 +294,7 @@ P_{\mathrm{jet}} = \frac{1}{2}\,T\,v_e.
 
 ## 6. Water mass as a function of whole dry mass
 
-Water is used only in R3. Let
+Water is used only in stage 3. Let
 
 \[
 m_{\mathrm{dry}}
@@ -609,7 +611,7 @@ P_{\mathrm{bus}} = \eta_{\mathrm{DEC}} P_{\alpha,\mathrm{ordered}}
 
 Thermal reject (X-ray, wall, inefficiencies) must be dumped to:
 
-- air path (R1–R2 heat exchanger / microwave), and/or  
+- air path (stage-1/2 heat exchanger / microwave reject), and/or  
 - island bath → compact turbine, and/or  
 - radiators only after exo-atmospheric (limited area).
 
@@ -678,32 +680,33 @@ is booked for **on-orbit relight**, while **first light on Earth** uses the grou
 
 ## 10. Combined-cycle engine (detail)
 
-One propulsion string with mode variable \(\sigma \in \{1,2,3,4\}\).
+One propulsion string with stage index \(\sigma \in \{1,2,3\}\).
 
-### 9.1 Mode map
+### 9.1 Stage map
 
-Table: Combined-cycle engine mode map.
+Table: Combined-cycle engine stages (no scramjet).
 
-| \(\sigma\) | Name | Mach / ambient | Mass flow | Thrust model (0D) |
-|------------|------|----------------|-----------|-------------------|
-| 1 | Electric fan | \(0 \le M \lesssim 0.9\) | \(\dot{m}_{\mathrm{air}}\) | \(T = \eta_{\mathrm{f}} P_{\mathrm{bus}} / v_{\mathrm{jet}}\) |
-| 2 | Thermal ram | \(0.9 \lesssim M \lesssim 5\) | ram \(\dot{m}_{\mathrm{air}}(M,\rho)\) | heat addition \(\Delta h = \eta_{\mathrm{h}} P_{\mathrm{th}}/\dot{m}\) |
-| 3 | Plasma / magnetohydrodynamic (MHD) | \(M \gtrsim 5\), scarce \(\rho\) | small \(\dot{m}_{\mathrm{air}}\) | \(T = \eta_{\mathrm{MHD}} P_{\mathrm{bus}} / v_{\mathrm{eff}}\) |
-| 4 | Water plasma | intakes sealed | \(\dot{m}_{\mathrm{w}}\) | \(T = \dot{m}_{\mathrm{w}} v_e\), \(P_{\mathrm{jet}}=\tfrac12\dot{m}_{\mathrm{w}} v_e^2\) |
+| \(\sigma\) | Name | Ambient | Mass flow | Thrust model (0D) | Lit. anchor |
+|------------|------|---------|-----------|-------------------|-------------|
+| 1 | Electric ducted fan | Dense air, low \(M\) | \(\dot{m}_{\mathrm{air}}\) | \(T = \eta_{\mathrm{f}} P_{\mathrm{bus}} / v_{\mathrm{jet}}\) | EDF / fan jet |
+| 2 | Microwave air plasma jet | Climb / scarce air | \(\dot{m}_{\mathrm{air}}\) (compressed) | electrothermal jet [23] | Ye et al. [23] |
+| 3 | Water plasma thruster | Intakes sealed | \(\dot{m}_{\mathrm{w}}\) | \(T=\dot{m}_{\mathrm{w}} v_e\), \(P_{\mathrm{jet}}=\tfrac12\dot{m}_{\mathrm{w}} v_e^2\) | Nakagawa et al. [24] |
 
 Switching laws (schematic):
 
 \[
 \sigma =
 \begin{cases}
-1 & \rho > \rho_1,\ M < M_{12},\\
-2 & \rho > \rho_2,\ M_{12} \le M < M_{23},\\
-3 & \rho_3 < \rho \le \rho_2,\ M \ge M_{23},\\
-4 & \rho \le \rho_3\ \text{or intakes commanded sealed}.
+1 & \rho > \rho_{12},\ M < M_{12},\\
+2 & \rho > \rho_{\mathrm{seal}},\ M \ge M_{12},\\
+3 & \rho \le \rho_{\mathrm{seal}}\ \text{or intakes commanded sealed}.
 \end{cases}
 \]
 
-### 9.2 Fan mode (municipal)
+**Stage 2 mechanism (locked):** high-power microwave source(s) couple into a duct of **compressed ingested air**, ionizing/heating it to a hot plasma (\(\gtrsim 10^3\,\mathrm{^\circ C}\) class in lab hardware) that expands through the shared nozzle — pure electric “thermal jet,” not a combustion scramjet [23].  
+**Stage 3 mechanism (locked):** carried water is vaporized, then microwave-discharged into an \(\mathrm{H_2O}\) plasma and accelerated (ion / electrothermal family demonstrated with water propellant [24]). Smallsat demos are \(\mu\mathrm{N}\)–class; this vehicle **keeps the propellant + microwave-plasma architecture** and sizes thrust from the GW bus (scale-up is an unobtainium — §13).
+
+### 9.2 Stage 1 — electric ducted fan (municipal)
 
 \[
 P_{\mathrm{fan}} = \eta_{\mathrm{m}}^{-1} T\,v_{\mathrm{to}},
@@ -720,18 +723,34 @@ P_{\mathrm{fan}} \approx 54\,\mathrm{MW}
 
 —well below \(P_{\star}\); municipal segment is **not** the power driver.
 
-### 9.3 Ram / plasma modes
+### 9.3 Stage 2 — microwave air plasma jet
 
-Ram drag and net thrust:
+Ingested air is compressed (ram +/or electric compressor), then heated/ionized by microwave power \(P_{\mu}\) in an applicator duct [23]:
+
+\[
+\dot{m}_{\mathrm{air}} = \rho\,A_{\mathrm{i}}\,v\,C_{\mathrm{cap}},
+\qquad
+\Delta h = \frac{\eta_{\mu} P_{\mu}}{\dot{m}_{\mathrm{air}}},
+\qquad
+v_{\mathrm{j,2}} \approx \sqrt{2\,\Delta h}\ \text{(ideal electrothermal)},
+\]
+
+\[
+T_2 \approx \eta_{\mathrm{j,2}}\,\dot{m}_{\mathrm{air}}\,v_{\mathrm{j,2}},
+\qquad
+P_{\mu} \le P_{\mathrm{bus}} - P_{\mathrm{hotel}}.
+\]
+
+Ram drag and net climb power still bound the bus:
 
 \[
 D_{\mathrm{ram}} = \tfrac12\rho v^2 C_D S,\qquad
 P_{\mathrm{need}} \approx \frac{(D_{\mathrm{ram}} - T_{\mathrm{excess}})\,v}{\eta_{\mathrm{p}}}.
 \]
 
-Peak \(P_{\mathrm{need}}\) near mid-hypersonic climb sets the \(1\,\mathrm{GW}\) requirement (design goal G9).
+Peak \(P_{\mathrm{need}}\) near mid–high-altitude climb sets the \(1\,\mathrm{GW}\) requirement (design goal G9). Lab microwave air-plasma jets are kW-class [23]; flight scale is an array / high-power source problem (thermal materials + magnetron/solid-state MW farm), not a different physics story.
 
-### 9.4 Water mode
+### 9.4 Stage 3 — water plasma thruster
 
 \[
 \dot{m}_{\mathrm{w}}(t) = \frac{T(t)}{v_e},\qquad
@@ -739,18 +758,19 @@ Peak \(P_{\mathrm{need}}\) near mid-hypersonic climb sets the \(1\,\mathrm{GW}\)
 \]
 
 \[
-P_{\mathrm{bus,4}}(t) \ge \frac{1}{2\eta_{\mathrm{jet}}} \dot{m}_{\mathrm{w}} v_e^2.
+P_{\mathrm{bus,3}}(t) \ge \frac{1}{2\eta_{\mathrm{jet}}} \dot{m}_{\mathrm{w}} v_e^2.
 \]
 
-At \(T = 100\,\mathrm{kN}\), \(v_e = 20\,\mathrm{km/s}\): \(P_{\mathrm{jet}} = 1\,\mathrm{GW}\) — vacuum thrust is power-limited; insertion is a **long burn**, not a Space Shuttle Main Engine (SSME) sprint.
+Water path (architecture from [24], power from CHARM bus): tank → feed pump → injector/vaporizer → microwave water-plasma source → accelerator / nozzle. At \(T = 100\,\mathrm{kN}\), \(v_e = 20\,\mathrm{km/s}\): \(P_{\mathrm{jet}} = 1\,\mathrm{GW}\) — vacuum thrust is power-limited; insertion is a **long burn**, not a Space Shuttle Main Engine (SSME) sprint.
 
 ### 9.5 Physical envelope
 
 - One rectangular / axisymmetric nacelle blended to wing root or aft fuselage.  
-- Variable inlet; **airlock shutters** for R3 and reentry.  
-- Shared nozzle for modes 2–4; fan bypass duct for mode 1.  
+- Variable inlet with **close-off shutters** for stage 3 and reentry.  
+- **Shared nozzle** for stages 2–3; fan bypass duct for stage 1.  
+- Stage-2 microwave applicator + stage-3 water-plasma source share the bus coupler; water tanks on the engine skid.  
 - Magnetic bearings / dry lubrication where vacuum survival matters.  
-- \(m_{\mathrm{eng}} = 15\,\mathrm{t}\) reference includes motors, microwave/MHD hardware, pumps, and structure.
+- \(m_{\mathrm{eng}} = 15\,\mathrm{t}\) reference includes EDF motors, microwave sources/applicators, water feed/pumps, plasma duct, and structure.
 
 ---
 
@@ -811,13 +831,13 @@ Table: Systems checklist: equations to constraints.
 |------|---------------------|----------------|
 | Goals | G1–G9 + single-deck crew | Shuttle bay + municipal SSTO to ISS |
 | LEO energy | \(E_{\mathrm{orb}}=m_{\mathrm{ins}}\Delta\varepsilon\), \(E_{\mathrm{src}}=\kappa_E E_{\mathrm{orb}}\) | **\(\sim 1.8\,\mathrm{GWh}\)** orbital @ \(196\,\mathrm{t}\); **\(\sim 5.4\,\mathrm{GWh}\)** source @ \(\kappa_E=3\) |
-| Regimes | R1–R3 mass-flow logic | Free air → scarce air → water |
+| Regimes | Stages 1–3 mass-flow logic | EDF → microwave air plasma → water plasma |
 | Water | \(m_{\mathrm{w}}=m_{\mathrm{dry}}(e^{\Delta v_{\mathrm{vac}}/v_e}-1)\) | **\(\sim 23\%\) of dry mass** @ ref |
 | Structure | \(m_{\mathrm{str}}=m_{\mathrm{af}}+m_{\mathrm{gear}}+m_{\mathrm{ctrl}}+m_{\mathrm{crew}}\) | **\(87.5\,\mathrm{t}\)** incl.\ gear/controls/ECLSS+O₂/luggage/airlock |
 | CHARM | \(m_{\mathrm{C}}=P_{\star}/\alpha_{\mathrm{C}}\), DEC, restart | **\(67\,\mathrm{t}\) @ \(15\,\mathrm{kW/kg}\)** |
 | Light-off | Magnets + RF + rotation; no NBI | **\(50\)–\(200\,\mathrm{kWh}\)** est.; cart / \(2\,\mathrm{t}\) battery |
 | Solve | \(m_0 = m_{\mathrm{dry}} e^{\Delta v_{\mathrm{vac}}/v_e}\) | **\(m_0 \approx 240\,\mathrm{t}\)**; **\(L \approx 52\,\mathrm{m}\)** |
-| Engine | Mode map \(\sigma\); \(P_{\mathrm{fan}}\ll P_{\star}\); \(P_{\mathrm{jet}}=\tfrac12 T v_e\) | \(1\,\mathrm{GW}\) sizes R2–R4 |
+| Engine | Stage map \(\sigma\in\{1,2,3\}\); \(P_{\mathrm{fan}}\ll P_{\star}\); \(P_{\mathrm{jet}}=\tfrac12 T v_e\) | \(1\,\mathrm{GW}\) sizes stages 2–3 [23], [24] |
 
 ---
 
@@ -887,7 +907,7 @@ Sections 1–12 are a **requirements mirror** held up to CHARM: they say what a 
 
 ## 14. Conclusion
 
-Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. The pressurized nose is **lengthened (\(\approx 52\,\mathrm{m}\) OML)** so the cabin can hold a real **ECLSS with O₂/N₂**, **luggage**, a **suited-size airlock** into the bay, plus visible **battery** and **fusion-fuel tank** bays. Crew: **forward-facing flight deck**, **six nap-recline seats**, **ground crew door**, **aft airlock into cargo**. **Landing gear (\(4\,\mathrm{t}\))** and **control surfaces (\(3\,\mathrm{t}\))** sit in the mass bill (gear drawn on the profile, not the floorplan). The MWh budget is linear in inserted mass: about **\(9.2\,\mathrm{kWh}\) per kg** orbital, times \(\kappa_E\sim 2\)–\(4\) at the CHARM bus. Water scales only with **dry mass** and vacuum \(\Delta v/I_{\mathrm{sp}}\). Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**, with CHARM as a **\(67\,\mathrm{t}\), \(\lesssim 120\,\mathrm{m}^3\)** island using **DEC**, lit by **magnets + RF + rotation** (\(50\)–\(200\,\mathrm{kWh}\) class light-off; space restart from a \(2\,\mathrm{t}\) battery), and a **single combined-cycle engine** spanning fan → ram/plasma → water jet. Vision figures (§1) show planform, plant, and profile. Those are the numbers the in-silico CHARM plant and engine maps must satisfy.
+Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. The pressurized nose is **lengthened (\(\approx 52\,\mathrm{m}\) OML)** so the cabin can hold a real **ECLSS with O₂/N₂**, **luggage**, a **suited-size airlock** into the bay, plus visible **battery** and **fusion-fuel tank** bays. Crew: **forward-facing flight deck**, **six nap-recline seats**, **ground crew door**, **aft airlock into cargo**. **Landing gear (\(4\,\mathrm{t}\))** and **control surfaces (\(3\,\mathrm{t}\))** sit in the mass bill (gear drawn on the profile, not the floorplan). The MWh budget is linear in inserted mass: about **\(9.2\,\mathrm{kWh}\) per kg** orbital, times \(\kappa_E\sim 2\)–\(4\) at the CHARM bus. Water scales only with **dry mass** and vacuum \(\Delta v/I_{\mathrm{sp}}\). Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**, with CHARM as a **\(67\,\mathrm{t}\), \(\lesssim 120\,\mathrm{m}^3\)** island using **DEC**, lit by **magnets + RF + rotation** (\(50\)–\(200\,\mathrm{kWh}\) class light-off; space restart from a \(2\,\mathrm{t}\) battery), and a **single combined-cycle engine** spanning electric ducted fan → microwave air plasma → water plasma. Vision figures (§1) show planform, plant, and profile. Those are the numbers the in-silico CHARM plant and engine maps must satisfy.
 
 ---
 
@@ -933,15 +953,19 @@ CHARM denotes the chambered aneutronic rotating-mirror architecture developed at
 
 [17] G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th ed. Hoboken, NJ: Wiley, 2017. (Rocket equation; \(I_{\mathrm{sp}}\)–\(v_e\) relation.)
 
-[18] J. D. Anderson Jr., *Modern Compressible Flow*, 3rd ed. New York, NY: McGraw-Hill, 2003. (Ram drag / air-breathing thermo context for modes 2–3.)
+[18] J. D. Anderson Jr., *Modern Compressible Flow*, 3rd ed. New York, NY: McGraw-Hill, 2003. (Ram drag / inlet thermo context for stage-2 air path.)
 
-[19] W. J. D. Escher, E. H. Hyde, and D. M. Anderson, “A preliminary systems assessment of the ‘Star-Raker’… airbreathing SSTO concept,” AIAA Paper, 1980s SABRE/airbreathing SSTO literature survey context for combined-cycle mode logic.
+[19] W. J. D. Escher, E. H. Hyde, and D. M. Anderson, “A preliminary systems assessment of the ‘Star-Raker’… airbreathing SSTO concept,” AIAA Paper, 1980s SABRE/airbreathing SSTO literature context for multi-regime airbreathing logic (this paper replaces scramjet claims with microwave air plasma [23]).
 
 [20] T. H. Rider, “Fundamental limitations on plasma fusion systems not in thermodynamic equilibrium,” Ph.D. dissertation, Massachusetts Institute of Technology, Cambridge, MA, 1995. (Non-equilibrium / radiation-limit context motivating chambered \(p\text{-}^{11}\mathrm{B}\) approaches.)
 
 [21] NASA, *Space Shuttle Vehicle Familiarization* (SSV FAM), crew module description: flight deck; middeck galley, personal hygiene, airlock, and **side hatch** for ground ingress/egress; equipment bay ECLSS. Training document SSV-FAM-1107 and NASA *Space Shuttle News Reference* crew-cabin arrangement figures (flight deck p.\ 3-9; middeck p.\ 3-10).
 
 [22] NASA, “A Walk Around the Space Shuttle,” crew compartment summary: flight deck controls; middeck living; side hatch; airlock hatch into the cargo bay. [Online]. Available: https://www.nasa.gov/wp-content/uploads/2016/08/113009main_walkaround.pdf
+
+[23] D. Ye, J. Li, and J. Tang, “Jet propulsion by microwave air plasma in the atmosphere,” *AIP Advances*, vol. 10, no. 5, Art. no. 055002, 2020, doi: 10.1063/5.0005814. (Stage-2 anchor: magnetron → compressed-air microwave plasma jet.)
+
+[24] Y. Nakagawa, H. Koizumi, H. Kawahara, and K. Komurasaki, “Performance characterization of a miniature microwave discharge ion thruster operated with water,” *Acta Astronautica*, vol. 157, pp. 294–299, 2019, doi: 10.1016/j.actaastro.2018.12.031. (Stage-3 architecture lineage: water propellant + microwave plasma; smallsat scale — vehicle sizes from GW bus.)
 
 ---
 

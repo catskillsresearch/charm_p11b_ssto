@@ -6,11 +6,12 @@
     "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
     "architecture": "Drop-ins each with own skid and bay doors: cargo, Fusion electric plant, combined-cycle engine. Plant \u2194 engine by power cable (DEC \u2192 bus coupler). Tail bolts to fuselage around the engine nozzle cutout; nozzle belongs to the engine only.",
     "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages.",
-    "rev": "2026-07-24-he-ash-bay",
+    "rev": "2026-07-24-edf-to-nozzle",
     "outliner_check": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "charm_cad": "CHARM expands to left fusion chamber | heat exchange chamber | right fusion chamber + central axis \u2014 match Fisch multi-chamber centrifugal mirror figure.",
     "packaging": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
-    "ash_handling": "interim_bay_pollution: He ash after DEC \u2192 fusion_plant_bay_atmosphere; not freeze/liquefy hazard; replace with buffer+purge later."
+    "ash_handling": "interim_bay_pollution: He ash after DEC \u2192 fusion_plant_bay_atmosphere; not freeze/liquefy hazard; replace with buffer+purge later.",
+    "engine_stages": "1=EDF, 2=microwave air plasma (Ye 2020), 3=water microwave plasma (Nakagawa 2019 lineage)"
   },
   "frame": {
     "id": "vehicle",
@@ -1735,7 +1736,7 @@
           "x0": 45.0,
           "x1": 52.0
         },
-        "note": "Drop-in: engine skid (structure + bay doors) plus water tanks and propulsion hardware. Power from Fusion electric plant via cable (DEC \u2192 bus coupler). Nozzle clears under Tail; Tail is a separate fuselage-mounted assembly.",
+        "note": "Drop-in three-stage electric combined-cycle: (1) electric ducted fan, (2) microwave air plasma jet [Ye AIP Adv 2020], (3) water microwave plasma thruster [Nakagawa Acta Astronaut. 2019 lineage]. Power only via cable from Fusion electric plant (DEC \u2192 bus coupler).",
         "children": [
           {
             "id": "engine_skid",
@@ -1824,6 +1825,18 @@
                   {
                     "id": "nozzle_mount",
                     "role": "engine_mount"
+                  },
+                  {
+                    "id": "edf_mount",
+                    "role": "engine_mount"
+                  },
+                  {
+                    "id": "stage2_mount",
+                    "role": "engine_mount"
+                  },
+                  {
+                    "id": "stage3_mount",
+                    "role": "engine_mount"
                   }
                 ],
                 "children": [],
@@ -1859,6 +1872,188 @@
             ]
           },
           {
+            "id": "stage1_edf",
+            "label": "Stage-1 electric ducted fan",
+            "kind": "equipment",
+            "note": "Municipal / dense-air thrust: high-bypass electric ducted fan driven from the bus. No combustor / no turbine core. Bypass exhaust ducts to the shared nozzle (stages 2\u20133 use the plasma path into the same nozzle).",
+            "ports": [
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              },
+              {
+                "id": "bus",
+                "role": "power"
+              },
+              {
+                "id": "air_in",
+                "role": "air_path"
+              },
+              {
+                "id": "bypass_out",
+                "role": "fan_exhaust"
+              }
+            ]
+          },
+          {
+            "id": "stage2_air_plasma",
+            "label": "Stage-2 microwave air plasma jet",
+            "kind": "assembly",
+            "note": "Ye et al. (AIP Advances 2020) architecture at flight scale: compress ingested air, couple high-power microwaves, expand hot air plasma in shared nozzle. Built as an engine subassembly before skid integration.",
+            "children": [
+              {
+                "id": "stage2_frame",
+                "label": "Stage-2 plasma duct frame",
+                "kind": "structure",
+                "ports": [
+                  {
+                    "id": "skid_mount",
+                    "role": "engine_mount"
+                  },
+                  {
+                    "id": "gear_mount",
+                    "role": "rack_mount"
+                  }
+                ]
+              },
+              {
+                "id": "air_precompressor",
+                "label": "Air precompressor / ram conditioner",
+                "kind": "equipment",
+                "note": "Raises ingested air toward microwave-breakdown / applicator pressure (ram +/or electric boost).",
+                "ports": [
+                  {
+                    "id": "rack_mate",
+                    "role": "rack_mount"
+                  },
+                  {
+                    "id": "air_in",
+                    "role": "air_path"
+                  },
+                  {
+                    "id": "air_out",
+                    "role": "air_path"
+                  },
+                  {
+                    "id": "bus",
+                    "role": "power"
+                  }
+                ]
+              },
+              {
+                "id": "mw_magnetron_farm",
+                "label": "Microwave source farm (magnetron / solid-state)",
+                "kind": "equipment",
+                "note": "High-power microwave generators for stage-2 air plasma (and can feed stage-3 source). Lab anchor ~2.45 GHz magnetron [Ye 2020]; flight is an array / high-power farm.",
+                "ports": [
+                  {
+                    "id": "rack_mate",
+                    "role": "rack_mount"
+                  },
+                  {
+                    "id": "bus",
+                    "role": "power"
+                  },
+                  {
+                    "id": "mw_out",
+                    "role": "microwave"
+                  }
+                ]
+              },
+              {
+                "id": "mw_air_applicator",
+                "label": "Microwave air applicator / plasma duct",
+                "kind": "plasma_source",
+                "note": "Waveguide / quartz-ceramic duct where microwaves ionize and heat compressed air (>1000 \u00b0C class in lab).",
+                "ports": [
+                  {
+                    "id": "rack_mate",
+                    "role": "rack_mount"
+                  },
+                  {
+                    "id": "air_in",
+                    "role": "air_path"
+                  },
+                  {
+                    "id": "mw_in",
+                    "role": "microwave"
+                  },
+                  {
+                    "id": "plasma_out",
+                    "role": "plasma_exhaust"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "stage3_water_plasma_rack",
+            "label": "Stage-3 water plasma rack",
+            "kind": "assembly",
+            "note": "Separately buildable stage-3 package: vaporizer + microwave water-plasma thruster. Bolts to engine skid; uses carried water tanks.",
+            "children": [
+              {
+                "id": "stage3_frame",
+                "label": "Stage-3 thruster frame",
+                "kind": "structure",
+                "ports": [
+                  {
+                    "id": "skid_mount",
+                    "role": "engine_mount"
+                  },
+                  {
+                    "id": "gear_mount",
+                    "role": "rack_mount"
+                  }
+                ]
+              },
+              {
+                "id": "water_vaporizer",
+                "label": "Water vaporizer / gas-liquid separator",
+                "kind": "equipment",
+                "note": "Turns liquid water feed into vapor for the microwave plasma source (smallsat water thruster feed practice).",
+                "ports": [
+                  {
+                    "id": "rack_mate",
+                    "role": "rack_mount"
+                  },
+                  {
+                    "id": "liquid_in",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "vapor_out",
+                    "role": "propellant_feed"
+                  }
+                ]
+              },
+              {
+                "id": "stage3_water_plasma",
+                "label": "Stage-3 water plasma thruster",
+                "kind": "plasma_source",
+                "note": "Stage 3 (intakes sealed): water vapor \u2192 microwave H\u2082O plasma \u2192 accelerate/expand. Architecture lineage: miniature microwave water ion thrusters (Nakagawa/Koizumi); vehicle sizes from CHARM GW bus (scale-up unobtainium).",
+                "ports": [
+                  {
+                    "id": "bus",
+                    "role": "power"
+                  },
+                  {
+                    "id": "propellant_in",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "exhaust",
+                    "role": "plasma_exhaust"
+                  },
+                  {
+                    "id": "rack_mate",
+                    "role": "rack_mount"
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "id": "water_tanks",
             "label": "Water tanks (space propellant)",
             "kind": "tank",
@@ -1877,7 +2072,39 @@
                 "note": "To water injector"
               }
             ],
-            "note": "Carried water = R3 reaction mass. Lives on the engine drop-in (not the CHARM plant). Fed to the water injector; ionized in the engine."
+            "note": "Carried water = stage-3 reaction mass only. On the engine drop-in (not CHARM). Fed to injector \u2192 vaporizer \u2192 stage-3 thruster."
+          },
+          {
+            "id": "water_injector",
+            "label": "Water injector",
+            "kind": "injector",
+            "note": "Meters carried water into the stage-3 vaporizer / thruster when intakes are sealed.",
+            "ports": [
+              {
+                "id": "feed",
+                "role": "propellant_feed"
+              },
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              }
+            ]
+          },
+          {
+            "id": "propulsion_bus_coupler",
+            "label": "Propulsion bus coupler",
+            "kind": "equipment",
+            "note": "Engine-side end of the CHARM power cable / bus. Feeds stage-1 EDF, stage-2 microwave farm / compressor, and stage-3 water plasma thruster.",
+            "ports": [
+              {
+                "id": "bus_in",
+                "role": "power"
+              },
+              {
+                "id": "mount",
+                "role": "engine_mount"
+              }
+            ]
           },
           {
             "id": "nacelle",
@@ -1898,6 +2125,15 @@
               {
                 "id": "mount",
                 "role": "engine_mount"
+              },
+              {
+                "id": "air_out",
+                "role": "air_path"
+              },
+              {
+                "id": "edf_air_out",
+                "role": "air_path",
+                "note": "Bifurcation to stage-1 EDF when in fan mode"
               }
             ]
           },
@@ -1910,54 +2146,15 @@
               {
                 "id": "mount",
                 "role": "engine_mount"
-              }
-            ]
-          },
-          {
-            "id": "water_injector",
-            "label": "Water injector",
-            "kind": "injector",
-            "note": "Meters carried water into the thruster for R3 (vacuum). Fed from water tanks.",
-            "ports": [
-              {
-                "id": "feed",
-                "role": "propellant_feed"
               },
               {
-                "id": "mount",
-                "role": "engine_mount"
-              }
-            ]
-          },
-          {
-            "id": "water_ionizer",
-            "label": "Water ionizer / plasma accelerator",
-            "kind": "plasma_source",
-            "note": "Where water is ionized and accelerated for the water-plasma jet (R3). Bus power \u2192 exhaust kinetic energy. Not part of the CHARM chamber string.",
-            "ports": [
-              {
-                "id": "mount",
-                "role": "engine_mount"
+                "id": "plasma_in",
+                "role": "plasma_exhaust"
               },
               {
-                "id": "bus",
-                "role": "power"
-              }
-            ]
-          },
-          {
-            "id": "propulsion_bus_coupler",
-            "label": "Propulsion bus coupler",
-            "kind": "equipment",
-            "note": "Engine-side end of the CHARM power cable / bus. Feeds fan, heater, MHD, and water-ionizer modes.",
-            "ports": [
-              {
-                "id": "bus_in",
-                "role": "power"
-              },
-              {
-                "id": "mount",
-                "role": "engine_mount"
+                "id": "fan_bypass_in",
+                "role": "fan_exhaust",
+                "note": "Stage-1 EDF bypass thrust tube into shared aft exhaust"
               }
             ]
           }
@@ -2415,13 +2612,6 @@
       "note": "Water injector mounted on combined-cycle engine"
     },
     {
-      "id": "j_ionizer_on_engine",
-      "a": "water_ionizer.mount",
-      "b": "combined_cycle_engine_skid.ionizer_mount",
-      "type": "fixed",
-      "note": "Water ionizer / plasma accelerator on combined-cycle engine"
-    },
-    {
       "id": "j_bus_coupler_on_engine",
       "a": "propulsion_bus_coupler.mount",
       "b": "combined_cycle_engine_skid.bus_coupler_mount",
@@ -2853,6 +3043,138 @@
       "b": "charm_skid.bay_volume",
       "type": "contains",
       "note": "Bay atmosphere is the free volume inside the fusion plant skid envelope"
+    },
+    {
+      "id": "j_edf_on_skid",
+      "a": "stage1_edf.mount",
+      "b": "combined_cycle_engine_skid.edf_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_edf_bus",
+      "a": "propulsion_bus_coupler.bus_in",
+      "b": "stage1_edf.bus",
+      "type": "power",
+      "note": "Bus \u2192 stage-1 EDF (also branched to other stages)"
+    },
+    {
+      "id": "j_stage2_on_skid",
+      "a": "stage2_frame.skid_mount",
+      "b": "combined_cycle_engine_skid.stage2_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_precomp_in_stage2",
+      "a": "air_precompressor.rack_mate",
+      "b": "stage2_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_mw_farm_in_stage2",
+      "a": "mw_magnetron_farm.rack_mate",
+      "b": "stage2_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_applicator_in_stage2",
+      "a": "mw_air_applicator.rack_mate",
+      "b": "stage2_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_inlet_to_precomp",
+      "a": "variable_inlets.air_out",
+      "b": "air_precompressor.air_in",
+      "type": "air_path",
+      "note": "Inlets \u2192 precompressor (port reuse: functional air path)"
+    },
+    {
+      "id": "j_precomp_to_applicator",
+      "a": "air_precompressor.air_out",
+      "b": "mw_air_applicator.air_in",
+      "type": "air_path"
+    },
+    {
+      "id": "j_mw_to_applicator",
+      "a": "mw_magnetron_farm.mw_out",
+      "b": "mw_air_applicator.mw_in",
+      "type": "microwave"
+    },
+    {
+      "id": "j_stage2_to_nozzle",
+      "a": "mw_air_applicator.plasma_out",
+      "b": "shared_nozzle.plasma_in",
+      "type": "plasma_exhaust",
+      "note": "Stage-2 plasma \u2192 shared nozzle"
+    },
+    {
+      "id": "j_stage3_on_skid",
+      "a": "stage3_frame.skid_mount",
+      "b": "combined_cycle_engine_skid.stage3_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_vaporizer_in_stage3",
+      "a": "water_vaporizer.rack_mate",
+      "b": "stage3_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_thruster_in_stage3",
+      "a": "stage3_water_plasma.rack_mate",
+      "b": "stage3_frame.gear_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_injector_to_vaporizer",
+      "a": "water_injector.feed",
+      "b": "water_vaporizer.liquid_in",
+      "type": "propellant_feed"
+    },
+    {
+      "id": "j_vaporizer_to_thruster",
+      "a": "water_vaporizer.vapor_out",
+      "b": "stage3_water_plasma.propellant_in",
+      "type": "propellant_feed"
+    },
+    {
+      "id": "j_stage3_to_nozzle",
+      "a": "stage3_water_plasma.exhaust",
+      "b": "shared_nozzle.plasma_in",
+      "type": "plasma_exhaust",
+      "note": "Stage-3 plasma \u2192 shared nozzle"
+    },
+    {
+      "id": "j_bus_to_mw_farm",
+      "a": "propulsion_bus_coupler.bus_in",
+      "b": "mw_magnetron_farm.bus",
+      "type": "power"
+    },
+    {
+      "id": "j_bus_to_stage3",
+      "a": "propulsion_bus_coupler.bus_in",
+      "b": "stage3_water_plasma.bus",
+      "type": "power"
+    },
+    {
+      "id": "j_bus_to_precomp",
+      "a": "propulsion_bus_coupler.bus_in",
+      "b": "air_precompressor.bus",
+      "type": "power"
+    },
+    {
+      "id": "j_edf_to_nozzle",
+      "a": "stage1_edf.bypass_out",
+      "b": "shared_nozzle.fan_bypass_in",
+      "type": "fan_exhaust",
+      "note": "Stage-1 EDF bypass \u2192 shared nozzle"
+    },
+    {
+      "id": "j_inlet_to_edf",
+      "a": "variable_inlets.edf_air_out",
+      "b": "stage1_edf.air_in",
+      "type": "air_path",
+      "note": "Inlets \u2192 stage-1 EDF"
     }
   ],
   "stations": [
