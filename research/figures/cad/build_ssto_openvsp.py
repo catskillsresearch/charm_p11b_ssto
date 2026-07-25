@@ -684,7 +684,17 @@ def render_floorplan(slim: dict, wing_ov: dict, tris: np.ndarray, out: Path) -> 
                 zorder=3,
             )
         )
-        ax.text(0.5 * (s["x0"] + s["x1"]), 0.0, s["label"], ha="center", va="center", fontsize=7.5, color="#1a1a1a", zorder=4)
+        ax.text(
+            0.5 * (s["x0"] + s["x1"]),
+            0.0,
+            s["label"],
+            ha="center",
+            va="center",
+            fontsize=7.5,
+            color="#1a1a1a",
+            rotation=90 if (s["x1"] - s["x0"]) < 3.5 else 0,
+            zorder=4,
+        )
     for p0, p1 in _silhouette_segments(tris, (0, 1)):
         ax.plot([p0[0], p1[0]], [p0[1], p1[1]], color="#1f1f1f", lw=0.12, alpha=0.22, zorder=5)
     ax.set_aspect("equal")

@@ -6,6 +6,7 @@
 |------|------|
 | [`assembly.json`](assembly.json) | **Geometry / topology** — hierarchy, ports, joints, sizes, station labels |
 | [`assembly_hierarchy.mmd`](assembly_hierarchy.mmd) | Mermaid of that tree (`python emit_assembly_mermaid.py`) |
+| [`lib/mermaid_builder.py`](lib/mermaid_builder.py) | Shared visible-set/nearest-ancestor Mermaid renderer — one algorithm behind `assembly_hierarchy.mmd`, the interactive outliner, and arxiv.md Figs. 7–9 |
 | [`vehicle_spec.json`](vehicle_spec.json) | Temporary OpenVSP *implementation* binding (builders); not the product tree |
 | [`constants_model.py`](constants_model.py) | **Numeric sizing constraints** — numpy/dataclass model for the CHARM bottom-up mass roll-up (magnets, cryo) and the full `m_dry`/`mu`/`m_w`/`m0` chain; writes `constants.generated.json`, consumed by `arxiv.md`'s `<!--gen-->` spans, `assembly.json`, `vehicle_spec.json`, and `build_fusion_plant_skid_blender.py` |
 
@@ -67,7 +68,7 @@ Each figure computes its own camera `cam_y`/`ortho_scale` explicitly in `main()`
 
 `build_fusion_plant_skid_blender.py` additionally imports `constants_model.py` directly (`compute(Params()).values`) for its magnet count/mass and cryocooler count/mass/power, so the rendered figure's callout text can never disagree with `arxiv.md` §9.6 or `assembly.json`'s `mirror_magnets`/`cryocooler` nodes.
 
-The combined-cycle engine skid (scoops/duct/nozzle/water tanks) is **not yet** migrated to this pattern — it needs genuinely new procedural geometry with no library equivalent, and is tracked as a follow-up.
+The combined-cycle engine skid (scoops/duct/nozzle) is **not yet** migrated to this pattern — it needs genuinely new procedural geometry with no library equivalent, and is tracked as a follow-up. Its water reaction-mass tanks were relocated to the CHARM skid (§9.9 radiation-shield buffer), so this figure no longer carries bulk tankage.
 
 ### Reusable source assets
 
@@ -88,6 +89,43 @@ Regenerate diagram:
 ```bash
 poetry run python research/figures/cad/emit_assembly_mermaid.py
 ```
+
+### Mermaid figures in arxiv.md (Figs. 7–9)
+
+`arxiv.md`'s three embedded diagrams — the fusion-plant schematic (Fig. 7), the
+profile-station tree (Fig. 8), and the top-down floorplan (Fig. 9) — are no
+longer hand-authored text. Each is generated straight from `assembly.json` by
+[`lib/mermaid_builder.py`](lib/mermaid_builder.py) (a Python port of the
+interactive outliner's `buildMermaid()`/`nearestVisible()` in
+[`hierarchy_app/app.js`](hierarchy_app/app.js)), so the same visible-set
+algorithm draws all three: `assembly_hierarchy.mmd`, the interactive outliner,
+and the paper figures.
+
+```text
+assembly.json + emit_paper_mermaid.py's FIGURES specs
+  → lib/mermaid_builder.build_mermaid()
+  → scripts/update_arxiv_mermaid.py regenerates the
+    <!--mermaid-gen KEY-->...<!--/mermaid-gen--> blocks in arxiv.md in place
+```
+
+Two things the paper figures use that the other two consumers don't:
+
+- **Hard scope + boundary stubs** (`scope_root=` in `emit_paper_mermaid.FigureSpec`) — Fig. 7 is scoped to `charm_power_plant`'s own subtree; any real joint that leaves it (e.g. the water duct and power cable to the combined-cycle engine) is drawn as a small dashed `"→ Combined-cycle engine"` stub instead of pulling the external assembly's parts into the figure.
+- **Functional-joint filtering** (`FUNCTIONAL_JOINT_TYPES` in `lib/mermaid_builder.py`) — paper figures only draw joints that carry a real resource/signal flow (fuel, power, coolant, RF, crew passage, …), dropping the ~80 purely mechanical "bolted to" mounts that `assembly_hierarchy.mmd` and the interactive outliner still show in full.
+
+Each figure's `(scope_root, expand_ids, direction)` is an explicit spec in
+[`emit_paper_mermaid.py`](emit_paper_mermaid.py) — the non-interactive
+equivalent of clicking through the outliner's expand/collapse twisties.
+Preview all three on stdout:
+
+```bash
+poetry run python research/figures/cad/emit_paper_mermaid.py
+```
+
+`make paper-render` runs `scripts/update_arxiv_mermaid.py` as its last step
+(after `assembly.json` has been patched with the latest magnet/cryo counts),
+so every paper build re-derives Figs. 7–9 from the live JSON tree — they can
+no longer silently drift the way the old hand-written blocks did.
 
 ## Interactive outliner (Blender-style hierarchy)
 

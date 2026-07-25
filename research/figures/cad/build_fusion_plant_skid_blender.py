@@ -79,6 +79,9 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     n_al630 = int(gen["charm.n_al630"])
     m_cryo_t = gen["charm.m_cryo_t"]
     p_cryo_kw = gen["charm.p_cryo_kw"]
+    m_w_t = gen["mass.m_w_t"]
+    shield_thickness_m = gen["shield.b1_thickness_m"]
+    shield_mass_t = gen["shield.b1_mass_t"]
 
     scene_root = col("00_FusionPlantSkid")
     c_shell = col("01_Shell", scene_root)
@@ -100,6 +103,8 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     m_dec = mat("fp_dec", (0.85, 0.35, 0.55), roughness=0.4)
     m_fuel = mat("fp_fuel", (0.70, 0.65, 0.85), roughness=0.4)
     m_battery = mat("fp_battery", (0.55, 0.70, 0.55), roughness=0.4)
+    m_water = mat("fp_water", (0.45, 0.65, 0.90), roughness=0.25, metallic=0.05)
+    m_shield = mat("fp_shield", (0.88, 0.88, 0.80), roughness=0.55)
 
     cx = (x0 + x1) / 2.0
 
@@ -114,17 +119,25 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
             c_shell,
         )
 
-    # --- Station layout along X: battery | fuel | reactor island ---
+    # --- Station layout along X: battery | water | fuel | reactor island
+    # (§9.9: water relocated ahead of CHARM as a supplemental shield; the
+    # island's own forward slice is the permanent shield bulkhead) ---
     battery_x0, battery_x1 = x0, x0 + 2.2
-    fuel_x0, fuel_x1 = battery_x1, battery_x1 + 2.0
+    water_x0, water_x1 = battery_x1, battery_x1 + 4.0
+    fuel_x0, fuel_x1 = water_x1, water_x1 + 2.0
     island_x0, island_x1 = fuel_x1, x1
-    island_len = island_x1 - island_x0
 
-    # Split the reactor island into left-fusion / HEX / right-fusion spans.
+    # Forward slice of the island is the permanent shield bulkhead; the rest
+    # is the actual chamber string + magnets/racks.
+    shield_x0, shield_x1 = island_x0, island_x0 + shield_thickness_m
+    reactor_x0, reactor_x1 = shield_x1, island_x1
+    island_len = reactor_x1 - reactor_x0
+
+    # Split the reactor span into left-fusion / HEX / right-fusion spans.
     lf_frac, hex_frac, rf_frac = 0.347, 0.306, 0.347
-    lf_x0, lf_x1 = island_x0, island_x0 + island_len * lf_frac
+    lf_x0, lf_x1 = reactor_x0, reactor_x0 + island_len * lf_frac
     hex_x0, hex_x1 = lf_x1, lf_x1 + island_len * hex_frac
-    rfc_x0, rfc_x1 = hex_x1, island_x1
+    rfc_x0, rfc_x1 = hex_x1, reactor_x1
     lf_cx, hex_cx, rfc_cx = (lf_x0 + lf_x1) / 2.0, (hex_x0 + hex_x1) / 2.0, (rfc_x0 + rfc_x1) / 2.0
     lf_r, hex_r, rfc_r = 1.1, 0.95, 1.1
 
@@ -138,6 +151,34 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
         (battery_cx, 0.0, floor_z + wall_h * 0.3),
         m_battery,
         c_systems,
+    )
+
+    # --- Water tanks (space propellant, relocated ahead of CHARM as a
+    # supplemental radiation shield when full, arxiv.md §9.9 B2) ---
+    water_cx = (water_x0 + water_x1) / 2.0
+    # Capped well below z_lab so the "WATER TANKS" label (on the centerline,
+    # like the battery/fuel labels) never sits underneath the tank's own
+    # top-down silhouette.
+    water_r = min((water_x1 - water_x0) * 0.42, y_half * 0.42, 0.65)
+    tank(
+        "Water_Tank",
+        water_r,
+        water_x1 - water_x0 - 0.3,
+        (water_cx, 0.0, z_axis),
+        m_water,
+        c_systems,
+        axis="X",
+    )
+
+    # --- Permanent shield bulkhead (poly, §9.9 B1) — forward slice of the
+    # CHARM envelope, spans almost the full skid width; holds even empty ---
+    shield_cx = (shield_x0 + shield_x1) / 2.0
+    box(
+        "Shield_Bulkhead",
+        (shield_x1 - shield_x0, width * 0.92, wall_h * 0.96),
+        (shield_cx, 0.0, floor_z + wall_h * 0.48),
+        m_shield,
+        c_reactor,
     )
 
     # --- p-11B fuel tanks (proton + boron feed, side by side) ---
@@ -186,15 +227,15 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     box(
         "Magnet_PSU_Bay",
         (island_len * 0.55, 0.9, wall_h * 0.55),
-        (island_x0 + island_len * 0.5, psu_y, floor_z + wall_h * 0.28),
+        (reactor_x0 + island_len * 0.5, psu_y, floor_z + wall_h * 0.28),
         m_psu,
         c_systems,
     )
 
     # --- Cryo compressor bay: N_AL630 units in a row (outer row, same side as PSU) ---
     cryo_y = -y_half * 0.78
-    cryo_x0 = island_x0 + 0.5
-    cryo_x1 = island_x1 - 0.5
+    cryo_x0 = reactor_x0 + 0.5
+    cryo_x1 = reactor_x1 - 0.5
     cryo_step = (cryo_x1 - cryo_x0) / max(n_al630 - 1, 1)
     for i in range(n_al630):
         xc = cryo_x0 + i * cryo_step if n_al630 > 1 else (cryo_x0 + cryo_x1) / 2.0
@@ -240,6 +281,13 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     # --- Battery / fuel: plain labels directly over their own low boxes
     # (well below z_lab, so no leader line is needed) ---
     text_label("LBL_battery", "FLIGHT BATTERY", (battery_cx, 0.0, z_lab), c_lab, size=0.16)
+    text_label(
+        "LBL_water",
+        f"WATER TANKS ({m_w_t:.0f} t) \u2014 shield bonus, \u00a79.9",
+        (water_cx, 0.0, z_lab),
+        c_lab,
+        size=0.15,
+    )
     text_label("LBL_fuel", "p-\u00b9\u00b9B FUEL TANKS", (fuel_cx, 0.0, z_lab), c_lab, size=0.16)
 
     # --- Callouts: top row (magnets / RF / DEC), spread wide in X so the
@@ -279,6 +327,18 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     # the AL630 cryo text is the widest label in the figure so it gets its
     # own generously spaced slot rather than sharing a column with a chamber ---
     callout(
+        "CO_shield",
+        anchor_xyz=(shield_cx, width * 0.46, 0.0),
+        label_xyz=(fuel_cx - 0.9, safe_y_top, 0.0),
+        text=(
+            f"Permanent shield bulkhead\n"
+            f"({shield_thickness_m:.2f} m poly, {shield_mass_t:.1f} t) \u2014 \u00a79.9"
+        ),
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.115,
+    )
+    callout(
         "CO_lf",
         anchor_xyz=(lf_cx, -lf_r, 0.0),
         label_xyz=(island_x0 - 0.6, safe_y_bot, 0.0),
@@ -310,7 +370,7 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     )
     callout(
         "CO_psu",
-        anchor_xyz=(island_x0 + island_len * 0.5, psu_y, 0.0),
+        anchor_xyz=(reactor_x0 + island_len * 0.5, psu_y, 0.0),
         label_xyz=(rfc_cx, safe_y_bot, 0.0),
         text="Magnet\nPSU bay",
         collection=c_lab,
@@ -359,6 +419,8 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     legend(
         [
             (m_battery, "Flight battery"),
+            (m_water, "Water tanks (shield bonus)"),
+            (m_shield, "Permanent shield bulkhead"),
             (m_fuel, "p-\u00b9\u00b9B fuel"),
             (m_chamber, "Fusion chambers"),
             (m_hex, "Heat-exchange chamber"),

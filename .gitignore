@@ -231,6 +231,7 @@ demos/vendor/
 arxiv.tex
 zenodo.tex
 /figures/
+/listings/
 # Keep research/figures/ (source PNGs + prompts); ignore only build output above
 *.aux
 *.lof

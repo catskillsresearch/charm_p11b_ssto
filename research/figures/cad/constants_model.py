@@ -33,6 +33,122 @@ import numpy as np
 
 CAD_DIR = Path(__file__).resolve().parent
 GENERATED_JSON = CAD_DIR / "constants.generated.json"
+VEHICLE_SPEC_JSON = CAD_DIR / "vehicle_spec.json"
+
+# ---------------------------------------------------------------------------
+# US Standard Atmosphere, 1976 — closed-form piecewise layers [37].
+# Textbook physics, not a guess: used by the stage-2 climb integrator below.
+# ---------------------------------------------------------------------------
+
+_R_AIR = 287.053  # J/(kg K)
+_GAMMA_AIR = 1.4
+_G0_STD = 9.80665
+
+# (base geopotential height m, lapse rate K/m, base temp K, base pressure Pa)
+_US76_LAYERS: tuple[tuple[float, float, float, float], ...] = (
+    (0.0, -0.0065, 288.15, 101325.0),
+    (11000.0, 0.0, 216.65, 22632.06),
+    (20000.0, 0.0010, 216.65, 5474.889),
+    (32000.0, 0.0028, 228.65, 868.0187),
+    (47000.0, 0.0, 270.65, 110.9063),
+    (51000.0, -0.0028, 270.65, 66.93887),
+    (71000.0, -0.0020, 214.65, 3.956420),
+    (84852.0, 0.0, 186.87, 0.3733989),
+)
+
+
+def us_standard_atmosphere(h_m: np.ndarray | float) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Vectorized US Standard Atmosphere 1976 [37]: rho(h), T(h), P(h) for
+    h in [0, 84852] m (clipped outside that range)."""
+    h = np.clip(np.atleast_1d(np.asarray(h_m, dtype=float)), 0.0, _US76_LAYERS[-1][0])
+    T = np.empty_like(h)
+    P = np.empty_like(h)
+    for i, (Hb, L, Tb, Pb) in enumerate(_US76_LAYERS):
+        Htop = _US76_LAYERS[i + 1][0] if i + 1 < len(_US76_LAYERS) else np.inf
+        mask = (h >= Hb) & (h <= Htop) if i + 1 < len(_US76_LAYERS) else (h >= Hb)
+        if not np.any(mask):
+            continue
+        dh = h[mask] - Hb
+        if abs(L) < 1e-12:
+            T[mask] = Tb
+            P[mask] = Pb * np.exp(-_G0_STD * dh / (_R_AIR * Tb))
+        else:
+            T[mask] = Tb + L * dh
+            P[mask] = Pb * (Tb / T[mask]) ** (_G0_STD / (_R_AIR * L))
+    rho = P / (_R_AIR * T)
+    return rho, T, P
+
+
+def wing_reference_area_m2(spec_path: Path = VEHICLE_SPEC_JSON) -> float:
+    """Trapezoid-panel planform area of the double-delta main wing, computed
+    directly from vehicle_spec.json's SSOT wing geometry (span/chords) —
+    cross-checks against OpenVSP's own ~229 m^2 computed area."""
+    spec = json.loads(Path(spec_path).read_text())
+    wing = next(pt for pt in spec["parts"] if pt["id"] == "main_wing")["openvsp"]
+    half_span = wing["span_m"] / 2.0
+    s_inner = wing["inner_span_frac"] * half_span
+    s_outer = half_span - s_inner
+    area_inner = 0.5 * (wing["root_chord_m"] + wing["kink_chord_m"]) * s_inner
+    area_outer = 0.5 * (wing["kink_chord_m"] + wing["tip_chord_m"]) * s_outer
+    return 2.0 * (area_inner + area_outer)
+
+
+def fuselage_frontal_area_m2(spec_path: Path = VEHICLE_SPEC_JSON) -> float:
+    """Rectangle approximation of the fuselage cross-section (width x height)
+    from vehicle_spec.json's OML — shared by the drag model (wave/parasite
+    reference) and the §9.9 shield-bulkhead area (same fuselage, one seam)."""
+    spec = json.loads(Path(spec_path).read_text())
+    oml = spec["oml"]
+    return oml["fuselage_width_m"] * oml["fuselage_height_m"]
+
+
+# 3-breakpoint generic hypersonic lifting-body/waverider-class CD(M) table
+# [38] — flagged: no CHARM-specific CFD or wind-tunnel data exists for this
+# airframe. Subsonic cruise-drag floor, transonic peak, hypersonic falloff.
+_MACH_BREAKPOINTS = np.array([0.0, 0.8, 1.05, 1.3, 2.0, 3.0, 6.0, 10.0])
+_CD_BREAKPOINTS = np.array([0.045, 0.048, 0.090, 0.075, 0.060, 0.052, 0.050, 0.050])
+
+
+def drag_coefficient(mach: np.ndarray | float) -> np.ndarray:
+    """Interpolated generic hypersonic CD(M) table [38]."""
+    return np.interp(np.atleast_1d(np.asarray(mach, dtype=float)), _MACH_BREAKPOINTS, _CD_BREAKPOINTS)
+
+
+def integrate_stage2_climb(
+    v1_m_s: float,
+    v_ab_m_s: float,
+    q_ascent_pa: float,
+    thrust_n: float,
+    mass_kg: float,
+    g0: float,
+    n_steps: int = 2000,
+) -> tuple[float, float, float]:
+    """Constant-dynamic-pressure (Bryson-style energy-height) climb from
+    v1 to v_ab. Along a constant-Q path, h(v) is fixed by rho(h)=2Q/v^2, so
+    the 2D trajectory collapses to a 1D quadrature in v:
+
+        dt/dv = m*(g0*dh/dv + v) / ((T - D(v))*v),   D(v) = Q*S*CD(M(v,h(v)))
+
+    Returns (t2_s, h_seal_m, mach_at_handoff). h_seal falls OUT of the
+    integration (not assumed) — it is h(v_ab) under the constant-Q schedule.
+    """
+    S = wing_reference_area_m2()
+    v_grid = np.linspace(v1_m_s, v_ab_m_s, n_steps + 1)
+    h_grid = np.linspace(0.0, 84000.0, 20000)
+    rho_grid, T_grid, _ = us_standard_atmosphere(h_grid)
+    target_rho = 2.0 * q_ascent_pa / v_grid**2
+    # rho_grid decreases monotonically with h_grid -> reverse for np.interp
+    h_of_v = np.interp(target_rho, rho_grid[::-1], h_grid[::-1])
+    T_of_v = np.interp(h_of_v, h_grid, T_grid)
+    a_of_v = np.sqrt(_GAMMA_AIR * _R_AIR * T_of_v)
+    mach = v_grid / a_of_v
+    drag_n = q_ascent_pa * S * drag_coefficient(mach)
+    dh_dv = np.gradient(h_of_v, v_grid)
+    excess_n = np.maximum(thrust_n - drag_n, 1.0)  # guard against stall in the model
+    dt_dv = mass_kg * (g0 * dh_dv + v_grid) / (excess_n * v_grid)
+    trapz = getattr(np, "trapezoid", None) or np.trapz
+    t2_s = float(trapz(dt_dv, v_grid))
+    return t2_s, float(h_of_v[-1]), float(mach[-1])
 
 
 def sci(value: float, sig: int) -> tuple[str, int]:
@@ -129,6 +245,56 @@ class Params:
     # --- Ceiling check: NASA 20 W/20 K flight-cryocooler program,
     # state-of-the-art specific mass (measured, not imputed) ---
     nasa_soa_kg_per_w: float = 18.7
+
+    # --- Stage 1 (EDF): existing §10.2/§10.3 constants, now wired through
+    # this model instead of hand-typed, so P1/T1/m_EDF track m0 ---
+    thrust_to_weight_min: float = 0.25
+    v_to_m_s: float = 80.0
+    eta_m: float = 0.90
+    eta_prop: float = 0.80
+    k_fan: float = 1.35
+    alpha_mot_w_per_kg: float = 16.0e3
+
+    # --- Stage 2 (microwave air plasma): existing §10.2/§10.4 constants,
+    # reused as-is, plus new ascent-physics inputs for the climb integrator.
+    # v1/Q_ascent are flagged planning guesses; v_ab is the *existing*
+    # air-breathing delta-v credit reused as the stage-2 handoff speed. ---
+    eta_mu: float = 0.55
+    eta_j2: float = 0.45
+    v_j2_m_s: float = 600.0
+    P_hotel_w: float = 5.0e6
+    v1_m_s: float = 300.0  # flagged guess: transonic stage-1->2 handoff
+    v_ab_m_s: float = 3500.0  # reused from §6's v_ab = 3.5 km/s
+    q_ascent_pa: float = 25.0e3  # flagged design Q, X-15/Shuttle-class order
+
+    # --- Stage 3 (water plasma): existing §10.2/§10.5 constant, reused ---
+    eta_jet: float = 0.55
+
+    # --- Top-down energy check (§4/§8), reused ---
+    kappa_e_assumed: float = 3.0
+    e_orb_j: float = 6.49e12
+
+    # --- §9.9 shielding: photon (bremsstrahlung/X-ray) + residual-neutron
+    # source terms are flagged order-of-magnitude fractions of P_star, not a
+    # CHARM-specific power balance (none published, §9.6). Attenuation
+    # coefficients are cited (NIST XCOM [39]; standard removal cross
+    # sections [40]), not fitted. ---
+    f_gamma_residual: float = 0.005  # flagged: residual photon power / P_star
+    f_n_residual: float = 0.005  # flagged: <=~1% of a D-T-equivalent yield
+    mu_rho_water_photon_cm2_g: float = 0.1186  # NIST XCOM @ ~300 keV [39]
+    mu_rho_poly_photon_cm2_g: float = 0.1211  # NIST XCOM @ ~300 keV [39]
+    rho_water_g_cm3: float = 1.00
+    rho_poly_g_cm3: float = 0.94
+    sigma_r_water_per_cm: float = 0.103  # fast-neutron removal xsec [40]
+    sigma_r_poly_per_cm: float = 0.100  # fast-neutron removal xsec [40]
+    target_attenuation_decades: float = 3.0  # flagged design requirement (1000x)
+    water_slab_depth_m: float = 4.0  # new water-tank envelope length (§11)
+
+    # --- §9.9 RF/microwave leakage (B3): separate non-ionizing hazard,
+    # Faraday-cage shielding-effectiveness order-of-magnitude estimate ---
+    rf_freq_hz: float = 2.45e9  # flagged: representative RF frequency, unspecified in [1]
+    rf_skin_thickness_mm: float = 1.0  # representative structural Al skin
+    rf_conductivity_s_per_m: float = 3.5e7  # aluminum
 
 
 # ---------------------------------------------------------------------------
@@ -231,6 +397,135 @@ def compute(p: Params = Params()) -> Results:
     r.set("mass.m_w_t", m_w_kg / 1e3)
     r.set("mass.m0_t", m0_kg / 1e3)
 
+    # ----- Aero/atmosphere reference constants (§10.2), echoed for markers -----
+    r.set("aero.wing_area_m2", wing_reference_area_m2())
+    r.set("stage.q_ascent_kpa", p.q_ascent_pa / 1e3)
+    r.set("stage.v1_m_s", p.v1_m_s)
+    r.set("stage.v_ab_m_s", p.v_ab_m_s)
+    r.set("stage.v_ab_km_s", p.v_ab_m_s / 1e3)
+
+    # ----- Stage 1 (EDF): T1/P1/m_EDF from the actual solved m0 -----
+    eta1 = r.set("stage.eta1", p.eta_m * p.eta_prop)
+    t1_n = r.set("stage.t1_n", p.thrust_to_weight_min * m0_kg * p.g0)
+    p1_w = r.set("stage.p1_w", t1_n * p.v_to_m_s / eta1)
+    r.set("stage.p1_mw", p1_w / 1e6)
+    r.set("stage.t1_kn", t1_n / 1e3)
+    m_edf_kg = r.set("stage.m_edf_kg", p.k_fan * p1_w / p.alpha_mot_w_per_kg)
+    r.set("stage.m_edf_t", m_edf_kg / 1e3)
+    # order-of-magnitude ground-roll+initial-climb duration: impulse estimate
+    # to reach v1 at ~constant net thrust T1 (drag/lift losses not modeled)
+    t1_s = r.set("stage.t1_s", m0_kg * p.v1_m_s / t1_n)
+    e1_j = r.set("stage.e1_j", p1_w * t1_s)
+    r.set("stage.e1_mwh", e1_j / 3.6e9)
+
+    # ----- Stage 2 (microwave air plasma): real climb integrator -----
+    p2_star_w = r.set("stage.p2_star_w", p.P_star_w - p.P_hotel_w)
+    r.set("stage.p2_star_mw", p2_star_w / 1e6)
+    t2_ratio = r.set("stage.t2_over_p2_n_per_kw", 2.0 * p.eta_mu * p.eta_j2 / p.v_j2_m_s * 1e3)
+    t2_n = r.set("stage.t2_n", t2_ratio * 1e-3 * p2_star_w)
+    r.set("stage.t2_kn", t2_n / 1e3)
+    t2_s, h_seal_m, mach_seal = integrate_stage2_climb(
+        v1_m_s=p.v1_m_s,
+        v_ab_m_s=p.v_ab_m_s,
+        q_ascent_pa=p.q_ascent_pa,
+        thrust_n=t2_n,
+        mass_kg=m0_kg,
+        g0=p.g0,
+    )
+    r.set("stage.t2_s", t2_s)
+    r.set("stage.t2_min", t2_s / 60.0)
+    r.set("stage.h_seal_m", h_seal_m)
+    r.set("stage.h_seal_km", h_seal_m / 1e3)
+    r.set("stage.mach_seal", mach_seal)
+    e2_j = r.set("stage.e2_j", p2_star_w * t2_s)
+    r.set("stage.e2_mwh", e2_j / 3.6e9)
+
+    # ----- Stage 3 (water plasma): closed-form invariant E3 -----
+    p3_star_w = r.set("stage.p3_star_w", p.P_star_w - p.P_hotel_w)
+    r.set("stage.p3_star_mw", p3_star_w / 1e6)
+    t3_n = r.set("stage.t3_n", 2.0 * p.eta_jet * p3_star_w / v_e)
+    r.set("stage.t3_kn", t3_n / 1e3)
+    mdot_w = r.set("stage.mdot_w_kg_s", t3_n / v_e)
+    t3_s = r.set("stage.t3_s", m_w_kg / mdot_w)
+    r.set("stage.t3_h", t3_s / 3600.0)
+    # Closed form: E3 = 1/2 m_w v_e^2 / eta_jet -- a physical invariant of
+    # (m_w, v_e, eta_jet) alone, independent of whatever power ceiling is
+    # assumed for P3 (matches p3_star_w * t3_s exactly by construction).
+    e3_j = r.set("stage.e3_j", 0.5 * m_w_kg * v_e**2 / p.eta_jet)
+    r.set("stage.e3_mwh", e3_j / 3.6e9)
+
+    # ----- Reconciliation: bottom-up stage energies vs top-down kappa_E -----
+    e_hotel_j = r.set("stage.e_hotel_j", p.P_hotel_w * (t1_s + t2_s + t3_s))
+    r.set("stage.e_hotel_mwh", e_hotel_j / 3.6e9)
+    e_bottom_up_j = r.set("stage.e_bottom_up_j", e1_j + e2_j + e3_j + e_hotel_j)
+    r.set("stage.e_bottom_up_mwh", e_bottom_up_j / 3.6e9)
+    r.set("stage.e_bottom_up_tj", e_bottom_up_j / 1e12)
+    r.set("stage.kappa_e_implied", e_bottom_up_j / p.e_orb_j)
+    e_src_topdown_j = r.set("stage.e_src_topdown_j", p.kappa_e_assumed * p.e_orb_j)
+    r.set("stage.e_src_topdown_mwh", e_src_topdown_j / 3.6e9)
+    r.set(
+        "stage.e_bottom_up_over_topdown_pct",
+        e_bottom_up_j / e_src_topdown_j * 100.0,
+    )
+
+    # ----- §9.9 shielding: B1 permanent bulkhead, B2 water bonus, B3 RF ----
+    area_m2 = r.set("shield.area_m2", fuselage_frontal_area_m2())
+    hvl_water_gamma_cm = r.set(
+        "shield.hvl_water_gamma_cm",
+        math.log(2.0) / (p.mu_rho_water_photon_cm2_g * p.rho_water_g_cm3),
+    )
+    hvl_poly_gamma_cm = r.set(
+        "shield.hvl_poly_gamma_cm",
+        math.log(2.0) / (p.mu_rho_poly_photon_cm2_g * p.rho_poly_g_cm3),
+    )
+    hvl_water_n_cm = r.set("shield.hvl_water_n_cm", math.log(2.0) / p.sigma_r_water_per_cm)
+    hvl_poly_n_cm = r.set("shield.hvl_poly_n_cm", math.log(2.0) / p.sigma_r_poly_per_cm)
+    n_hvl_target = r.set(
+        "shield.n_hvl_target", p.target_attenuation_decades / math.log10(2.0)
+    )
+    r.set("shield.target_db", p.target_attenuation_decades * 10.0)
+
+    # B1: permanent polyethylene bulkhead, sized for BOTH hazards (take the
+    # thicker requirement), zero water assumed present.
+    t_b1_gamma_cm = n_hvl_target * hvl_poly_gamma_cm
+    t_b1_n_cm = n_hvl_target * hvl_poly_n_cm
+    r.set("shield.b1_thickness_gamma_cm", t_b1_gamma_cm)
+    r.set("shield.b1_thickness_n_cm", t_b1_n_cm)
+    t_b1_cm = r.set("shield.b1_thickness_cm", max(t_b1_gamma_cm, t_b1_n_cm))
+    r.set("shield.b1_thickness_m", t_b1_cm / 100.0)
+    m_b1_kg = r.set(
+        "shield.b1_mass_kg", (t_b1_cm / 100.0) * area_m2 * (p.rho_poly_g_cm3 * 1e3)
+    )
+    m_b1_t = r.set("shield.b1_mass_t", m_b1_kg / 1e3)
+    r.set("shield.b1_pct_of_remainder", m_b1_t / m_remainder_t * 100.0)
+    m_remainder_after_b1_t = r.set(
+        "charm.m_remainder_after_b1_t", max(m_remainder_t - m_b1_t, 0.0)
+    )
+
+    # B2: bonus attenuation the (consumable) water slab provides when full,
+    # at the SAME target methodology, purely as a supplemental check.
+    n_hvl_water_gamma = r.set(
+        "shield.n_hvl_water_gamma", p.water_slab_depth_m * 100.0 / hvl_water_gamma_cm
+    )
+    n_hvl_water_n = r.set(
+        "shield.n_hvl_water_n", p.water_slab_depth_m * 100.0 / hvl_water_n_cm
+    )
+    r.set("shield.water_gamma_db", n_hvl_water_gamma * math.log10(2.0) * 10.0)
+    r.set("shield.water_n_db", n_hvl_water_n * math.log10(2.0) * 10.0)
+
+    # B3: RF/microwave leakage -- Faraday-cage skin-depth shielding
+    # effectiveness for a conductive aluminum skin (order-of-magnitude;
+    # penetrations/seams are the real risk, not called out here).
+    mu0 = 4.0 * math.pi * 1e-7
+    skin_depth_m = r.set(
+        "shield.rf_skin_depth_m",
+        math.sqrt(1.0 / (math.pi * p.rf_freq_hz * mu0 * p.rf_conductivity_s_per_m)),
+    )
+    r.set("shield.rf_skin_depth_um", skin_depth_m * 1e6)
+    t_over_delta = (p.rf_skin_thickness_mm * 1e-3) / skin_depth_m
+    r.set("shield.rf_thickness_over_skin_depths", t_over_delta)
+    r.set("shield.rf_se_db", 8.686 * t_over_delta)
+
     # ----- Sensitivity table: alpha_C in {5, 10, 15, 25} kW/kg -----
     for label, alpha in (("5", 5.0e3), ("10", 10.0e3), ("15", 15.0e3), ("25", 25.0e3)):
         m_c_sens_kg = p.P_star_w / alpha
@@ -295,6 +590,28 @@ def main() -> int:
     print(f"  mu     = {r.values['mass.mu']:.3f}")
     print(f"  m_w    = {r.values['mass.m_w_kg'] / 1e3:.1f} t")
     print(f"  m0     = {r.values['mass.m0_kg'] / 1e3:.1f} t  (GLOW)")
+    print()
+    print("Stage energy budget (bottom-up):")
+    print(f"  stage 1: P1={r.values['stage.p1_mw']:.1f} MW, t1={r.values['stage.t1_s']:.0f} s, "
+          f"E1={r.values['stage.e1_mwh']:.2f} MWh")
+    print(f"  stage 2: P2*={r.values['stage.p2_star_mw']:.0f} MW, t2={r.values['stage.t2_min']:.1f} min, "
+          f"h_seal={r.values['stage.h_seal_km']:.1f} km, Mach={r.values['stage.mach_seal']:.1f}, "
+          f"E2={r.values['stage.e2_mwh']:.1f} MWh")
+    print(f"  stage 3: P3*={r.values['stage.p3_star_mw']:.0f} MW, t3={r.values['stage.t3_h']:.2f} h, "
+          f"E3={r.values['stage.e3_mwh']:.1f} MWh")
+    print(f"  hotel  : E_hotel={r.values['stage.e_hotel_mwh']:.1f} MWh")
+    print(f"  bottom-up total = {r.values['stage.e_bottom_up_mwh']:.0f} MWh "
+          f"(kappa_E implied = {r.values['stage.kappa_e_implied']:.2f}, "
+          f"top-down @ kappa=3 = {r.values['stage.e_src_topdown_mwh']:.0f} MWh)")
+    print()
+    print("Shielding (§9.9):")
+    print(f"  B1 permanent poly bulkhead: {r.values['shield.b1_thickness_cm']:.0f} cm, "
+          f"{r.values['shield.b1_mass_t']:.1f} t "
+          f"({r.values['shield.b1_pct_of_remainder']:.0f}% of the {r.values['charm.m_remainder_t']:.1f} t remainder)")
+    print(f"  B2 water bonus (full tank): {r.values['shield.water_gamma_db']:.0f} dB gamma, "
+          f"{r.values['shield.water_n_db']:.0f} dB neutron (target {r.values['shield.target_db']:.0f} dB)")
+    print(f"  B3 RF leakage: {r.values['shield.rf_se_db']:.0f} dB shielding effectiveness "
+          f"from a {Params().rf_skin_thickness_mm:.0f} mm Al skin (not a mass driver)")
     return 0
 
 

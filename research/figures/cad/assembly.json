@@ -6,7 +6,7 @@
     "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
     "architecture": "Drop-ins each with own skid and bay doors: cargo, Fusion electric plant, combined-cycle engine. Plant \u2194 engine by power cable (DEC \u2192 bus coupler). Tail bolts to fuselage around the engine nozzle cutout; nozzle belongs to the engine only.",
     "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages.",
-    "rev": "2026-07-24-air-scoop-duct",
+    "rev": "2026-07-25-water-shield-relocation",
     "outliner_check": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "charm_cad": "CHARM expands to left fusion chamber | heat exchange chamber | right fusion chamber + central axis \u2014 match Fisch multi-chamber centrifugal mirror figure.",
     "packaging": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
@@ -883,9 +883,9 @@
         "form": "power_skid",
         "envelope": {
           "x0": 33.3,
-          "x1": 45.0
+          "x1": 49.0
         },
-        "note": "Fusion plant: skid + finished CHARM island (with its own sub-racks) + Magnet PSU bay + cryo compressor bay + fuel + DEC + battery.",
+        "note": "Fusion plant: skid + finished CHARM island (with its own sub-racks + permanent shield bulkhead) + Magnet PSU bay + cryo compressor bay + fuel + DEC + battery + water tanks (relocated ahead of CHARM as a supplemental shield, arxiv.md \u00a79.9). Skid grew from 11.7 m to 15.7 m to hold the relocated water tank.",
         "children": [
           {
             "id": "fusion_plant_skid",
@@ -899,12 +899,16 @@
                 "label": "Skid structure",
                 "kind": "power_module",
                 "form": "semi_circular_skid",
-                "note": "Skid rails. Seats: CHARM island mounts, Magnet PSU bay, cryo compressor bay, fuel services, DEC, flight battery.",
+                "note": "Skid rails. Seats: CHARM island mounts, Magnet PSU bay, cryo compressor bay, fuel services, DEC, flight battery, water tanks (relocated ahead of CHARM, arxiv.md \u00a79.9).",
                 "envelope": {
                   "x0": 33.3,
-                  "x1": 45.0
+                  "x1": 49.0
                 },
                 "ports": [
+                  {
+                    "id": "water_mount",
+                    "role": "keel_mount"
+                  },
                   {
                     "id": "cradle_mount",
                     "xyz": [
@@ -1031,16 +1035,43 @@
             "label": "CHARM",
             "kind": "assembly",
             "form": "charm_machine_with_subracks",
-            "note": "CHARM assembly = backbone + chamber string + four CHARM-owned sub-racks (Magnet, RF, Rotation drive, Thermal). Each rack is built separately and bolted into CHARM before the finished island integrates into the fusion plant skid.",
+            "note": "CHARM assembly = permanent shield bulkhead (forward face) + backbone + chamber string + four CHARM-owned sub-racks (Magnet, RF, Rotation drive, Thermal). Each rack is built separately and bolted into CHARM before the finished island integrates into the fusion plant skid.",
             "envelope": {
-              "x0": 37.5,
-              "x1": 45.0
+              "x0": 41.5,
+              "x1": 49.0
             },
             "size": {
               "volume_m3_max": 120,
               "mass_t_ref": 66.7
             },
             "children": [
+              {
+                "id": "charm_shield_bulkhead",
+                "label": "Permanent shield bulkhead",
+                "kind": "shield",
+                "form": "poly_bulkhead",
+                "envelope": {
+                  "x0": 41.5,
+                  "x1": 42.19
+                },
+                "size": {
+                  "thickness_m_ref": 0.69,
+                  "mass_t_ref": 21.9
+                },
+                "note": "arxiv.md \u00a79.9 (B1): permanent polyethylene/borated-polyethylene bulkhead spanning the fuselage cross-section, sized for zero water present (photon + residual-neutron order-of-magnitude attenuation, NIST XCOM + standard fast-neutron removal cross sections). Forward face of CHARM, immediately aft of the fuel bay \u2014 blocks CHARM radiation from reaching the relocated water tank, fuel, battery, cargo, airlock, and crew even when the water tank is empty. Mass is carved out of the existing unsized RF/shield/structure remainder inside m_C (does not add to m_C=66.7 t).",
+                "ports": [
+                  {
+                    "id": "fwd_mount",
+                    "role": "keel_mount",
+                    "note": "Bolts to fuel_services_frame / skid rails on the forward side"
+                  },
+                  {
+                    "id": "aft_mount",
+                    "role": "fixed",
+                    "note": "Bolts to charm_backbone on the aft side"
+                  }
+                ]
+              },
               {
                 "id": "charm_backbone",
                 "label": "CHARM backbone / strongback",
@@ -1822,6 +1853,27 @@
             "note": "Flight battery (~2 t): on-orbit relight / hotel \u2014 magnets + RF (+ rotation) kindling. First light on Earth uses the ground cart (not carried)."
           },
           {
+            "id": "water_tanks",
+            "label": "Water tanks (space propellant)",
+            "kind": "tank",
+            "envelope": {
+              "x0": 35.5,
+              "x1": 39.5
+            },
+            "ports": [
+              {
+                "id": "keel_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "engine_feed",
+                "role": "propellant_feed",
+                "note": "Long cross-skid duct run to the water injector on the combined-cycle engine (~10 m; was a short in-skid run when the tank lived aft of CHARM)"
+              }
+            ],
+            "note": "Stage-3 reaction mass only. Reference mw\u224844.3 t \u224844 m\u00b3 liquid water at Isp=2000 s (166 t if Isp=665 s demo; 27 t if Isp=3150 s MPD-class). RELOCATED (arxiv.md \u00a79.9, B2) from aft-of-CHARM / engine skid to ahead of CHARM on the fusion plant skid: supplemental radiation shield when full, on top of the permanent charm_shield_bulkhead which holds when empty. Envelope x=35.5\u201339.5 m (same 4 m length) must visually dominate the plant skid bay \u2014 not small service bottles."
+          },
+          {
             "id": "ground_cart",
             "label": "Ground cart (Earth only)",
             "kind": "equipment",
@@ -1847,10 +1899,10 @@
         "drop_in": true,
         "form": "engine_skid_with_doors",
         "envelope": {
-          "x0": 45.0,
+          "x0": 49.0,
           "x1": 52.0
         },
-        "note": "Three-stage electric CC: P1*\u224865 MW, P2*=P3*\u2248995 MW. meng=15 t budget (EDF 5 + air-plasma 4.4 + water 3.1 + shared 2.5). Power cable from fusion plant only.",
+        "note": "Three-stage electric CC: P1*\u224865 MW, P2*=P3*\u2248995 MW. meng=15 t budget (EDF 5 + air-plasma 4.4 + water 3.1 + shared 2.5). Power cable from fusion plant only. Water tanks moved OFF this skid to the fusion plant skid (arxiv.md \u00a79.9); fed here by a long cross-skid duct (j_water_to_injector).",
         "children": [
           {
             "id": "engine_skid",
@@ -1865,7 +1917,7 @@
                 "kind": "propulsion_module",
                 "form": "semi_circular_skid",
                 "drop_in": true,
-                "note": "Physical drop-in propulsion frame. Bay doors hinge here; engine hardware bolts here. Sits in the aft fuselage cradle well. Nozzle exits under Tail.",
+                "note": "Physical drop-in propulsion frame. Bay doors hinge here; engine hardware bolts here. Sits in the aft fuselage cradle well. Nozzle exits under Tail. Water tanks no longer mount here (moved to charm_skid, arxiv.md \u00a79.9) \u2014 water arrives via a long duct to the water_injector instead.",
                 "ports": [
                   {
                     "id": "nozzle",
@@ -1923,10 +1975,6 @@
                     "id": "bus_in",
                     "role": "power",
                     "note": "Receives CHARM DEC bus via power cable"
-                  },
-                  {
-                    "id": "water_mount",
-                    "role": "keel_mount"
                   },
                   {
                     "id": "nacelle_mount",
@@ -2170,27 +2218,6 @@
                 ]
               }
             ]
-          },
-          {
-            "id": "water_tanks",
-            "label": "Water tanks (space propellant)",
-            "kind": "tank",
-            "envelope": {
-              "x0": 45.0,
-              "x1": 49.0
-            },
-            "ports": [
-              {
-                "id": "keel_mount",
-                "role": "keel_mount"
-              },
-              {
-                "id": "engine_feed",
-                "role": "propellant_feed",
-                "note": "To water injector"
-              }
-            ],
-            "note": "Stage-3 reaction mass only. Reference mw\u224844.3 t \u224844 m\u00b3 liquid water at Isp=2000 s (166 t if Isp=665 s demo; 27 t if Isp=3150 s MPD-class). Envelope x=45\u201349 m must visually dominate the engine skid \u2014 not small service bottles."
           },
           {
             "id": "water_injector",
@@ -2756,7 +2783,7 @@
       "a": "water_tanks.engine_feed",
       "b": "water_injector.feed",
       "type": "duct",
-      "note": "Water propellant feed on the engine drop-in"
+      "note": "Water propellant feed \u2014 now a long ~10 m cross-skid duct run from the relocated water tank (fusion plant skid, ahead of CHARM) to the water injector on the combined-cycle engine drop-in (arxiv.md \u00a79.9, B2)"
     },
     {
       "id": "j_injector_on_engine",
@@ -2799,11 +2826,25 @@
       "type": "fixed"
     },
     {
-      "id": "j_water_on_engine_skid",
+      "id": "j_water_on_charm_skid",
       "a": "water_tanks.keel_mount",
-      "b": "combined_cycle_engine_skid.water_mount",
+      "b": "charm_skid.water_mount",
       "type": "fixed",
-      "note": "Water tanks ride on the engine drop-in"
+      "note": "Water tanks ride on the fusion plant skid, ahead of CHARM (relocated from the engine skid, arxiv.md \u00a79.9)"
+    },
+    {
+      "id": "j_shield_bulkhead_on_backbone",
+      "a": "charm_shield_bulkhead.aft_mount",
+      "b": "charm_backbone.skid_mount",
+      "type": "fixed",
+      "note": "Permanent shield bulkhead bolted to the CHARM backbone, forward face of the island"
+    },
+    {
+      "id": "j_shield_bulkhead_to_fuel_frame",
+      "a": "charm_shield_bulkhead.fwd_mount",
+      "b": "fuel_services_frame.skid_mount",
+      "type": "fixed",
+      "note": "Shield bulkhead's forward face bolts to the fuel-services frame, sealing CHARM's forward boundary"
     },
     {
       "id": "j_dec_on_skid",

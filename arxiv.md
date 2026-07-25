@@ -23,7 +23,7 @@ Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real c
 
 Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [14,21], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **$L \approx 52\,\mathrm{m}$**. ECLSS = **Environmental Control and Life Support System**. Depth $\approx 6.5$–$7\,\mathrm{m}$, span $\approx 28\,\mathrm{m}$.
 
-Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell doors); **fusion electric plant** $33.3$–$45\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, fuel services $35.5$–$37.5\,\mathrm{m}$, CHARM island $37.5$–$45\,\mathrm{m}$); **combined-cycle engine** $45$–$52\,\mathrm{m}$ (water tanks $45$–$49\,\mathrm{m}$ on the engine skid, stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}) is 1–1 with that JSON tree. The floorplan is a top-down cutaway (no landing gear). The profile shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
+Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell doors); **fusion electric plant** $33.3$–$49\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, water tanks $35.5$–$39.5\,\mathrm{m}$ — relocated ahead of CHARM as a supplemental radiation shield, §9.9 — fuel services $39.5$–$41.5\,\mathrm{m}$, CHARM island incl. permanent shield bulkhead $41.5$–$49\,\mathrm{m}$); **combined-cycle engine** $49$–$52\,\mathrm{m}$ (stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}) is 1–1 with that JSON tree. The floorplan is a top-down cutaway (no landing gear). The profile shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
 
 <!-- figure-landscape -->
 ![Vehicle floor plan.](research/figures/charm_ssto_interior_floorplan.png)
@@ -45,105 +45,267 @@ All four drop-ins below are **Blender** orthographic top views built procedurall
 ![Cargo skid, Blender top-down cutaway from assembly.json with bay doors open.](research/figures/cargo_skid_top.png)
 
 <!-- figure-landscape -->
-![Fusion plant skid, Blender top-down cutaway from assembly.json: chamber string, 6 mirror magnets, 6-unit cryo compressor bay, magnet PSU, RF, DEC, fuel, and battery.](research/figures/fusion_plant_skid_top.png)
+![Fusion plant skid, Blender top-down cutaway from assembly.json: flight battery, relocated water tanks (radiation-shield buffer, §9.9), p-11B fuel, permanent shield bulkhead, chamber string, 6 mirror magnets, 6-unit cryo compressor bay, magnet PSU, RF, and DEC.](research/figures/fusion_plant_skid_top.png)
 
 ### Fusion electric plant (assembly SSOT)
 
-Schematic below is drawn from `research/figures/cad/assembly.json` (same tree as the interactive outliner). Boxes are plant parts/collections, not a separate physics cartoon.
+Schematic below is auto-generated from `research/figures/cad/assembly.json` on every build (`scripts/update_arxiv_mermaid.py`, same visible-set algorithm as the interactive outliner — see `research/figures/cad/lib/mermaid_builder.py`). Boxes are plant parts/collections, not a separate physics cartoon; this figure is hard-scoped to the fusion plant assembly, so the one connection leaving it (to the combined-cycle engine) is drawn as a dashed boundary stub rather than pulling in the engine's own parts.
 
 <!-- mermaid-caption: Fusion electric plant (assembly.json) -->
+<!--mermaid-gen fusion_electric_plant-->
 ```mermaid
 flowchart TB
-  subgraph plant ["Fusion electric plant"]
-    subgraph skid ["Fusion plant skid"]
-      Skid["Skid structure"]
-      BayAtm["Bay atmosphere<br/>interim He ash"]
-      Skid --- BayAtm
-    end
-    subgraph charm ["CHARM"]
-      BB["Backbone / strongback"]
-      subgraph chambers ["Chamber string"]
-        L["Left fusion chamber"]
-        HEX["Heat exchange chamber"]
-        R["Right fusion chamber"]
-        Axis["Central axis / shaft"]
-        L --- HEX --- R
-        Axis --- HEX
-      end
-      MagR["Magnet rack<br/>coils + cryostats"]
-      RfR["RF rack<br/>launchers + amps"]
-      DrR["Rotation drive rack"]
-      ThR["Thermal rack<br/>coolant bath"]
-      BB --- chambers
-      BB --- MagR
-      BB --- RfR
-      BB --- DrR
-      BB --- ThR
-    end
-    DEC["DEC"]
-    Bus["Plant electrical bus 1 GW"]
-    PSU["Magnet PSU bay"]
-    Cryo["Cryo compressor bay"]
-    Vac["Vacuum / controls pack"]
-    subgraph fuel ["Fuel services"]
-      Hp["Proton tank"]
-      B11["Boron-11 container"]
-      Inj["Solid fuel injector"]
-      Hp --- B11 --- Inj
-    end
-    Bat["Flight battery 2 t"]
-    Cart["Ground cart Earth only"]
-  end
-  Eng["Combined-cycle engine<br/>propulsion bus coupler"]
-  skid --- charm
-  HEX -->|alphas| DEC
-  DEC --> Bus
-  Bus -->|power cable| Eng
-  MagR --- PSU
-  ThR --- Cryo
-  Inj -->|solid feed| L
-  Inj -->|solid feed| R
-  Hp -->|feed| L
-  Hp -->|feed| R
-  DEC -->|He ash interim| BayAtm
-  Cart -.->|startup| PSU
-  Cart -.->|startup| RfR
-  Bat -.->|startup| PSU
-  Bat -.->|startup| RfR
-  Bat -.->|startup| DrR
-  Vac --- HEX
+  linkStyle default stroke:#9a9a9a,stroke-width:1.5px
+  classDef collection fill:#e7eef8,stroke:#5a6f8c,stroke-width:1.8px,stroke-dasharray:6 4,color:#243447
+  classDef part fill:#ffffff,stroke:#333,stroke-width:1.5px,color:#222
+  classDef boundary fill:#f6ece4,stroke:#9a5a3a,stroke-width:1.5px,stroke-dasharray:3 3,color:#4a2e1c
+  classDef tint0c fill:#e4f0e2,stroke:#4f7a48,stroke-width:1.8px,stroke-dasharray:6 4,color:#1e3320
+  classDef tint0p fill:#e4f0e2,stroke:#4f7a48,stroke-width:1.5px,color:#1e3320
+  classDef tint1c fill:#e2f1f4,stroke:#3d6f7c,stroke-width:1.8px,stroke-dasharray:6 4,color:#1a3036
+  classDef tint1p fill:#e2f1f4,stroke:#3d6f7c,stroke-width:1.5px,color:#1a3036
+  classDef tint2c fill:#f5efe3,stroke:#8a6e42,stroke-width:1.8px,stroke-dasharray:6 4,color:#3a2e18
+  classDef tint2p fill:#f5efe3,stroke:#8a6e42,stroke-width:1.5px,color:#3a2e18
+  classDef tint3c fill:#f3e8e8,stroke:#8a5558,stroke-width:1.8px,stroke-dasharray:6 4,color:#3a1e20
+  classDef tint3p fill:#f3e8e8,stroke:#8a5558,stroke-width:1.5px,color:#3a1e20
+  classDef tint4c fill:#eceedf,stroke:#6a7a40,stroke-width:1.8px,stroke-dasharray:6 4,color:#2a3218
+  classDef tint4p fill:#eceedf,stroke:#6a7a40,stroke-width:1.5px,color:#2a3218
+  classDef tint5c fill:#ebe8f2,stroke:#5a5578,stroke-width:1.8px,stroke-dasharray:6 4,color:#242038
+  classDef tint5p fill:#ebe8f2,stroke:#5a5578,stroke-width:1.5px,color:#242038
+  charm_power_plant(["Fusion electric plant"])
+  fusion_plant_skid(["Fusion plant skid"])
+  charm_skid["Skid structure"]
+  left_fusion_plant_door["Left fusion plant bay door"]
+  right_fusion_plant_door["Right fusion plant bay door"]
+  fusion_plant_bay_atmosphere["Fusion plant bay atmosphere"]
+  charm(["CHARM"])
+  charm_shield_bulkhead["Permanent shield bulkhead"]
+  charm_backbone["CHARM backbone / strongback"]
+  charm_chamber_string(["Chamber string"])
+  left_fusion_chamber["Left fusion chamber"]
+  heat_exchange_chamber["Heat exchange chamber"]
+  right_fusion_chamber["Right fusion chamber"]
+  charm_axis["Central axis / shaft"]
+  charm_magnet_rack(["Magnet rack"])
+  charm_rf_rack(["RF rack"])
+  charm_drive_rack(["Rotation drive rack"])
+  charm_thermal_rack(["Thermal rack"])
+  dec["DEC"]
+  plant_electrical_bus["Plant electrical bus (1 GW)"]
+  magnet_psu_bay(["Magnet PSU bay"])
+  cryo_compressor_bay(["Cryo compressor bay"])
+  vacuum_controls["Vacuum / controls pack"]
+  fuel_services(["Fuel services"])
+  fuel_services_frame["Fuel services frame"]
+  proton_tank["Proton tank"]
+  boron11_container["Boron-11 container"]
+  boron11_injector["Boron-11 solid fuel injector"]
+  flight_battery["Flight battery"]
+  water_tanks["Water tanks (space propellant)"]
+  ground_cart["Ground cart (Earth only)"]
+  class charm_power_plant collection
+  class fusion_plant_skid,charm_thermal_rack tint0c
+  class charm_skid,charm_shield_bulkhead,left_fusion_chamber,vacuum_controls,fuel_services_frame tint0p
+  class left_fusion_plant_door,charm_backbone,heat_exchange_chamber,proton_tank tint1p
+  class right_fusion_plant_door,right_fusion_chamber,dec,boron11_container,flight_battery tint2p
+  class fusion_plant_bay_atmosphere,charm_axis,plant_electrical_bus,boron11_injector,water_tanks tint3p
+  class charm,fuel_services tint1c
+  class charm_chamber_string tint2c
+  class charm_magnet_rack tint3c
+  class charm_rf_rack,magnet_psu_bay tint4c
+  class charm_drive_rack,cryo_compressor_bay tint5c
+  class ground_cart tint4p
+  charm_power_plant --> fusion_plant_skid
+  fusion_plant_skid --> charm_skid
+  fusion_plant_skid --> left_fusion_plant_door
+  fusion_plant_skid --> right_fusion_plant_door
+  fusion_plant_skid --> fusion_plant_bay_atmosphere
+  charm_power_plant --> charm
+  charm --> charm_shield_bulkhead
+  charm --> charm_backbone
+  charm --> charm_chamber_string
+  charm_chamber_string --> left_fusion_chamber
+  charm_chamber_string --> heat_exchange_chamber
+  charm_chamber_string --> right_fusion_chamber
+  charm_chamber_string --> charm_axis
+  charm --> charm_magnet_rack
+  charm --> charm_rf_rack
+  charm --> charm_drive_rack
+  charm --> charm_thermal_rack
+  charm_power_plant --> dec
+  charm_power_plant --> plant_electrical_bus
+  charm_power_plant --> magnet_psu_bay
+  charm_power_plant --> cryo_compressor_bay
+  charm_power_plant --> vacuum_controls
+  charm_power_plant --> fuel_services
+  fuel_services --> fuel_services_frame
+  fuel_services --> proton_tank
+  fuel_services --> boron11_container
+  fuel_services --> boron11_injector
+  charm_power_plant --> flight_battery
+  charm_power_plant --> water_tanks
+  charm_power_plant --> ground_cart
+  %% connections
+  flight_battery ==>|startup power| charm_drive_rack
+  boron11_container ==>|solid feed to| boron11_injector
+  flight_battery ==>|startup power| magnet_psu_bay
+  flight_battery ==>|startup power| cryo_compressor_bay
+  left_fusion_chamber ==>|necks into| heat_exchange_chamber
+  right_fusion_chamber ==>|necks into| heat_exchange_chamber
+  heat_exchange_chamber ==>|alphas to DEC| dec
+  proton_tank ==>|feed to| left_fusion_chamber
+  proton_tank ==>|feed to| right_fusion_chamber
+  boron11_injector ==>|feed to| left_fusion_chamber
+  boron11_injector ==>|feed to| right_fusion_chamber
+  charm_magnet_rack ==>|magnet leads to| left_fusion_chamber
+  charm_magnet_rack ==>|magnet leads to| right_fusion_chamber
+  charm_thermal_rack ==>|coolant loop| heat_exchange_chamber
+  cryo_compressor_bay ==>|cryo line| charm_magnet_rack
+  cryo_compressor_bay ==>|cryo line| charm_thermal_rack
+  magnet_psu_bay ==>|powers| charm_magnet_rack
+  charm_drive_rack ==>|rotation drive| charm_axis
+  dec ==>|He ash to| fusion_plant_bay_atmosphere
+  dec ==>|powers| plant_electrical_bus
+  vacuum_controls ==>|vacuum line| heat_exchange_chamber
+  ground_cart ==>|startup power| magnet_psu_bay
+  ground_cart ==>|startup power| charm_rf_rack
+  ground_cart ==>|startup power| cryo_compressor_bay
+  _boundary_combined_cycle_engine(("→ Combined-cycle engine"))
+  class _boundary_combined_cycle_engine boundary
+  water_tanks -.->|duct to| _boundary_combined_cycle_engine
+  plant_electrical_bus -.->|power cable| _boundary_combined_cycle_engine
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
+  linkStyle 30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f
+  linkStyle 54,55 stroke:#9a5a3a,stroke-width:1.5px,stroke-dasharray:3 3,color:#9a5a3a
 ```
+<!--/mermaid-gen-->
 
 ### Profile stations
 
-Stations match assembly envelopes: crew \(0\)–\(11\,\mathrm{m}\), airlock \(11\)–\(15\,\mathrm{m}\), cargo \(15\)–\(33.3\,\mathrm{m}\), fusion plant \(33.3\)–\(45\,\mathrm{m}\) (battery + fuel + CHARM on one skid), engine \(45\)–\(52\,\mathrm{m}\) (water tanks on engine skid).
+Stations match assembly envelopes: crew \(0\)–\(11\,\mathrm{m}\), airlock \(11\)–\(15\,\mathrm{m}\), cargo \(15\)–\(33.3\,\mathrm{m}\), fusion plant \(33.3\)–\(49\,\mathrm{m}\) (battery + water + fuel + CHARM on one skid — water relocated ahead of CHARM as a supplemental shield, §9.9), engine \(49\)–\(52\,\mathrm{m}\). Auto-generated (whole-vehicle scope, one level into the fusion plant and engine) by the same `scripts/update_arxiv_mermaid.py` pipeline as Fig.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}.
 
 <!-- mermaid-caption: Profile stations from assembly envelopes -->
+<!--mermaid-gen profile_stations-->
 ```mermaid
 flowchart TD
-  subgraph profile ["Profile stations +x from assembly.json"]
-    N["Nose gear<br/>fuselage"]
-    C2["Crew capsule<br/>0–11 m"]
-    A2["Airlock<br/>11–15 m"]
-    B2["Cargo bay<br/>15–33.3 m"]
-    FP["Fusion electric plant<br/>33.3–45 m"]
-    BAT2["Flight battery<br/>on plant skid"]
-    F2["Fuel services<br/>on plant skid"]
-    R2["CHARM island<br/>on plant skid"]
-    ENG["Combined-cycle engine<br/>45–52 m"]
-    W2["Water tanks<br/>on engine skid"]
-    E2["Stages 1–3 + nozzle"]
-    MG["Main gear<br/>wing"]
-    N --- C2 --- A2 --- B2 --- FP
-    FP --- BAT2
-    FP --- F2
-    FP --- R2
-    FP --- ENG
-    ENG --- W2
-    ENG --- E2
-    B2 --- MG
-  end
+  linkStyle default stroke:#9a9a9a,stroke-width:1.5px
+  classDef collection fill:#e7eef8,stroke:#5a6f8c,stroke-width:1.8px,stroke-dasharray:6 4,color:#243447
+  classDef part fill:#ffffff,stroke:#333,stroke-width:1.5px,color:#222
+  classDef tint0c fill:#e4f0e2,stroke:#4f7a48,stroke-width:1.8px,stroke-dasharray:6 4,color:#1e3320
+  classDef tint0p fill:#e4f0e2,stroke:#4f7a48,stroke-width:1.5px,color:#1e3320
+  classDef tint1c fill:#e2f1f4,stroke:#3d6f7c,stroke-width:1.8px,stroke-dasharray:6 4,color:#1a3036
+  classDef tint1p fill:#e2f1f4,stroke:#3d6f7c,stroke-width:1.5px,color:#1a3036
+  classDef tint2c fill:#f5efe3,stroke:#8a6e42,stroke-width:1.8px,stroke-dasharray:6 4,color:#3a2e18
+  classDef tint2p fill:#f5efe3,stroke:#8a6e42,stroke-width:1.5px,color:#3a2e18
+  classDef tint3c fill:#f3e8e8,stroke:#8a5558,stroke-width:1.8px,stroke-dasharray:6 4,color:#3a1e20
+  classDef tint3p fill:#f3e8e8,stroke:#8a5558,stroke-width:1.5px,color:#3a1e20
+  classDef tint4c fill:#eceedf,stroke:#6a7a40,stroke-width:1.8px,stroke-dasharray:6 4,color:#2a3218
+  classDef tint4p fill:#eceedf,stroke:#6a7a40,stroke-width:1.5px,color:#2a3218
+  classDef tint5c fill:#ebe8f2,stroke:#5a5578,stroke-width:1.8px,stroke-dasharray:6 4,color:#242038
+  classDef tint5p fill:#ebe8f2,stroke:#5a5578,stroke-width:1.5px,color:#242038
+  vehicle(["Whole vehicle"])
+  fuselage(["Fuselage"])
+  crew_capsule(["Crew capsule"])
+  airlock(["Airlock"])
+  cargo_bay(["Cargo bay"])
+  charm_power_plant(["Fusion electric plant"])
+  fusion_plant_skid(["Fusion plant skid"])
+  charm(["CHARM"])
+  dec["DEC"]
+  plant_electrical_bus["Plant electrical bus (1 GW)"]
+  magnet_psu_bay(["Magnet PSU bay"])
+  cryo_compressor_bay(["Cryo compressor bay"])
+  vacuum_controls["Vacuum / controls pack"]
+  fuel_services(["Fuel services"])
+  flight_battery["Flight battery"]
+  water_tanks["Water tanks (space propellant)"]
+  ground_cart["Ground cart (Earth only)"]
+  combined_cycle_engine(["Combined-cycle engine"])
+  engine_skid(["Engine skid"])
+  stage1_edf["Stage-1 electric ducted fan"]
+  stage2_air_plasma(["Stage-2 microwave air plasma jet"])
+  stage3_water_plasma_rack(["Stage-3 water plasma rack"])
+  water_injector["Water injector"]
+  propulsion_bus_coupler["Propulsion bus coupler"]
+  nacelle["Engine housing / nacelle"]
+  variable_inlets["External air scoops / variable inlets"]
+  inlet_duct["Inlet duct / plenum"]
+  shared_nozzle["Shared flared exhaust nozzle"]
+  tail_assembly(["Tail assembly"])
+  wing(["Wing"])
+  class vehicle collection
+  class fuselage,fusion_plant_skid,engine_skid,tail_assembly tint0c
+  class crew_capsule,charm,fuel_services,wing tint1c
+  class airlock,stage2_air_plasma tint2c
+  class cargo_bay,stage3_water_plasma_rack tint3c
+  class charm_power_plant,magnet_psu_bay tint4c
+  class dec,flight_battery,inlet_duct tint2p
+  class plant_electrical_bus,water_tanks,shared_nozzle tint3p
+  class cryo_compressor_bay,combined_cycle_engine tint5c
+  class vacuum_controls,nacelle tint0p
+  class ground_cart,water_injector tint4p
+  class stage1_edf,variable_inlets tint1p
+  class propulsion_bus_coupler tint5p
+  vehicle --> fuselage
+  vehicle --> crew_capsule
+  vehicle --> airlock
+  vehicle --> cargo_bay
+  vehicle --> charm_power_plant
+  charm_power_plant --> fusion_plant_skid
+  charm_power_plant --> charm
+  charm_power_plant --> dec
+  charm_power_plant --> plant_electrical_bus
+  charm_power_plant --> magnet_psu_bay
+  charm_power_plant --> cryo_compressor_bay
+  charm_power_plant --> vacuum_controls
+  charm_power_plant --> fuel_services
+  charm_power_plant --> flight_battery
+  charm_power_plant --> water_tanks
+  charm_power_plant --> ground_cart
+  vehicle --> combined_cycle_engine
+  combined_cycle_engine --> engine_skid
+  combined_cycle_engine --> stage1_edf
+  combined_cycle_engine --> stage2_air_plasma
+  combined_cycle_engine --> stage3_water_plasma_rack
+  combined_cycle_engine --> water_injector
+  combined_cycle_engine --> propulsion_bus_coupler
+  combined_cycle_engine --> nacelle
+  combined_cycle_engine --> variable_inlets
+  combined_cycle_engine --> inlet_duct
+  combined_cycle_engine --> shared_nozzle
+  vehicle --> tail_assembly
+  vehicle --> wing
+  %% connections
+  crew_capsule ==>|pressure door| airlock
+  airlock ==>|pressure door| cargo_bay
+  water_tanks ==>|duct to| water_injector
+  plant_electrical_bus ==>|power cable| propulsion_bus_coupler
+  flight_battery ==>|startup power| charm
+  flight_battery ==>|startup power| magnet_psu_bay
+  flight_battery ==>|startup power| cryo_compressor_bay
+  charm ==>|alphas to DEC| dec
+  fuel_services ==>|feed to| charm
+  cryo_compressor_bay ==>|cryo line| charm
+  magnet_psu_bay ==>|powers| charm
+  dec ==>|He ash to| fusion_plant_skid
+  propulsion_bus_coupler ==>|powers| stage1_edf
+  stage2_air_plasma ==>|plasma exhaust to| shared_nozzle
+  water_injector ==>|propellant feed| stage3_water_plasma_rack
+  stage3_water_plasma_rack ==>|plasma exhaust to| shared_nozzle
+  propulsion_bus_coupler ==>|powers| stage2_air_plasma
+  propulsion_bus_coupler ==>|powers| stage3_water_plasma_rack
+  stage1_edf ==>|fan exhaust to| shared_nozzle
+  dec ==>|powers| plant_electrical_bus
+  vacuum_controls ==>|vacuum line| charm
+  ground_cart ==>|startup power| magnet_psu_bay
+  ground_cart ==>|startup power| charm
+  ground_cart ==>|startup power| cryo_compressor_bay
+  variable_inlets ==>|air path| inlet_duct
+  inlet_duct ==>|air path| stage1_edf
+  inlet_duct ==>|air path| stage2_air_plasma
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
+  linkStyle 29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f
 ```
+<!--/mermaid-gen-->
 
 ---
 
@@ -745,6 +907,8 @@ m_{\mathrm{remainder}} = m_{\mathrm{C,target}} - m_{\mathrm{bottom\text{-}up,kno
 \quad\text{("RF + shielding + backbone/chamber structure + margin — future work").}
 \]
 
+§9.9 below sources the first real piece of this bucket — a permanent radiation-shield bulkhead, \(<!--gen shield.b1_mass_t:.1f-->21.9<!--/gen--> \,\mathrm{t}\) — leaving \(<!--gen charm.m_remainder_after_b1_t:.1f-->31.5<!--/gen--> \,\mathrm{t}\) still unsized (RF hardware + backbone/chamber structure).
+
 \[
 \boxed{
 m_{\mathrm{C}} = \max\!\left(m_{\mathrm{C,target}},\; m_{\mathrm{bottom\text{-}up,known}}\right) = <!--gen charm.m_c_t:.1f-->66.7<!--/gen-->\,\mathrm{t}
@@ -817,6 +981,46 @@ is booked for **on-orbit relight**, while **first light on Earth** uses the grou
 
 **Pilot-string kindling:** battery (or cart) lights a fraction of chambers → DEC/RF bus cascades the rest.
 
+### 9.9 Radiation and RF shielding: permanent bulkhead (baseline), water relocation (bonus), RF leakage (separate)
+
+Crew/cargo safety must not depend on the water tank's fill state — water is a consumable that can legitimately be empty (post-insertion, pre-fueling, or after an early dump). This is therefore **three separate, independently-motivated additions**, computed by [`constants_model.py`](research/figures/cad/constants_model.py) (plain numpy, no fitting) and reported as `<!--gen-->` spans. All three are explicitly-flagged, 1D slab, order-of-magnitude estimates — no real photon/neutron spectrum, scatter, or 3D solid-angle coverage is modeled, and no CHARM-specific source term exists in [1] or the CHARM literature search behind §9.6.
+
+**Shared methodology.** A representative bremsstrahlung/X-ray photon energy of \(\sim 300\,\mathrm{keV}\) is assumed (flagged guess, informed by the \(100\)s-of-keV electron temperatures discussed for radiation-trapping \(p\text{-}^{11}\mathrm{B}\) regimes [7]), with NIST XCOM mass-attenuation coefficients [39] for water and polyethylene at that energy. A residual-neutron source term is also carried even though \(p\text{-}^{11}\mathrm{B}\) is billed as aneutronic: secondary/contamination reactions give a small non-zero yield, flagged at \(\lesssim 1\%\) of a D–T-equivalent yield per general \(p\text{-}^{11}\mathrm{B}\) literature, attenuated using standard polyethylene/water fast-neutron removal cross sections [40] (a different physical mechanism than the photon \(\mu/\rho\) above, reported separately). A **target attenuation** of \(<!--gen shield.target_db:.0f-->30<!--/gen--> \,\mathrm{dB}\) (\(<!--gen shield.n_hvl_target:.1f-->10.0<!--/gen-->\) half-value layers, \(1000\times\) flux reduction) is the flagged baseline design requirement — a planning choice, absent a real CHARM source-term/dose calculation, applied identically to both B1 and B2 below.
+
+**B1 — Permanent dedicated shield bulkhead (baseline, sized for zero water present).** A polyethylene (or borated-polyethylene) bulkhead between CHARM and the forward vehicle — the standard aerospace choice for combined photon+neutron shielding (hydrogen-rich; the NASA/ISS/Orion reference material) — spans the fuselage cross-section (\(<!--gen shield.area_m2:.0f-->34<!--/gen--> \,\mathrm{m}^2\), reused from §10.2's aero frontal-area estimate) and is thick enough to hit the target attenuation against **both** hazards independently:
+
+\[
+t_{\gamma} = N_{\mathrm{HVL}}\times\mathrm{HVL}_{\gamma,\mathrm{poly}} \approx <!--gen shield.b1_thickness_gamma_cm:.0f-->61<!--/gen--> \,\mathrm{cm},\qquad
+t_{n} = N_{\mathrm{HVL}}\times\mathrm{HVL}_{n,\mathrm{poly}} \approx <!--gen shield.b1_thickness_n_cm:.0f-->69<!--/gen--> \,\mathrm{cm},
+\]
+
+\[
+\boxed{
+t_{\mathrm{B1}} = \max(t_{\gamma}, t_n) \approx <!--gen shield.b1_thickness_m:.2f-->0.69<!--/gen--> \,\mathrm{m}
+\quad\Rightarrow\quad
+m_{\mathrm{B1}} = t_{\mathrm{B1}}\times A \times \rho_{\mathrm{poly}} \approx <!--gen shield.b1_mass_t:.1f-->21.9<!--/gen--> \,\mathrm{t}
+}
+\]
+
+This mass becomes the **first real, sourced line item** inside the \(<!--gen charm.m_remainder_t:.1f-->53.5<!--/gen-->\,\mathrm{t}\) "RF + shielding + backbone/chamber structure" remainder carried since §9.6 — \(<!--gen shield.b1_pct_of_remainder:.0f-->41<!--/gen-->\%\) of it, leaving \(<!--gen charm.m_remainder_after_b1_t:.1f-->31.5<!--/gen-->\,\mathrm{t}\) still unsized (RF hardware and backbone/chamber structure). It is a partial de-risking, not a closure — \(m_{\mathrm{C}}\) does not move, since the bottom-up known total (magnets + cryo + B1) still fits inside the top-down target.
+
+**B2 — Relocate water tanks (bonus/supplemental shield, unchanged station lengths).** Moving the water tanks from aft-of-CHARM (§1/§11, previously shielding nothing) to between CHARM and the forward vehicle adds *supplemental* shielding on top of B1 whenever the tank is full — new layout: `crew → airlock → cargo → battery → water → fuel → charm → engine` (§1/§11). At the full-tank slab depth (\(<!--gen mass.m_w_t:.0f-->44<!--/gen-->\,\mathrm{t}\) reference load, \(4.0\,\mathrm{m}\) envelope), water alone provides:
+
+\[
+<!--gen shield.water_gamma_db:.0f-->206<!--/gen--> \,\mathrm{dB}\ \text{(photon)},\qquad
+<!--gen shield.water_n_db:.0f-->179<!--/gen--> \,\mathrm{dB}\ \text{(neutron)}
+\]
+
+— both far beyond the \(30\,\mathrm{dB}\) B1 baseline target, i.e. a full water tank is vastly better shielding than the permanent bulkhead alone, but B1 is what remains when it is empty.
+
+**B3 — RF/microwave leakage (separate physics, own brief treatment).** "Damaging RF energy" — stray microwave/RF leakage from the RF confinement racks, a non-ionizing occupational-exposure hazard — is a **different shielding problem** from B1/B2: solved by continuous conductive (Faraday-cage) enclosure, not mass shielding. At a flagged representative frequency of \(2.45\,\mathrm{GHz}\) (CHARM's actual RF launcher frequency is unspecified in [1]), the skin depth in aluminum is \(<!--gen shield.rf_skin_depth_um:.1f-->1.7<!--/gen--> \,\mu\mathrm{m}\), so a \(1\,\mathrm{mm}\) structural skin (\(\approx <!--gen shield.rf_thickness_over_skin_depths:.0f-->582<!--/gen-->\) skin depths) gives
+
+\[
+\mathrm{SE} \approx <!--gen shield.rf_se_db:.0f-->5054<!--/gen--> \,\mathrm{dB}
+\]
+
+— i.e. the airframe/backbone structure and B1's likely metal facesheets already provide near-total RF attenuation at **zero incremental mass**. This is explicitly **not a mass driver**; the real engineering risk is penetrations and seams (hatches, feedthroughs) needing EMI gaskets, called out qualitatively rather than mass-costed.
+
 ---
 
 ## 10. Combined-cycle engine (detail)
@@ -865,6 +1069,11 @@ Table: Frozen stage constants (literature-anchored; packaging \(\alpha\) are des
 | \(v_e=I_{\mathrm{sp}}g_0\) | 3 | Exhaust speed | \(19.61\,\mathrm{km/s}\) |
 | \(P_{\mathrm{hotel}}\) | all | Hotel / plant recirculating floor | \(5\,\mathrm{MW}\) |
 | \(C_{\mathrm{cap}}\) | 1–2 | Inlet capture coefficient | \(\le 1\) (free air; not a carried mass) |
+| \(\rho(h)\) | 2 | US Standard Atmosphere 1976 [37] | Closed-form piecewise layers (textbook, not a guess) |
+| \(S\) | 2 | Wing reference area | \(<!--gen aero.wing_area_m2:.0f-->229<!--/gen-->\,\mathrm{m}^2\) — computed from `vehicle_spec.json`'s double-delta geometry (§1); cross-checks OpenVSP's own \(\approx 229\,\mathrm{m}^2\) |
+| \(C_D(M)\) | 2 | Generic hypersonic lifting-body drag table [38] | Flagged: no CHARM-specific CFD/wind-tunnel data; \(0.045\) subsonic, \(0.09\) transonic peak, \(0.05\) hypersonic |
+| \(Q_{\mathrm{ascent}}\) | 2 | Design ascent dynamic pressure | Flagged guess, X-15/Shuttle-class order: \(<!--gen stage.q_ascent_kpa:.0f-->25<!--/gen-->\,\mathrm{kPa}\) |
+| \(v_1\) | 1→2 | Stage 1→2 transition speed | Flagged guess (transonic handoff): \(<!--gen stage.v1_m_s:.0f-->300<!--/gen-->\,\mathrm{m/s}\) |
 
 **Reaction-mass utilization:**
 - Stages 1–2: utilization of **carried** propellant is zero (air is free). Inlet capture \(C_{\mathrm{cap}}\) only limits available \(\dot{m}_{\mathrm{air}}\).
@@ -880,16 +1089,16 @@ m_{\mathrm{EDF}} = k_{\mathrm{fan}}\frac{P_1}{\alpha_{\mathrm{mot}}}.
 }
 \]
 
-At reference \(m_0=240\,\mathrm{t}\):
+At the solved reference \(m_0=<!--gen mass.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}\) (§8):
 
 \[
-T_1 \approx 589\,\mathrm{kN},\qquad
-P_1 \approx 65\,\mathrm{MW},\qquad
-m_{\mathrm{EDF}}\approx 5.5\,\mathrm{t}
+T_1 \approx <!--gen stage.t1_kn:.0f-->589<!--/gen-->\,\mathrm{kN},\qquad
+P_1 \approx <!--gen stage.p1_mw:.0f-->65<!--/gen-->\,\mathrm{MW},\qquad
+m_{\mathrm{EDF}}\approx <!--gen stage.m_edf_t:.1f-->5.5<!--/gen-->\,\mathrm{t}
 \ \text{(HEMM-class \(\alpha_{\mathrm{mot}}\); within the \(15\,\mathrm{t}\) engine budget)}.
 \]
 
-Municipal segment is **not** the \(P_{\star}\) driver.
+Municipal segment is **not** the \(P_{\star}\) driver: an impulse-estimate ground-roll/initial-climb duration to \(v_1\) gives \(t_1\approx <!--gen stage.t1_s:.0f-->122<!--/gen-->\,\mathrm{s}\), \(E_1\approx <!--gen stage.e1_mwh:.1f-->2.2<!--/gen-->\,\mathrm{MWh}\) — negligible next to stages 2–3 below.
 
 ### 10.4 Stage 2 — power and mass (electrothermal, not Ye’s N/kW)
 
@@ -915,11 +1124,33 @@ P_2 \le P_{\star} - P_{\mathrm{hotel}}.
 Climb still sets the bus:
 
 \[
-D_{\mathrm{ram}} = \tfrac12\rho v^2 C_D S,\qquad
+D_{\mathrm{ram}} = \tfrac12\rho v^2 C_D S = Q\,C_D(M)\,S,\qquad
 P_{\mathrm{need}} \approx \frac{(D_{\mathrm{ram}}-T_{\mathrm{excess}})v}{\eta_{\mathrm{p}}}.
 \]
 
-**Freeze for sizing:** \(P_2^{\star} = P_{\star}-P_{\mathrm{hotel}} = 995\,\mathrm{MW}\) → \(T_2 \approx 821\,\mathrm{kN}\) at the \(v_{\mathrm{j},2}\) freeze (order-of; real trajectory integrates \(\rho(h),M\)).
+**Freeze for sizing:** \(P_2^{\star} = P_{\star}-P_{\mathrm{hotel}} = <!--gen stage.p2_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}\) → \(T_2 = \left(2\eta_{\mu}\eta_{\mathrm{j},2}/v_{\mathrm{j},2}\right)P_2^{\star} \approx <!--gen stage.t2_kn:.0f-->821<!--/gen-->\,\mathrm{kN}\), constant along the climb since \(P_2\) sits at the ceiling and \(v_{\mathrm{j},2}\) is frozen.
+
+**Why \(P_2^{\star}=P_3^{\star}\) does not mean stage 2 and stage 3 look alike.** Both freezes above are taken *at the same ceiling* \(P_{\star}-P_{\mathrm{hotel}}\) — that is a packaging/bus-sizing choice, not a claim that the two mission phases consume comparable energy. Under a **constant ascent dynamic pressure** \(Q_{\mathrm{ascent}}\) climb schedule (Bryson-style energy-height method [38]: \(E_s=h+v^2/2g_0\), \(dE_s/dt=(T-D)v/(mg_0)\)), the path \(h(v)\) is fixed by \(\rho(h)=2Q_{\mathrm{ascent}}/v^2\) (US Standard Atmosphere 1976 [37]), collapsing the 2D trajectory to a 1D quadrature
+
+\[
+\boxed{
+\frac{dt}{dv} = \frac{m_0\left(g_0\,\dfrac{dh}{dv} + v\right)}{\left(T_2 - Q_{\mathrm{ascent}}\,C_D(M)\,S\right)v}
+}
+\]
+
+integrated numerically (`integrate_stage2_climb` in [`constants_model.py`](research/figures/cad/constants_model.py), plain numpy quadrature) from \(v_1\) to the existing air-breathing handoff speed \(v_{\mathrm{ab}}=<!--gen stage.v_ab_km_s:.1f-->3.5<!--/gen-->\,\mathrm{km/s}\) (§6 — reused, not re-guessed). Mass is held at \(m_0\) (stages 1–2 burn free air; no carried propellant depletes). The sealing altitude is **not** assumed — it falls out as \(h(v_{\mathrm{ab}})\):
+
+\[
+\boxed{
+t_2 \approx <!--gen stage.t2_min:.1f-->28.7<!--/gen-->\,\mathrm{min},\qquad
+h_{\mathrm{seal}} \approx <!--gen stage.h_seal_km:.1f-->39.6<!--/gen-->\,\mathrm{km},\qquad
+M_{\mathrm{seal}} \approx <!--gen stage.mach_seal:.1f-->11.0<!--/gen-->
+}
+\]
+
+\[
+E_2 = P_2^{\star}\,t_2 \approx <!--gen stage.e2_mwh:.0f-->476<!--/gen-->\,\mathrm{MWh}.
+\]
 
 ### 10.5 Stage 3 — water, power, and \(I_{\mathrm{sp}}\) cases
 
@@ -936,12 +1167,22 @@ m_{\mathrm{w}} = m_{\mathrm{dry}}\bigl(e^{\Delta v_{\mathrm{vac}}/v_e}-1\bigr)
 \quad(u_{\mathrm{w}}=1).
 \]
 
-With \(P_3=995\,\mathrm{MW}\), \(\eta_{\mathrm{jet}}=0.55\), \(I_{\mathrm{sp}}=2000\,\mathrm{s}\):
+With \(P_3=<!--gen stage.p3_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}\), \(\eta_{\mathrm{jet}}=0.55\), \(I_{\mathrm{sp}}=2000\,\mathrm{s}\):
 
 \[
-T_3 \approx 56\,\mathrm{kN},\qquad
-\dot{m}_{\mathrm{w}} \approx 2.85\,\mathrm{kg/s}.
+T_3 \approx <!--gen stage.t3_kn:.0f-->56<!--/gen-->\,\mathrm{kN},\qquad
+\dot{m}_{\mathrm{w}} \approx <!--gen stage.mdot_w_kg_s:.2f-->2.85<!--/gen-->\,\mathrm{kg/s}.
 \]
+
+**\(E_3\) is a physical invariant, independent of the \(P_3\) ceiling.** Unlike stage 2 (§10.4), stage 3's total energy does not depend on which power ceiling gets assumed — the closed form
+
+\[
+\boxed{
+E_3 = \tfrac12\,m_{\mathrm{w}}\,v_e^2/\eta_{\mathrm{jet}} \approx <!--gen stage.e3_mwh:.0f-->4309<!--/gen-->\,\mathrm{MWh}
+}
+\]
+
+follows purely from \((m_{\mathrm{w}}, v_e, \eta_{\mathrm{jet}})\) — pick a *smaller* \(P_3\) and \(t_3\) simply grows in proportion (\(t_3=E_3/P_3\)), the total energy delivered to the water is the same. At the \(P_3^{\star}\) ceiling this gives the burn time already used above (§10.6): \(t_3\approx m_{\mathrm{w}}/\dot m_{\mathrm{w}}\approx <!--gen stage.t3_h:.2f-->4.33<!--/gen-->\,\mathrm{h}\), and \(P_3^{\star}t_3\equiv E_3\) exactly by construction (same physics, not a coincidence).
 
 Table: Water store versus stage-3 $I_{\mathrm{sp}}$ at fixed $m_{\mathrm{dry}}=196\,\mathrm{t}$, $\Delta v_{\mathrm{vac}}=4\,\mathrm{km/s}$.
 
@@ -953,6 +1194,29 @@ Table: Water store versus stage-3 $I_{\mathrm{sp}}$ at fixed $m_{\mathrm{dry}}=1
 
 Path: tanks → pump/injector → vaporizer → microwave/EM plasma → shared nozzle [24], [27], [28].
 
+**Stage energy comparison — same peak power, very different mission phases.** \(P_2^{\star}=P_3^{\star}\) is a **bus-ceiling coincidence**, not a claim that the two phases are alike: stage 2 is a short, low-mass-flow hypersonic climb; stage 3 is a long, power-limited vacuum burn that expends the entire water store.
+
+Table: Stage energy comparison at the closed reference vehicle ($m_0=<!--gen mass.m0_t:.0f-->240<!--/gen--> \,\mathrm{t}$).
+
+| Stage | Peak \(P^{\star}\) | Duration | Energy | Why |
+|-------|--------------------|----------|--------|-----|
+| 1 — EDF | \(<!--gen stage.p1_mw:.0f-->65<!--/gen-->\,\mathrm{MW}\) | \(<!--gen stage.t1_s:.0f-->122<!--/gen-->\,\mathrm{s}\) | \(<!--gen stage.e1_mwh:.1f-->2.2<!--/gen-->\,\mathrm{MWh}\) | Ground roll / initial climb only |
+| 2 — air plasma | \(<!--gen stage.p2_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}\) | \(<!--gen stage.t2_min:.1f-->28.7<!--/gen-->\,\mathrm{min}\) | \(<!--gen stage.e2_mwh:.0f-->476<!--/gen-->\,\mathrm{MWh}\) | Short, steep constant-\(Q\) climb to \(h_{\mathrm{seal}}\) |
+| 3 — water plasma | \(<!--gen stage.p3_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}\) | \(<!--gen stage.t3_h:.2f-->4.33<!--/gen-->\,\mathrm{h}\) | \(<!--gen stage.e3_mwh:.0f-->4309<!--/gen-->\,\mathrm{MWh}\) | Long, power-limited vacuum insertion burn |
+| Hotel | \(5\,\mathrm{MW}\) | \(t_1+t_2+t_3\) | \(<!--gen stage.e_hotel_mwh:.1f-->24.2<!--/gen-->\,\mathrm{MWh}\) | Continuous recirculating floor (§9.5) |
+| **Bottom-up total** | — | — | \(<!--gen stage.e_bottom_up_mwh:.0f-->4811<!--/gen-->\,\mathrm{MWh}\) | \(E_1+E_2+E_3+E_{\mathrm{hotel}}\) |
+
+Same peak power (\(P_2^{\star}=P_3^{\star}\) by ceiling), but \(t_2 \ll t_3\) and \(E_2 \ll E_3\) by **actual physics** — this is the answer to why stage 2 and stage 3 previously looked identical on paper: the ceiling was the only number ever shown; duration and energy were never independently derived until this pass.
+
+**Reconciliation against the §4/§8 top-down energy budget.** §4/§8 assume \(E_{\mathrm{src}}=\kappa_E E_{\mathrm{orb}}\) with \(\kappa_E\in[2,4]\) as a chain-efficiency guess, without a bottom-up check. Summing the stage energies above against \(E_{\mathrm{orb}}=6.49\,\mathrm{TJ}\) (§4.1):
+
+\[
+\kappa_{E,\mathrm{implied}} = \frac{E_1+E_2+E_3+E_{\mathrm{hotel}}}{E_{\mathrm{orb}}}
+\approx <!--gen stage.kappa_e_implied:.2f-->2.67<!--/gen-->
+\]
+
+— inside the assumed \([2,4]\) band (not forced to agree by construction; the two derivations are independent), and \(<!--gen stage.e_bottom_up_over_topdown_pct:.0f-->89<!--/gen-->\%\) of the top-down \(\kappa_E=3\) figure of \(<!--gen stage.e_src_topdown_mwh:.0f-->5408<!--/gen-->\,\mathrm{MWh}\) used to freeze the reference vehicle in §8. This is an honesty check, not a new closure — §7/§8's mass chain is not re-solved against this bottom-up number.
+
 ### 10.6 Closed solve: powers, component masses, fuels
 
 **Power ratings (required outputs):**
@@ -960,15 +1224,17 @@ Path: tanks → pump/injector → vaporizer → microwave/EM plasma → shared n
 \[
 \boxed{
 \begin{aligned}
-P_1^{\star} &\approx 65\,\mathrm{MW}
- && \text{(stage 1 at \(m_0=240\,\mathrm{t}\))},\\
-P_2^{\star} &= 995\,\mathrm{MW}
- && \text{(stage 2 sizes \(P_{\star}\))},\\
-P_3^{\star} &= 995\,\mathrm{MW}
- && \text{(stage 3 vacuum; \(T_3\sim 56\,\mathrm{kN}\))}.
+P_1^{\star} &\approx <!--gen stage.p1_mw:.0f-->65<!--/gen-->\,\mathrm{MW}
+ && \text{(stage 1 at \(m_0=<!--gen mass.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}\))},\\
+P_2^{\star} &= <!--gen stage.p2_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}
+ && \text{(stage 2 sizes \(P_{\star}\); }t_2\approx <!--gen stage.t2_min:.1f-->28.7<!--/gen-->\,\mathrm{min)},\\
+P_3^{\star} &= <!--gen stage.p3_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}
+ && \text{(stage 3 vacuum; \(T_3\sim <!--gen stage.t3_kn:.0f-->56<!--/gen-->\,\mathrm{kN}\); }t_3\approx <!--gen stage.t3_h:.2f-->4.33<!--/gen-->\,\mathrm{h)}.
 \end{aligned}
 }
 \]
+
+\(P_2^{\star}=P_3^{\star}\) by the shared bus ceiling — §10.4/§10.5 now derive \(t_2\), \(h_{\mathrm{seal}}\), and \(E_2\) independently of that ceiling coincidence, and show \(E_2\ll E_3\) despite it (comparison table, §10.5).
 
 **Engine mass budget** (reference hole \(m_{\mathrm{eng}}=15\,\mathrm{t}\)):
 
@@ -986,14 +1252,14 @@ If stage-2/3 hardware were packaged at a more literal \(\alpha_{\mu}\sim 8\,\mat
 
 **Fusion fuel (not nozzle propellant):** mission bus energy \(E_{\mathrm{src}}=\kappa_E m_{\mathrm{ins}}\Delta\varepsilon\). Stoichiometric \(p\text{-}^{11}\mathrm{B}\) rest-mass for that energy is \(\ll 1\,\mathrm{kg}\) at ideal conversion; with chain efficiency \(\sim 0.25\) still \(\sim 1\,\mathrm{kg}\). Freeze \(m_{\mathrm{f}}=0.5\,\mathrm{t}\) covers tankage, residuals, and margin — **water dominates expendables**.
 
-**Vacuum burn time** at constant \(T_3\): \(t_3 \approx m_{\mathrm{w}}/\dot{m}_{\mathrm{w}} \approx 4.3\,\mathrm{h}\) — long insertion, consistent with power-limited electric thrust.
+**Vacuum burn time** at constant \(T_3\): \(t_3 \approx m_{\mathrm{w}}/\dot{m}_{\mathrm{w}} \approx <!--gen stage.t3_h:.2f-->4.33<!--/gen-->\,\mathrm{h}\) — long insertion, consistent with power-limited electric thrust, and \(\gg t_2\approx <!--gen stage.t2_min:.1f-->28.7<!--/gen-->\,\mathrm{min}\) (§10.5 comparison table).
 
 ### 10.7 Physical envelope
 
 - One nacelle with **external air scoops** (OML lips + close-off shutters) feeding an **inlet duct/plenum**.  
 - Stage-1 EDF sits **in-duct** behind the scoops (not a bare fan on the skid face); duct also feeds stage-2 precompressor.  
 - **Shared flared** aft nozzle — common exit for **all three** stages (stage-1 EDF bypass + stages 2–3 plasma).  
-- Water tanks on the engine skid (\(m_{\mathrm{w}}\approx 44\,\mathrm{t}\approx 44\,\mathrm{m}^{3}\) at the reference \(I_{\mathrm{sp}}\); envelope \(45\)–\(49\,\mathrm{m}\), not small service bottles); MW farm shared in packaging intent between stages 2 and 3.  
+- Water tanks moved to the **fusion plant skid**, ahead of CHARM (\(m_{\mathrm{w}}\approx <!--gen mass.m_w_t:.0f-->44<!--/gen-->\,\mathrm{t}\approx 44\,\mathrm{m}^{3}\) at the reference \(I_{\mathrm{sp}}\); envelope \(35.5\)–\(39.5\,\mathrm{m}\), not small service bottles) — a supplemental radiation shield when full, §9.9; fed to the engine skid by a long cross-skid duct (`j_water_to_injector`). MW farm shared in packaging intent between stages 2 and 3.  
 - \(m_{\mathrm{eng}}=15\,\mathrm{t}\) reference as in §10.6.
 ---
 
@@ -1010,57 +1276,163 @@ Table: Longitudinal station and bay layout.
 | \(11\)–\(15\) | Airlock | **Suited-crew airlock** (\(\sim 2.5\,\mathrm{m}\) class clear), aft bulkhead facing **into cargo bay** |
 | \(15\)–\(33.3\) | Cargo | \(18.3\,\mathrm{m}\times 4.6\,\mathrm{m}\) payload bay (no reactors) |
 | \(33.3\)–\(35.5\) | Battery | Flight battery \(\approx 2\,\mathrm{t}\) (restart / hotel) |
-| \(35.5\)–\(37.5\) | Fusion fuel | Proton / \({}^{11}\mathrm{B}\) feed tanks + plumbing (low mass, real volume) |
-| \(37.5\)–\(45\) | CHARM | Reactor island (\(\lesssim 120\,\mathrm{m}^3\), \(67\,\mathrm{t}\)) |
-| \(45\)–\(49\) | Water | \(\approx 44\,\mathrm{t}\) H\(_2\)O |
+| \(35.5\)–\(39.5\) | Water | \(\approx <!--gen mass.m_w_t:.0f-->44<!--/gen-->\,\mathrm{t}\) H\(_2\)O — relocated ahead of CHARM: supplemental radiation shield when full (§9.9) |
+| \(39.5\)–\(41.5\) | Fusion fuel | Proton / \({}^{11}\mathrm{B}\) feed tanks + plumbing (low mass, real volume) |
+| \(41.5\)–\(49\) | CHARM | Reactor island incl. permanent shield bulkhead (\(\lesssim 120\,\mathrm{m}^3\), \(<!--gen charm.m_c_t:.1f-->66.7<!--/gen-->\,\mathrm{t}\)) |
 | \(49\)–\(52\) | Engine | Combined-cycle nacelle + nozzle |
 | Wings | Controls | Elevons, rudder (gear not drawn on this figure) |
 
-**Doors (Shuttle pattern).** (1) **Side/forward crew door** — runway/ground only; (2) **airlock** — on-orbit cabin ↔ cargo bay / vacuum for suited operations [21].
+**Doors (Shuttle pattern).** (1) **Side/forward crew door** — runway/ground only; (2) **airlock** — on-orbit cabin ↔ cargo bay / vacuum for suited operations [21]. Auto-generated (whole-vehicle scope; crew capsule expanded to system level, airlock/cargo bay as single boxes, plant/engine one level) by the same pipeline as Figs.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}–\ref{fig:mermaid-profile-stations-from-assembly-envelopes}.
 
 <!-- mermaid-caption: Top-down floorplan from assembly.json -->
+<!--mermaid-gen floorplan-->
 ```mermaid
 flowchart LR
-  subgraph crew ["Crew capsule"]
-    FD["Flight deck<br/>CDR/PLT forward"]
-    SE["Six passenger seats + deck"]
-    LUG["Luggage lockers"]
-    WCS["Toilet"]
-    GAL["Galley"]
-    ECLSS["ECLSS + O₂/N₂<br/>inside cabin"]
-    DOOR["Left-side ground hatch"]
-    FD --- SE --- LUG
-    SE --- WCS --- GAL --- ECLSS
-    DOOR --- SE
-  end
-  AL["Airlock<br/>cabin↔bay hatches"]
-  B["Cargo bay<br/>skid + bay doors"]
-  subgraph FP ["Fusion electric plant skid"]
-    BAT["Flight battery"]
-    FUEL["Fuel services<br/>H / ¹¹B / injector"]
-    R["CHARM<br/>chambers + sub-racks"]
-    DEC2["DEC + plant bus"]
-    BAT --- FUEL --- R --- DEC2
-  end
-  subgraph ENG ["Combined-cycle engine skid"]
-    SC["External air scoops"]
-    DU["Inlet duct / plenum"]
-    W["Water tanks"]
-    S1["Stage-1 EDF<br/>in-duct"]
-    S2["Stage-2 air plasma"]
-    S3["Stage-3 water plasma"]
-    NZ["Shared flared nozzle<br/>stages 1–3"]
-    SC --> DU
-    DU --> S1
-    DU --> S2
-    W --- S3
-    S1 --- NZ
-    S2 --- NZ
-    S3 --- NZ
-  end
-  crew --> AL --> B --> FP --> ENG
+  linkStyle default stroke:#9a9a9a,stroke-width:1.5px
+  classDef collection fill:#e7eef8,stroke:#5a6f8c,stroke-width:1.8px,stroke-dasharray:6 4,color:#243447
+  classDef part fill:#ffffff,stroke:#333,stroke-width:1.5px,color:#222
+  classDef tint0c fill:#e4f0e2,stroke:#4f7a48,stroke-width:1.8px,stroke-dasharray:6 4,color:#1e3320
+  classDef tint0p fill:#e4f0e2,stroke:#4f7a48,stroke-width:1.5px,color:#1e3320
+  classDef tint1c fill:#e2f1f4,stroke:#3d6f7c,stroke-width:1.8px,stroke-dasharray:6 4,color:#1a3036
+  classDef tint1p fill:#e2f1f4,stroke:#3d6f7c,stroke-width:1.5px,color:#1a3036
+  classDef tint2c fill:#f5efe3,stroke:#8a6e42,stroke-width:1.8px,stroke-dasharray:6 4,color:#3a2e18
+  classDef tint2p fill:#f5efe3,stroke:#8a6e42,stroke-width:1.5px,color:#3a2e18
+  classDef tint3c fill:#f3e8e8,stroke:#8a5558,stroke-width:1.8px,stroke-dasharray:6 4,color:#3a1e20
+  classDef tint3p fill:#f3e8e8,stroke:#8a5558,stroke-width:1.5px,color:#3a1e20
+  classDef tint4c fill:#eceedf,stroke:#6a7a40,stroke-width:1.8px,stroke-dasharray:6 4,color:#2a3218
+  classDef tint4p fill:#eceedf,stroke:#6a7a40,stroke-width:1.5px,color:#2a3218
+  classDef tint5c fill:#ebe8f2,stroke:#5a5578,stroke-width:1.8px,stroke-dasharray:6 4,color:#242038
+  classDef tint5p fill:#ebe8f2,stroke:#5a5578,stroke-width:1.5px,color:#242038
+  vehicle(["Whole vehicle"])
+  fuselage(["Fuselage"])
+  crew_capsule(["Crew capsule"])
+  pressure_vessel["Pressure vessel"]
+  flight_deck["Flight deck"]
+  crew_compartment["Living / systems cabin"]
+  seat_row["Six passenger seats"]
+  wcs["Toilet (WCS)"]
+  galley["Galley / food station (no sink)"]
+  luggage["Luggage lockers"]
+  eclss_rack["Life-support rack"]
+  o2_tankage["Oxygen tanks (inside cabin only)"]
+  n2_tankage["Nitrogen tanks (inside cabin only)"]
+  hatch_aft_door["Aft pressure hatch door (to airlock)"]
+  side_hatch["Left-side ground hatch (runway only)"]
+  forward_steering_module["Forward steering module (nose)"]
+  airlock(["Airlock"])
+  cargo_bay(["Cargo bay"])
+  charm_power_plant(["Fusion electric plant"])
+  fusion_plant_skid(["Fusion plant skid"])
+  charm(["CHARM"])
+  dec["DEC"]
+  plant_electrical_bus["Plant electrical bus (1 GW)"]
+  magnet_psu_bay(["Magnet PSU bay"])
+  cryo_compressor_bay(["Cryo compressor bay"])
+  vacuum_controls["Vacuum / controls pack"]
+  fuel_services(["Fuel services"])
+  flight_battery["Flight battery"]
+  water_tanks["Water tanks (space propellant)"]
+  ground_cart["Ground cart (Earth only)"]
+  combined_cycle_engine(["Combined-cycle engine"])
+  engine_skid(["Engine skid"])
+  stage1_edf["Stage-1 electric ducted fan"]
+  stage2_air_plasma(["Stage-2 microwave air plasma jet"])
+  stage3_water_plasma_rack(["Stage-3 water plasma rack"])
+  water_injector["Water injector"]
+  propulsion_bus_coupler["Propulsion bus coupler"]
+  nacelle["Engine housing / nacelle"]
+  variable_inlets["External air scoops / variable inlets"]
+  inlet_duct["Inlet duct / plenum"]
+  shared_nozzle["Shared flared exhaust nozzle"]
+  tail_assembly(["Tail assembly"])
+  wing(["Wing"])
+  class vehicle collection
+  class fuselage,fusion_plant_skid,engine_skid,tail_assembly tint0c
+  class crew_capsule,charm,fuel_services,wing tint1c
+  class pressure_vessel,flight_deck,seat_row,n2_tankage,vacuum_controls,nacelle tint0p
+  class crew_compartment,wcs,hatch_aft_door,side_hatch,stage1_edf,variable_inlets tint1p
+  class galley,forward_steering_module,dec,flight_battery,inlet_duct tint2p
+  class luggage,plant_electrical_bus,water_tanks,shared_nozzle tint3p
+  class eclss_rack,ground_cart,water_injector tint4p
+  class o2_tankage,propulsion_bus_coupler tint5p
+  class airlock,stage2_air_plasma tint2c
+  class cargo_bay,stage3_water_plasma_rack tint3c
+  class charm_power_plant,magnet_psu_bay tint4c
+  class cryo_compressor_bay,combined_cycle_engine tint5c
+  vehicle --> fuselage
+  vehicle --> crew_capsule
+  crew_capsule --> pressure_vessel
+  pressure_vessel --> flight_deck
+  pressure_vessel --> crew_compartment
+  crew_compartment --> seat_row
+  crew_compartment --> wcs
+  crew_compartment --> galley
+  crew_compartment --> luggage
+  crew_compartment --> eclss_rack
+  crew_compartment --> o2_tankage
+  crew_compartment --> n2_tankage
+  crew_compartment --> hatch_aft_door
+  crew_capsule --> side_hatch
+  crew_capsule --> forward_steering_module
+  vehicle --> airlock
+  vehicle --> cargo_bay
+  vehicle --> charm_power_plant
+  charm_power_plant --> fusion_plant_skid
+  charm_power_plant --> charm
+  charm_power_plant --> dec
+  charm_power_plant --> plant_electrical_bus
+  charm_power_plant --> magnet_psu_bay
+  charm_power_plant --> cryo_compressor_bay
+  charm_power_plant --> vacuum_controls
+  charm_power_plant --> fuel_services
+  charm_power_plant --> flight_battery
+  charm_power_plant --> water_tanks
+  charm_power_plant --> ground_cart
+  vehicle --> combined_cycle_engine
+  combined_cycle_engine --> engine_skid
+  combined_cycle_engine --> stage1_edf
+  combined_cycle_engine --> stage2_air_plasma
+  combined_cycle_engine --> stage3_water_plasma_rack
+  combined_cycle_engine --> water_injector
+  combined_cycle_engine --> propulsion_bus_coupler
+  combined_cycle_engine --> nacelle
+  combined_cycle_engine --> variable_inlets
+  combined_cycle_engine --> inlet_duct
+  combined_cycle_engine --> shared_nozzle
+  vehicle --> tail_assembly
+  vehicle --> wing
+  %% connections
+  pressure_vessel ==>|pressure door| airlock
+  airlock ==>|pressure door| cargo_bay
+  water_tanks ==>|duct to| water_injector
+  plant_electrical_bus ==>|power cable| propulsion_bus_coupler
+  flight_battery ==>|startup power| charm
+  flight_battery ==>|startup power| magnet_psu_bay
+  flight_battery ==>|startup power| cryo_compressor_bay
+  charm ==>|alphas to DEC| dec
+  fuel_services ==>|feed to| charm
+  cryo_compressor_bay ==>|cryo line| charm
+  magnet_psu_bay ==>|powers| charm
+  dec ==>|He ash to| fusion_plant_skid
+  propulsion_bus_coupler ==>|powers| stage1_edf
+  stage2_air_plasma ==>|plasma exhaust to| shared_nozzle
+  water_injector ==>|propellant feed| stage3_water_plasma_rack
+  stage3_water_plasma_rack ==>|plasma exhaust to| shared_nozzle
+  propulsion_bus_coupler ==>|powers| stage2_air_plasma
+  propulsion_bus_coupler ==>|powers| stage3_water_plasma_rack
+  stage1_edf ==>|fan exhaust to| shared_nozzle
+  dec ==>|powers| plant_electrical_bus
+  vacuum_controls ==>|vacuum line| charm
+  ground_cart ==>|startup power| magnet_psu_bay
+  ground_cart ==>|startup power| charm
+  ground_cart ==>|startup power| cryo_compressor_bay
+  variable_inlets ==>|air path| inlet_duct
+  inlet_duct ==>|air path| stage1_edf
+  inlet_duct ==>|air path| stage2_air_plasma
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
+  linkStyle 42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f
 ```
-
+<!--/mermaid-gen-->
 
 ---
 
@@ -1104,7 +1476,8 @@ Table: Imputed CHARM plant requirements for this SSTO.
 | Aux heating | RF + rotation + magnets; **no** multi-MW NBI farm | §9.5, §9.8 |
 | Magnets (6, WHAM-anchored) | \(\approx <!--gen charm.m_magnets_t:.1f-->10.8<!--/gen-->\,\mathrm{t}\) (\(<!--gen charm.pct_magnets:.1f-->16.2<!--/gen-->\%\) of \(m_{\mathrm{C}}\)) | §9.6 |
 | Cryo compressor bay (6 AL630, flight-remanufactured) | \(\approx <!--gen charm.m_cryo_t:.1f-->2.4<!--/gen-->\,\mathrm{t}\), \(\approx <!--gen charm.p_cryo_kw:.0f-->88<!--/gen--> \,\mathrm{kW}\) (\(<!--gen charm.pct_cryo:.1f-->3.6<!--/gen-->\%\) of \(m_{\mathrm{C}}\)) | §9.6 |
-| RF + shield + backbone structure | \(\approx <!--gen charm.m_remainder_t:.1f-->53.5<!--/gen-->\,\mathrm{t}\) allocated remainder, **not independently sized** | §9.6 |
+| Permanent radiation shield bulkhead (poly, sized empty-tank) | \(\approx <!--gen shield.b1_mass_t:.1f-->21.9<!--/gen-->\,\mathrm{t}\) (\(<!--gen shield.b1_thickness_m:.2f-->0.69<!--/gen--> \,\mathrm{m}\)), first sourced piece of the remainder | §9.9 |
+| RF + backbone/chamber structure | \(\approx <!--gen charm.m_remainder_after_b1_t:.1f-->31.5<!--/gen-->\,\mathrm{t}\) remaining, **not independently sized** | §9.6, §9.9 |
 | Light-off energy | \(\sim 50\)–\(200\,\mathrm{kWh}\) to useful plasma (est.) | §9.8 |
 | Space restart | Pilot-string from \(\sim 2\,\mathrm{t}\) battery (\(\sim 300\)–\(500\,\mathrm{kWh}\)) | §6, §9.4 |
 | Duty | Continuous burn through climb/insert; throttleable bus | §5 |
@@ -1137,7 +1510,7 @@ Call a requirement **unobtainium** if it is not implied by present CHARM results
 3. **Selective RF / ponderomotive “one-way” walls** that regulate ion traffic at acceptable recirculating power (slides note one-way walls can be energetically costly if overused) [1,9].  
 4. **Wave-mediated ash extraction / alpha channeling into protons (or DEC)** fast enough that helium does not poison the cell [3,6].  
 5. **Ultra-high DC / open-field electrode structures** that survive \(\alpha\) and X-ray loads while feeding a GW bus [10].  
-6. **Flight specific power** \(\alpha_{\mathrm{C}} \sim 15\,\mathrm{kW/kg}\) **and** \(\bar{p}_{\mathrm{C}} \gtrsim 8\,\mathrm{MW/m}^3\) including magnets, RF, shield, cryo, and structure — beyond any published CHARM packaging study. §9.6 now sizes magnets (\(\approx 10.8\,\mathrm{t}\), WHAM-anchored) and cryo (\(\approx 2.4\,\mathrm{t}\), 6 flight-remanufactured AL630s) bottom-up; on demonstrated flight-cryocooler specific mass instead of the remanufactured-AL630 guess, cryo alone could reach \(45\)–\(90\,\mathrm{t}\) — i.e., **flight-weight cryocooler specific mass is its own unobtainium**, not just a rounding term inside \(\alpha_{\mathrm{C}}\). The remaining \(\approx 53.5\,\mathrm{t}\) (RF + shielding + backbone/chamber structure) is **still an unsized placeholder**, not fabricated engineering — the largest unresolved piece of \(\alpha_{\mathrm{C}}\).  
+6. **Flight specific power** \(\alpha_{\mathrm{C}} \sim 15\,\mathrm{kW/kg}\) **and** \(\bar{p}_{\mathrm{C}} \gtrsim 8\,\mathrm{MW/m}^3\) including magnets, RF, shield, cryo, and structure — beyond any published CHARM packaging study. §9.6 now sizes magnets (\(\approx 10.8\,\mathrm{t}\), WHAM-anchored) and cryo (\(\approx 2.4\,\mathrm{t}\), 6 flight-remanufactured AL630s) bottom-up, and §9.9 now sizes a permanent radiation-shield bulkhead (\(\approx 21.9\,\mathrm{t}\), sized for the empty-water-tank case) bottom-up; on demonstrated flight-cryocooler specific mass instead of the remanufactured-AL630 guess, cryo alone could reach \(45\)–\(90\,\mathrm{t}\) — i.e., **flight-weight cryocooler specific mass is its own unobtainium**, not just a rounding term inside \(\alpha_{\mathrm{C}}\). The remaining \(\approx 31.5\,\mathrm{t}\) (RF hardware + backbone/chamber structure) is **still an unsized placeholder**, not fabricated engineering — the largest unresolved piece of \(\alpha_{\mathrm{C}}\).  
 7. **Continuous GW-class operation** through a multi-hour ascent with vibration, thrust-vector loads, and thermal transients — not part of the present ARPA-E scope.  
 8. **Pilot-string light-off / space restart** at \(50\)–\(200\,\mathrm{kWh}\) class — engineering estimate only; not a CHARM experimental result.  
 9. **Stage-2/3 thruster packaging** at \(\sim 200\)–\(300\,\mathrm{kW/kg}\) inside a \(15\,\mathrm{t}\) engine (§10.6) — HEMM-class stage 1 is nearer [25]; microwave air / water plasma at GW in a few tonnes is not [23], [24], [26], [27].  
@@ -1291,6 +1664,14 @@ CHARM denotes the chambered aneutronic rotating-mirror architecture developed at
 [35] A. Radovinsky et al., “Design of High Field HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 33, no. 5, 2023, doi: 10.1109/TASC.2023.3240377. (§9.6 magnet anchor: preliminary design of the \(<2\,\mathrm{t}\), \(\sim 20\,\mathrm{T}\)-on-tape, conduction-cooled WHAM mirror coil.)
 
 [36] “Manufacturing and Testing HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 35, 2025, doi: 10.1109/TASC.2025.3542351. (§9.6 magnet anchor: as-built/tested confirmation of the \(<2\,\mathrm{t}\) WHAM magnet pair, conduction-cooled to \(20\,\mathrm{K}\).)
+
+[37] National Oceanic and Atmospheric Administration (NOAA), National Aeronautics and Space Administration (NASA), and U.S. Air Force, *U.S. Standard Atmosphere, 1976*, NOAA-S/T 76-1562. (§10.2/§10.4 atmosphere model: closed-form piecewise density/temperature/pressure layers used by the stage-2 climb integrator in `constants_model.py`.)
+
+[38] J. D. Anderson Jr., *Hypersonic and High-Temperature Gas Dynamics*, 3rd ed. Reston, VA: American Institute of Aeronautics and Astronautics (AIAA), 2019. (§10.4 generic hypersonic lifting-body \(C_D(M)\) drag-coefficient shape and constant-dynamic-pressure ascent-trajectory design point — a flagged non-CHARM-specific stand-in for the stage-2 climb, in lieu of any CFD/wind-tunnel data for this airframe.)
+
+[39] National Institute of Standards and Technology (NIST), “X-Ray Mass Attenuation Coefficients (XCOM),” NIST Standard Reference Database 8. (§9.9 photon-shielding order-of-magnitude estimate: \(\mu/\rho\) for water and polyethylene.) [Online]. Available: https://www.nist.gov/pml/xcom-photon-cross-sections-database
+
+[40] J. K. Shultis and R. E. Faw, *Fundamentals of Nuclear Science and Engineering*, 3rd ed. Boca Raton, FL: CRC Press, 2016. (§9.9 neutron-shielding order-of-magnitude estimate: standard fast-neutron removal cross sections for water and polyethylene.)
 
 ---
 

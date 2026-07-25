@@ -38,6 +38,7 @@ CONSTANTS_MODEL := $(CAD_DIR)/constants_model.py
 CONSTANTS_JSON := $(CAD_DIR)/constants.generated.json
 UPDATE_ARXIV_CONSTANTS := $(ROOT)/scripts/update_arxiv_constants.py
 APPLY_CONSTANTS_TO_ASSEMBLY := $(ROOT)/scripts/apply_constants_to_assembly.py
+UPDATE_ARXIV_MERMAID := $(ROOT)/scripts/update_arxiv_mermaid.py
 
 .PHONY: help cad-figures cad-crew-capsule cad-airlock cad-cargo-skid cad-fusion-skid cad-drop-ins paper-constants paper-render install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
 
@@ -46,7 +47,7 @@ help:
 	@echo "  make zenodo          - cad-figures + zenodo.pdf + dist/zenodo_submit.zip"
 	@echo "  make zenodo-tex      - paper-render + arxiv.md → zenodo.tex (+ mermaid/assets)"
 	@echo "  make paper-constants - constants_model.py (numpy) → constants.generated.json"
-	@echo "  make paper-render    - paper-constants + regenerate arxiv.md <!--gen--> spans + patch assembly.json/vehicle_spec.json"
+	@echo "  make paper-render    - paper-constants + regenerate arxiv.md <!--gen--> spans + patch assembly.json/vehicle_spec.json + regenerate Figs 7-9 mermaid from assembly.json"
 	@echo "  make cad-figures     - vehicle_spec → OpenVSP (+constraints) → figures"
 	@echo "  make cad-drop-ins    - crew capsule + airlock + cargo skid + fusion plant skid (Blender)"
 	@echo "  make cad-crew-capsule - assembly.json → Blender crew cutaway PNG + .blend"
@@ -115,6 +116,7 @@ paper-constants: $(CONSTANTS_JSON)
 paper-render: paper-constants
 	$(POETRY) run python $(UPDATE_ARXIV_CONSTANTS)
 	$(POETRY) run python $(APPLY_CONSTANTS_TO_ASSEMBLY)
+	$(POETRY) run python $(UPDATE_ARXIV_MERMAID)
 
 zenodo-tex: paper-render cad-figures
 	$(ROOT)/scripts/build_zenodo_tex.sh

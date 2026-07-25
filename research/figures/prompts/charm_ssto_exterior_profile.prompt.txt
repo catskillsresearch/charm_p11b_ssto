@@ -4,6 +4,6 @@ DOORS AND BAYS (critical—do not invent other openings):
 - PORT FORWARD CREW SIDE HATCH on the crew module (forward fuselage): clearly visible circular/oval Shuttle-style side hatch with window for GROUND ingress only; label FORWARD CREW DOOR / SIDE HATCH.
 - NO large rectangular personnel door on the side of the airlock or mid-fuselage. The airlock is INTERNAL and opens AFT into the cargo bay only (not to the outside).
 - CARGO BAY mid-fuselage: show Shuttle-style PAYLOAD BAY DOORS on the TOP of the fuselage—longitudinal hinge/split line along the upper spine over the 18.3 m bay, door panels closed on top of the vehicle; label CARGO BAY DOORS (TOP CLAMSHELL). Do NOT draw a big side hatch into the bay.
-- Label fuselage stations along the length matching the floorplan: CREW/ECLSS (with side hatch), AIRLOCK (internal—label as INTERNAL AIRLOCK TO BAY), CARGO BAY 18.3 m + TOP DOORS, BATTERY, p-11B FUEL, CHARM, WATER, ENGINE.
+- Label fuselage stations along the length matching the floorplan: CREW/ECLSS (with side hatch), AIRLOCK (internal—label as INTERNAL AIRLOCK TO BAY), CARGO BAY 18.3 m + TOP DOORS, BATTERY, WATER (relocated ahead of CHARM as a radiation-shield buffer, §9.9), p-11B FUEL, CHARM (with forward permanent shield bulkhead), ENGINE.
 
 NO external O2/N2 tank pods on the side. Blueprint / engineering drawing style, CATSKILLS-SSTO, scale bar 52 m.

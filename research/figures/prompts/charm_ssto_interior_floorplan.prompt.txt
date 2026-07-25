@@ -6,9 +6,9 @@ STATIONS left→right:
 (3) AIRLOCK 11–15 m (~2.5 m square, two suited crew): INTERNAL volume on the aft crew bulkhead. Hatches ONLY: cabin↔airlock and airlock↔CARGO BAY. Airlock does NOT open to outside atmosphere/space through the side of the fuselage. Aft face of airlock opens INTO the cargo bay (Shuttle middeck→payload bay pattern).
 (4) CARGO BAY 15–33.3 m (18.3×4.6 m): empty payload volume; show bay centerline and left/right PAYLOAD BAY DOOR hinge lines along the top of the fuselage (Shuttle-style clamshell doors over the bay)—doors are the ROOF of the bay, not side doors.
 (5) FLIGHT BATTERY 33.3–35.5 m (~2 t).
-(6) p-11B / PROTON FUEL TANKS 35.5–37.5 m (small, internal).
-(7) CHARM REACTOR 37.5–45 m.
-(8) WATER TANKS 45–49 m.
-(9) COMBINED-CYCLE ENGINE 49–52 m.
+(6) WATER TANKS 35.5–39.5 m: relocated here (ahead of CHARM, was aft-of-CHARM on the engine skid) so the propellant load doubles as a radiation-shield buffer between the reactor and the crewed/cargo forward hull (§9.9).
+(7) p-11B / PROTON FUEL TANKS 39.5–41.5 m (small, internal).
+(8) CHARM REACTOR 41.5–49 m: forward-most slice is a PERMANENT shield bulkhead (poly, X-ray/neutron/RF) that protects the crew even with the water tanks empty; reactor island proper aft of it.
+(9) COMBINED-CYCLE ENGINE 49–52 m. No water tankage on this skid anymore.
 
 Title CATSKILLS-SSTO FLOORPLAN. Scale bar ~52 m. Clean callouts. No external O2/N2 bottles on the side.

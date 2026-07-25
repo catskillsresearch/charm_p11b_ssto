@@ -1,4 +1,4 @@
-ENGLISH PACKAGING BRIEF — Combined-cycle engine drop-in (nozzle + water volume corrected)
+ENGLISH PACKAGING BRIEF — Combined-cycle engine drop-in (nozzle corrected; water tankage relocated forward to the CHARM skid, §9.9)
 
 ORIENTATION: LONG axis fore–aft (~7 m engine bay). SHORT axis fuselage beam (~5 m).
 
@@ -10,8 +10,8 @@ AIR PATH:
 
 NOZZLE (critical): ONE large SHARED FLARED exhaust nozzle at aft — common exit for ALL THREE stages (stage-1 EDF bypass + stage-2 air plasma + stage-3 water plasma). Label must say "Shared flared nozzle (stages 1–3)". Substantial outward bell. NOT "stages 2–3 only".
 
-WATER TANKS (critical scale): Reference propellant is ~44 tonnes ≈ 44 m³ liquid water. Show HUGE propellant tanks that dominate stations ~45–49 m — twin large cylinders or a tank farm filling most of the skid beam and ~4 m of length (airline-galley scale wrong; think large pressure vessels / tank truck scale relative to the ~7 m skid). Label "Water tanks ~44 t propellant". Do NOT show two small scuba / service bottles.
+WATER FEED (critical — do NOT draw bulk tankage here): the ~44 t water reaction-mass supply now lives upstream on the CHARM skid (stations ~35.5–39.5 m, ahead of the reactor, doubling as a radiation-shield buffer — see fusion_plant_skid figure). This engine skid only carries a SMALL vaporizer feed line / accumulator hard-lined in from that forward tank farm — label "Water feed line (from CHARM-skid tanks)". Do NOT show large cylindrical tanks or a tank farm on this skid.
 
-OTHER: Stage-2 microwave farm + applicator; Stage-3 vaporizer + water plasma thruster into shared nozzle; propulsion bus coupler with thick power cable; open bay doors; partial nacelle cutaway.
+OTHER: Stage-2 microwave farm + applicator; Stage-3 vaporizer + water plasma thruster (fed from the forward water tanks) into shared nozzle; propulsion bus coupler with thick power cable; open bay doors; partial nacelle cutaway.
 
-VISUAL: Photoreal hangar. Water volume must look like it could actually push an SSTO. Flared three-stage nozzle. Scoops → duct → in-duct fan. No purple neon.
+VISUAL: Photoreal hangar. Flared three-stage nozzle is the dominant feature; the skid itself looks lighter/emptier now that bulk water tankage has moved forward. Scoops → duct → in-duct fan. No purple neon.

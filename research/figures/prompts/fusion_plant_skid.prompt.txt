@@ -1,26 +1,12 @@
-ENGLISH PACKAGING BRIEF — Fusion electric plant drop-in (assembly.json SSOT)
+DEPRECATED — do not regenerate this figure with an image model.
 
-LABEL THE CORE EXACTLY: "CHARM (Chambered Aneutronic Rotating Mirror)" — never invent Heliconian or any other expansion.
+Fusion plant skid top-down is now built in Blender from assembly.json +
+constants_model.py:
 
-PHYSICAL BASE: heavy steel fusion plant skid (rails / baseplate) with left/right bay doors open or hinged aside. Free bay volume exists (interim He ash sink) — do not draw a fantasy fog tank; just a sealed industrial bay floor under the packages.
+  make cad-fusion-skid
 
-CHARM MACHINE ISLAND (dominant center, bolted to skid via backbone):
-- Strongback / backbone frame.
-- Horizontal chamber string: left fusion chamber | heat-exchange chamber | right fusion chamber, central axis through all three.
-- Four CHARM-owned sub-racks hard-mounted ON the machine (not freestanding skid cabinets across the room):
-  1. Magnet rack — copper/SC coils on chamber ODs inside cryostat jackets with cold heads ON the coils.
-  2. RF rack — neck launchers between chambers + amp boxes next to necks (short waveguides only).
-  3. Rotation drive rack — actuators/gearboxes on the axis ends.
-  4. Thermal rack — coolant bath plumbed tight to the heat-exchange chamber.
+Outputs:
+  research/figures/fusion_plant_skid_top.png
+  research/figures/cad/fusion_plant_skid_cutaway.blend
 
-SKID-MOUNTED PLANT SERVICES (separate packages bolted to the skid floor beside/under the island):
-- DEC — at HEX ash face; conduit "alphas to DEC".
-- Plant electrical bus (1 GW) — bus duct / switchgear package after DEC; thick power cable leaving skid toward engine (can exit frame).
-- Magnet PSU bay — power-electronics cabinet; heavy leads to magnet coils (NOT the magnets).
-- Cryo compressor bay — industrial helium compressor; insulated cryo lines up to magnet cold heads.
-- Vacuum / controls pack — small pump/controls skidlet with vacuum plumbing to chambers.
-- Fuel services — proton tank, boron-11 container, solid injector hard-lined into both fusion chambers.
-- Flight battery — high-density pack; thick startup cables to PSU / RF / drive / cryo.
-- Ground cart — OPTIONAL at frame edge, unbolted / umbilical only, labeled "Earth only" (not flight mass).
-
-VISUAL RULES: Photoreal hangar / industrial bay. Dense real plumbing and cable trays. CHARM is one dense integrated island; skid services are distinct bays around it. No row of four identical IT racks. No purple neon sci-fi city. Clean callout labels for CHARM (full expansion), DEC, Magnet PSU bay, Cryo compressor bay, Fuel services, Flight battery, Vacuum/controls, Plant bus. Subtle cool plasma glow only inside chamber viewports.
+Script: research/figures/cad/build_fusion_plant_skid_blender.py

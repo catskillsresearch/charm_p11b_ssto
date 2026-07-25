@@ -72,30 +72,31 @@
       "color": [0.55, 0.70, 0.55]
     },
     {
-      "id": "fuel",
+      "id": "water",
       "x0": 35.5,
-      "x1": 37.5,
+      "x1": 39.5,
+      "label": "WATER",
+      "contents": ["vacuum_reaction_mass_tankage"],
+      "note": "Relocated ahead of CHARM (was aft-of-CHARM / on the engine skid): supplemental radiation shield when full (arxiv.md \u00a79.9). Same 4 m envelope length as before.",
+      "color": [0.45, 0.65, 0.90]
+    },
+    {
+      "id": "fuel",
+      "x0": 39.5,
+      "x1": 41.5,
       "label": "p/¹¹B FUEL",
       "contents": ["proton_B11_feed_tanks", "plumbing"],
       "color": [0.70, 0.65, 0.85]
     },
     {
       "id": "charm",
-      "x0": 37.5,
-      "x1": 45.0,
+      "x0": 41.5,
+      "x1": 49.0,
       "label": "CHARM",
-      "contents": ["reactor_island"],
+      "contents": ["reactor_island", "permanent_shield_bulkhead"],
       "volume_m3_max": 120,
       "mass_t_ref": 66.7,
       "color": [0.90, 0.55, 0.45]
-    },
-    {
-      "id": "water",
-      "x0": 45.0,
-      "x1": 49.0,
-      "label": "WATER",
-      "contents": ["vacuum_reaction_mass_tankage"],
-      "color": [0.45, 0.65, 0.90]
     },
     {
       "id": "engine",

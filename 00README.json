@@ -8,11 +8,31 @@
       "usage": "toplevel"
     },
     {
+      "filename": "listings/snippet-003.txt",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/airlock_top.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/cargo_skid_top.png",
+      "usage": "include"
+    },
+    {
       "filename": "figures/assets/charm_ssto_exterior_profile.png",
       "usage": "include"
     },
     {
       "filename": "figures/assets/charm_ssto_interior_floorplan.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/crew_capsule_top.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/fusion_plant_skid_top.png",
       "usage": "include"
     },
     {
