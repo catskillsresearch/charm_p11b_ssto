@@ -33,16 +33,16 @@ Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior
 
 ### Forward drop-ins (top-down, covers off)
 
-Crew capsule cutaway is a **Blender** orthographic top view built from `assembly.json` (`make cad-crew-capsule` → `research/figures/cad/crew_capsule_cutaway.blend`). Airlock and cargo figures below are still AI hangar sketches pending the same Blender path.
+All three drop-ins below are **Blender** orthographic top views built procedurally from `assembly.json` (`make cad-drop-ins`; see `research/figures/cad/build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py`, and the shared helpers in `research/figures/cad/lib/`). No AI-generated imagery remains in this section.
 
 <!-- figure-landscape -->
 ![Crew capsule, Blender top-down cutaway from assembly.json.](research/figures/crew_capsule_top.png)
 
 <!-- figure-landscape -->
-![Airlock, top-down with roof cover removed.](research/figures/airlock_top.png)
+![Airlock, Blender top-down cutaway from assembly.json.](research/figures/airlock_top.png)
 
 <!-- figure-landscape -->
-![Cargo skid, top-down with bay doors open.](research/figures/cargo_skid_top.png)
+![Cargo skid, Blender top-down cutaway from assembly.json with bay doors open.](research/figures/cargo_skid_top.png)
 
 ### Fusion electric plant (assembly SSOT)
 
@@ -1066,7 +1066,7 @@ Table: External packages and tools used by the living design / paper build.
 | **NumPy** | Numeric support in OpenVSP figure export |
 | **Matplotlib** | Raster floorplan / profile renders from the OpenVSP model |
 | **OpenVSP** (optional Poetry group; upstream `.deb` + Python API) | Parametric vehicle CAD (`.vsp3`); source of the orthographic floorplan and profile figures |
-| **Blender** 5.x (snap `/snap/bin/blender`) | Drop-in cutaways from `assembly.json` (crew capsule top-down; `make cad-crew-capsule`) |
+| **Blender** 5.x (snap `/snap/bin/blender`) | Drop-in cutaways from `assembly.json` (crew capsule, airlock, cargo skid top-down; `make cad-drop-ins`) |
 | **Pillow** | Image handling when the paper build ingests raster figure assets |
 | **Pandoc** | `arxiv.md` → LaTeX body conversion inside `scripts/build_arxiv_tex.py` |
 | **Mermaid CLI** (`mmdc` / `@mermaid-js/mermaid-cli`) | Paper mermaid fences → `figures/figure-NNN.pdf` |
@@ -1089,16 +1089,16 @@ The **assembly outliner** is a small local web app under `research/figures/cad/h
 
 ### A.3 Blender drop-in cutaways
 
-Layout-critical packaging figures (hatches, seat rows, aisle clearances) are built as **editable Blender geometry** from `assembly.json`, not AI image prompts. The first module is the **crew capsule** top-down cutaway:
+Layout-critical packaging figures (hatches, seat rows, aisle clearances, bay doors) are built as **editable Blender geometry** from `assembly.json`, not AI image prompts. Three modules are done this way — crew capsule, airlock, and cargo skid:
 
 ```bash
-make cad-crew-capsule
-# research/figures/crew_capsule_top.png
-# research/figures/cad/crew_capsule_cutaway.blend
-./bl.sh   # GUI edit
+make cad-drop-ins
+# research/figures/{crew_capsule_top,airlock_top,cargo_skid_top}.png
+# research/figures/cad/{crew_capsule_cutaway,airlock_cutaway,cargo_skid_cutaway}.blend
+./bl.sh   # GUI edit (crew capsule; edit the path for the other two)
 ```
 
-Script: `research/figures/cad/build_crew_capsule_blender.py`. Airlock and cargo skid are next on the same path.
+Each figure has its own placement script — `build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py` — sharing common primitives, hatch/shell/door "kits", and camera setup from `research/figures/cad/lib/` (`assembly_parser.py`, `procedural_geometry.py`, `render_utils.py`). The fusion-plant skid (CHARM chambers) and combined-cycle engine skid (scoops/duct/nozzle/water tanks) are not yet migrated — those need real procedural modeling of hardware that has no library equivalent, and remain AI concept sketches for now.
 
 ---
 

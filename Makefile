@@ -20,14 +20,27 @@ CREW_BLEND_SCRIPT := $(CAD_DIR)/build_crew_capsule_blender.py
 CREW_BLEND := $(CAD_DIR)/crew_capsule_cutaway.blend
 CREW_PNG := $(FIGURES_DIR)/crew_capsule_top.png
 
-.PHONY: help cad-figures cad-crew-capsule install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
+AIRLOCK_BLEND_SCRIPT := $(CAD_DIR)/build_airlock_blender.py
+AIRLOCK_BLEND := $(CAD_DIR)/airlock_cutaway.blend
+AIRLOCK_PNG := $(FIGURES_DIR)/airlock_top.png
+
+CARGO_BLEND_SCRIPT := $(CAD_DIR)/build_cargo_skid_blender.py
+CARGO_BLEND := $(CAD_DIR)/cargo_skid_cutaway.blend
+CARGO_PNG := $(FIGURES_DIR)/cargo_skid_top.png
+
+CAD_LIB := $(CAD_DIR)/lib/assembly_parser.py $(CAD_DIR)/lib/procedural_geometry.py $(CAD_DIR)/lib/render_utils.py
+
+.PHONY: help cad-figures cad-crew-capsule cad-airlock cad-cargo-skid cad-drop-ins install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
 
 help:
 	@echo "Targets:"
 	@echo "  make zenodo          - cad-figures + zenodo.pdf + dist/zenodo_submit.zip"
 	@echo "  make zenodo-tex      - arxiv.md → zenodo.tex (+ mermaid/assets)"
 	@echo "  make cad-figures     - vehicle_spec → OpenVSP (+constraints) → figures"
+	@echo "  make cad-drop-ins    - crew capsule + airlock + cargo skid (Blender)"
 	@echo "  make cad-crew-capsule - assembly.json → Blender crew cutaway PNG + .blend"
+	@echo "  make cad-airlock     - assembly.json → Blender airlock cutaway PNG + .blend"
+	@echo "  make cad-cargo-skid  - assembly.json → Blender cargo skid cutaway PNG + .blend"
 	@echo "  make cad-validate    - re-check .vsp3 against JSON constraints"
 	@echo "  make cad-outliner    - Blender-style assembly hierarchy browser"
 	@echo "  make install-openvsp - download Ubuntu .deb + poetry openvsp group"
@@ -51,10 +64,21 @@ cad-outliner:
 	$(CAD_DIR)/serve_hierarchy_app.sh
 
 cad-crew-capsule: $(CREW_PNG)
+cad-airlock: $(AIRLOCK_PNG)
+cad-cargo-skid: $(CARGO_PNG)
+cad-drop-ins: cad-crew-capsule cad-airlock cad-cargo-skid
 
-$(CREW_PNG) $(CREW_BLEND): $(CREW_BLEND_SCRIPT) $(CAD_DIR)/assembly.json
+$(CREW_PNG) $(CREW_BLEND): $(CREW_BLEND_SCRIPT) $(CAD_DIR)/assembly.json $(CAD_LIB)
 	@test -x "$(BLENDER)" || (echo "Blender not found at $(BLENDER)" >&2; exit 1)
 	$(BLENDER) -b -P $(CREW_BLEND_SCRIPT)
+
+$(AIRLOCK_PNG) $(AIRLOCK_BLEND): $(AIRLOCK_BLEND_SCRIPT) $(CAD_DIR)/assembly.json $(CAD_LIB)
+	@test -x "$(BLENDER)" || (echo "Blender not found at $(BLENDER)" >&2; exit 1)
+	$(BLENDER) -b -P $(AIRLOCK_BLEND_SCRIPT)
+
+$(CARGO_PNG) $(CARGO_BLEND): $(CARGO_BLEND_SCRIPT) $(CAD_DIR)/assembly.json $(CAD_LIB)
+	@test -x "$(BLENDER)" || (echo "Blender not found at $(BLENDER)" >&2; exit 1)
+	$(BLENDER) -b -P $(CARGO_BLEND_SCRIPT)
 
 $(CAD_PNGS): $(CAD_SCRIPT) $(CAD_SPEC) $(CAD_VALIDATE)
 	@test -d $(ROOT)/third_party/openvsp/opt/OpenVSP/python/openvsp || \

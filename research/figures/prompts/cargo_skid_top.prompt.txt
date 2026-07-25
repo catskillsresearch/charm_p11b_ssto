@@ -1,14 +1,11 @@
-ENGLISH PACKAGING BRIEF — Cargo skid, top-down with bay doors open (assembly.json SSOT)
+DEPRECATED — do not regenerate this figure with an image model.
 
-CAMERA: Strict TOP-DOWN (bird's-eye) view of an ISOLATED drop-in cassette — not a whole airplane (no wings, nose cockpit, or engines). Forward (toward airlock) LEFT, aft (toward fusion plant) RIGHT. Left and right TOP CLAMSHELL cargo doors OPEN / hinged aside so the skid floor is fully visible.
+Cargo skid top-down is now built in Blender from assembly.json:
 
-ENVELOPE: Shuttle-class cargo skid ~18.3 m long × ~4.6 m wide × ~4.6 m high (stations 15–33.3 m). Semi-circular / half-capsule skid on a wheeled stand or cradle rails. Doors belong to the cargo drop-in (hinged to the skid), not fuselage skin.
+  make cad-cargo-skid
 
-SHOW:
-1. Long cargo skid floor / rails / tie-down grid empty or with a few generic payload pallets (optional light load — keep floor readable).
-2. Left and right bay doors open like Shuttle payload-bay doors — large, curved, same length as the bay.
-3. Forward bulkhead facing the airlock (hatch interface hint at left).
-4. Aft open well toward the fusion plant bay (no pressure door aft — maintenance access intent).
-5. Skid structure edges clear.
+Outputs:
+  research/figures/cargo_skid_top.png
+  research/figures/cad/cargo_skid_cutaway.blend
 
-VISUAL: Photoreal hangar, orthographic-ish top view. Clean callout labels: Cargo skid (18.3×4.6 m), Left bay door (open), Right bay door (open), Forward (airlock), Aft (plant well). Industrial aerospace, not cartoon. No purple neon. No fusion plant or engine hardware in this frame — cargo bay only.
+Script: research/figures/cad/build_cargo_skid_blender.py

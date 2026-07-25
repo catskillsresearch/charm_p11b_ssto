@@ -256,3 +256,9 @@ research/figures/cad/*.blend1
 research/figures/cad/cache/
 research/figures/cad/__pycache__/
 .vsptime
+
+# research/figures/cad/lib/ is real source (shared Blender build helpers),
+# not a venv lib/ dir — un-ignore it from the generic "lib/" rule above.
+!/research/figures/cad/lib/
+!/research/figures/cad/lib/**
+research/figures/cad/lib/__pycache__/

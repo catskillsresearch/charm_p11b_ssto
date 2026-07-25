@@ -5,6 +5,10 @@
 Frame: +X aft (station), +Y port, +Z up. Open-top pressure vessel with
 primitive interiors; orthographic top render for the paper.
 
+Shared primitives, hatch/shell kits, and camera setup live in `lib/`
+(shared with build_airlock_blender.py and build_cargo_skid_blender.py) —
+this script only places crew-capsule-specific hardware.
+
 Run::
 
     /snap/bin/blender -b -P research/figures/cad/build_crew_capsule_blender.py
@@ -16,15 +20,30 @@ Or::
 
 from __future__ import annotations
 
-import json
 import math
 import sys
 from pathlib import Path
 
 import bpy
-from mathutils import Euler, Vector
+from mathutils import Euler
 
 CAD_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(CAD_DIR))
+
+from lib.assembly_parser import find_node_in_doc, load_assembly  # noqa: E402
+from lib.procedural_geometry import (  # noqa: E402
+    box,
+    callout,
+    col,
+    cylinder,
+    dimension_line,
+    import_glb_centered,
+    legend,
+    mat,
+    text_label,
+)
+from lib.render_utils import clear_scene, render_to, setup_topdown_camera  # noqa: E402
+
 ROOT = CAD_DIR.parents[2]
 FIGURES = ROOT / "research" / "figures"
 ASSEMBLY_PATH = CAD_DIR / "assembly.json"
@@ -32,206 +51,14 @@ BLEND_OUT = CAD_DIR / "crew_capsule_cutaway.blend"
 PNG_OUT = FIGURES / "crew_capsule_top.png"
 CREW_LOCK_BAG = CAD_DIR / "assets" / "nasa" / "crew_lock_bag.glb"
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-
-def clear_scene() -> None:
-    bpy.ops.wm.read_factory_settings(use_empty=True)
-
-
-def col(name: str, parent: bpy.types.Collection | None = None) -> bpy.types.Collection:
-    existing = bpy.data.collections.get(name)
-    if existing:
-        return existing
-    c = bpy.data.collections.new(name)
-    if parent is not None:
-        parent.children.link(c)
-    else:
-        bpy.context.scene.collection.children.link(c)
-    return c
-
-
-def to_col(ob: bpy.types.Object, collection: bpy.types.Collection) -> bpy.types.Object:
-    for c in list(ob.users_collection):
-        c.objects.unlink(ob)
-    collection.objects.link(ob)
-    return ob
-
-
-def mat(name: str, color, *, roughness=0.45, metallic=0.05) -> bpy.types.Material:
-    m = bpy.data.materials.get(name)
-    if m:
-        return m
-    m = bpy.data.materials.new(name=name)
-    m.use_nodes = True
-    bsdf = m.node_tree.nodes.get("Principled BSDF")
-    if bsdf:
-        bsdf.inputs["Base Color"].default_value = (*color, 1.0)
-        if "Roughness" in bsdf.inputs:
-            bsdf.inputs["Roughness"].default_value = roughness
-        if "Metallic" in bsdf.inputs:
-            bsdf.inputs["Metallic"].default_value = metallic
-    return m
-
-
-def assign(ob: bpy.types.Object, material: bpy.types.Material) -> None:
-    if ob.data and hasattr(ob.data, "materials"):
-        if ob.data.materials:
-            ob.data.materials[0] = material
-        else:
-            ob.data.materials.append(material)
-
-
-def box(
-    name: str,
-    size: tuple[float, float, float],
-    loc: tuple[float, float, float],
-    material: bpy.types.Material,
-    collection: bpy.types.Collection,
-    *,
-    parent: bpy.types.Object | None = None,
-) -> bpy.types.Object:
-    bpy.ops.mesh.primitive_cube_add(size=1.0, location=loc)
-    ob = bpy.context.active_object
-    ob.name = name
-    ob.scale = size
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-    assign(ob, material)
-    to_col(ob, collection)
-    if parent is not None:
-        ob.parent = parent
-    return ob
-
-
-def cylinder(
-    name: str,
-    radius: float,
-    depth: float,
-    loc: tuple[float, float, float],
-    material: bpy.types.Material,
-    collection: bpy.types.Collection,
-    *,
-    axis: str = "Z",
-) -> bpy.types.Object:
-    bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=depth, location=loc, vertices=24)
-    ob = bpy.context.active_object
-    ob.name = name
-    if axis == "X":
-        ob.rotation_euler = (0.0, math.pi / 2.0, 0.0)
-    elif axis == "Y":
-        ob.rotation_euler = (math.pi / 2.0, 0.0, 0.0)
-    bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-    assign(ob, material)
-    to_col(ob, collection)
-    return ob
-
-
-def text_label(
-    name: str,
-    body: str,
-    loc: tuple[float, float, float],
-    collection: bpy.types.Collection,
-    *,
-    size: float = 0.18,
-) -> bpy.types.Object:
-    curve = bpy.data.curves.new(name=name, type="FONT")
-    curve.body = body
-    curve.size = size
-    curve.align_x = "CENTER"
-    curve.align_y = "CENTER"
-    ob = bpy.data.objects.new(name, curve)
-    ob.location = loc
-    ob.rotation_euler = (0.0, 0.0, 0.0)  # flat on XY for top view
-    to_col(ob, collection)
-    assign(ob, mat("label_ink", (0.05, 0.05, 0.08), roughness=0.9))
-    return ob
-
-
-def find_node(root: dict, nid: str) -> dict | None:
-    if root.get("id") == nid:
-        return root
-    for c in root.get("children") or []:
-        hit = find_node(c, nid)
-        if hit:
-            return hit
-    return None
-
-
-def set_engine(scene: bpy.types.Scene) -> None:
-    for eng in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "EEVEE"):
-        try:
-            scene.render.engine = eng
-            return
-        except TypeError:
-            continue
-
-
-def render_to(cam: bpy.types.Object, path: Path, *, width: int, height: int) -> None:
-    scene = bpy.context.scene
-    scene.camera = cam
-    set_engine(scene)
-    scene.render.use_freestyle = False
-    scene.render.resolution_x = width
-    scene.render.resolution_y = height
-    scene.render.resolution_percentage = 100
-    scene.render.image_settings.file_format = "PNG"
-    scene.render.image_settings.color_mode = "RGB"
-    scene.render.film_transparent = False
-    scene.render.filepath = str(path.with_suffix(""))
-    bpy.ops.render.render(write_still=True)
-    print(f"wrote {path} ({path.stat().st_size} bytes)")
-
-
-def import_glb_centered(
-    path: Path,
-    *,
-    name: str,
-    target_max_m: float,
-    loc: tuple[float, float, float],
-    collection: bpy.types.Collection,
-) -> bpy.types.Object:
-    """Import a GLB and normalize its largest extent for placement."""
-    before = set(bpy.context.scene.objects)
-    bpy.ops.import_scene.gltf(filepath=str(path))
-    imported = list(set(bpy.context.scene.objects) - before)
-    if not imported:
-        raise RuntimeError(f"Blender imported no objects from {path}")
-
-    bpy.context.view_layer.update()
-    corners = [
-        ob.matrix_world @ Vector(corner)
-        for ob in imported
-        if ob.type == "MESH"
-        for corner in ob.bound_box
-    ]
-    if not corners:
-        raise RuntimeError(f"No mesh geometry in {path}")
-
-    lo = Vector((min(c[i] for c in corners) for i in range(3)))
-    hi = Vector((max(c[i] for c in corners) for i in range(3)))
-    extent = hi - lo
-    scale = target_max_m / max(extent)
-    center = (lo + hi) / 2.0
-
-    root = bpy.data.objects.new(name, None)
-    collection.objects.link(root)
-    root.location = Vector(loc) - center * scale
-    root.scale = (scale, scale, scale)
-    for ob in imported:
-        ob.parent = root
-    return root
-
 
 # ---------------------------------------------------------------------------
 # Geometry from assembly.json
 # ---------------------------------------------------------------------------
 
 
-def build_crew_capsule(asm: dict) -> dict[str, bpy.types.Collection]:
-    root = asm["root"] if "root" in asm else asm
-    capsule = find_node(root, "crew_capsule")
+def build_crew_capsule(asm: dict) -> dict:
+    capsule = find_node_in_doc(asm, "crew_capsule")
     if not capsule:
         raise SystemExit("crew_capsule not found in assembly.json")
 
@@ -261,11 +88,11 @@ def build_crew_capsule(asm: dict) -> dict[str, bpy.types.Collection]:
     m_seat = mat("seat", (0.12, 0.14, 0.18), roughness=0.55)
     m_locker = mat("locker", (0.78, 0.80, 0.84), roughness=0.45)
     m_sys = mat("systems", (0.25, 0.45, 0.35), roughness=0.4)
-    m_tank = mat("tank", (0.20, 0.55, 0.30), roughness=0.35, metallic=0.2)
+    m_tank = mat("tank", (0.20, 0.55, 0.30), roughness=0.7, metallic=0.05)
     m_food = mat("food", (0.85, 0.82, 0.70), roughness=0.5)
     m_wcs = mat("wcs", (0.75, 0.78, 0.82), roughness=0.4)
-    m_hatch = mat("hatch", (0.55, 0.58, 0.62), roughness=0.3, metallic=0.35)
-    m_rcs = mat("rcs", (0.15, 0.15, 0.17), roughness=0.4, metallic=0.5)
+    m_hatch = mat("hatch", (0.55, 0.58, 0.62), roughness=0.65, metallic=0.05)
+    m_rcs = mat("rcs", (0.15, 0.15, 0.17), roughness=0.65, metallic=0.05)
     m_panel = mat("panel", (0.10, 0.12, 0.18), roughness=0.25)
 
     # --- Floor (open top: no roof on vessel) ---
@@ -449,7 +276,7 @@ def build_crew_capsule(asm: dict) -> dict[str, bpy.types.Collection]:
             0.16,
             0.85,
             (x0 + 10.55, -y_half + wall_t + 0.9 + dy, floor_z + 0.65),
-            mat("tank_n2", (0.65, 0.68, 0.72), roughness=0.35, metallic=0.25),
+            mat("tank_n2", (0.65, 0.68, 0.72), roughness=0.7, metallic=0.05),
             c_int,
             axis="Z",
         )
@@ -514,25 +341,136 @@ def build_crew_capsule(asm: dict) -> dict[str, bpy.types.Collection]:
         c_roof,
     )
 
-    # Labels (flat text, readable in top ortho)
+    # Leader-line callouts (dot on the part, line out to readable text) instead
+    # of bare floating labels — keeps each label visibly tied to its part.
     z_lab = wall_h + 0.05
-    labels = [
-        ("LBL_title", "CREW CAPSULE (assembly.json)", (cx, cover_y - 1.2, z_lab), 0.28),
-        ("LBL_rcs", "Forward RCS", (x0 - 0.3, 1.6, z_lab), 0.16),
-        ("LBL_cdr", "CDR", (deck_x, 1.3, z_lab), 0.14),
-        ("LBL_plt", "PLT", (deck_x, -1.3, z_lab), 0.14),
-        ("LBL_pax", "6 passenger seats", (x0 + 5.7, 1.55, z_lab), 0.15),
-        ("LBL_earth", "Earth hatch", (hatch_x, y_half + 0.7, z_lab), 0.14),
-        ("LBL_aft", "Aft hatch → airlock", (x1 + 0.15, 1.4, z_lab), 0.13),
-        ("LBL_food", "Food pouches + warmer", (food_x, food_y - 1.05, z_lab), 0.12),
-        ("LBL_wcs", "WCS", (wcs_x - 0.2, wcs_y + 1.0, z_lab), 0.12),
-        ("LBL_eclss", "ECLSS + O2/N2", (x0 + 10.0, -1.6, z_lab), 0.12),
-        ("LBL_lock", "Luggage 0.6 m deep", (locker_x, -y_half - 0.55, z_lab), 0.12),
-        ("LBL_roof", "Roof cover (same footprint)", (cx, cover_y - 0.55, z_lab), 0.14),
-        ("LBL_dim", f"{length:.1f} m × {width:.1f} m", (cx, y_half + 1.25, z_lab), 0.18),
-    ]
-    for name, body, loc, sz in labels:
-        text_label(name, body, loc, c_lab, size=sz)
+    callout(
+        "CO_rcs",
+        anchor_xyz=(x0 - 0.55, 0.0, 0.0),
+        label_xyz=(x0 - 1.0, 1.9, 0.0),
+        text="Forward RCS",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.15,
+    )
+    callout(
+        "CO_cdr",
+        anchor_xyz=(deck_x, 0.55, 0.0),
+        label_xyz=(deck_x, 1.5, 0.0),
+        text="CDR",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.13,
+    )
+    callout(
+        "CO_plt",
+        anchor_xyz=(deck_x, -0.55, 0.0),
+        label_xyz=(deck_x, -1.5, 0.0),
+        text="PLT",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.13,
+    )
+    text_label("LBL_pax", "6 passenger seats", (row_xs[1], 1.55, z_lab), c_lab, size=0.15)
+    callout(
+        "CO_earth",
+        anchor_xyz=(hatch_x, y_half, 0.0),
+        label_xyz=(hatch_x, y_half + 0.9, 0.0),
+        text="Earth hatch",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.14,
+    )
+    callout(
+        "CO_aft",
+        anchor_xyz=(x1, 0.35, 0.0),
+        label_xyz=(x1 + 0.7, 1.4, 0.0),
+        text="Aft hatch → airlock",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.13,
+    )
+    callout(
+        "CO_food",
+        anchor_xyz=(food_x, food_y, 0.0),
+        label_xyz=(food_x, food_y - 1.1, 0.0),
+        text="Food pouches + warmer",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.12,
+    )
+    callout(
+        "CO_wcs",
+        anchor_xyz=(wcs_x, wcs_y, 0.0),
+        label_xyz=(wcs_x - 0.7, wcs_y + 0.55, 0.0),
+        text="WCS",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.13,
+    )
+    callout(
+        "CO_eclss",
+        anchor_xyz=(x0 + 10.2, -y_half + 0.6, 0.0),
+        label_xyz=(x0 + 10.2, -y_half - 0.55, 0.0),
+        text="ECLSS + O2/N2",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.12,
+    )
+    callout(
+        "CO_lock",
+        anchor_xyz=(locker_x, -(y_half - wall_t - locker_d / 2.0), 0.0),
+        label_xyz=(locker_x, -y_half - 0.55, 0.0),
+        text="Luggage 0.6 m deep",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.12,
+    )
+    text_label("LBL_roof", "Roof cover (same footprint)", (cx, cover_y - 0.55, z_lab), c_lab, size=0.14)
+    text_label(
+        "LBL_title",
+        "CREW CAPSULE (assembly.json)",
+        (cx, cover_y - width * 0.55, z_lab),
+        c_lab,
+        size=0.26,
+    )
+
+    # Dimension lines: length along the top, width ahead of the nose.
+    dimension_line(
+        "DIM_length",
+        p0=(x0, y_half),
+        p1=(x1, y_half),
+        offset=1.1,
+        text=f"{length:.1f} m",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.18,
+    )
+    dimension_line(
+        "DIM_width",
+        p0=(x0, -y_half),
+        p1=(x0, y_half),
+        offset=1.8,
+        text=f"{width:.1f} m",
+        collection=c_lab,
+        z=z_lab,
+        text_size=0.18,
+    )
+
+    # Subsystem color legend, clear of the vessel in the left margin.
+    legend(
+        [
+            (m_shell, "Structure / shell"),
+            (m_hatch, "Hatches"),
+            (m_seat, "Seats"),
+            (m_locker, "Stowage / luggage"),
+            (m_sys, "ECLSS systems"),
+            (m_tank, "Gas tanks"),
+        ],
+        (x0 - 5.4, 1.2, z_lab),
+        c_lab,
+        title="LEGEND",
+    )
 
     # Keep aisle visually empty (no geometry in |Y| < aisle_half for furniture)
     _ = aisle_half
@@ -549,41 +487,9 @@ def build_crew_capsule(asm: dict) -> dict[str, bpy.types.Collection]:
         "width": width,
         "cx": cx,
         "wall_h": wall_h,
+        "y_half": y_half,
+        "cover_y": cover_y,
     }
-
-
-def setup_view(meta: dict) -> bpy.types.Object:
-    world = bpy.data.worlds.new("World")
-    bpy.context.scene.world = world
-    world.use_nodes = True
-    bg = world.node_tree.nodes["Background"]
-    bg.inputs[0].default_value = (0.88, 0.89, 0.91, 1.0)
-    bg.inputs[1].default_value = 1.0
-
-    bpy.ops.object.light_add(type="SUN", location=(meta["cx"], -4.0, 40.0))
-    sun = bpy.context.active_object
-    sun.name = "Sun"
-    sun.data.energy = 3.5
-    sun.rotation_euler = (0.3, 0.2, 0.1)
-    to_col(sun, meta["lights"])
-
-    bpy.ops.object.light_add(type="AREA", location=(meta["cx"], 0.0, 25.0))
-    area = bpy.context.active_object
-    area.name = "Fill"
-    area.data.energy = 800
-    area.data.size = 40
-    to_col(area, meta["lights"])
-
-    data = bpy.data.cameras.new("Cam_Top")
-    data.type = "ORTHO"
-    # Fit length + parked roof cover
-    data.ortho_scale = max(meta["length"] * 1.35, meta["width"] * 3.2)
-    cam = bpy.data.objects.new("Cam_Top", data)
-    cam.location = (meta["cx"], -meta["width"] * 0.35, 40.0)
-    cam.rotation_euler = (0.0, 0.0, 0.0)  # look down -Z? Blender cam looks -Z local
-    # Camera default looks along local -Z; with rot 0 at high Z looking down works
-    to_col(cam, meta["root"])
-    return cam
 
 
 def main() -> int:
@@ -591,15 +497,44 @@ def main() -> int:
         print(f"missing {ASSEMBLY_PATH}", file=sys.stderr)
         return 1
 
-    asm = json.loads(ASSEMBLY_PATH.read_text(encoding="utf-8"))
+    asm = load_assembly(ASSEMBLY_PATH)
     print("==> clear scene / build crew capsule from assembly.json")
     clear_scene()
     meta = build_crew_capsule(asm)
-    cam = setup_view(meta)
+
+    # Composition is asymmetric in both axes (legend in the left margin,
+    # dimension lines above, parked roof cover + title well below; camera x
+    # is pinned to cx), so fit content bounds explicitly.
+    render_w, render_h = 3200, 2000
+    y_top = meta["y_half"] + 1.5
+    y_bottom = meta["cover_y"] - meta["width"] * 0.55 - 0.3
+    cam_y = (y_top + y_bottom) / 2.0
+    half_height_needed = (y_top - y_bottom) / 2.0
+
+    x0 = meta["cx"] - meta["length"] / 2.0
+    x1 = meta["cx"] + meta["length"] / 2.0
+    x_left = x0 - 5.7  # legend origin (x0 - 5.4) minus swatch/text margin
+    x_right = x1 + 1.8  # aft-hatch callout label margin
+    half_width_needed = max(meta["cx"] - x_left, x_right - meta["cx"])
+
+    ortho_scale = max(
+        half_width_needed * 2.0,
+        half_height_needed * 2.0 * (render_w / render_h),
+    )
+
+    cam = setup_topdown_camera(
+        meta["root"],
+        meta["lights"],
+        cx=meta["cx"],
+        length=meta["length"],
+        width=meta["width"],
+        cam_y=cam_y,
+        ortho_scale=ortho_scale,
+    )
 
     FIGURES.mkdir(parents=True, exist_ok=True)
     print("==> render top-down")
-    render_to(cam, PNG_OUT, width=3200, height=2000)
+    render_to(cam, PNG_OUT, width=render_w, height=render_h)
 
     bpy.ops.wm.save_as_mainfile(filepath=str(BLEND_OUT))
     print(f"saved {BLEND_OUT}")
