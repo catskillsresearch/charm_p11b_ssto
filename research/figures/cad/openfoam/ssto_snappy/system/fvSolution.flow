@@ -1,0 +1,59 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+
+solvers
+{
+    Phi
+    {
+        solver          GAMG;
+        tolerance       1e-6;
+        relTol          0.01;
+        smoother        DIC;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+
+    p
+    {
+        $Phi;
+    }
+
+    "(U|nuTilda)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0.1;
+    }
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 3;
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors 1;
+    consistent      yes;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p               0.3;
+    }
+    equations
+    {
+        U               0.5;
+        nuTilda         0.5;
+    }
+}

@@ -114,6 +114,46 @@ def drag_coefficient(mach: np.ndarray | float) -> np.ndarray:
     return np.interp(np.atleast_1d(np.asarray(mach, dtype=float)), _MACH_BREAKPOINTS, _CD_BREAKPOINTS)
 
 
+def _ground_roll_m(
+    mass_kg: float,
+    thrust_n: float,
+    v_lof_m_s: float,
+    s_m2: float,
+    rho: float,
+    cl: float,
+    cd: float,
+    mu: float,
+    g0: float,
+    dv: float = 0.5,
+) -> tuple[float, float]:
+    """Integrate ground roll to V_lof. Returns (distance_m, time_s).
+
+    a = (T − D − μ(W−L))/m with L,D from constant CL/CD during the roll.
+    """
+    weight_n = mass_kg * g0
+    v = 0.0
+    s = 0.0
+    t = 0.0
+    while v < v_lof_m_s - 1e-9:
+        q = 0.5 * rho * v * v
+        lift = q * s_m2 * cl
+        drag = q * s_m2 * cd
+        friction = mu * max(weight_n - lift, 0.0)
+        accel = (thrust_n - drag - friction) / mass_kg
+        if accel <= 0.05:
+            # Cannot accelerate to liftoff — return a huge sentinel distance.
+            return 1.0e9, 1.0e9
+        v_next = min(v + dv, v_lof_m_s)
+        # ds = V dV / a  (use mid-point V)
+        v_mid = 0.5 * (v + v_next)
+        ds = v_mid * (v_next - v) / accel
+        dt = (v_next - v) / accel
+        s += ds
+        t += dt
+        v = v_next
+    return float(s), float(t)
+
+
 def integrate_stage2_climb(
     v1_m_s: float,
     v_ab_m_s: float,
@@ -249,11 +289,21 @@ class Params:
     # --- Stage 1 (EDF): existing §10.2/§10.3 constants, now wired through
     # this model instead of hand-typed, so P1/T1/m_EDF track m0 ---
     thrust_to_weight_min: float = 0.25
-    v_to_m_s: float = 80.0
     eta_m: float = 0.90
     eta_prop: float = 0.80
     k_fan: float = 1.35
     alpha_mot_w_per_kg: float = 16.0e3
+    # Takeoff lift closure (§10.3). Clean-wing CL from VSPAERO M=0.3, α=8°;
+    # CL_max_takeoff is a flagged high-lift assumption (flaps/elevon droop —
+    # not yet in the OpenVSP exterior). k_lof = V_lof / V_s.
+    rho_sl_kg_m3: float = 1.225
+    cl_clean_vspaero: float = 0.478
+    cl_max_takeoff: float = 1.65  # flagged high-lift (flaps / elevon droop)
+    k_lof: float = 1.12
+    mu_roll: float = 0.025
+    cl_ground_roll: float = 0.55  # partial lift during roll (flagged)
+    cd_ground_roll: float = 0.090  # gear+flaps parasite (flagged)
+    runway_available_m: float = 3500.0  # long municipal / G6 class
 
     # --- Stage 2 (microwave air plasma): existing §10.2/§10.4 constants,
     # reused as-is, plus new ascent-physics inputs for the climb integrator.
@@ -404,17 +454,62 @@ def compute(p: Params = Params()) -> Results:
     r.set("stage.v_ab_m_s", p.v_ab_m_s)
     r.set("stage.v_ab_km_s", p.v_ab_m_s / 1e3)
 
-    # ----- Stage 1 (EDF): T1/P1/m_EDF from the actual solved m0 -----
+    # ----- Stage 1 (EDF): takeoff lift closure, then T1/P1/m_EDF -----
     eta1 = r.set("stage.eta1", p.eta_m * p.eta_prop)
     t1_n = r.set("stage.t1_n", p.thrust_to_weight_min * m0_kg * p.g0)
-    p1_w = r.set("stage.p1_w", t1_n * p.v_to_m_s / eta1)
-    r.set("stage.p1_mw", p1_w / 1e6)
     r.set("stage.t1_kn", t1_n / 1e3)
+    S = wing_reference_area_m2()
+    weight_n = m0_kg * p.g0
+    r.set("stage.cl_clean_vspaero", p.cl_clean_vspaero)
+    r.set("stage.cl_max_takeoff", p.cl_max_takeoff)
+    # Stall / liftoff speeds: V_s = sqrt(2W/(ρ S CL)), V_lof = k_lof V_s
+    vs_clean = math.sqrt(
+        2.0 * weight_n / (p.rho_sl_kg_m3 * S * p.cl_clean_vspaero)
+    )
+    vs_to = math.sqrt(2.0 * weight_n / (p.rho_sl_kg_m3 * S * p.cl_max_takeoff))
+    v_lof = r.set("stage.v_lof_m_s", p.k_lof * vs_to)
+    r.set("stage.v_stall_clean_m_s", vs_clean)
+    r.set("stage.v_stall_to_m_s", vs_to)
+    r.set("stage.v_to_m_s", v_lof)  # EDF power reference = liftoff speed
+    s_g, t_g = _ground_roll_m(
+        mass_kg=m0_kg,
+        thrust_n=t1_n,
+        v_lof_m_s=v_lof,
+        s_m2=S,
+        rho=p.rho_sl_kg_m3,
+        cl=p.cl_ground_roll,
+        cd=p.cd_ground_roll,
+        mu=p.mu_roll,
+        g0=p.g0,
+    )
+    r.set("stage.ground_roll_m", s_g)
+    r.set("stage.ground_roll_km", s_g / 1e3)
+    r.set("stage.ground_roll_s", t_g)
+    r.set("stage.runway_available_m", p.runway_available_m)
+    r.set("stage.runway_margin_m", p.runway_available_m - s_g)
+    # Clean-wing counterfactual (no flaps): same thrust, VSPAERO CL only.
+    v_lof_clean = p.k_lof * vs_clean
+    s_g_clean, _ = _ground_roll_m(
+        mass_kg=m0_kg,
+        thrust_n=t1_n,
+        v_lof_m_s=v_lof_clean,
+        s_m2=S,
+        rho=p.rho_sl_kg_m3,
+        cl=min(p.cl_ground_roll, 0.35),
+        cd=0.06,
+        mu=p.mu_roll,
+        g0=p.g0,
+    )
+    r.set("stage.v_lof_clean_m_s", v_lof_clean)
+    r.set("stage.ground_roll_clean_m", s_g_clean)
+    # Bus power at liftoff speed (not an arbitrary 80 m/s).
+    p1_w = r.set("stage.p1_w", t1_n * v_lof / eta1)
+    r.set("stage.p1_mw", p1_w / 1e6)
     m_edf_kg = r.set("stage.m_edf_kg", p.k_fan * p1_w / p.alpha_mot_w_per_kg)
     r.set("stage.m_edf_t", m_edf_kg / 1e3)
-    # order-of-magnitude ground-roll+initial-climb duration: impulse estimate
-    # to reach v1 at ~constant net thrust T1 (drag/lift losses not modeled)
-    t1_s = r.set("stage.t1_s", m0_kg * p.v1_m_s / t1_n)
+    # Stage-1 energy to handoff: ground roll + climb/accel impulse to v1.
+    t_climb_s = max(m0_kg * (p.v1_m_s - v_lof) / t1_n, 0.0)
+    t1_s = r.set("stage.t1_s", t_g + t_climb_s)
     e1_j = r.set("stage.e1_j", p1_w * t1_s)
     r.set("stage.e1_mwh", e1_j / 3.6e9)
 

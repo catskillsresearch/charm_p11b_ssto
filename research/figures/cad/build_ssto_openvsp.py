@@ -356,6 +356,11 @@ def build_rudder_speedbrake(vsp, spec: dict[str, Any], ctx: dict[str, str]) -> N
 
 
 def build_body_flap(vsp, spec: dict[str, Any], ctx: dict[str, str]) -> None:
+    """Shuttle-style body flap: a short rectangular *plate* under the aft.
+
+    Default WING airfoils are cambered — under snappy they read as a corn chip.
+    Force rounded-rectangle sections so the flap stays flat and hinged-looking.
+    """
     part = _part(spec, "body_flap")
     assert part is not None
     ov = part["openvsp"]
@@ -363,44 +368,58 @@ def build_body_flap(vsp, spec: dict[str, Any], ctx: dict[str, str]) -> None:
     fuse_h = float(spec["oml"]["fuselage_height_m"])
     flap = vsp.AddGeom("WING", fuse)
     vsp.SetGeomName(flap, ov.get("name", "BODY_FLAP"))
-    vsp.SetParmVal(flap, "Sym_Planar_Flag", "Sym", 0)
+    vsp.SetParmVal(flap, "Sym_Planar_Flag", "Sym", 2)  # XZ
     vsp.SetParmVal(flap, "X_Rel_Location", "XForm", float(ov["x_m"]))
+    vsp.SetParmVal(flap, "Y_Rel_Location", "XForm", 0.0)
     vsp.SetParmVal(flap, "Z_Rel_Location", "XForm", fuse_h * float(ov["z_frac_of_fuse_h"]))
+    for rot in ("X_Rel_Rotation", "Y_Rel_Rotation", "Z_Rel_Rotation"):
+        vsp.SetParmVal(flap, rot, "XForm", 0.0)
+
     half = float(ov["span_m"]) / 2.0
+    root_c = float(ov["root_chord_m"])
+    tip_c = float(ov["tip_chord_m"])
+    thick_m = float(ov.get("thickness_m", 0.45))
+    # Planform first — ChangeXSecShape below replaces XSecCurve parms.
     vsp.SetParmVal(flap, "Span", "XSec_1", half)
-    vsp.SetParmVal(flap, "Root_Chord", "XSec_1", float(ov["root_chord_m"]))
-    vsp.SetParmVal(flap, "Tip_Chord", "XSec_1", float(ov["tip_chord_m"]))
-    vsp.SetParmVal(flap, "Sweep", "XSec_1", float(ov["sweep_deg"]))
-    vsp.SetParmVal(flap, "ThickChord", "XSecCurve_0", 0.08)
-    vsp.SetParmVal(flap, "ThickChord", "XSecCurve_1", 0.08)
-    # Mirror manually: OpenVSP sym on a centered wing — use XY sym instead
-    vsp.SetParmVal(flap, "Sym_Planar_Flag", "Sym", 2)
-    print("  + body_flap")
+    vsp.SetParmVal(flap, "Root_Chord", "XSec_1", root_c)
+    vsp.SetParmVal(flap, "Tip_Chord", "XSec_1", tip_c)
+    vsp.SetParmVal(flap, "Sweep", "XSec_1", float(ov.get("sweep_deg", 0.0)))
+    vsp.SetParmVal(flap, "Dihedral", "XSec_1", 0.0)
+    vsp.SetParmVal(flap, "Twist", "XSec_1", 0.0)
+    vsp.SetParmVal(flap, "SectTess_U", "XSec_1", int(ov.get("tess_u", 8)))
+    vsp.Update()
+
+    # Flat plate sections (not NACA camber) — this is what killed the Frito.
+    xsurf = vsp.GetXSecSurf(flap, 0)
+    for ix, chord in ((0, root_c), (1, tip_c)):
+        vsp.ChangeXSecShape(xsurf, ix, vsp.XS_ROUNDED_RECTANGLE)
+        xs = vsp.GetXSec(xsurf, ix)
+        vsp.SetXSecWidthHeight(xs, chord, thick_m)
+    vsp.Update()
+    try:
+        vsp.SetParmVal(flap, "Tess_W", "Shape", int(ov.get("tess_w", 11)))
+    except Exception:
+        pass
+    print(f"  + body_flap  span={ov['span_m']} m  plate thickness={thick_m} m")
 
 
 def build_plbd(vsp, spec: dict[str, Any], ctx: dict[str, str]) -> None:
+    """Retired exterior stand-in.
+
+    Early OpenVSP used two WING geoms on the bay roof as closed clamshells.
+    That broke the unbroken-tube OML. Doors belong on the cargo-skid drop-in
+    (``build_cargo_skid_blender.py``); keep ``plbd.enabled: false`` in
+    ``vehicle_spec.json``.
+    """
     part = _part(spec, "plbd")
     assert part is not None
-    ov = part["openvsp"]
-    cargo = _station(spec, "cargo")
-    fuse = ctx["fuse"]
-    fuse_h = float(spec["oml"]["fuselage_height_m"])
-    # Closed top clamshell: two low-profile wings lying on bay roof (port/starboard).
-    for side, ysign in (("L", -1.0), ("R", 1.0)):
-        door = vsp.AddGeom("WING", fuse)
-        vsp.SetGeomName(door, f"{ov['name_prefix']}_{side}")
-        vsp.SetParmVal(door, "Sym_Planar_Flag", "Sym", 0)
-        vsp.SetParmVal(door, "X_Rel_Location", "XForm", cargo["x0"] + 0.5)
-        vsp.SetParmVal(door, "Y_Rel_Location", "XForm", ysign * 0.15)
-        vsp.SetParmVal(door, "Z_Rel_Location", "XForm", fuse_h * 0.48)
-        vsp.SetParmVal(door, "Z_Rel_Rotation", "XForm", ysign * 8.0)  # slight roof angle
-        vsp.SetParmVal(door, "Span", "XSec_1", float(ov["span_each_m"]))
-        vsp.SetParmVal(door, "Root_Chord", "XSec_1", float(cargo["bay_length_m"]) - 1.0)
-        vsp.SetParmVal(door, "Tip_Chord", "XSec_1", float(cargo["bay_length_m"]) - 1.0)
-        vsp.SetParmVal(door, "Sweep", "XSec_1", 0.0)
-        vsp.SetParmVal(door, "ThickChord", "XSecCurve_0", float(ov["thickness_chord"]))
-        vsp.SetParmVal(door, "ThickChord", "XSecCurve_1", float(ov["thickness_chord"]))
-    print("  + plbd  closed clamshell L/R")
+    if not part.get("enabled", True):
+        print("  skip plbd  (doors on cargo skid; exterior OML is smooth tube)")
+        return
+    raise RuntimeError(
+        "plbd exterior WING builder is retired — set plbd.enabled=false "
+        "and use the Blender cargo-skid drop-in for door geometry"
+    )
 
 
 def build_oms_pods(vsp, spec: dict[str, Any], ctx: dict[str, str]) -> None:

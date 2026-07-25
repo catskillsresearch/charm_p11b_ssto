@@ -1,0 +1,65 @@
+#!/bin/bash
+# Spalart–Allmaras RANS on the snappy mesh, warm-started from potentialFoam.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+if ! command -v simpleFoam >/dev/null 2>&1; then
+  echo "ERROR: simpleFoam not on PATH" >&2
+  exit 1
+fi
+if [[ ! -d constant/polyMesh ]]; then
+  echo "ERROR: no polyMesh — run make cad-snappy first" >&2
+  exit 1
+fi
+
+echo "==> potentialFoam warm-start"
+bash ./Allrun.flow
+
+echo "==> RANS BCs / schemes (keep potential U internal field; wall → noSlip)"
+cp -f 0.orig/U.rans 0/U
+# Re-apply freestream internal + flip if potentialFoam wrote −U∞
+poetry run python - <<'PY'
+from pathlib import Path
+import re, numpy as np
+# Read potential U vectors
+text = Path("0/U").read_text()  # currently U.rans template
+# Load last potential solution from polyMesh time 0 backup — we overwrote.
+# Instead re-read from log: parse VTK if present
+import pyvista as pv
+vtu = Path("VTK/ssto_snappy_0/internal.vtu")
+if not vtu.is_file():
+    raise SystemExit("missing potentialFoam VTK — Allrun.flow failed?")
+vol = pv.read(str(vtu))
+# cell U → use cell centres count must match nCells
+U = np.asarray(vol.cell_data["U"] if "U" in vol.cell_data else vol.point_data["U"], dtype=float)
+if U.ndim != 2:
+    raise SystemExit("bad U")
+if float(U[:, 0].mean()) < 0:
+    U = -U
+# Write OpenFOAM nonuniform U with noSlip walls from template
+hdr = Path("0.orig/U.rans").read_text()
+# Replace internalField
+body = "\n".join(f"({u[0]:.8g} {u[1]:.8g} {u[2]:.8g})" for u in U)
+# Prefer point-data length vs cell count — OpenFOAM U is per cell
+n = len(U)
+new_internal = f"internalField   nonuniform List<vector>\n{n}\n(\n{body}\n);"
+out = re.sub(r"internalField\s+uniform\s+\([^)]+\);", new_internal, hdr, count=1)
+Path("0/U").write_text(out)
+print(f"wrote 0/U from potentialFoam ({n} cells), Ux_mean={U[:,0].mean():.2f}")
+PY
+
+cp -f 0.orig/nuTilda 0/nuTilda
+cp -f 0.orig/nut 0/nut
+# Keep p from potential / restore outlet BC
+cp -f 0.orig/p 0/p
+cp -f system/fvSchemes.rans system/fvSchemes
+cp -f system/fvSolution.rans system/fvSolution
+cp -f system/controlDict.rans system/controlDict
+
+echo "==> simpleFoam (SpalartAllmaras)"
+simpleFoam 2>&1 | tee log.simpleFoam
+
+echo "==> foamToVTK"
+rm -rf VTK
+foamToVTK -latestTime || foamToVTK
+echo "OK: RANS fields under VTK/"

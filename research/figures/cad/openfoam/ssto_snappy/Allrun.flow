@@ -1,0 +1,35 @@
+#!/bin/bash
+# potentialFoam on the snappy mesh — stable inviscid streamlines for the paper.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+if ! command -v potentialFoam >/dev/null 2>&1; then
+  echo "ERROR: potentialFoam not on PATH (install openfoam)" >&2
+  exit 1
+fi
+
+if [[ ! -d constant/polyMesh ]]; then
+  echo "ERROR: no polyMesh — run make cad-snappy first" >&2
+  exit 1
+fi
+
+echo "==> restore 0/ from 0.orig"
+rm -rf 0
+cp -a 0.orig 0
+
+echo "==> set Φ = U∞·x on far-field patches"
+SETPHI="$(cd .. && pwd)/set_phi_freestream.py"
+poetry run python "$SETPHI"
+
+echo "==> controlDict / fvSolution → potentialFoam"
+cp -f system/controlDict.flow system/controlDict
+cp -f system/fvSolution.flow system/fvSolution
+
+echo "==> potentialFoam (~M=0.3 α=4°, inviscid)"
+# Capital -writePhi writes the potential; -writephi is only face flux.
+potentialFoam -initialiseUBCs -writePhi 2>&1 | tee log.potentialFoam
+
+echo "==> foamToVTK"
+foamToVTK -latestTime || foamToVTK
+
+echo "OK: flow fields under VTK/"

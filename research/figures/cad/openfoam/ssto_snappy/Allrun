@@ -1,0 +1,39 @@
+#!/bin/bash
+# Mesh CHARM SSTO with snappyHexMesh (+ a few prism layers on WALL).
+# Requires OpenFOAM sourced in the environment (host apt install — not Poetry).
+set -euo pipefail
+cd "$(dirname "$0")"
+
+if ! command -v snappyHexMesh >/dev/null 2>&1; then
+  echo "ERROR: snappyHexMesh not on PATH." >&2
+  echo "  Install:  sudo apt-get install -y openfoam" >&2
+  echo "  Then:     source /usr/lib/openfoam/openfoam*/etc/bashrc" >&2
+  echo "  See:      research/figures/cad/openfoam/README.md" >&2
+  exit 1
+fi
+
+# Flight-config STL: smooth tube, gear retracted (drops extended-gear stubs).
+mkdir -p constant/triSurface
+PREPARE="$(cd .. && pwd)/prepare_aero_stl.py"
+poetry run python "$PREPARE"
+
+cp -f system/controlDict.mesh system/controlDict
+
+echo "==> surfaceFeatureExtract"
+surfaceFeatureExtract
+
+echo "==> blockMesh"
+blockMesh
+
+echo "==> snappyHexMesh (castellate + snap + layers)"
+snappyHexMesh -overwrite
+
+echo "==> checkMesh"
+checkMesh | tee log.checkMesh
+
+if command -v foamToVTK >/dev/null 2>&1; then
+  echo "==> foamToVTK"
+  foamToVTK -latestTime || foamToVTK || true
+fi
+
+echo "OK: polyMesh under constant/polyMesh (and VTK/ if foamToVTK ran)"

@@ -36,6 +36,26 @@
       "usage": "include"
     },
     {
+      "filename": "figures/assets/stage1_rans_wing.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/stage1_snappy_wall.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/stage1_takeoff_check.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/stage1_vspaero_polar.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/stage2_climb_check.png",
+      "usage": "include"
+    },
+    {
       "filename": "figures/figure-000.pdf",
       "usage": "include"
     },
@@ -45,6 +65,10 @@
     },
     {
       "filename": "figures/figure-002.pdf",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/figure-003.pdf",
       "usage": "include"
     }
   ]

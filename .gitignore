@@ -266,3 +266,35 @@ research/figures/cad/lib/__pycache__/
 
 # VSPAERO digital-tunnel working files (keep summary.json / polar.csv / polar.png)
 research/figures/cad/vspaero/run/
+
+# SU2 binaries / large run artifacts (keep scripts + README + plotted PNG)
+third_party/su2/*.zip
+third_party/su2/bin/
+third_party/su2/linux64-omp.zip
+research/figures/cad/su2/**/restart_*.dat
+research/figures/cad/su2/**/restart.dat
+research/figures/cad/su2/**/flow.vtu
+research/figures/cad/su2/**/vol_solution.vtu
+research/figures/cad/su2/**/history.csv
+research/figures/cad/su2/**/su2_run.log
+research/figures/cad/su2/**/surface_flow.vtu
+research/figures/cad/su2/**/surface.vtu
+research/figures/cad/su2/**/surface_flow.csv
+research/figures/cad/su2/**/surface.csv
+research/figures/cad/su2/**/*.su2
+research/figures/cad/su2/**/ssto_farfield.vtu
+research/figures/cad/su2/**/body_voxel.stl
+research/figures/cad/su2/**/body_clean.stl
+research/figures/cad/su2/**/mesh_out.su2
+research/figures/cad/su2/quickstart/
+
+# OpenFOAM snappyHexMesh case artifacts (keep dicts / Allrun / README)
+research/figures/cad/openfoam/ssto_snappy/constant/polyMesh/
+research/figures/cad/openfoam/ssto_snappy/constant/triSurface/
+research/figures/cad/openfoam/ssto_snappy/VTK/
+research/figures/cad/openfoam/ssto_snappy/processor*/
+research/figures/cad/openfoam/ssto_snappy/[0-9]*/
+research/figures/cad/openfoam/ssto_snappy/log.*
+research/figures/cad/openfoam/ssto_snappy/*.obj
+research/figures/cad/openfoam/ssto_snappy/constant/extendedFeatureEdgeMesh/
+research/figures/cad/openfoam/ssto_snappy/constant/triSurface/*.eMesh

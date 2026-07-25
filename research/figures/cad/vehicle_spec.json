@@ -125,18 +125,19 @@
     },
     {
       "id": "plbd",
-      "enabled": true,
-      "name": "Payload bay doors (top clamshell, closed)",
+      "enabled": false,
+      "name": "Payload bay doors (retired from exterior OML)",
       "builder": "plbd",
       "mass_line": "m_af",
-      "paper": "§1 / §11 top clamshell PLBDs; closed on profile",
+      "paper": "Doors live on the cargo-skid drop-in (Blender), not as OpenVSP roof wings. Exterior OML is an unbroken tube; bay doors are packaging, puttied into the shell when closed.",
       "openvsp": {
         "type": "WING",
         "name_prefix": "PLBD",
         "thickness_chord": 0.04,
         "chord_m": 2.4,
         "span_each_m": 2.15,
-        "closed": true
+        "closed": true,
+        "note": "Disabled: was a fake WING-on-roof stand-in that broke the smooth fuselage. Use build_cargo_skid_blender.py for door geometry."
       }
     },
     {
@@ -228,12 +229,16 @@
       "openvsp": {
         "type": "WING",
         "name": "BODY_FLAP",
-        "span_m": 4.8,
-        "root_chord_m": 2.2,
-        "tip_chord_m": 2.0,
+        "span_m": 5.0,
+        "root_chord_m": 3.0,
+        "tip_chord_m": 2.6,
         "sweep_deg": 0.0,
-        "x_m": 48.5,
-        "z_frac_of_fuse_h": -0.52
+        "x_m": 46.0,
+        "z_frac_of_fuse_h": -0.42,
+        "thickness_m": 0.5,
+        "tess_u": 10,
+        "tess_w": 13,
+        "note": "Rounded-rect plate positioned to overlap the tapered aft belly (x0..x0+chord <= fuselage x_max=52) instead of floating past the tail tip; was a Frito when it hung in open air aft of the hull."
       }
     },
     {
@@ -366,7 +371,7 @@
   },
   "figure_rules": {
     "floorplan": "top-down cutaway; station colors; no landing gear",
-    "profile": "side OML; TPS belly; gear extended; port hatch; PLBDs closed"
+    "profile": "side OML unbroken tube; TPS belly; gear extended; port hatch; PLBDs on cargo skid only"
   },
   "frames": {
     "vehicle": {

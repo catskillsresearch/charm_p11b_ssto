@@ -23,7 +23,7 @@ Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real c
 
 Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [14,21], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **$L \approx 52\,\mathrm{m}$**. ECLSS = **Environmental Control and Life Support System**. Depth $\approx 6.5$–$7\,\mathrm{m}$, span $\approx 28\,\mathrm{m}$.
 
-Figs.~\ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell doors); **fusion electric plant** $33.3$–$49\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, water tanks $35.5$–$39.5\,\mathrm{m}$ — relocated ahead of CHARM as a supplemental radiation shield, §9.9 — fuel services $39.5$–$41.5\,\mathrm{m}$, CHARM island incl. permanent shield bulkhead $41.5$–$49\,\mathrm{m}$); **combined-cycle engine** $49$–$52\,\mathrm{m}$ (stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant}) is 1–1 with that JSON tree. Fig.~\ref{fig:charm-ssto-interior-floorplan} is a top-down cutaway (no landing gear). Fig.~\ref{fig:charm-ssto-exterior-profile} shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
+Figs.~\ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, clamshell doors on the cargo-skid drop-in; exterior OML is an unbroken tube); **fusion electric plant** $33.3$–$49\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, water tanks $35.5$–$39.5\,\mathrm{m}$ — relocated ahead of CHARM as a supplemental radiation shield, §9.9 — fuel services $39.5$–$41.5\,\mathrm{m}$, CHARM island incl. permanent shield bulkhead $41.5$–$49\,\mathrm{m}$); **combined-cycle engine** $49$–$52\,\mathrm{m}$ (stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant}) is 1–1 with that JSON tree. Fig.~\ref{fig:charm-ssto-interior-floorplan} is a top-down cutaway (no landing gear). Fig.~\ref{fig:charm-ssto-exterior-profile} shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
 
 <!-- figure-landscape -->
 ![Vehicle floor plan.](research/figures/charm_ssto_interior_floorplan.png)
@@ -1062,7 +1062,9 @@ Table: Frozen stage constants (literature-anchored; packaging \(\alpha\) are des
 | \(\eta_{\mathrm{prop}}\) | 1 | Fan propulsive efficiency (\(T v / P_{\mathrm{shaft}}\)) | \(0.80\) |
 | \(\eta_1=\eta_{\mathrm{m}}\eta_{\mathrm{prop}}\) | 1 | Bus → \(T v\) | \(0.72\) |
 | \((T/W)_{\min}\) | 1 | Takeoff thrust / weight | \(0.25\) |
-| \(v_{\mathrm{to}}\) | 1 | Takeoff / early climb reference speed | \(80\,\mathrm{m/s}\) |
+| \(C_{L,\max}^{\mathrm{TO}}\) | 1 | Takeoff max lift (high-lift / flaps) | Flagged \(<!--gen stage.cl_max_takeoff:.2f-->1.65<!--/gen-->\) — clean VSPAERO \(C_L(M{=}0.3,\alpha{=}8^\circ)\approx <!--gen stage.cl_clean_vspaero:.2f-->0.48<!--/gen-->\) is not enough alone |
+| \(k_{\mathrm{lof}}\) | 1 | \(V_{\mathrm{lof}}/V_s\) | \(1.12\) |
+| \(v_{\mathrm{to}}\equiv V_{\mathrm{lof}}\) | 1 | Liftoff speed (EDF power reference) | \(<!--gen stage.v_lof_m_s:.0f-->113<!--/gen-->\,\mathrm{m/s}\) from \(V_s=\sqrt{2W/(\rho S C_{L,\max})}\) |
 | \(k_{\mathrm{fan}}\) | 1 | Fan+duct+inverter mass / EM motor mass | \(1.35\) |
 | \(\alpha_{\mathrm{mot}}\) | 1 | Motor specific power (EM) | \(16\,\mathrm{kW/kg}\) [25] |
 | \(\eta_{\mu}\) | 2 | Bus → microwave power in plasma | \(0.55\) |
@@ -1092,6 +1094,8 @@ Table: VSPAERO polar on `catskills_ssto.vsp3` (gear retracted; \(Re_c/10^6=10\);
 | \(0.80\) | \(0.108\) | \(0.237\), \(0.096\), \(2.5\) | \(0.534\), \(0.111\), \(4.8\) |
 | \(0.95\) | \(0.077\) | \(0.350\), \(0.075\), \(4.7\) | \(0.680\), \(0.106\), \(6.4\) |
 
+![Stage 1 VSPAERO polar (Mach×α digital tunnel on `catskills_ssto.vsp3`).](research/figures/stage1_vspaero_polar.png)
+
 **Read against the §10.2 \(C_D(M)\) freeze.** At \(\alpha=0\) the VLM zero-lift drag is \(\sim 0.027\) subsonic (lighter than the frozen \(0.045\) floor — VSPAERO under-counts some parasite/excrescence) and peaks near \(0.11\) at \(M=0.8\) (same *order* as the frozen \(0.09\) transonic peak). Best \(L/D\) in this grid is \(\approx 12.6\) at \(M=0.3\), \(\alpha=8^\circ\). The climb energy integral in §10.4 still uses the conservative generic table [38]; replacing that table with a VSPAERO-fitted \(C_D(M)\) (and extending past Mach 1 with real hypersonic CFD) is future work — Mach \(\gtrsim 1.2\) cases on this full airframe did not converge in practical wall time under VLM.
 
 **Stage 1 pass analysis.** Stage 1 (electric ducted fan, municipal runway through the transonic handoff at \(v_1\)) is the propulsion segment whose airframe loads sit inside VSPAERO’s credible band. Treating the digital tunnel as a **Stage 1 outline go / no-go**:
@@ -1102,33 +1106,62 @@ Table: VSPAERO polar on `catskills_ssto.vsp3` (gear retracted; \(Re_c/10^6=10\);
 | Reference area \(S\) | **Pass** | \(\approx 229\,\mathrm{m}^2\) matches the paper freeze |
 | Transonic drag peak | **Pass** | \(C_D\sim 0.11\) at \(M=0.8\), \(\alpha=0\) vs frozen \(\sim 0.09\) |
 | Subsonic \(C_D\) floor | **Soft pass** | VSPAERO \(\sim 0.027\) vs frozen \(0.045\) — solver optimistic on parasite; paper keeps the heavier floor |
+| Exterior hex mesh + layers (snappyHexMesh) | **Pass (mesh)** | Flight OML (gear retracted); `checkMesh` OK (`make cad-snappy`). Layer coverage partial on thin features |
+| Wing-flow smoke (`potentialFoam`) | **Soft pass** | Inviscid streamlines over the port wing at \(\sim M=0.3\), \(\alpha=4^\circ\) (`make cad-flow`) — poster check, not a polar |
+| Turbulent wing smoke (SA RANS) | **Soft pass** | `simpleFoam` + Spalart–Allmaras on the snappy mesh (`make cad-rans`) — optics / eddy-viscosity field, not a polar |
+| Takeoff lift / ground roll (§10.3) | **Pass (with flaps)** | \(V_{\mathrm{lof}}\approx <!--gen stage.v_lof_m_s:.0f-->113<!--/gen-->\,\mathrm{m/s}\), \(s_g\approx <!--gen stage.ground_roll_km:.2f-->3.34<!--/gen-->\,\mathrm{km}\) on a \(<!--gen stage.runway_available_m:.0f-->3500<!--/gen-->\,\mathrm{m}\) runway; **clean wing alone fails** |
 
-**Verdict:** Stage 1 **passes** this outline check — the planform is sane in the subsonic–transonic band and nothing in VSPAERO breaks the Stage 1 power/drag story (§10.3). Stage 2 and Stage 3 have their own pass analyses (§10.4, §10.5); they are not VSPAERO freestream polars.
+![Stage 1 snappyHexMesh wall on the OpenVSP exterior (full airframe in frame; unbroken tube OML — bay doors live on the cargo-skid drop-in, not as roof wings). Colour = wall eddy viscosity \(\nu_t\) from the Stage 1 RANS dump.](research/figures/stage1_snappy_wall.png)
+
+![Stage 1 turbulent flow: OpenFOAM Spalart–Allmaras RANS (\(\sim M=0.3\), \(\alpha=4^\circ\)), full airframe. Wall coloured by eddy viscosity \(\nu_t\); streamlines over the forward fuselage and wing root.](research/figures/stage1_rans_wing.png)
+
+**Verdict:** Stage 1 **passes** this outline check — the planform is sane in the subsonic–transonic band and nothing in VSPAERO breaks the Stage 1 power/drag story (§10.3). Takeoff **requires the flagged high-lift \(C_{L,\max}\)** (clean VSPAERO \(C_L\) alone needs \(\gtrsim 16\,\mathrm{km}\) of runway). Stage 2 and Stage 3 have their own pass analyses (§10.4, §10.5); they are not VSPAERO freestream polars.
 
 **Reaction-mass utilization:**
 - Stages 1–2: utilization of **carried** propellant is zero (air is free). Inlet capture \(C_{\mathrm{cap}}\) only limits available \(\dot{m}_{\mathrm{air}}\).
 - Stage 3: mass accounting assumes all loaded water is expelled (\(u_{\mathrm{w}}=1\)); power conversion is \(\eta_{\mathrm{jet}}\) (not all bus power becomes \({\tfrac12}\dot{m}v_e^2\)).
 
-### 10.3 Stage 1 — power and mass
+### 10.3 Stage 1 — takeoff lift, power, and mass
+
+**Can it get off the runway before Stage 2?** Thrust alone is not enough — the wing must lift \(m_0 g_0\) at a municipal \(V_{\mathrm{lof}}\). With the VSPAERO clean-wing \(C_L\approx <!--gen stage.cl_clean_vspaero:.2f-->0.48<!--/gen-->\) (\(M{=}0.3\), \(\alpha{=}8^\circ\)) the stall speed is \(\sim <!--gen stage.v_stall_clean_m_s:.0f-->187<!--/gen-->\,\mathrm{m/s}\) and the ground roll is \(\sim <!--gen stage.ground_roll_clean_m:.0f-->15197<!--/gen-->\,\mathrm{m}\) — **fail**. Closing municipal takeoff therefore freezes a **flagged high-lift** \(C_{L,\max}^{\mathrm{TO}}=<!--gen stage.cl_max_takeoff:.2f-->1.65<!--/gen-->\) (flaps / elevon droop; not yet in the OpenVSP exterior):
+
+\[
+\boxed{
+V_s = \sqrt{\dfrac{2\,m_0 g_0}{\rho_{\mathrm{SL}} S\,C_{L,\max}^{\mathrm{TO}}}},\qquad
+V_{\mathrm{lof}} = k_{\mathrm{lof}} V_s,\qquad
+s_g = \int_0^{V_{\mathrm{lof}}}\dfrac{V\,\mathrm{d}V}{a(V)}
+}
+\]
+
+with \(a=(T_1 - D - \mu(W-L))/m_0\) during the roll (\(C_L,C_D\) frozen at gear+flaps values). At \(m_0=<!--gen mass.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}\):
+
+\[
+V_{\mathrm{lof}} \approx <!--gen stage.v_lof_m_s:.0f-->113<!--/gen-->\,\mathrm{m/s},\qquad
+s_g \approx <!--gen stage.ground_roll_km:.2f-->3.34<!--/gen-->\,\mathrm{km}
+\ \text{on a } <!--gen stage.runway_available_m:.0f-->3500<!--/gen-->\,\mathrm{m}
+\text{ runway (margin } <!--gen stage.runway_margin_m:.0f-->156<!--/gen-->\,\mathrm{m}).
+\]
+
+![Stage 1 takeoff closure: ground-roll speed vs distance (left); clean-wing vs high-lift runway demand (right).](research/figures/stage1_takeoff_check.png)
+
+EDF bus power is referenced at liftoff (not an arbitrary \(80\,\mathrm{m/s}\)):
 
 \[
 \boxed{
 T_1 \ge (T/W)_{\min}\,m_0 g_0,\qquad
-P_1 = \frac{T_1\,v_{\mathrm{to}}}{\eta_1},\qquad
+P_1 = \frac{T_1\,V_{\mathrm{lof}}}{\eta_1},\qquad
 m_{\mathrm{EDF}} = k_{\mathrm{fan}}\frac{P_1}{\alpha_{\mathrm{mot}}}.
 }
 \]
 
-At the solved reference \(m_0=<!--gen mass.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}\) (§8):
-
 \[
 T_1 \approx <!--gen stage.t1_kn:.0f-->589<!--/gen-->\,\mathrm{kN},\qquad
-P_1 \approx <!--gen stage.p1_mw:.0f-->65<!--/gen-->\,\mathrm{MW},\qquad
-m_{\mathrm{EDF}}\approx <!--gen stage.m_edf_t:.1f-->5.5<!--/gen-->\,\mathrm{t}
+P_1 \approx <!--gen stage.p1_mw:.0f-->93<!--/gen-->\,\mathrm{MW},\qquad
+m_{\mathrm{EDF}}\approx <!--gen stage.m_edf_t:.1f-->7.8<!--/gen-->\,\mathrm{t}
 \ \text{(HEMM-class \(\alpha_{\mathrm{mot}}\); within the \(15\,\mathrm{t}\) engine budget)}.
 \]
 
-Municipal segment is **not** the \(P_{\star}\) driver: an impulse-estimate ground-roll/initial-climb duration to \(v_1\) gives \(t_1\approx <!--gen stage.t1_s:.0f-->122<!--/gen-->\,\mathrm{s}\), \(E_1\approx <!--gen stage.e1_mwh:.1f-->2.2<!--/gen-->\,\mathrm{MWh}\) — negligible next to stages 2–3 below.
+Municipal segment is **not** the \(P_{\star}\) driver: ground roll + accel to \(v_1\) gives \(t_1\approx <!--gen stage.t1_s:.0f-->133<!--/gen-->\,\mathrm{s}\), \(E_1\approx <!--gen stage.e1_mwh:.1f-->3.4<!--/gen-->\,\mathrm{MWh}\) — still small next to stages 2–3. **Optics caveat:** takeoff **passes only with the high-lift freeze**; a clean double-delta does not municipal-takeoff this GLOW.
 
 ### 10.4 Stage 2 — power and mass (electrothermal, not Ye’s N/kW)
 
@@ -1168,6 +1201,7 @@ P_{\mathrm{need}} \approx \frac{(D_{\mathrm{ram}}-T_{\mathrm{excess}})v}{\eta_{\
 }
 \]
 
+\noindent
 integrated numerically (`integrate_stage2_climb` in [`constants_model.py`](research/figures/cad/constants_model.py), plain numpy quadrature) from \(v_1\) to the existing air-breathing handoff speed \(v_{\mathrm{ab}}=<!--gen stage.v_ab_km_s:.1f-->3.5<!--/gen-->\,\mathrm{km/s}\) (§6 — reused, not re-guessed). Mass is held at \(m_0\) (stages 1–2 burn free air; no carried propellant depletes). The sealing altitude is **not** assumed — it falls out as \(h(v_{\mathrm{ab}})\):
 
 \[
@@ -1190,9 +1224,12 @@ E_2 = P_2^{\star}\,t_2 \approx <!--gen stage.e2_mwh:.0f-->476<!--/gen-->\,\mathr
 | Electrothermal \(T/P\) (not Ye N/kW) | **Pass (physics)** | \(T_2/P_2 = 2\eta_{\mu}\eta_{\mathrm{j},2}/v_{\mathrm{j},2}\) — energy-consistent; super-unity claims rejected [26] |
 | \(E_2 = P_2^{\star}t_2\) vs top-down \(\kappa_E\) | **Soft pass** | Bottom-up stage energies land inside the §4 \(\kappa_E\in[2,4]\) band (§10.5 reconciliation) |
 | Hypersonic airframe \(C_D(M)\) | **Not tested** | Generic table [38]; VSPAERO did not finish Mach \(\gtrsim 1.2\) |
+| Subsonic volume-CFD airframe smoke | **Inherited** | §10.2.1 SU2 Euler is a Stage‑1-band exterior check only — it does **not** clear hypersonic \(C_D\) |
 | GW-class air-plasma thruster + packaging \(\sim 230\,\mathrm{kW/kg}\) | **Fail / unobtainium** | Lab ducts exist [23]; vehicle-scale power and specific mass do not (§13.3) |
 
-**Verdict:** Stage 2 **passes the energy/climb smoke** (the trajectory integral and \(T/P\) physics close on paper) and **fails the thruster/packaging smoke** until a real MW→GW air-plasma string exists. Next smoke tests worth building: (i) a 1D inlet + applicator mass-flow / \(\Delta h\) model at \(Q_{\mathrm{ascent}}\) that must recover \(\dot{m}_{\mathrm{air}}\) and \(T_2\) without magic \(C_{\mathrm{cap}}\); (ii) OpenVSP **actuator-disk** or jet boundary on the same `.vsp3` (still not plasma CFD); (iii) subscale literature replay — reproduce published microwave-air thrust/power within a factor of a few before trusting the vehicle freeze.
+![Stage 2 climb smoke: constant-\(Q\) path with \(T_2\) vs \(D=Q C_D S\) (left) and \(h(v)\) to seal (right).](research/figures/stage2_climb_check.png)
+
+**Verdict:** Stage 2 **passes the energy/climb smoke** (the trajectory integral and \(T/P\) physics close on paper) and **fails the thruster/packaging smoke** until a real MW→GW air-plasma string exists. The exterior CFD figure in §10.2.1 is deliberately **not** re-used as a Stage‑2 hypersonic clearance. Next smoke tests worth building: (i) a 1D inlet + applicator mass-flow / \(\Delta h\) model at \(Q_{\mathrm{ascent}}\) that must recover \(\dot{m}_{\mathrm{air}}\) and \(T_2\) without magic \(C_{\mathrm{cap}}\); (ii) OpenVSP **actuator-disk** or jet boundary on the same `.vsp3` (still not plasma CFD); (iii) OpenFOAM `snappyHexMesh` (+ layers) → RANS/Euler on the true STL, then a high-Mach solver before touching the frozen \(C_D(M)\) table; (iv) subscale literature replay — reproduce published microwave-air thrust/power within a factor of a few before trusting the vehicle freeze.
 
 ### 10.5 Stage 3 — water, power, and \(I_{\mathrm{sp}}\) cases
 
@@ -1254,11 +1291,11 @@ Table: Stage energy comparison at the closed reference vehicle ($m_0=<!--gen mas
 
 | Stage | Peak \(P^{\star}\) | Duration | Energy | Why |
 |-------|--------------------|----------|--------|-----|
-| 1 — EDF | \(<!--gen stage.p1_mw:.0f-->65<!--/gen-->\,\mathrm{MW}\) | \(<!--gen stage.t1_s:.0f-->122<!--/gen-->\,\mathrm{s}\) | \(<!--gen stage.e1_mwh:.1f-->2.2<!--/gen-->\,\mathrm{MWh}\) | Ground roll / initial climb only |
+| 1 — EDF | \(<!--gen stage.p1_mw:.0f-->93<!--/gen-->\,\mathrm{MW}\) | \(<!--gen stage.t1_s:.0f-->133<!--/gen-->\,\mathrm{s}\) | \(<!--gen stage.e1_mwh:.1f-->3.4<!--/gen-->\,\mathrm{MWh}\) | Ground roll / initial climb only |
 | 2 — air plasma | \(<!--gen stage.p2_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}\) | \(<!--gen stage.t2_min:.1f-->28.7<!--/gen-->\,\mathrm{min}\) | \(<!--gen stage.e2_mwh:.0f-->476<!--/gen-->\,\mathrm{MWh}\) | Short, steep constant-\(Q\) climb to \(h_{\mathrm{seal}}\) |
 | 3 — water plasma | \(<!--gen stage.p3_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}\) | \(<!--gen stage.t3_h:.2f-->4.33<!--/gen-->\,\mathrm{h}\) | \(<!--gen stage.e3_mwh:.0f-->4309<!--/gen-->\,\mathrm{MWh}\) | Long, power-limited vacuum insertion burn |
 | Hotel | \(5\,\mathrm{MW}\) | \(t_1+t_2+t_3\) | \(<!--gen stage.e_hotel_mwh:.1f-->24.2<!--/gen-->\,\mathrm{MWh}\) | Continuous recirculating floor (§9.5) |
-| **Bottom-up total** | — | — | \(<!--gen stage.e_bottom_up_mwh:.0f-->4811<!--/gen-->\,\mathrm{MWh}\) | \(E_1+E_2+E_3+E_{\mathrm{hotel}}\) |
+| **Bottom-up total** | — | — | \(<!--gen stage.e_bottom_up_mwh:.0f-->4812<!--/gen-->\,\mathrm{MWh}\) | \(E_1+E_2+E_3+E_{\mathrm{hotel}}\) |
 
 Same peak power (\(P_2^{\star}=P_3^{\star}\) by ceiling), but \(t_2 \ll t_3\) and \(E_2 \ll E_3\) by **actual physics** — this is the answer to why stage 2 and stage 3 previously looked identical on paper: the ceiling was the only number ever shown; duration and energy were never independently derived until this pass.
 
@@ -1278,7 +1315,7 @@ Same peak power (\(P_2^{\star}=P_3^{\star}\) by ceiling), but \(t_2 \ll t_3\) an
 \[
 \boxed{
 \begin{aligned}
-P_1^{\star} &\approx <!--gen stage.p1_mw:.0f-->65<!--/gen-->\,\mathrm{MW}
+P_1^{\star} &\approx <!--gen stage.p1_mw:.0f-->93<!--/gen-->\,\mathrm{MW}
  && \text{(stage 1 at \(m_0=<!--gen mass.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}\))},\\
 P_2^{\star} &= <!--gen stage.p2_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}
  && \text{(stage 2 sizes \(P_{\star}\); }t_2\approx <!--gen stage.t2_min:.1f-->28.7<!--/gen-->\,\mathrm{min)},\\
@@ -1631,10 +1668,13 @@ Table: External packages and tools used by the living design / paper build.
 | Package / tool | Role in this project |
 |----------------|----------------------|
 | **Python** \(\ge 3.12\) + **Poetry** | Project environment; CAD scripts; assembly JSON tooling; paper build driver |
-| **NumPy** | Numeric support in OpenVSP figure export |
-| **Matplotlib** | Raster floorplan / profile renders from the OpenVSP model |
+| **NumPy** | OpenVSP figure export; `constants_model.py` sizing / Stage‑2 climb smoke |
+| **Matplotlib** | OpenVSP floorplan/profile rasters; VSPAERO polar; Stage‑2 climb check |
 | **OpenVSP** (optional Poetry group; upstream `.deb` + Python API; NOSA 1.3) | Parametric vehicle CAD (`.vsp3`); source of the orthographic floorplan and profile figures |
-| **VSPAERO** (bundled with OpenVSP; NOSA 1.3) | Digital wind tunnel on `catskills_ssto.vsp3` — Mach×α VLM polar (`make cad-vspaero` → `research/figures/cad/vspaero/`); cross-checks §10.2 \(C_D(M)\) in the subsonic/transonic band |
+| **VSPAERO** (bundled with OpenVSP; NOSA 1.3) | Digital wind tunnel on `catskills_ssto.vsp3` — Mach×α VLM polar (`make cad-vspaero` → `research/figures/cad/vspaero/`); Stage‑1 outline check (§10.2.1) |
+| **SU2** v8.x (OpenMP binary under `third_party/su2/`) | Scripted compressible CFD — NACA0012 proof (`make su2-naca`) and coarse 3D Euler on the SSTO exterior (`make su2-ssto` → §10.2.1 figure) |
+| **OpenFOAM** (host apt; **not** Poetry) | `snappyHexMesh` exterior mesh + prism layers on the true OpenVSP STL (`make cad-snappy` → `research/figures/cad/openfoam/`); next step above the voxel/TetGen plushy mesh |
+| **Gmsh** / **TetGen** / **trimesh** / **pyvista** / **scikit-image** (Poetry) | STL cleanup, coarse tet far-field (interim), and off-screen CFD renders for the paper figures |
 | **Blender** 5.x (snap `/snap/bin/blender`) | Drop-in cutaways from `assembly.json` (crew capsule, airlock, cargo skid, fusion plant skid top-down; `make cad-drop-ins`) |
 | **NumPy** (`research/figures/cad/constants_model.py`) | Single source for every sizing-constraint number in §6–§9 and the CHARM bottom-up mass roll-up (§9.6); regenerates `<!--gen-->` spans in this file and patches `assembly.json` / `vehicle_spec.json` — plain arithmetic, never an LLM call |
 | **Pillow** | Image handling when the paper build ingests raster figure assets |
@@ -1673,6 +1713,49 @@ make cad-drop-ins
 Every numeric value wrapped in a machine-readable HTML comment pair in this document (the CHARM mass/power/cryo chain of §6–§9, most visibly §9.6) is **program-controlled**, not hand-typed: it is written by [`scripts/update_arxiv_constants.py`](scripts/update_arxiv_constants.py), which re-runs [`research/figures/cad/constants_model.py`](research/figures/cad/constants_model.py) (pure NumPy + Python stdlib, no LLM in the loop) and regex-replaces only the text between each marker pair, leaving surrounding prose untouched. The same run also writes `research/figures/cad/constants.generated.json`, which [`scripts/apply_constants_to_assembly.py`](scripts/apply_constants_to_assembly.py) reads to patch `assembly.json`'s magnet/cryocooler node counts and `size` blocks, and which `build_fusion_plant_skid_blender.py` reads for its magnet/cryocooler counts — so the paper, the JSON single source of truth, and the Blender renders can never numerically disagree. `make paper-render` runs the whole chain; it is a dependency of `make arxiv` and `make zenodo-tex`.
 
 Each figure has its own placement script — `build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py` — sharing common primitives, hatch/shell/door "kits", and camera setup from `research/figures/cad/lib/` (`assembly_parser.py`, `procedural_geometry.py`, `render_utils.py`). The fusion-plant skid (CHARM chambers) and combined-cycle engine skid (scoops/duct/nozzle/water tanks) are not yet migrated — those need real procedural modeling of hardware that has no library equivalent, and remain AI concept sketches for now.
+
+### A.5 Aerodynamics figure toolchain
+
+How the Stage‑1 / Stage‑2 aerodynamics check diagrams in §10.2.1 and §10.4 are produced. Host tools (OpenVSP, OpenFOAM, SU2 binary) sit outside Poetry; Python deps for meshing/plotting are in the Poetry environment.
+
+```mermaid
+flowchart LR
+  subgraph SSOT["Sources of truth"]
+    VS[vehicle_spec.json]
+    CM[constants_model.py]
+  end
+
+  subgraph Host["Host tools"]
+    VSP[OpenVSP]
+    VAE[VSPAERO]
+    OF[OpenFOAM snappyHexMesh]
+    SU2[SU2_CFD]
+  end
+
+  subgraph Poetry["Poetry env"]
+    PLT[Matplotlib]
+    PV[pyvista]
+  end
+
+  subgraph Paper["Paper assets"]
+    P1[stage1_vspaero_polar.png]
+    P1b[stage1_snappy_wall.png]
+    P2[stage1_su2_euler_cp.png]
+    P3[stage2_climb_check.png]
+    MD[arxiv.md §§10.2.1 / 10.4]
+  end
+
+  VS --> VSP --> VAE --> PLT --> P1
+  VSP -->|STL| OF --> PV --> P1b
+  VSP -->|STL / interim tet| SU2 --> PV --> P2
+  CM --> PLT --> P3
+  P1 --> MD
+  P1b --> MD
+  P2 --> MD
+  P3 --> MD
+```
+
+Make targets: `make cad-vspaero`, `make cad-snappy`, `make su2-ssto`, `poetry run python research/figures/cad/emit_stage2_climb_plot.py`, then `make arxiv`.
 
 ---
 

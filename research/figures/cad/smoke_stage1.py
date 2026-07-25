@@ -102,8 +102,32 @@ def main() -> int:
         )
     )
 
-    print("Stage 1 smoke (VSPAERO outline / §10.2.1)")
+    from constants_model import Params, compute
+
+    to = compute(Params()).values
+    margin = float(to["stage.runway_margin_m"])
+    s_clean = float(to["stage.ground_roll_clean_m"])
+    s_g = float(to["stage.ground_roll_m"])
+    ok_to = margin > 0.0 and s_g < float(to["stage.runway_available_m"])
+    checks.append(
+        (
+            "takeoff ground roll < runway (high-lift)",
+            ok_to,
+            f"sg={s_g:.0f} m, margin={margin:.0f} m, Vlof={float(to['stage.v_lof_m_s']):.0f} m/s",
+        )
+    )
+    ok_clean_fails = s_clean > 2.0 * float(to["stage.runway_available_m"])
+    checks.append(
+        (
+            "clean-wing takeoff correctly fails",
+            ok_clean_fails,
+            f"sg_clean={s_clean:.0f} m (needs flaps)",
+        )
+    )
+
+    print("Stage 1 smoke (VSPAERO outline + takeoff / §10.2.1–§10.3)")
     hard_fail = False
+    soft_names = ("subsonic",)
     for name, ok, note in checks:
         mark = "PASS" if ok else "FAIL"
         # subsonic floor is soft in the paper — warn but don't fail the smoke
@@ -112,7 +136,7 @@ def main() -> int:
         elif name.startswith("subsonic"):
             mark = "SOFT-PASS"
         print(f"  [{mark}] {name}: {note}")
-        if not ok and not name.startswith("subsonic"):
+        if not ok and not name.startswith(soft_names):
             hard_fail = True
 
     if hard_fail:

@@ -11,6 +11,8 @@ dependencies = [
     "scipy>=1.17.1,<2.0",
     "pyqtgraph>=0.14,<0.15",
     "pillow>=12.2,<13.0",
+    "scikit-image (>=0.26.0,<0.27.0)",
+    "tetgen (>=0.8.4,<0.9.0)",
 ]
 
 [tool.poetry]
@@ -25,6 +27,8 @@ PySide6 = ">=6.8,<6.12"
 [project.scripts]
 p11b-operator = "simulator.app:main"
 
+
+
 [tool.poetry.group.dev]
 optional = true
 
@@ -35,6 +39,8 @@ ruff = "^0.12"
 
 # OpenVSP is not on PyPI. The Python API ships inside the official Ubuntu .deb
 # from https://openvsp.org/download.php (see scripts/install_openvsp.sh).
+
+
 [tool.poetry.group.openvsp]
 optional = true
 

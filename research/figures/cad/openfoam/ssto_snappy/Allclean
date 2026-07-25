@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")"
+rm -rf constant/polyMesh constant/extendedFeatureEdgeMesh VTK processor* log.*
+rm -f constant/triSurface/*.eMesh
+# keep the STL copy if present
+find . -maxdepth 1 -type d -regex './[0-9]+' -exec rm -rf {} +
+echo "cleaned snappy case"

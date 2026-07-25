@@ -40,7 +40,7 @@ UPDATE_ARXIV_CONSTANTS := $(ROOT)/scripts/update_arxiv_constants.py
 APPLY_CONSTANTS_TO_ASSEMBLY := $(ROOT)/scripts/apply_constants_to_assembly.py
 UPDATE_ARXIV_MERMAID := $(ROOT)/scripts/update_arxiv_mermaid.py
 
-.PHONY: help cad-figures cad-vspaero smoke-stage1 smoke-stage2 cad-crew-capsule cad-airlock cad-cargo-skid cad-fusion-skid cad-drop-ins paper-constants paper-render install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
+.PHONY: help cad-figures cad-vspaero cad-snappy cad-flow cad-rans smoke-stage1 smoke-stage2 su2-naca su2-ssto cad-crew-capsule cad-airlock cad-cargo-skid cad-fusion-skid cad-drop-ins paper-constants paper-render install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
 
 help:
 	@echo "Targets:"
@@ -49,8 +49,13 @@ help:
 	@echo "  make paper-constants - constants_model.py (numpy) → constants.generated.json"
 	@echo "  make paper-render    - paper-constants + regenerate arxiv.md <!--gen--> spans + patch assembly.json/vehicle_spec.json + regenerate Figs 7-9 mermaid from assembly.json"
 	@echo "  make cad-vspaero     - OpenVSP/VSPAERO Mach×α digital tunnel → cad/vspaero/"
+	@echo "  make cad-snappy      - OpenFOAM snappyHexMesh (+BL layers) on catskills_ssto.stl"
+	@echo "  make cad-flow        - potentialFoam on snappy mesh + wing streamline figure"
+	@echo "  make cad-rans        - Spalart-Allmaras RANS + turbulent wing figure"
 	@echo "  make smoke-stage1    - Stage 1 VSPAERO outline go/no-go (§10.2.1)"
 	@echo "  make smoke-stage2    - Stage 2 climb/energy go/no-go (§10.4)"
+	@echo "  make su2-naca        - SU2 scripted NACA0012 inviscid case → su2/naca0012/"
+	@echo "  make su2-ssto        - SU2 coarse 3D Euler on CHARM SSTO → su2/ssto/"
 	@echo "  make cad-figures     - vehicle_spec → OpenVSP (+constraints) → figures"
 	@echo "  make cad-drop-ins    - crew capsule + airlock + cargo skid + fusion plant skid (Blender)"
 	@echo "  make cad-crew-capsule - assembly.json → Blender crew cutaway PNG + .blend"
@@ -79,6 +84,28 @@ smoke-stage1:
 
 smoke-stage2:
 	$(POETRY) run python $(CAD_DIR)/smoke_stage2.py
+
+su2-naca:
+	@test -x $(ROOT)/third_party/su2/bin/SU2_CFD || \
+	  (echo "SU2 missing. Unpack OpenMP binary under third_party/su2/ (see cad/su2/README.md)" >&2; exit 1)
+	$(POETRY) run python $(CAD_DIR)/su2/run_naca0012.py
+
+su2-ssto:
+	@test -x $(ROOT)/third_party/su2/bin/SU2_CFD || \
+	  (echo "SU2 missing. Unpack OpenMP binary under third_party/su2/ (see cad/su2/README.md)" >&2; exit 1)
+	$(POETRY) run python $(CAD_DIR)/su2/run_ssto.py
+
+cad-snappy:
+	$(POETRY) run python $(CAD_DIR)/openfoam/run_snappy.py
+	$(POETRY) run python $(CAD_DIR)/openfoam/render_snappy_wall.py
+
+cad-flow:
+	$(POETRY) run python $(CAD_DIR)/openfoam/run_flow.py
+
+cad-rans:
+	@bash $(CAD_DIR)/openfoam/ssto_snappy/Allrun.rans
+	$(POETRY) run python $(CAD_DIR)/openfoam/render_rans_wing.py
+	$(POETRY) run python $(CAD_DIR)/openfoam/render_snappy_wall.py
 
 cad-figures: $(CAD_PNGS)
 

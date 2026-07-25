@@ -13,10 +13,12 @@
 ```text
 assembly.json  →  OpenVSP exterior  →  .stl shell
                →  VSPAERO digital tunnel (`make cad-vspaero` → `vspaero/`)
+               →  SU2 coarse Euler (`make su2-ssto`) / OpenFOAM snappy (`make cad-snappy`)
                →  Blender cutaway / interior placement along the same tree
 constants_model.py (numpy)  →  constants.generated.json  →  arxiv.md <!--gen--> spans
                                                           →  assembly.json / vehicle_spec.json size blocks
                                                           →  build_fusion_plant_skid_blender.py magnet/cryo counts
+                                                          →  stage2_climb_check.png
 ```
 
 ### Generated numeric constants
