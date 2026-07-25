@@ -359,7 +359,7 @@
               "width_m": 5.2,
               "height_m": 6.5
             },
-            "note": "Physical pressurized shell of the crew capsule. Holds flight deck and living cabin. Side hatch and forward steering module bolt onto this vessel; they are siblings in the capsule collection, not interior furnishings.",
+            "note": "Standalone pressure vessel (Crew Dragon\u2013like cabin, stretched). All ECLSS / O2 / N2 / seats / galley / WCS / luggage live INSIDE this shell. Solid pressure hatch aft (to airlock) and solid port side hatch (Earth/runway only). Side hatch and forward steering module bolt onto this vessel as siblings.",
             "ports": [
               {
                 "id": "cradle_mount",
@@ -482,44 +482,49 @@
                   "x0": 4.0,
                   "x1": 11.0
                 },
+                "note": "Open single-deck cabin (stretched Crew Dragon vibe). Flight deck CDR+PLT facing forward; six forward-facing passenger seats in three rows of two with a center aisle. WCS (space toilet, no 1g bathroom suite). Galley = food / pouch station \u2014 NO kitchen sink (0g). Luggage locker doors face into the cabin aisle. ECLSS + O2/N2 underfloor or cabin-side INSIDE the pressure shell. Clear aisle to closed aft pressure hatch.",
                 "children": [
                   {
                     "id": "seat_row",
-                    "label": "Four nap seats",
+                    "label": "Six passenger seats",
                     "kind": "seat_group",
-                    "count": 4,
+                    "count": 6,
                     "size": {
                       "facing": "forward",
-                      "recline": "nap"
+                      "recline": "nap",
+                      "layout": "three_rows_of_two"
                     },
                     "ports": [
                       {
                         "id": "deck_mount",
                         "role": "floor_mount"
                       }
-                    ]
+                    ],
+                    "note": "Six passenger seats aft of flight deck, all facing forward (Crew Dragon\u2013like). Not sideways facing pairs."
                   },
                   {
                     "id": "wcs",
-                    "label": "Toilet",
+                    "label": "Toilet (WCS)",
                     "kind": "furnishing",
                     "ports": [
                       {
                         "id": "deck_mount",
                         "role": "floor_mount"
                       }
-                    ]
+                    ],
+                    "note": "Space waste collection system with aisle access; not a 1g bathroom suite."
                   },
                   {
                     "id": "galley",
-                    "label": "Galley / food station",
+                    "label": "Galley / food station (no sink)",
                     "kind": "furnishing",
                     "ports": [
                       {
                         "id": "deck_mount",
                         "role": "floor_mount"
                       }
-                    ]
+                    ],
+                    "note": "Crew Dragon\u2013style food system: retort meal pouches in stowage bags/trays, compact food warmer, potable-water rehydration interface. No kitchen sink, no restaurant galley box."
                   },
                   {
                     "id": "luggage",
@@ -530,18 +535,21 @@
                         "id": "deck_mount",
                         "role": "floor_mount"
                       }
-                    ]
+                    ],
+                    "note": "Deep cargo-bay-style stowage (Dragon under-seat / sidewall cargo volume class) \u2014 not thin wall panels. Doors open into the cabin aisle."
                   },
                   {
                     "id": "eclss_rack",
                     "label": "Life-support rack",
                     "kind": "system_rack",
+                    "constraint": "inside_pressurized_volume_only",
                     "ports": [
                       {
                         "id": "deck_mount",
                         "role": "floor_mount"
                       }
-                    ]
+                    ],
+                    "note": "Inside the pressure vessel (Crew Dragon: much ECLSS underfloor / cabin). Never outside the vacuum shell."
                   },
                   {
                     "id": "o2_tankage",
@@ -566,6 +574,18 @@
                         "role": "rack_mount"
                       }
                     ]
+                  },
+                  {
+                    "id": "hatch_aft_door",
+                    "label": "Aft pressure hatch door (to airlock)",
+                    "kind": "hatch",
+                    "ports": [
+                      {
+                        "id": "ring",
+                        "role": "pressure_hatch"
+                      }
+                    ],
+                    "note": "Solid closable pressure door on the aft bulkhead of the crew pressure vessel. Mates to airlock forward hatch. Must show as a real door, not an empty hole."
                   }
                 ]
               }
@@ -589,7 +609,7 @@
                 "role": "not_vacuum_rated_outer"
               }
             ],
-            "note": "Left-side ground hatch cut into the pressure-vessel skin. Runway ingress only \u2014 not vacuum-rated as an outer space hatch."
+            "note": "Solid closable side hatch in the pressure-vessel skin for Earth/runway ingress. Not an open hole; not vacuum-rated as an outer space hatch."
           },
           {
             "id": "forward_steering_module",

@@ -15,13 +15,19 @@ POETRY ?= poetry
 CAD_STEMS := charm_ssto_interior_floorplan charm_ssto_exterior_profile
 CAD_PNGS := $(addprefix $(FIGURES_DIR)/,$(addsuffix .png,$(CAD_STEMS)))
 
-.PHONY: help cad-figures install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
+BLENDER ?= /snap/bin/blender
+CREW_BLEND_SCRIPT := $(CAD_DIR)/build_crew_capsule_blender.py
+CREW_BLEND := $(CAD_DIR)/crew_capsule_cutaway.blend
+CREW_PNG := $(FIGURES_DIR)/crew_capsule_top.png
+
+.PHONY: help cad-figures cad-crew-capsule install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
 
 help:
 	@echo "Targets:"
 	@echo "  make zenodo          - cad-figures + zenodo.pdf + dist/zenodo_submit.zip"
 	@echo "  make zenodo-tex      - arxiv.md → zenodo.tex (+ mermaid/assets)"
 	@echo "  make cad-figures     - vehicle_spec → OpenVSP (+constraints) → figures"
+	@echo "  make cad-crew-capsule - assembly.json → Blender crew cutaway PNG + .blend"
 	@echo "  make cad-validate    - re-check .vsp3 against JSON constraints"
 	@echo "  make cad-outliner    - Blender-style assembly hierarchy browser"
 	@echo "  make install-openvsp - download Ubuntu .deb + poetry openvsp group"
@@ -43,6 +49,12 @@ cad-validate:
 cad-outliner:
 	@echo "Open http://127.0.0.1:8765/hierarchy_app/"
 	$(CAD_DIR)/serve_hierarchy_app.sh
+
+cad-crew-capsule: $(CREW_PNG)
+
+$(CREW_PNG) $(CREW_BLEND): $(CREW_BLEND_SCRIPT) $(CAD_DIR)/assembly.json
+	@test -x "$(BLENDER)" || (echo "Blender not found at $(BLENDER)" >&2; exit 1)
+	$(BLENDER) -b -P $(CREW_BLEND_SCRIPT)
 
 $(CAD_PNGS): $(CAD_SCRIPT) $(CAD_SPEC) $(CAD_VALIDATE)
 	@test -d $(ROOT)/third_party/openvsp/opt/OpenVSP/python/openvsp || \

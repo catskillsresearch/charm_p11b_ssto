@@ -13,6 +13,25 @@ assembly.json  →  OpenVSP exterior (VSPAERO later)  →  .stl shell
                →  Blender cutaway / interior placement along the same tree
 ```
 
+### Crew capsule cutaway (Blender)
+
+```bash
+make cad-crew-capsule
+# → research/figures/crew_capsule_top.png
+# → research/figures/cad/crew_capsule_cutaway.blend
+./bl.sh   # open the .blend in the GUI
+```
+
+Script: [`build_crew_capsule_blender.py`](build_crew_capsule_blender.py) — primitives from `assembly.json`, orthographic top-down. Not AI.
+
+### Reusable source assets
+
+[`assets/manifest.json`](assets/manifest.json) records every downloaded model's
+source, reuse terms, checksum, and mapped `assembly.json` part. The first
+verified import is NASA's Crew Lock Bag GLB, used for cabin stowage. Downloaded
+marketplace/BlenderKit assets are excluded because their reuse terms do not
+allow committing editable source models to this repository.
+
 ## Hierarchy idea
 
 - **Drop-in modules:** `crew_capsule`, `airlock`, `cargo_bay`

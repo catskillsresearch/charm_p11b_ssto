@@ -1,0 +1,15 @@
+ENGLISH PACKAGING BRIEF — Airlock module, top-down with roof cover removed (assembly.json SSOT)
+
+CAMERA: Strict TOP-DOWN (bird's-eye) view. Forward (crew capsule) LEFT, aft (cargo bay) RIGHT. Upper cover REMOVED and set aside beside the module — a clamshell / cargo-door-style roof panel sized to this short bay (not 18 m; ~4 m long × ~2.5 m wide cover matching the airlock planform), parked open so the chamber is fully visible.
+
+ENVELOPE: Suited standing airlock ~4 m long × ~2.5 m wide × ~2.5 m high (stations 11–15 m). Room for about two suited crew.
+
+CONTENTS (must show):
+1. Square/rectangular pressure chamber floor with suit-clear volume.
+2. FORWARD pressure door — hatch between cabin and airlock (left face).
+3. AFT pressure door — hatch between airlock and cargo bay (right face).
+4. Air tank (press/depress) bolted to the vessel.
+5. Cycle pack — valves, pump/equalizer, gauges (ISS / submarine style).
+NO outer side door to space. Hatches only cabin↔airlock and airlock↔bay.
+
+VISUAL: Photoreal hangar. Metallic pressure vessel walls in plan cut. Clean callout labels: Hatch to cabin, Hatch to cargo bay, Air tank, Cycle pack, Removed roof cover. Compact dense module — do not stretch to cargo-bay length. No purple neon.

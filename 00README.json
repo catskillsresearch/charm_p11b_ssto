@@ -1,0 +1,31 @@
+{
+  "process": {
+    "compiler": "pdflatex"
+  },
+  "sources": [
+    {
+      "filename": "arxiv.tex",
+      "usage": "toplevel"
+    },
+    {
+      "filename": "figures/assets/charm_ssto_exterior_profile.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/charm_ssto_interior_floorplan.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/figure-000.pdf",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/figure-001.pdf",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/figure-002.pdf",
+      "usage": "include"
+    }
+  ]
+}

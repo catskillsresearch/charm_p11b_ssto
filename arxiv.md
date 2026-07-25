@@ -31,6 +31,19 @@ Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior
 <!-- figure-landscape -->
 ![Vehicle profile view.](research/figures/charm_ssto_exterior_profile.png)
 
+### Forward drop-ins (top-down, covers off)
+
+Crew capsule cutaway is a **Blender** orthographic top view built from `assembly.json` (`make cad-crew-capsule` → `research/figures/cad/crew_capsule_cutaway.blend`). Airlock and cargo figures below are still AI hangar sketches pending the same Blender path.
+
+<!-- figure-landscape -->
+![Crew capsule, Blender top-down cutaway from assembly.json.](research/figures/crew_capsule_top.png)
+
+<!-- figure-landscape -->
+![Airlock, top-down with roof cover removed.](research/figures/airlock_top.png)
+
+<!-- figure-landscape -->
+![Cargo skid, top-down with bay doors open.](research/figures/cargo_skid_top.png)
+
 ### Fusion electric plant (assembly SSOT)
 
 Schematic below is drawn from `research/figures/cad/assembly.json` (same tree as the interactive outliner). Boxes are plant parts/collections, not a separate physics cartoon.
@@ -412,7 +425,7 @@ Payload density check:
 
 (compatible with mixed cargo; bay remains payload volume).
 
-**Crew (Shuttle functions, single deck).** Forward **flight deck**: commander and pilot **facing forward** into windows and a full control-panel wall [14,21]. Living volume: **six seats** with moderate nap recline; **waste collection system (WCS)**; **galley/food**; **crew luggage / personal stowage**; **ECLSS** with explicit **oxygen and nitrogen / pressure-control tankage** (not a token rack). **Forward/port crew door (side hatch)** for terrestrial ingress only. **Airlock** oversized vs a suit-closet: dual-hatch volume on the aft cabin bulkhead facing the **cargo bay**, sized for suited egress (Shuttle middeck airlock pattern, not undersized) [21].
+**Crew (Shuttle functions, single deck).** Forward **flight deck**: commander and pilot **facing forward** into windows and a full control-panel wall [14,21]. Living volume: **six forward-facing passenger seats** (Crew Dragon–like rows, stretched cabin) plus the flight-deck pair; **waste collection system (WCS)**; **galley/food station without a kitchen sink** (0g); **crew luggage** with doors into the aisle; **ECLSS** with **O₂/N₂ tankage inside the pressure vessel**. **Solid port side hatch** (Earth/runway only) and **solid aft pressure hatch** to the airlock. **Airlock** oversized vs a suit-closet: dual-hatch volume on the aft cabin bulkhead facing the **cargo bay**, sized for suited egress (Shuttle middeck airlock pattern, not undersized) [21].
 
 **Landing gear and control surfaces** are explicit mass lines (not buried only in a lump “structure” number):
 
@@ -890,7 +903,7 @@ Table: Longitudinal station and bay layout.
 
 | Station (m) | Bay | Contents |
 |-------------|-----|----------|
-| \(0\)–\(11\) | Crew module | Forward-facing commander (CDR) / pilot (PLT) + flight deck; four more nap-recline seats (six total); WCS; galley; **luggage stowage**; **ECLSS + O₂/N₂ / pressure tanks** |
+| \(0\)–\(11\) | Crew module | Forward-facing CDR/PLT flight deck; **six** forward-facing passenger seats; WCS; galley (no sink); **luggage stowage**; **ECLSS + O₂/N₂** inside pressure vessel; solid side + aft hatches |
 | \(-\) | Ground door | **Forward/port crew door (side hatch)** — terrestrial ingress only |
 | \(11\)–\(15\) | Airlock | **Suited-crew airlock** (\(\sim 2.5\,\mathrm{m}\) class clear), aft bulkhead facing **into cargo bay** |
 | \(15\)–\(33.3\) | Cargo | \(18.3\,\mathrm{m}\times 4.6\,\mathrm{m}\) payload bay (no reactors) |
@@ -908,7 +921,7 @@ Table: Longitudinal station and bay layout.
 flowchart LR
   subgraph crew ["Crew capsule"]
     FD["Flight deck<br/>CDR/PLT forward"]
-    SE["Four nap seats + deck"]
+    SE["Six passenger seats + deck"]
     LUG["Luggage lockers"]
     WCS["Toilet"]
     GAL["Galley"]
@@ -1035,7 +1048,7 @@ Sections 1–12 are a **requirements mirror** held up to CHARM: they say what a 
 
 ## 14. Conclusion
 
-Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. The pressurized nose is **lengthened (\(\approx 52\,\mathrm{m}\) OML)** so the cabin can hold a real **ECLSS with O₂/N₂**, **luggage**, a **suited-size airlock** into the bay, plus visible **battery** and **fusion-fuel tank** bays. Crew: **forward-facing flight deck**, **six nap-recline seats**, **ground crew door**, **aft airlock into cargo**. **Landing gear (\(4\,\mathrm{t}\))** and **control surfaces (\(3\,\mathrm{t}\))** sit in the mass bill (gear drawn on the profile, not the floorplan). The MWh budget is linear in inserted mass: about **\(9.2\,\mathrm{kWh}\) per kg** orbital, times \(\kappa_E\sim 2\)–\(4\) at the CHARM bus. Water scales only with **dry mass** and vacuum \(\Delta v/I_{\mathrm{sp}}\). Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**, with CHARM as a **\(67\,\mathrm{t}\), \(\lesssim 120\,\mathrm{m}^3\)** island using **DEC**, lit by **magnets + RF + rotation** (\(50\)–\(200\,\mathrm{kWh}\) class light-off; space restart from a \(2\,\mathrm{t}\) battery), and a **single combined-cycle engine** spanning electric ducted fan → microwave air plasma → water plasma. Vision figures (§1) show planform, plant, and profile. Those are the numbers the in-silico CHARM plant and engine maps must satisfy.
+Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. The pressurized nose is **lengthened (\(\approx 52\,\mathrm{m}\) OML)** so the cabin can hold a real **ECLSS with O₂/N₂**, **luggage**, a **suited-size airlock** into the bay, plus visible **battery** and **fusion-fuel tank** bays. Crew: **forward-facing flight deck**, **six passenger seats**, **solid ground side hatch**, **solid aft hatch into airlock**. **Landing gear (\(4\,\mathrm{t}\))** and **control surfaces (\(3\,\mathrm{t}\))** sit in the mass bill (gear drawn on the profile, not the floorplan). The MWh budget is linear in inserted mass: about **\(9.2\,\mathrm{kWh}\) per kg** orbital, times \(\kappa_E\sim 2\)–\(4\) at the CHARM bus. Water scales only with **dry mass** and vacuum \(\Delta v/I_{\mathrm{sp}}\). Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**, with CHARM as a **\(67\,\mathrm{t}\), \(\lesssim 120\,\mathrm{m}^3\)** island using **DEC**, lit by **magnets + RF + rotation** (\(50\)–\(200\,\mathrm{kWh}\) class light-off; space restart from a \(2\,\mathrm{t}\) battery), and a **single combined-cycle engine** spanning electric ducted fan → microwave air plasma → water plasma. Vision figures (§1) show planform, plant, and profile. Those are the numbers the in-silico CHARM plant and engine maps must satisfy.
 
 ---
 
@@ -1053,6 +1066,7 @@ Table: External packages and tools used by the living design / paper build.
 | **NumPy** | Numeric support in OpenVSP figure export |
 | **Matplotlib** | Raster floorplan / profile renders from the OpenVSP model |
 | **OpenVSP** (optional Poetry group; upstream `.deb` + Python API) | Parametric vehicle CAD (`.vsp3`); source of the orthographic floorplan and profile figures |
+| **Blender** 5.x (snap `/snap/bin/blender`) | Drop-in cutaways from `assembly.json` (crew capsule top-down; `make cad-crew-capsule`) |
 | **Pillow** | Image handling when the paper build ingests raster figure assets |
 | **Pandoc** | `arxiv.md` → LaTeX body conversion inside `scripts/build_arxiv_tex.py` |
 | **Mermaid CLI** (`mmdc` / `@mermaid-js/mermaid-cli`) | Paper mermaid fences → `figures/figure-NNN.pdf` |
@@ -1072,6 +1086,19 @@ The **assembly outliner** is a small local web app under `research/figures/cad/h
 **How to run.** From the repo root: `make cad-outliner` (or `./research/figures/cad/serve_hierarchy_app.sh`) → open `http://127.0.0.1:8765/hierarchy_app/`. The server sends `Cache-Control: no-store`; use **Reload data** after editing `assembly.json`.
 
 **Stack.** Static HTML/CSS/JS; Mermaid.js in the browser; no build step. The serve script is a tiny Python `ThreadingHTTPServer`.
+
+### A.3 Blender drop-in cutaways
+
+Layout-critical packaging figures (hatches, seat rows, aisle clearances) are built as **editable Blender geometry** from `assembly.json`, not AI image prompts. The first module is the **crew capsule** top-down cutaway:
+
+```bash
+make cad-crew-capsule
+# research/figures/crew_capsule_top.png
+# research/figures/cad/crew_capsule_cutaway.blend
+./bl.sh   # GUI edit
+```
+
+Script: `research/figures/cad/build_crew_capsule_blender.py`. Airlock and cargo skid are next on the same path.
 
 ---
 

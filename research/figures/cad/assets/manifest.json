@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "policy": {
+    "allow": [
+      "public-domain",
+      "cc0",
+      "explicitly-reusable government source"
+    ],
+    "reject": [
+      "marketplace royalty-free assets",
+      "assets requiring an account or subscription",
+      "assets with unverified reuse terms"
+    ]
+  },
+  "assets": [
+    {
+      "id": "nasa_crew_lock_bag",
+      "file": "nasa/crew_lock_bag.glb",
+      "format": "glb",
+      "sha256": "abd3be0b79fef602ce9ec603f19980d313dfc46a5974d347a4a5ec201a7baf24",
+      "source": "https://github.com/nasa/NASA-3D-Resources/tree/master/3D%20Models/Crew%20Lock%20Bag",
+      "download": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Crew%20Lock%20Bag/Crew%20Lock%20Bag.glb",
+      "license": "NASA 3D Resources; free to download and use subject to NASA Images and Media Usage Guidelines",
+      "usage_guidelines": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "assembly_parts": [
+        "luggage",
+        "galley"
+      ],
+      "placement": "Crew-capsule sidewall stowage / food pouch proxy",
+      "status": "imported by build_crew_capsule_blender.py"
+    }
+  ],
+  "project_geometry": [
+    {
+      "assembly_parts": [
+        "captain_chair",
+        "pilot_chair",
+        "seat_row"
+      ],
+      "reason": "No verified reusable NASA standalone seat asset; seating must fit exact aisle and seat-pitch constraints."
+    },
+    {
+      "assembly_parts": [
+        "side_hatch",
+        "hatch_aft_door",
+        "hatch_cabin_al",
+        "hatch_al_bay"
+      ],
+      "reason": "Pressure doors are vehicle interfaces, so their geometry remains project-authored."
+    },
+    {
+      "assembly_parts": [
+        "wcs",
+        "eclss_rack",
+        "o2_tankage",
+        "n2_tankage"
+      ],
+      "reason": "No verified reusable NASA standalone assets; dimensions and service interfaces are project-specific."
+    }
+  ]
+}

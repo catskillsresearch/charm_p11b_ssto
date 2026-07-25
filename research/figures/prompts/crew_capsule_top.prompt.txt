@@ -1,0 +1,11 @@
+DEPRECATED — do not regenerate this figure with an image model.
+
+Crew capsule top-down is now built in Blender from assembly.json:
+
+  make cad-crew-capsule
+
+Outputs:
+  research/figures/crew_capsule_top.png
+  research/figures/cad/crew_capsule_cutaway.blend
+
+Script: research/figures/cad/build_crew_capsule_blender.py
