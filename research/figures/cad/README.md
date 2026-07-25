@@ -7,20 +7,34 @@
 | [`assembly.json`](assembly.json) | **Geometry / topology** — hierarchy, ports, joints, sizes, station labels |
 | [`assembly_hierarchy.mmd`](assembly_hierarchy.mmd) | Mermaid of that tree (`python emit_assembly_mermaid.py`) |
 | [`vehicle_spec.json`](vehicle_spec.json) | Temporary OpenVSP *implementation* binding (builders); not the product tree |
+| [`constants_model.py`](constants_model.py) | **Numeric sizing constraints** — numpy/dataclass model for the CHARM bottom-up mass roll-up (magnets, cryo) and the full `m_dry`/`mu`/`m_w`/`m0` chain; writes `constants.generated.json`, consumed by `arxiv.md`'s `<!--gen-->` spans, `assembly.json`, `vehicle_spec.json`, and `build_fusion_plant_skid_blender.py` |
 
 ```text
 assembly.json  →  OpenVSP exterior (VSPAERO later)  →  .stl shell
                →  Blender cutaway / interior placement along the same tree
+constants_model.py (numpy)  →  constants.generated.json  →  arxiv.md <!--gen--> spans
+                                                          →  assembly.json / vehicle_spec.json size blocks
+                                                          →  build_fusion_plant_skid_blender.py magnet/cryo counts
 ```
+
+### Generated numeric constants
+
+```bash
+make paper-constants   # constants_model.py → constants.generated.json
+make paper-render      # paper-constants + regenerate arxiv.md <!--gen--> spans + patch assembly.json/vehicle_spec.json
+```
+
+`research/figures/cad/constants_model.py` is the single numpy/stdlib source for every derived number in `arxiv.md` §6–§9 (CHARM magnet/cryo bottom-up mass, `m_dry`, `mu`, `m_w`, `m0`, the sensitivity table) — plain arithmetic, never an LLM call, per the "systematic, not vibe-computed" requirement. [`scripts/update_arxiv_constants.py`](../../scripts/update_arxiv_constants.py) regex-replaces only the text inside `<!--gen KEY:FMT-->...<!--/gen-->` markers in `arxiv.md`, leaving prose untouched. [`scripts/apply_constants_to_assembly.py`](../../scripts/apply_constants_to_assembly.py) patches `assembly.json`'s `mirror_magnets`/`cryocooler`/`charm` `size` blocks and `vehicle_spec.json`'s `charm` station `mass_t_ref` the same way — assembly.json via structural JSON edits (targeted node lookups, not a full-file rewrite, since the file's formatting already round-trips through `json.dump`), vehicle_spec.json via a targeted regex patch (its hand-formatted compact-array style does **not** round-trip through `json.dump`, so only the one numeric span is touched). `make arxiv` and `make zenodo-tex` both depend on `paper-render`, so every paper build re-derives these numbers from scratch — they can never silently drift from the JSON SSOT or the Blender renders.
 
 ### Drop-in cutaways (Blender)
 
 ```bash
-make cad-drop-ins        # crew capsule + airlock + cargo skid
+make cad-drop-ins        # crew capsule + airlock + cargo skid + fusion plant skid
 # or individually:
 make cad-crew-capsule    # → research/figures/crew_capsule_top.png + cad/crew_capsule_cutaway.blend
 make cad-airlock         # → research/figures/airlock_top.png + cad/airlock_cutaway.blend
 make cad-cargo-skid      # → research/figures/cargo_skid_top.png + cad/cargo_skid_cutaway.blend
+make cad-fusion-skid     # → research/figures/fusion_plant_skid_top.png + cad/fusion_plant_skid_cutaway.blend
 ./bl.sh   # open the crew-capsule .blend in the GUI
 ```
 
@@ -34,9 +48,11 @@ research/figures/cad/
 │   │                            #   pressure_shell, ring_hatch, hinged_door_leaf,
 │   │                            #   clamshell_bay_door, tank, tie_down_grid kits
 │   └── render_utils.py          # clear_scene, render_to, setup_topdown_camera
+├── constants_model.py
 ├── build_crew_capsule_blender.py
 ├── build_airlock_blender.py
-└── build_cargo_skid_blender.py
+├── build_cargo_skid_blender.py
+└── build_fusion_plant_skid_blender.py
 ```
 
 Not AI — every hatch, seat row, tank, and door is placed procedurally from `assembly.json` station/envelope data, using the reusable kits in `lib/procedural_geometry.py` so hatch and shell geometry isn't reinvented per figure.
@@ -49,7 +65,9 @@ Not AI — every hatch, seat row, tank, and door is placed procedurally from `as
 
 Each figure computes its own camera `cam_y`/`ortho_scale` explicitly in `main()` (via `setup_topdown_camera`) to fit its actual annotation bounds — the legend, dimension lines, and parked roof cover/title text make every composition asymmetric, so the naive symmetric-footprint default undershoots the frame.
 
-The fusion-plant skid (CHARM chambers) and combined-cycle engine skid (scoops/duct/nozzle/water tanks) are **not yet** migrated to this pattern — they need genuinely new procedural geometry with no library equivalent, and are tracked as a follow-up.
+`build_fusion_plant_skid_blender.py` additionally imports `constants_model.py` directly (`compute(Params()).values`) for its magnet count/mass and cryocooler count/mass/power, so the rendered figure's callout text can never disagree with `arxiv.md` §9.6 or `assembly.json`'s `mirror_magnets`/`cryocooler` nodes.
+
+The combined-cycle engine skid (scoops/duct/nozzle/water tanks) is **not yet** migrated to this pattern — it needs genuinely new procedural geometry with no library equivalent, and is tracked as a follow-up.
 
 ### Reusable source assets
 

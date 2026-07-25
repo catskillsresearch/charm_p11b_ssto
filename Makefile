@@ -28,19 +28,31 @@ CARGO_BLEND_SCRIPT := $(CAD_DIR)/build_cargo_skid_blender.py
 CARGO_BLEND := $(CAD_DIR)/cargo_skid_cutaway.blend
 CARGO_PNG := $(FIGURES_DIR)/cargo_skid_top.png
 
+FUSION_SKID_BLEND_SCRIPT := $(CAD_DIR)/build_fusion_plant_skid_blender.py
+FUSION_SKID_BLEND := $(CAD_DIR)/fusion_plant_skid_cutaway.blend
+FUSION_SKID_PNG := $(FIGURES_DIR)/fusion_plant_skid_top.png
+
 CAD_LIB := $(CAD_DIR)/lib/assembly_parser.py $(CAD_DIR)/lib/procedural_geometry.py $(CAD_DIR)/lib/render_utils.py
 
-.PHONY: help cad-figures cad-crew-capsule cad-airlock cad-cargo-skid cad-drop-ins install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
+CONSTANTS_MODEL := $(CAD_DIR)/constants_model.py
+CONSTANTS_JSON := $(CAD_DIR)/constants.generated.json
+UPDATE_ARXIV_CONSTANTS := $(ROOT)/scripts/update_arxiv_constants.py
+APPLY_CONSTANTS_TO_ASSEMBLY := $(ROOT)/scripts/apply_constants_to_assembly.py
+
+.PHONY: help cad-figures cad-crew-capsule cad-airlock cad-cargo-skid cad-fusion-skid cad-drop-ins paper-constants paper-render install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
 
 help:
 	@echo "Targets:"
 	@echo "  make zenodo          - cad-figures + zenodo.pdf + dist/zenodo_submit.zip"
-	@echo "  make zenodo-tex      - arxiv.md → zenodo.tex (+ mermaid/assets)"
+	@echo "  make zenodo-tex      - paper-render + arxiv.md → zenodo.tex (+ mermaid/assets)"
+	@echo "  make paper-constants - constants_model.py (numpy) → constants.generated.json"
+	@echo "  make paper-render    - paper-constants + regenerate arxiv.md <!--gen--> spans + patch assembly.json/vehicle_spec.json"
 	@echo "  make cad-figures     - vehicle_spec → OpenVSP (+constraints) → figures"
-	@echo "  make cad-drop-ins    - crew capsule + airlock + cargo skid (Blender)"
+	@echo "  make cad-drop-ins    - crew capsule + airlock + cargo skid + fusion plant skid (Blender)"
 	@echo "  make cad-crew-capsule - assembly.json → Blender crew cutaway PNG + .blend"
 	@echo "  make cad-airlock     - assembly.json → Blender airlock cutaway PNG + .blend"
 	@echo "  make cad-cargo-skid  - assembly.json → Blender cargo skid cutaway PNG + .blend"
+	@echo "  make cad-fusion-skid - assembly.json + constants_model.py → Blender fusion plant skid PNG + .blend"
 	@echo "  make cad-validate    - re-check .vsp3 against JSON constraints"
 	@echo "  make cad-outliner    - Blender-style assembly hierarchy browser"
 	@echo "  make install-openvsp - download Ubuntu .deb + poetry openvsp group"
@@ -66,7 +78,8 @@ cad-outliner:
 cad-crew-capsule: $(CREW_PNG)
 cad-airlock: $(AIRLOCK_PNG)
 cad-cargo-skid: $(CARGO_PNG)
-cad-drop-ins: cad-crew-capsule cad-airlock cad-cargo-skid
+cad-fusion-skid: $(FUSION_SKID_PNG)
+cad-drop-ins: cad-crew-capsule cad-airlock cad-cargo-skid cad-fusion-skid
 
 $(CREW_PNG) $(CREW_BLEND): $(CREW_BLEND_SCRIPT) $(CAD_DIR)/assembly.json $(CAD_LIB)
 	@test -x "$(BLENDER)" || (echo "Blender not found at $(BLENDER)" >&2; exit 1)
@@ -80,6 +93,10 @@ $(CARGO_PNG) $(CARGO_BLEND): $(CARGO_BLEND_SCRIPT) $(CAD_DIR)/assembly.json $(CA
 	@test -x "$(BLENDER)" || (echo "Blender not found at $(BLENDER)" >&2; exit 1)
 	$(BLENDER) -b -P $(CARGO_BLEND_SCRIPT)
 
+$(FUSION_SKID_PNG) $(FUSION_SKID_BLEND): $(FUSION_SKID_BLEND_SCRIPT) $(CAD_DIR)/assembly.json $(CAD_LIB) $(CONSTANTS_MODEL)
+	@test -x "$(BLENDER)" || (echo "Blender not found at $(BLENDER)" >&2; exit 1)
+	$(BLENDER) -b -P $(FUSION_SKID_BLEND_SCRIPT)
+
 $(CAD_PNGS): $(CAD_SCRIPT) $(CAD_SPEC) $(CAD_VALIDATE)
 	@test -d $(ROOT)/third_party/openvsp/opt/OpenVSP/python/openvsp || \
 	  (echo "OpenVSP not extracted. Run: make install-openvsp" >&2; exit 1)
@@ -87,7 +104,19 @@ $(CAD_PNGS): $(CAD_SCRIPT) $(CAD_SPEC) $(CAD_VALIDATE)
 	  LD_LIBRARY_PATH="$(OPENVSP_LIB)$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}" \
 	  $(POETRY) run python $(CAD_SCRIPT)
 
-zenodo-tex: cad-figures
+# --- Generated numeric constants (magnets/cryo bottom-up mass, full m_dry/
+# mu/m_w/m0 chain): single numpy source of truth for arxiv.md §6-§9 and the
+# assembly.json/vehicle_spec.json SSOT. See research/figures/cad/constants_model.py.
+$(CONSTANTS_JSON): $(CONSTANTS_MODEL)
+	$(POETRY) run python $(CONSTANTS_MODEL)
+
+paper-constants: $(CONSTANTS_JSON)
+
+paper-render: paper-constants
+	$(POETRY) run python $(UPDATE_ARXIV_CONSTANTS)
+	$(POETRY) run python $(APPLY_CONSTANTS_TO_ASSEMBLY)
+
+zenodo-tex: paper-render cad-figures
 	$(ROOT)/scripts/build_zenodo_tex.sh
 
 zenodo-pdf: zenodo-tex
@@ -96,10 +125,10 @@ zenodo-pdf: zenodo-tex
 zenodo-zip:
 	$(ROOT)/scripts/package_zenodo.sh --zip-only
 
-zenodo: cad-figures
+zenodo: paper-render cad-figures
 	$(ROOT)/scripts/rebuild_zenodo.sh
 
-arxiv:
+arxiv: paper-render
 	bash $(ROOT)/scripts/build_arxiv_pdf.sh
 
 clean-figures:

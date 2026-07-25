@@ -1038,7 +1038,7 @@
             },
             "size": {
               "volume_m3_max": 120,
-              "mass_t_ref": 67
+              "mass_t_ref": 66.7
             },
             "children": [
               {
@@ -1284,7 +1284,7 @@
                     "id": "mirror_magnets",
                     "label": "Mirror magnets",
                     "kind": "equipment",
-                    "note": "Mirror / chamber field coils \u2014 live in the CHARM Magnet rack, seated on the fusion chamber ODs.",
+                    "note": "Mirror / chamber field coils \u2014 live in the CHARM Magnet rack, seated on the fusion chamber ODs. N_coil=6, 1.8 t each (10.8 t total), WHAM-anchored (arxiv.md \u00a79.6, refs [34]-[36]); on-coil cold head mass is bundled into mass_each_t.",
                     "ports": [
                       {
                         "id": "mount_left",
@@ -1314,7 +1314,13 @@
                         "id": "rack_mate",
                         "role": "rack_mount"
                       }
-                    ]
+                    ],
+                    "count": 6,
+                    "size": {
+                      "mass_each_t": 1.8,
+                      "mass_t_ref": 10.8,
+                      "layout": "two_end_mirror_coils_per_chamber_plus_two_hex_shaping"
+                    }
                   },
                   {
                     "id": "magnet_cryostats",
@@ -1334,9 +1340,14 @@
                         "id": "rack_mate",
                         "role": "rack_mount"
                       }
-                    ]
+                    ],
+                    "count": 6
                   }
-                ]
+                ],
+                "size": {
+                  "mass_t_ref": 10.8,
+                  "note": "Bottom-up known mass (magnets only; rack frame not independently sized). See arxiv.md \u00a79.6."
+                }
               },
               {
                 "id": "charm_rf_rack",
@@ -1622,7 +1633,7 @@
             "id": "cryo_compressor_bay",
             "label": "Cryo compressor bay",
             "kind": "assembly",
-            "note": "Skid compressor plant. Cold heads live on CHARM magnets.",
+            "note": "Skid compressor plant. Cold heads live on CHARM magnets. Sized in arxiv.md \u00a79.6: N_AL630=6 flight-remanufactured Cryomech AL630-class compressor packages (\u00d71.5 flight-mass guess, \u00d71.4 integration margin) \u2192 2.41 t, 87.6 kW electrical, 600 W @ 20 K total (3.6% of the CHARM island mass budget). Conservative SPARC-TFMC-anchored risk case (24-48 units, 8-16 t) and NASA flight-cryocooler ceiling case (45-90 t) also carried in \u00a79.6.",
             "children": [
               {
                 "id": "cryo_compressor_bay_frame",
@@ -1643,7 +1654,7 @@
                 "id": "cryocooler",
                 "label": "Cryo compressor plant",
                 "kind": "equipment",
-                "note": "Helium / cryogen COMPRESSOR and oil management \u2014 the noisy plant package on the skid. It does NOT cryocool the magnets by itself; short cryogen lines feed the magnet cold heads and bath on the CHARM island.",
+                "note": "Helium / cryogen COMPRESSOR and oil management \u2014 the noisy plant package on the skid. It does NOT cryocool the magnets by itself; short cryogen lines feed the magnet cold heads and bath on the CHARM island. count=6 (one dedicated compressor package per magnet); mass/power in size block are flight-remanufactured-from-ground-hardware estimates, see arxiv.md \u00a79.6.",
                 "ports": [
                   {
                     "id": "mount",
@@ -1661,9 +1672,20 @@
                     "id": "skid_mount",
                     "role": "keel_mount"
                   }
-                ]
+                ],
+                "count": 6,
+                "size": {
+                  "mass_each_bare_kg": 191,
+                  "flight_mass_mult": 1.5,
+                  "mass_each_flight_kg": 286.5,
+                  "power_each_kw": 12.7
+                }
               }
-            ]
+            ],
+            "size": {
+              "mass_t_ref": 2.41,
+              "power_kw_ref": 87.6
+            }
           },
           {
             "id": "vacuum_controls",

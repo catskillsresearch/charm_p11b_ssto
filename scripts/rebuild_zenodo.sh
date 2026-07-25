@@ -3,6 +3,9 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+echo "==> Regenerating numeric constants (arxiv.md / assembly.json / vehicle_spec.json)"
+make paper-render
+
 echo "==> CAD vehicle figures (Blender)"
 make cad-figures
 

@@ -34,11 +34,11 @@ flowchart TB
   flight_deck --> glare_shield
   crew_compartment["Living / systems cabin"]
   pressure_vessel --> crew_compartment
-  seat_row["Four nap seats"]
+  seat_row["Six passenger seats"]
   crew_compartment --> seat_row
-  wcs["Toilet"]
+  wcs["Toilet (WCS)"]
   crew_compartment --> wcs
-  galley["Galley / food station"]
+  galley["Galley / food station (no sink)"]
   crew_compartment --> galley
   luggage["Luggage lockers"]
   crew_compartment --> luggage
@@ -48,6 +48,8 @@ flowchart TB
   crew_compartment --> o2_tankage
   n2_tankage["Nitrogen tanks (inside cabin only)"]
   crew_compartment --> n2_tankage
+  hatch_aft_door["Aft pressure hatch door (to airlock)"]
+  crew_compartment --> hatch_aft_door
   side_hatch["Left-side ground hatch (runway only)"]
   crew_capsule --> side_hatch
   forward_steering_module["Forward steering module (nose)"]
@@ -225,7 +227,7 @@ flowchart TB
   right_main_landing_gear["Right main landing gear"]
   main_landing_gear --> right_main_landing_gear
   class vehicle,fuselage,crew_capsule,airlock,cargo_bay,charm_power_plant,fusion_plant_skid,charm,charm_chamber_string,charm_magnet_rack,charm_rf_rack,charm_drive_rack,charm_thermal_rack,magnet_psu_bay,cryo_compressor_bay,fuel_services,combined_cycle_engine,engine_skid,stage2_air_plasma,stage3_water_plasma_rack,tail_assembly,wing,main_landing_gear collection
-  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,right_aft_steering_pod,body_flap,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,side_hatch,forward_steering_module,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,charm_skid,left_fusion_plant_door,right_fusion_plant_door,fusion_plant_bay_atmosphere,charm_backbone,left_fusion_chamber,heat_exchange_chamber,right_fusion_chamber,charm_axis,charm_magnet_rack_frame,mirror_magnets,magnet_cryostats,charm_rf_rack_frame,rf_launchers,rf_amps,charm_drive_rack_frame,rotation_drive,charm_thermal_rack_frame,coolant_bath,dec,plant_electrical_bus,magnet_psu_bay_frame,magnet_psu,cryo_compressor_bay_frame,cryocooler,vacuum_controls,fuel_services_frame,proton_tank,boron11_container,boron11_injector,flight_battery,ground_cart,combined_cycle_engine_skid,left_engine_bay_door,right_engine_bay_door,stage1_edf,stage2_frame,air_precompressor,mw_magnetron_farm,mw_air_applicator,stage3_frame,water_vaporizer,stage3_water_plasma,water_tanks,water_injector,propulsion_bus_coupler,nacelle,variable_inlets,inlet_duct,shared_nozzle,vertical_stabilizer,left_rudder_speedbrake,right_rudder_speedbrake,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
+  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,right_aft_steering_pod,body_flap,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,hatch_aft_door,side_hatch,forward_steering_module,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,charm_skid,left_fusion_plant_door,right_fusion_plant_door,fusion_plant_bay_atmosphere,charm_backbone,left_fusion_chamber,heat_exchange_chamber,right_fusion_chamber,charm_axis,charm_magnet_rack_frame,mirror_magnets,magnet_cryostats,charm_rf_rack_frame,rf_launchers,rf_amps,charm_drive_rack_frame,rotation_drive,charm_thermal_rack_frame,coolant_bath,dec,plant_electrical_bus,magnet_psu_bay_frame,magnet_psu,cryo_compressor_bay_frame,cryocooler,vacuum_controls,fuel_services_frame,proton_tank,boron11_container,boron11_injector,flight_battery,ground_cart,combined_cycle_engine_skid,left_engine_bay_door,right_engine_bay_door,stage1_edf,stage2_frame,air_precompressor,mw_magnetron_farm,mw_air_applicator,stage3_frame,water_vaporizer,stage3_water_plasma,water_tanks,water_injector,propulsion_bus_coupler,nacelle,variable_inlets,inlet_duct,shared_nozzle,vertical_stabilizer,left_rudder_speedbrake,right_rudder_speedbrake,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
 
   %% Connections (ports / joints)
   pressure_vessel ==>|drops into| fuselage_cradle
@@ -355,5 +357,5 @@ flowchart TB
   variable_inlets ==>|air_path| inlet_duct
   inlet_duct ==>|air_path| stage1_edf
   inlet_duct ==>|air_path| air_precompressor
-  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
-  linkStyle 108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
+  linkStyle 109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f

@@ -86,7 +86,7 @@
       "label": "CHARM",
       "contents": ["reactor_island"],
       "volume_m3_max": 120,
-      "mass_t_ref": 67,
+      "mass_t_ref": 66.7,
       "color": [0.90, 0.55, 0.45]
     },
     {

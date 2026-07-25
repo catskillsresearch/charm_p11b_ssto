@@ -33,7 +33,7 @@ Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior
 
 ### Forward drop-ins (top-down, covers off)
 
-All three drop-ins below are **Blender** orthographic top views built procedurally from `assembly.json` (`make cad-drop-ins`; see `research/figures/cad/build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py`, and the shared helpers in `research/figures/cad/lib/`). No AI-generated imagery remains in this section.
+All four drop-ins below are **Blender** orthographic top views built procedurally from `assembly.json` (`make cad-drop-ins`; see `research/figures/cad/build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py`, `build_fusion_plant_skid_blender.py`, and the shared helpers in `research/figures/cad/lib/`). No AI-generated imagery remains in this section.
 
 <!-- figure-landscape -->
 ![Crew capsule, Blender top-down cutaway from assembly.json.](research/figures/crew_capsule_top.png)
@@ -43,6 +43,9 @@ All three drop-ins below are **Blender** orthographic top views built procedural
 
 <!-- figure-landscape -->
 ![Cargo skid, Blender top-down cutaway from assembly.json with bay doors open.](research/figures/cargo_skid_top.png)
+
+<!-- figure-landscape -->
+![Fusion plant skid, Blender top-down cutaway from assembly.json: chamber string, 6 mirror magnets, 6-unit cryo compressor bay, magnet PSU, RF, DEC, fuel, and battery.](research/figures/fusion_plant_skid_top.png)
 
 ### Fusion electric plant (assembly SSOT)
 
@@ -466,10 +469,10 @@ Table: CHARM island mass versus specific power at $1\,\mathrm{GW}$.
 
 | \(\alpha_{\mathrm{C}}\) | \(m_{\mathrm{C}}\) at \(P_{\star}=1\,\mathrm{GW}\) | Comment |
 |------------------------|--------------------------------------------------|---------|
-| \(5\,\mathrm{kW/kg}\) | \(200\,\mathrm{t}\) | Heavy; fights SSTO |
-| \(10\,\mathrm{kW/kg}\) | \(100\,\mathrm{t}\) | Stretch |
-| \(15\,\mathrm{kW/kg}\) | \(67\,\mathrm{t}\) | **Reference hole** |
-| \(25\,\mathrm{kW/kg}\) | \(40\,\mathrm{t}\) | Aggressive |
+| \(5\,\mathrm{kW/kg}\) | \(<!--gen sens5.m_c_t:.0f-->200<!--/gen-->\,\mathrm{t}\) | Heavy; fights SSTO |
+| \(10\,\mathrm{kW/kg}\) | \(<!--gen sens10.m_c_t:.0f-->100<!--/gen-->\,\mathrm{t}\) | Stretch |
+| \(15\,\mathrm{kW/kg}\) | \(<!--gen sens15.m_c_t:.0f-->67<!--/gen-->\,\mathrm{t}\) | **Reference hole** — bottom-up roll-up in §9.6 |
+| \(25\,\mathrm{kW/kg}\) | \(<!--gen sens25.m_c_t:.0f-->40<!--/gen-->\,\mathrm{t}\) | Aggressive |
 
 Volume consistency:
 
@@ -531,31 +534,32 @@ P_{\star} &= 1\,\mathrm{GW},&
 \alpha_{\mathrm{C}} &= 15\,\mathrm{kW/kg},&
 \Delta v_{\mathrm{vac}} &= 4.0\,\mathrm{km/s},\\
 I_{\mathrm{sp}} &= 2000\,\mathrm{s},&
-v_e &= I_{\mathrm{sp}} g_0 = 19.61\,\mathrm{km/s}.
+v_e &= I_{\mathrm{sp}} g_0 = <!--gen mass.v_e_km_s:.2f-->19.61<!--/gen-->\,\mathrm{km/s}.
 \end{aligned}
 \]
 
 **Solve:**
 
 \[
-m_{\mathrm{C}} = \frac{10^9}{1.5\times 10^4} = 6.67\times 10^4\,\mathrm{kg}.
+m_{\mathrm{C}} = \frac{10^9}{1.5\times 10^4} = <!--gen charm.m_c_kg_sci-->6.67\times 10^4<!--/gen-->\,\mathrm{kg}
+\quad\text{(bottom-up roll-up: §9.6).}
 \]
 
 \[
 \begin{aligned}
 m_{\mathrm{str}}
   &= 72\,000 + 4\,000 + 3\,000 + 8\,500
-  = 8.75\times 10^4\,\mathrm{kg},\\[6pt]
+  = <!--gen mass.m_str_kg_sci-->8.75\times 10^4<!--/gen-->\,\mathrm{kg},\\[6pt]
 m_{\mathrm{dry}}
-  &= 87\,500 + 24\,400 + 15\,000 + 66\,700 + 2\,000 + 500
-  = 1.961\times 10^5\,\mathrm{kg}
-  \;\;(196.1\,\mathrm{t}),\\[6pt]
-\mu &= e^{4000/19613} = 1.226,\qquad
-m_{\mathrm{w}} = 0.226\,m_{\mathrm{dry}} = 4.43\times 10^4\,\mathrm{kg}
-  \;\;(44.3\,\mathrm{t}),\\[6pt]
-m_0 &= 2.404\times 10^5\,\mathrm{kg}
-  \;\;\mathbf{(240\,\mathrm{t}\ GLOW)},\\[6pt]
-m_{\mathrm{ins}} &= 196.1\,\mathrm{t}.
+  &= 87\,500 + 24\,400 + 15\,000 + <!--gen charm.m_c_kg_latex-->66\,667<!--/gen--> + 2\,000 + 500
+  = <!--gen mass.m_dry_kg_sci-->1.961\times 10^5<!--/gen-->\,\mathrm{kg}
+  \;\;(<!--gen mass.m_dry_t:.1f-->196.1<!--/gen-->\,\mathrm{t}),\\[6pt]
+\mu &= e^{4000/19613} = <!--gen mass.mu:.3f-->1.226<!--/gen-->,\qquad
+m_{\mathrm{w}} = <!--gen mass.mu_minus1:.3f-->0.226<!--/gen-->\,m_{\mathrm{dry}} = <!--gen mass.m_w_kg_sci-->4.44\times 10^4<!--/gen-->\,\mathrm{kg}
+  \;\;(<!--gen mass.m_w_t:.1f-->44.4<!--/gen-->\,\mathrm{t}),\\[6pt]
+m_0 &= <!--gen mass.m0_kg_sci-->2.404\times 10^5<!--/gen-->\,\mathrm{kg}
+  \;\;\mathbf{(<!--gen mass.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}\ GLOW)},\\[6pt]
+m_{\mathrm{ins}} &= <!--gen mass.m_ins_t:.1f-->196.1<!--/gen-->\,\mathrm{t}.
 \end{aligned}
 \]
 
@@ -571,11 +575,11 @@ Table: Reference vehicle mass bill.
 | Crew systems (ECLSS, O₂/N₂, WCS, galley, food, luggage, airlock) | \(8.5\,\mathrm{t}\) |
 | Payload (cargo bay) | \(24.4\,\mathrm{t}\) |
 | Combined-cycle engine (EDF \(5.0\) + air-plasma \(4.4\) + water thruster \(3.1\) + shared \(2.5\)) | \(15.0\,\mathrm{t}\) |
-| CHARM island | \(66.7\,\mathrm{t}\) |
+| CHARM island (bottom-up roll-up: magnets + cryo + unsized remainder, §9.6) | \(<!--gen charm.m_c_t:.1f-->66.7<!--/gen-->\,\mathrm{t}\) |
 | Flight battery | \(2.0\,\mathrm{t}\) |
 | \(p\text{-}^{11}\mathrm{B}\) / proton fuel (+ tankage) | \(0.5\,\mathrm{t}\) |
-| Water (vacuum propellant) | \(44.3\,\mathrm{t}\) |
-| **GLOW** | **\(240\,\mathrm{t}\)** |
+| Water (vacuum propellant) | \(<!--gen mass.m_w_t:.1f-->44.4<!--/gen-->\,\mathrm{t}\) |
+| **GLOW** | **\(<!--gen mass.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}\)** |
 
 **Energy at this mass:**
 
@@ -593,9 +597,9 @@ Table: Sensitivity of dry and wet mass to specific power.
 
 | \(\alpha_{\mathrm{C}}\) | \(m_{\mathrm{C}}\) | \(m_{\mathrm{dry}}\) | \(m_{\mathrm{w}}\) | \(m_0\) |
 |------------------------|--------------------|----------------------|--------------------|---------|
-| \(10\,\mathrm{kW/kg}\) | \(100\,\mathrm{t}\) | \(229\,\mathrm{t}\) | \(52\,\mathrm{t}\) | \(281\,\mathrm{t}\) |
-| \(15\,\mathrm{kW/kg}\) | \(67\,\mathrm{t}\) | \(196\,\mathrm{t}\) | \(44\,\mathrm{t}\) | \(\mathbf{240\,\mathrm{t}}\) |
-| \(25\,\mathrm{kW/kg}\) | \(40\,\mathrm{t}\) | \(169\,\mathrm{t}\) | \(38\,\mathrm{t}\) | \(208\,\mathrm{t}\) |
+| \(10\,\mathrm{kW/kg}\) | \(<!--gen sens10.m_c_t:.0f-->100<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens10.m_dry_t:.0f-->229<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens10.m_w_t:.0f-->52<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens10.m0_t:.0f-->281<!--/gen-->\,\mathrm{t}\) |
+| \(15\,\mathrm{kW/kg}\) | \(<!--gen sens15.m_c_t:.0f-->67<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens15.m_dry_t:.0f-->196<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens15.m_w_t:.0f-->44<!--/gen-->\,\mathrm{t}\) | \(\mathbf{<!--gen sens15.m0_t:.0f-->240<!--/gen-->\,\mathrm{t}}\) |
+| \(25\,\mathrm{kW/kg}\) | \(<!--gen sens25.m_c_t:.0f-->40<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens25.m_dry_t:.0f-->169<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens25.m_w_t:.0f-->38<!--/gen-->\,\mathrm{t}\) | \(<!--gen sens25.m0_t:.0f-->208<!--/gen-->\,\mathrm{t}\) |
 
 Municipal takeoff weight \(\sim 210\)–\(280\,\mathrm{t}\) is heavy vs airliners but in the large-military / 747-class band—not a Citation.
 
@@ -605,7 +609,7 @@ Municipal takeoff weight \(\sim 210\)–\(280\,\mathrm{t}\) is heavy vs airliner
 
 Summarize as a requirement vector \(\mathcal{R}_{\mathrm{C}}\):
 
-### 10.1 Power and mass
+### 9.1 Power and mass
 
 \[
 \boxed{
@@ -627,7 +631,7 @@ V_{\mathrm{C}} \le 120\,\mathrm{m}^3,\qquad
 \bar{p}_{\mathrm{C}} = P_{\star}/V_{\mathrm{C}} \ge 8\,\mathrm{MW/m}^3.
 \]
 
-### 10.2 Fuel and ash
+### 9.2 Fuel and ash
 
 \[
 \dot{N}_{p{}^{11}\mathrm{B}}
@@ -638,7 +642,7 @@ m_{\mathrm{f}}(t_{\mathrm{mission}}) \ll m_{\mathrm{w}}.
 
 Ash (He) strained per CHARM multi-chamber design; DEC captures charged-product free energy.
 
-### 10.3 DEC
+### 9.3 DEC
 
 \[
 P_{\mathrm{bus}} = \eta_{\mathrm{DEC}} P_{\alpha,\mathrm{ordered}}
@@ -654,7 +658,7 @@ Thermal reject (X-ray, wall, inefficiencies) must be dumped to:
 - island bath → compact turbine, and/or  
 - radiators only after exo-atmospheric (limited area).
 
-### 10.4 Restartable in space
+### 9.4 Restartable in space
 
 \[
 E_{\mathrm{restart}} \le \eta_{\mathrm{bat}} m_{\mathrm{bat}} e_{\mathrm{bat}},
@@ -669,7 +673,7 @@ with \(m_{\mathrm{bat}} = 2\,\mathrm{t}\) reference and \(e_{\mathrm{bat}} \sim 
 
 Doctrine: continuous burn nominally; pilot-string kindling from \(m_{\mathrm{bat}}\) if segmented; glide if relight fails.
 
-### 10.5 Continuous operation / no beam farm
+### 9.5 Continuous operation / no beam farm
 
 Recirculating power is RF walls, rotation, magnets, vacuum, cryo:
 
@@ -680,13 +684,111 @@ P_{\mathrm{bus}} = (1 - f_{\mathrm{r}})\,P_{\mathrm{fusion,net\,to\,bus}}.
 
 Design intent: \(f_{\mathrm{r}}\) small enough that \(1\,\mathrm{GW}\) **bus** does not require multi-MW neutral-beam injection (NBI).
 
-### 9.6 Municipal and flight safety
+### 9.6 CHARM island bottom-up mass roll-up: magnets and cryo, sized; RF/shield/structure, not yet
+
+[1] gives no magnet field, magnet technology, or cryostat design — CHARM's own public materials are pure confinement/ash/DEC physics with zero cryogenics content. §7.2/§9.1's \(m_{\mathrm{C}} = P_{\star}/\alpha_{\mathrm{C}}\) is a **top-down** target, not a sum of parts. This subsection replaces two of that budget's line items — magnets and the cryo compressor bay — with explicit, literature-anchored bottom-up numbers computed by [`constants_model.py`](research/figures/cad/constants_model.py) (plain numpy, no fitting), and is honest about what still isn't independently sized. All boxed numbers below are program-generated (`<!--gen-->` spans); re-running `python research/figures/cad/constants_model.py` regenerates them from the `Params` at the top of that file.
+
+**Magnets — anchor: WHAM, not SPARC.** SPARC's TF coil is a tokamak magnet; CHARM is a chambered rotating **mirror**. The much closer real-hardware analog is the Wisconsin HTS Axisymmetric Mirror (WHAM), an ARPA-E-funded, currently-operating HTS mirror machine whose two magnets — built by Commonwealth Fusion Systems (CFS) — are real, delivered, tested hardware: \(<2\,\mathrm{t}\) each, \(17\,\mathrm{T}\) in the warm bore / \(20\,\mathrm{T}\) on tape, REBCO, "self-contained systems" bundling cryogenic refrigeration, vacuum, and controls on the magnet itself [34,35,36]. Take
+
+\[
+N_{\mathrm{coil}} = <!--gen charm.n_coil:.0f-->6<!--/gen-->
+\quad\text{(two WHAM-style end-mirror coils per fusion chamber, \(\times 2\) chambers, + 2 shaping coils at the heat-exchange chamber)},
+\]
+
+\[
+\boxed{
+m_{\mathrm{magnets}} = N_{\mathrm{coil}} \times <!--gen charm.m_magnet_each_t:.1f-->1.8<!--/gen--> \,\mathrm{t} = <!--gen charm.m_magnets_t:.1f-->10.8<!--/gen-->\,\mathrm{t}
+}
+\]
+
+(WHAM's "self-contained" description means the on-coil cold head is already inside that \(1.8\,\mathrm{t}\) figure — only the skid-mounted compressor package is a separate line item, below).
+
+**Cryo compressor bay — 6 flight-remanufactured AL630-class compressors.** One dedicated Cryomech AL630-class compressor **package** per magnet (echoing WHAM/CFS's "self-contained per-magnet" cryo philosophy); the cold head stays on the magnet (counted above), only the CPA1114 compressor package sits on the skid. Bare datasheet: \(191\,\mathrm{kg}\), \(12.7\,\mathrm{kW}\) electrical (60 Hz), \(100\,\mathrm{W}\) at \(20\,\mathrm{K}\) per cold head [33].
+
+\[
+N_{\mathrm{AL630}} = <!--gen charm.n_al630:.0f-->6<!--/gen-->
+\quad\Rightarrow\quad
+Q_{20\mathrm{K}} = N_{\mathrm{AL630}}\times 100\,\mathrm{W} = <!--gen charm.q20k_w:.0f-->600<!--/gen--> \,\mathrm{W}
+\;\;(\approx <!--gen charm.q20k_w_per_coil:.0f-->100<!--/gen--> \,\mathrm{W/coil}).
+\]
+
+This \(\approx 100\,\mathrm{W/coil}\) is **six times lighter** than the \(600\,\mathrm{W/coil}\) SPARC actually measured on its TFMC test coil (next subsection) — flagged plainly as an aggressive assumption resting on WHAM-style production coils (optimized current leads, no test-article instrumentation) rather than anything measured for CHARM.
+
+We do not have vendor or test data for re-engineering an AL630 to fly (vibration qualification; swapping the water-cooled compressor for a radiator/pumped-loop interface). **This multiplier is a guess, flagged as such:**
+
+\[
+\text{flight mass multiplier} = <!--gen charm.flight_mass_mult:.1f-->1.5<!--/gen-->\times,\qquad
+\text{flight power penalty} = <!--gen charm.flight_power_mult:.2f-->1.15<!--/gen-->\times
+\]
+
+("remanufacturing a proven, efficient ground design for flight qualification is assumed cheaper in mass than developing new lightweight cryocooler tech from scratch — no vendor or test data backs either number"). With the same \(\times 1.4\) integration margin as before (cryostat structure, transfer lines, manifolds — also a guess):
+
+\[
+\boxed{
+m_{\mathrm{cryo}} = N_{\mathrm{AL630}}\times 191\,\mathrm{kg}\times <!--gen charm.flight_mass_mult:.1f-->1.5<!--/gen--> \times 1.4 = <!--gen charm.m_cryo_t:.2f-->2.41<!--/gen-->\,\mathrm{t},\qquad
+P_{\mathrm{cryo}} = <!--gen charm.p_cryo_kw:.1f-->87.6<!--/gen--> \,\mathrm{kW}
+}
+\]
+
+**CHARM island roll-up.** Compare the parts we can now ground (magnets + cryo) against the existing top-down target:
+
+\[
+m_{\mathrm{bottom\text{-}up,known}} = m_{\mathrm{magnets}} + m_{\mathrm{cryo}} = <!--gen charm.m_bottom_up_known_t:.1f-->13.2<!--/gen-->\,\mathrm{t},
+\qquad
+m_{\mathrm{C,target}} = \frac{P_{\star}}{\alpha_{\mathrm{C}}} = <!--gen charm.m_c_target_t:.1f-->66.7<!--/gen-->\,\mathrm{t}.
+\]
+
+RF launchers/amplifiers, Bremsstrahlung/neutron shielding, and the CHARM backbone/chamber structure are **not independently sized in this pass** — no citable specific-mass number for gyrotron/RF-launcher hardware or \(p\text{-}^{11}\mathrm{B}\) photon-shield areal density was found that we trust enough to present as engineering (one search result claimed an RF specific mass near \(0.5\,\mathrm{kg/kW}\), which is implausibly light for gyrotron + waveguide + power-supply hardware and is deliberately **not used**). Rather than fabricate precision, the model carries the gap as one honestly-labeled remainder:
+
+\[
+m_{\mathrm{remainder}} = m_{\mathrm{C,target}} - m_{\mathrm{bottom\text{-}up,known}} = <!--gen charm.m_remainder_t:.1f-->53.5<!--/gen-->\,\mathrm{t}
+\quad\text{("RF + shielding + backbone/chamber structure + margin — future work").}
+\]
+
+\[
+\boxed{
+m_{\mathrm{C}} = \max\!\left(m_{\mathrm{C,target}},\; m_{\mathrm{bottom\text{-}up,known}}\right) = <!--gen charm.m_c_t:.1f-->66.7<!--/gen-->\,\mathrm{t}
+\quad\Rightarrow\quad
+\alpha_{\mathrm{C,implied}} = <!--gen charm.alpha_c_implied_kw_per_kg:.2f-->15.00<!--/gen--> \,\mathrm{kW/kg}
+}
+\]
+
+i.e. magnets are \(<!--gen charm.pct_magnets:.1f-->16.2<!--/gen-->\%\) of \(m_{\mathrm{C}}\), cryo is \(<!--gen charm.pct_cryo:.1f-->3.6<!--/gen-->\%\), and the unsized remainder is \(<!--gen charm.pct_remainder:.1f-->80.2<!--/gen-->\%\). Because the known bottom-up pieces fit comfortably inside the existing \(67\,\mathrm{t}\) target, **\(m_{\mathrm{C}}\), \(m_{\mathrm{dry}}\), and GLOW in §7.4/§8 do not move** — but the mechanism is live: `m_C = max(...)` in `constants_model.py` means a future RF/shield/structure sizing pass (or a heavier magnet/cryo number) would cascade into \(m_0\) automatically rather than needing another hand edit.
+
+**Conservative risk case — SPARC TFMC per-coil heat load.** If CHARM's production coils do **not** beat the \(600\,\mathrm{W/coil}\) SPARC actually measured on its Toroidal Field Model Coil (TFMC) — a real \(10{,}058\,\mathrm{kg}\) REBCO coil tested at \(20.1\,\mathrm{T}\), cooled by eight Cryomech AL630s in a liquid-free loop [29,30] — the bracket is much heavier. For \(N_{\mathrm{coil}}=4\)–\(8\):
+
+\[
+Q_{20\mathrm{K}}^{\mathrm{TFMC}} = N_{\mathrm{coil}}\times 600\,\mathrm{W} = <!--gen cons.q_low_kw:.1f-->2.4<!--/gen-->\text{–}<!--gen cons.q_high_kw:.1f-->4.8<!--/gen-->\,\mathrm{kW}
+\;\Rightarrow\;
+N_{\mathrm{AL630}} = <!--gen cons.n_al630_low:.0f-->24<!--/gen-->\text{–}<!--gen cons.n_al630_high:.0f-->48<!--/gen-->\;\text{units},
+\]
+
+\[
+m_{\mathrm{cryo}}^{\mathrm{risk}} \approx <!--gen cons.m_installed_low_t:.1f-->7.9<!--/gen-->\text{–}<!--gen cons.m_installed_high_t:.1f-->15.8<!--/gen-->\,\mathrm{t},\qquad
+P_{\mathrm{cryo}}^{\mathrm{risk}} \approx <!--gen cons.p_low_kw:.0f-->305<!--/gen-->\text{–}<!--gen cons.p_high_kw:.0f-->610<!--/gen-->\,\mathrm{kW}.
+\]
+
+This is still \(\ll\) the \(53.5\,\mathrm{t}\) remainder, so it would not by itself force \(m_{\mathrm{C}}\) up — but it is the number to reach for if the \(100\,\mathrm{W/coil}\) baseline assumption above turns out to be too optimistic.
+
+**Sanity check against a real full-scale plant ("why not a warehouse").** The Politico/CFS reporting on SPARC's actual cryoplant hall is the right gut-check, and the real numbers back the instinct that it's a *categorically* bigger machine, for reasons that don't apply here: SPARC's production TF magnet is \(18{,}025\,\mathrm{kg}\) per coil, eighteen of them (\(\gtrsim 324\,\mathrm{t}\) of TF magnet alone, before poloidal-field/central-solenoid coils, cryostat, or vacuum vessel) [29], and its full cryoplant needs \(17\,\mathrm{kW}\) steady-state (\(4.5\,\mathrm{K}\)-equivalent) plus a separate \(2.9\,\mathrm{MW}\) blowdown system to absorb the heat pulse from each \(\gtrsim 1\,\mathrm{GJ}\)-class shot — infrastructure that fills a dedicated cryoplant building and helium storage yard next to the tokamak hall [31]. Even the conservative TFMC-anchored risk case above is \(14\)–\(28\%\) of SPARC's *steady-state* number alone, for a coil inventory two orders of magnitude lighter — defensible **only** because (i) \(p\text{-}^{11}\mathrm{B}\) is aneutronic, so there is no nuclear heating of the magnets/shield that dominates a D–T tokamak's cryoplant sizing, and (ii) CHARM runs continuously rather than in pulses, so there is no SPARC-style blowdown/buffer system to size at all. Neither of those is a CHARM-specific result; both are architecture-level consequences of the fuel choice already assumed elsewhere in this note (G8, §9.2).
+
+**Ceiling check — flight-cryocooler technology instead of a remanufactured ground unit.** If remanufacturing an AL630 for flight turns out not to work and a clean-sheet space-qualified cryocooler is needed instead, NASA's own \(20\,\mathrm{W}/20\,\mathrm{K}\) reverse turbo-Brayton flight-cryocooler program is the closest public benchmark: state-of-the-art specific mass is \(18.7\,\mathrm{kg/W}\) (vs. that program's own \(4.4\)–\(5.5\,\mathrm{kg/W}\) *goal*, not yet demonstrated) [32] — \(12\)–\(45\times\) heavier than our \(2.4\,\mathrm{t}/600\,\mathrm{W} \approx 4.0\,\mathrm{kg/W}\) flight-remanufactured-AL630 assumption. Applied to the conservative TFMC-level risk-case load instead of the optimistic baseline:
+
+\[
+m_{\mathrm{cryo}}^{\mathrm{ceiling}} = Q_{20\mathrm{K}}^{\mathrm{TFMC}}\times 18.7\,\mathrm{kg/W} \approx <!--gen ceil.m_low_t:.0f-->45<!--/gen-->\text{–}<!--gen ceil.m_high_t:.0f-->90<!--/gen-->\,\mathrm{t}
+\]
+
+— up to, or beyond, the *entire* \(67\,\mathrm{t}\) CHARM island budget by itself. This stays tracked as its own named unobtainium (§13.3 item 6) rather than silently absorbed into \(\alpha_{\mathrm{C}}\); it is also the reason "remanufacture, don't clean-sheet" is load-bearing for this vehicle closing at all.
+
+**Reference point carried forward.** \(N_{\mathrm{coil}}=6\), \(N_{\mathrm{AL630}}=6\), \(m_{\mathrm{magnets}}\approx <!--gen charm.m_magnets_t:.1f-->10.8<!--/gen-->\,\mathrm{t}\), \(m_{\mathrm{cryo}}\approx <!--gen charm.m_cryo_t:.1f-->2.4<!--/gen-->\,\mathrm{t}\), \(P_{\mathrm{cryo}}\approx <!--gen charm.p_cryo_kw:.0f-->88<!--/gen--> \,\mathrm{kW}\) (\(<!--gen charm.p_cryo_frac_bus_pct:.3f-->0.009<!--/gen-->\%\) of the \(1\,\mathrm{GW}\) bus — negligible next to RF/magnet recirculating power, consistent with §9.5) are the working numbers carried into `assembly.json`'s `charm_magnet_rack` (6 magnet nodes) and `cryo_compressor_bay` (6 compressor nodes). The \(53.5\,\mathrm{t}\) remainder stays an explicit, tracked placeholder — not a rounding error, and not yet real engineering.
+
+### 9.7 Municipal and flight safety
 
 - No tritium breeding inventory.  
 - Shield so that ramp and cabin doses meet civil constraints with plant running in fan mode.  
 - Single-string plant: accept engine-out ≡ plant-out → glide.
 
-### 9.7 How CHARM is lit (and how much energy)
+### 9.8 How CHARM is lit (and how much energy)
 
 CHARM is **not** lit with a neutral-beam farm. Published architecture lights a **rotating open-field mirror** with **species-separated chambers** and **RF / ponderomotive walls** [1,8,9]. A practical light-off sequence for this vehicle is:
 
@@ -999,11 +1101,14 @@ Table: Imputed CHARM plant requirements for this SSTO.
 | Island volume | \(V_{\mathrm{C}} \lesssim 120\,\mathrm{m}^3\) | Fuselage bay aft of cargo |
 | Volumetric power | \(\bar{p}_{\mathrm{C}} \gtrsim 8\,\mathrm{MW/m}^3\) | \(P_{\star}/V_{\mathrm{C}}\) |
 | DEC | \(\eta_{\mathrm{DEC}} \sim 0.4\)–\(0.7\) on ordered \(\alpha\) / wave channel | §9.3 |
-| Aux heating | RF + rotation + magnets; **no** multi-MW NBI farm | §9.5, §9.7 |
-| Light-off energy | \(\sim 50\)–\(200\,\mathrm{kWh}\) to useful plasma (est.) | §9.7 |
+| Aux heating | RF + rotation + magnets; **no** multi-MW NBI farm | §9.5, §9.8 |
+| Magnets (6, WHAM-anchored) | \(\approx <!--gen charm.m_magnets_t:.1f-->10.8<!--/gen-->\,\mathrm{t}\) (\(<!--gen charm.pct_magnets:.1f-->16.2<!--/gen-->\%\) of \(m_{\mathrm{C}}\)) | §9.6 |
+| Cryo compressor bay (6 AL630, flight-remanufactured) | \(\approx <!--gen charm.m_cryo_t:.1f-->2.4<!--/gen-->\,\mathrm{t}\), \(\approx <!--gen charm.p_cryo_kw:.0f-->88<!--/gen--> \,\mathrm{kW}\) (\(<!--gen charm.pct_cryo:.1f-->3.6<!--/gen-->\%\) of \(m_{\mathrm{C}}\)) | §9.6 |
+| RF + shield + backbone structure | \(\approx <!--gen charm.m_remainder_t:.1f-->53.5<!--/gen-->\,\mathrm{t}\) allocated remainder, **not independently sized** | §9.6 |
+| Light-off energy | \(\sim 50\)–\(200\,\mathrm{kWh}\) to useful plasma (est.) | §9.8 |
 | Space restart | Pilot-string from \(\sim 2\,\mathrm{t}\) battery (\(\sim 300\)–\(500\,\mathrm{kWh}\)) | §6, §9.4 |
 | Duty | Continuous burn through climb/insert; throttleable bus | §5 |
-| Environment | Flight loads, TPS-adjacent thermal, municipal dose with fan-mode plant | G6, §9.6 |
+| Environment | Flight loads, TPS-adjacent thermal, municipal dose with fan-mode plant | G6, §9.7 |
 
 ### 13.2 Where published CHARM stands today
 
@@ -1032,7 +1137,7 @@ Call a requirement **unobtainium** if it is not implied by present CHARM results
 3. **Selective RF / ponderomotive “one-way” walls** that regulate ion traffic at acceptable recirculating power (slides note one-way walls can be energetically costly if overused) [1,9].  
 4. **Wave-mediated ash extraction / alpha channeling into protons (or DEC)** fast enough that helium does not poison the cell [3,6].  
 5. **Ultra-high DC / open-field electrode structures** that survive \(\alpha\) and X-ray loads while feeding a GW bus [10].  
-6. **Flight specific power** \(\alpha_{\mathrm{C}} \sim 15\,\mathrm{kW/kg}\) **and** \(\bar{p}_{\mathrm{C}} \gtrsim 8\,\mathrm{MW/m}^3\) including magnets, RF, shield, cryo, and structure — beyond any published CHARM packaging study.  
+6. **Flight specific power** \(\alpha_{\mathrm{C}} \sim 15\,\mathrm{kW/kg}\) **and** \(\bar{p}_{\mathrm{C}} \gtrsim 8\,\mathrm{MW/m}^3\) including magnets, RF, shield, cryo, and structure — beyond any published CHARM packaging study. §9.6 now sizes magnets (\(\approx 10.8\,\mathrm{t}\), WHAM-anchored) and cryo (\(\approx 2.4\,\mathrm{t}\), 6 flight-remanufactured AL630s) bottom-up; on demonstrated flight-cryocooler specific mass instead of the remanufactured-AL630 guess, cryo alone could reach \(45\)–\(90\,\mathrm{t}\) — i.e., **flight-weight cryocooler specific mass is its own unobtainium**, not just a rounding term inside \(\alpha_{\mathrm{C}}\). The remaining \(\approx 53.5\,\mathrm{t}\) (RF + shielding + backbone/chamber structure) is **still an unsized placeholder**, not fabricated engineering — the largest unresolved piece of \(\alpha_{\mathrm{C}}\).  
 7. **Continuous GW-class operation** through a multi-hour ascent with vibration, thrust-vector loads, and thermal transients — not part of the present ARPA-E scope.  
 8. **Pilot-string light-off / space restart** at \(50\)–\(200\,\mathrm{kWh}\) class — engineering estimate only; not a CHARM experimental result.  
 9. **Stage-2/3 thruster packaging** at \(\sim 200\)–\(300\,\mathrm{kW/kg}\) inside a \(15\,\mathrm{t}\) engine (§10.6) — HEMM-class stage 1 is nearer [25]; microwave air / water plasma at GW in a few tonnes is not [23], [24], [26], [27].  
@@ -1066,7 +1171,8 @@ Table: External packages and tools used by the living design / paper build.
 | **NumPy** | Numeric support in OpenVSP figure export |
 | **Matplotlib** | Raster floorplan / profile renders from the OpenVSP model |
 | **OpenVSP** (optional Poetry group; upstream `.deb` + Python API) | Parametric vehicle CAD (`.vsp3`); source of the orthographic floorplan and profile figures |
-| **Blender** 5.x (snap `/snap/bin/blender`) | Drop-in cutaways from `assembly.json` (crew capsule, airlock, cargo skid top-down; `make cad-drop-ins`) |
+| **Blender** 5.x (snap `/snap/bin/blender`) | Drop-in cutaways from `assembly.json` (crew capsule, airlock, cargo skid, fusion plant skid top-down; `make cad-drop-ins`) |
+| **NumPy** (`research/figures/cad/constants_model.py`) | Single source for every sizing-constraint number in §6–§9 and the CHARM bottom-up mass roll-up (§9.6); regenerates `<!--gen-->` spans in this file and patches `assembly.json` / `vehicle_spec.json` — plain arithmetic, never an LLM call |
 | **Pillow** | Image handling when the paper build ingests raster figure assets |
 | **Pandoc** | `arxiv.md` → LaTeX body conversion inside `scripts/build_arxiv_tex.py` |
 | **Mermaid CLI** (`mmdc` / `@mermaid-js/mermaid-cli`) | Paper mermaid fences → `figures/figure-NNN.pdf` |
@@ -1089,14 +1195,18 @@ The **assembly outliner** is a small local web app under `research/figures/cad/h
 
 ### A.3 Blender drop-in cutaways
 
-Layout-critical packaging figures (hatches, seat rows, aisle clearances, bay doors) are built as **editable Blender geometry** from `assembly.json`, not AI image prompts. Three modules are done this way — crew capsule, airlock, and cargo skid:
+Layout-critical packaging figures (hatches, seat rows, aisle clearances, bay doors, magnet/cryo layout) are built as **editable Blender geometry** from `assembly.json`, not AI image prompts. Four modules are done this way — crew capsule, airlock, cargo skid, and fusion plant skid:
 
 ```bash
 make cad-drop-ins
-# research/figures/{crew_capsule_top,airlock_top,cargo_skid_top}.png
-# research/figures/cad/{crew_capsule_cutaway,airlock_cutaway,cargo_skid_cutaway}.blend
-./bl.sh   # GUI edit (crew capsule; edit the path for the other two)
+# research/figures/{crew_capsule_top,airlock_top,cargo_skid_top,fusion_plant_skid_top}.png
+# research/figures/cad/{crew_capsule_cutaway,airlock_cutaway,cargo_skid_cutaway,fusion_plant_skid_cutaway}.blend
+./bl.sh   # GUI edit (crew capsule; edit the path for the others)
 ```
+
+### A.4 Generated numeric constants
+
+Every numeric value wrapped in a machine-readable HTML comment pair in this document (the CHARM mass/power/cryo chain of §6–§9, most visibly §9.6) is **program-controlled**, not hand-typed: it is written by [`scripts/update_arxiv_constants.py`](scripts/update_arxiv_constants.py), which re-runs [`research/figures/cad/constants_model.py`](research/figures/cad/constants_model.py) (pure NumPy + Python stdlib, no LLM in the loop) and regex-replaces only the text between each marker pair, leaving surrounding prose untouched. The same run also writes `research/figures/cad/constants.generated.json`, which [`scripts/apply_constants_to_assembly.py`](scripts/apply_constants_to_assembly.py) reads to patch `assembly.json`'s magnet/cryocooler node counts and `size` blocks, and which `build_fusion_plant_skid_blender.py` reads for its magnet/cryocooler counts — so the paper, the JSON single source of truth, and the Blender renders can never numerically disagree. `make paper-render` runs the whole chain; it is a dependency of `make arxiv` and `make zenodo-tex`.
 
 Each figure has its own placement script — `build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py` — sharing common primitives, hatch/shell/door "kits", and camera setup from `research/figures/cad/lib/` (`assembly_parser.py`, `procedural_geometry.py`, `render_utils.py`). The fusion-plant skid (CHARM chambers) and combined-cycle engine skid (scoops/duct/nozzle/water tanks) are not yet migrated — those need real procedural modeling of hardware that has no library equivalent, and remain AI concept sketches for now.
 
@@ -1165,6 +1275,22 @@ CHARM denotes the chambered aneutronic rotating-mirror architecture developed at
 [27] D. Komatsu, K. Nishii, and A. Kakami, “Study on electrodes design for MPD thruster using water propellant,” *Trans. JSASS*, vol. 68, 2025, doi: 10.2322/tjsass.68.108. (Stage-3 high-\(I_{\mathrm{sp}}\) water-MPD path: \(\sim 3150\,\mathrm{s}\) class at \(\eta\sim 0.07\)–\(0.11\), \(\sim 5\,\mathrm{mN/kW}\).)
 
 [28] J. E. Brandenburg, J. Kline, and D. Sullivan, “The microwave electro-thermal (MET) thruster using water vapor propellant,” *IEEE Trans. Plasma Sci.*, vol. 33, no. 2, pp. 776–782, 2005, doi: 10.1109/TPS.2005.845252. (Stage-3 water MET / electrothermal lineage; \(I_{\mathrm{sp}}\gtrsim 800\,\mathrm{s}\) reported class.)
+
+[29] Z. S. Hartwig et al., “The SPARC Toroidal Field Model Coil Program,” *IEEE Trans. Appl. Supercond.*, vol. 34, no. 2, Art. no. 0600316, Mar. 2024, doi: 10.1109/TASC.2023.3332613; arXiv:2308.12301. (§9.6 anchor: \(10{,}058\,\mathrm{kg}\) TFMC test coil at \(20.1\,\mathrm{T}\); \(18{,}025\,\mathrm{kg}\) per production SPARC TF coil, 18 coils per tokamak.)
+
+[30] P. C. Michael et al., “A 20-K, 600-W, Cryocooler-Based, Supercritical Helium Circulation System for the SPARC Toroidal Field Model Coil Program,” *IEEE Trans. Appl. Supercond.*, vol. 34, no. 2, Art. no. 0600313, Mar. 2024, doi: 10.1109/TASC.2023.3332266. (§9.6 anchor: measured \(600\,\mathrm{W}\) at \(20\,\mathrm{K}\) via eight Cryomech AL630 cryocoolers, cooling one HTS test coil.)
+
+[31] A. Dalesandro et al., “The SPARC cryogenic system,” *IOP Conf. Ser.: Mater. Sci. Eng.*, vol. 1301, Art. no. 012107, 2024, doi: 10.1088/1757-899X/1301/1/012107. (§9.6 full-scale contrast: \(17\,\mathrm{kW}\) steady-state \(4.5\,\mathrm{K}\)-equivalent cryoplant plus a separate \(2.9\,\mathrm{MW}\) blowdown system for pulse heat removal.)
+
+[32] B. T. Nugent, R. J. Grotenrath, and W. L. Johnson (NASA Glenn Research Center), “20 Watt 20 Kelvin Reverse Turbo-Brayton Cycle Cryocooler Testing and Applications,” 22nd Int. Cryocooler Conf. (ICC), Bethlehem, PA, Jun. 27–30, 2022, NASA/TM (NTRS 20220009350). (§9.6 flight-cryocooler ceiling check: \(4.4\)–\(5.5\,\mathrm{kg/W}\) goal vs. \(18.7\,\mathrm{kg/W}\) state-of-the-art specific mass at \(20\,\mathrm{K}\).)
+
+[33] Cryomech, Inc., “AL630 Gifford-McMahon Cryocooler” datasheet: \(100\,\mathrm{W}\) at \(20\,\mathrm{K}\), \(44\,\mathrm{kg}\) cold head + \(191\,\mathrm{kg}\) CPA1114 compressor package, \(11.7\)–\(12.7\,\mathrm{kW}\) electrical input. [Online]. Available: https://bluefors.com/products/gifford-mcmahon-cryocoolers/al630-gifford-mcmahon-cryocooler/
+
+[34] Commonwealth Fusion Systems, “Commonwealth Fusion Systems Delivers Superconducting Magnets to University of Wisconsin’s WHAM Project,” press release, Jul. 12, 2024. (§9.6 magnet anchor: two \(<2\,\mathrm{t}\) REBCO magnets, \(17\,\mathrm{T}\) warm bore / \(20\,\mathrm{T}\) on tape, self-contained with integrated cryo/vacuum/controls.) [Online]. Available: https://www.cfs.energy/news-and-media/commonwealth-fusion-systems-delivers-hts-magnets-to-uw-wham-project/
+
+[35] A. Radovinsky et al., “Design of High Field HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 33, no. 5, 2023, doi: 10.1109/TASC.2023.3240377. (§9.6 magnet anchor: preliminary design of the \(<2\,\mathrm{t}\), \(\sim 20\,\mathrm{T}\)-on-tape, conduction-cooled WHAM mirror coil.)
+
+[36] “Manufacturing and Testing HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 35, 2025, doi: 10.1109/TASC.2025.3542351. (§9.6 magnet anchor: as-built/tested confirmation of the \(<2\,\mathrm{t}\) WHAM magnet pair, conduction-cooled to \(20\,\mathrm{K}\).)
 
 ---
 
