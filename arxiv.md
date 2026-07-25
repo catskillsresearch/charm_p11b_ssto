@@ -1075,9 +1075,35 @@ Table: Frozen stage constants (literature-anchored; packaging \(\alpha\) are des
 | \(C_{\mathrm{cap}}\) | 1–2 | Inlet capture coefficient | \(\le 1\) (free air; not a carried mass) |
 | \(\rho(h)\) | 2 | US Standard Atmosphere 1976 [37] | Closed-form piecewise layers (textbook, not a guess) |
 | \(S\) | 2 | Wing reference area | \(<!--gen aero.wing_area_m2:.0f-->229<!--/gen-->\,\mathrm{m}^2\) — computed from `vehicle_spec.json`'s double-delta geometry (§1); cross-checks OpenVSP's own \(\approx 229\,\mathrm{m}^2\) |
-| \(C_D(M)\) | 2 | Generic hypersonic lifting-body drag table [38] | Flagged: no CHARM-specific CFD/wind-tunnel data; \(0.045\) subsonic, \(0.09\) transonic peak, \(0.05\) hypersonic |
+| \(C_D(M)\) | 2 | Generic hypersonic lifting-body drag table [38] | Flagged for hypersonic; subsonic/transonic now cross-checked by OpenVSP/VSPAERO (§10.2.1). Table freeze still \(0.045\) subsonic, \(0.09\) transonic peak, \(0.05\) hypersonic |
 | \(Q_{\mathrm{ascent}}\) | 2 | Design ascent dynamic pressure | Flagged guess, X-15/Shuttle-class order: \(<!--gen stage.q_ascent_kpa:.0f-->25<!--/gen-->\,\mathrm{kPa}\) |
 | \(v_1\) | 1→2 | Stage 1→2 transition speed | Flagged guess (transonic handoff): \(<!--gen stage.v1_m_s:.0f-->300<!--/gen-->\,\mathrm{m/s}\) |
+
+#### 10.2.1 OpenVSP / VSPAERO digital wind tunnel (subsonic–transonic)
+
+The living exterior (`.vsp3` from `vehicle_spec.json` / `make cad-figures`) is run through the bundled **VSPAERO** vortex-lattice solver (`make cad-vspaero`; gear pods deleted for the working copy). Reference area is the OpenVSP `MAIN_WING` component (\(S\approx 229\,\mathrm{m}^2\), same as the paper freeze). This is a **potential-flow digital tunnel**, not hypersonic CFD and not a stage-2/3 propulsion aero model — it qualifies the *outline* in the regime VSPAERO is built for.
+
+Table: VSPAERO polar on `catskills_ssto.vsp3` (gear retracted; \(Re_c/10^6=10\); thin-surface VLM). Source: `research/figures/cad/vspaero/polar.csv`.
+
+| \(M\) | \(\alpha=0^\circ\): \(C_D\) | \(\alpha=4^\circ\): \(C_L\), \(C_D\), \(L/D\) | \(\alpha=8^\circ\): \(C_L\), \(C_D\), \(L/D\) |
+|------|---------------------------|---------------------------------------------|---------------------------------------------|
+| \(0.30\) | \(0.027\) | \(0.232\), \(0.021\), \(10.9\) | \(0.478\), \(0.038\), \(12.6\) |
+| \(0.60\) | \(0.033\) | \(0.250\), \(0.028\), \(8.9\) | \(0.515\), \(0.047\), \(10.9\) |
+| \(0.80\) | \(0.108\) | \(0.237\), \(0.096\), \(2.5\) | \(0.534\), \(0.111\), \(4.8\) |
+| \(0.95\) | \(0.077\) | \(0.350\), \(0.075\), \(4.7\) | \(0.680\), \(0.106\), \(6.4\) |
+
+**Read against the §10.2 \(C_D(M)\) freeze.** At \(\alpha=0\) the VLM zero-lift drag is \(\sim 0.027\) subsonic (lighter than the frozen \(0.045\) floor — VSPAERO under-counts some parasite/excrescence) and peaks near \(0.11\) at \(M=0.8\) (same *order* as the frozen \(0.09\) transonic peak). Best \(L/D\) in this grid is \(\approx 12.6\) at \(M=0.3\), \(\alpha=8^\circ\). The climb energy integral in §10.4 still uses the conservative generic table [38]; replacing that table with a VSPAERO-fitted \(C_D(M)\) (and extending past Mach 1 with real hypersonic CFD) is future work — Mach \(\gtrsim 1.2\) cases on this full airframe did not converge in practical wall time under VLM.
+
+**Stage 1 pass analysis.** Stage 1 (electric ducted fan, municipal runway through the transonic handoff at \(v_1\)) is the propulsion segment whose airframe loads sit inside VSPAERO’s credible band. Treating the digital tunnel as a **Stage 1 outline go / no-go**:
+
+| Check | Verdict | Note |
+|-------|---------|------|
+| Solver ran; polar written | **Pass** | 12 cases (\(M\in\{0.3,0.6,0.8,0.95\}\), \(\alpha\in\{0^\circ,4^\circ,8^\circ\}\)) |
+| Reference area \(S\) | **Pass** | \(\approx 229\,\mathrm{m}^2\) matches the paper freeze |
+| Transonic drag peak | **Pass** | \(C_D\sim 0.11\) at \(M=0.8\), \(\alpha=0\) vs frozen \(\sim 0.09\) |
+| Subsonic \(C_D\) floor | **Soft pass** | VSPAERO \(\sim 0.027\) vs frozen \(0.045\) — solver optimistic on parasite; paper keeps the heavier floor |
+
+**Verdict:** Stage 1 **passes** this outline check — the planform is sane in the subsonic–transonic band and nothing in VSPAERO breaks the Stage 1 power/drag story (§10.3). Stage 2 and Stage 3 have their own pass analyses (§10.4, §10.5); they are not VSPAERO freestream polars.
 
 **Reaction-mass utilization:**
 - Stages 1–2: utilization of **carried** propellant is zero (air is free). Inlet capture \(C_{\mathrm{cap}}\) only limits available \(\dot{m}_{\mathrm{air}}\).
@@ -1156,6 +1182,18 @@ M_{\mathrm{seal}} \approx <!--gen stage.mach_seal:.1f-->11.0<!--/gen-->
 E_2 = P_2^{\star}\,t_2 \approx <!--gen stage.e2_mwh:.0f-->476<!--/gen-->\,\mathrm{MWh}.
 \]
 
+**Stage 2 pass analysis.** Stage 2 is microwave air plasma on a hypersonic constant-\(Q\) climb — **not** a VSPAERO freestream polar. The smoke tests that exist today are energy / climb bookkeeping and literature anchors, not a duct CFD:
+
+| Check | Verdict | Note |
+|-------|---------|------|
+| Climb quadrature closes (\(T_2>D\) along path) | **Pass** | `integrate_stage2_climb` returns finite \(t_2\), \(h_{\mathrm{seal}}\), \(M_{\mathrm{seal}}\) at \(P_2^{\star}\) |
+| Electrothermal \(T/P\) (not Ye N/kW) | **Pass (physics)** | \(T_2/P_2 = 2\eta_{\mu}\eta_{\mathrm{j},2}/v_{\mathrm{j},2}\) — energy-consistent; super-unity claims rejected [26] |
+| \(E_2 = P_2^{\star}t_2\) vs top-down \(\kappa_E\) | **Soft pass** | Bottom-up stage energies land inside the §4 \(\kappa_E\in[2,4]\) band (§10.5 reconciliation) |
+| Hypersonic airframe \(C_D(M)\) | **Not tested** | Generic table [38]; VSPAERO did not finish Mach \(\gtrsim 1.2\) |
+| GW-class air-plasma thruster + packaging \(\sim 230\,\mathrm{kW/kg}\) | **Fail / unobtainium** | Lab ducts exist [23]; vehicle-scale power and specific mass do not (§13.3) |
+
+**Verdict:** Stage 2 **passes the energy/climb smoke** (the trajectory integral and \(T/P\) physics close on paper) and **fails the thruster/packaging smoke** until a real MW→GW air-plasma string exists. Next smoke tests worth building: (i) a 1D inlet + applicator mass-flow / \(\Delta h\) model at \(Q_{\mathrm{ascent}}\) that must recover \(\dot{m}_{\mathrm{air}}\) and \(T_2\) without magic \(C_{\mathrm{cap}}\); (ii) OpenVSP **actuator-disk** or jet boundary on the same `.vsp3` (still not plasma CFD); (iii) subscale literature replay — reproduce published microwave-air thrust/power within a factor of a few before trusting the vehicle freeze.
+
 ### 10.5 Stage 3 — water, power, and \(I_{\mathrm{sp}}\) cases
 
 \[
@@ -1197,6 +1235,18 @@ Table: Water store versus stage-3 $I_{\mathrm{sp}}$ at fixed $m_{\mathrm{dry}}=1
 | \(3150\,\mathrm{s}\) | Water MPD class [27] | \(27\,\mathrm{t}\) | \(223\,\mathrm{t}\) | Demo \(\eta\) much lower than our \(\eta_{\mathrm{jet}}\) freeze |
 
 Path: tanks → pump/injector → vaporizer → microwave/EM plasma → shared nozzle [24], [27], [28].
+
+**Stage 3 pass analysis.** Stage 3 is carried-water plasma in vacuum — **no atmosphere**, so no wind tunnel. The smoke tests that exist today are propellant / power bookkeeping and demo-literature anchors:
+
+| Check | Verdict | Note |
+|-------|---------|------|
+| Rocket-equation water mass \(m_{\mathrm{w}}(I_{\mathrm{sp}})\) | **Pass** | Closed form at fixed \(m_{\mathrm{dry}}\), \(\Delta v_{\mathrm{vac}}\) (table above) |
+| \(E_3=\tfrac12 m_{\mathrm{w}}v_e^2/\eta_{\mathrm{jet}}\) invariant | **Pass** | Independent of \(P_3\) ceiling; \(P_3^{\star}t_3\equiv E_3\) by construction |
+| \(T_3\), \(\dot{m}_{\mathrm{w}}\), \(t_3\) consistency | **Pass** | \(T_3=2\eta_{\mathrm{jet}}P_3/v_e\), \(t_3=m_{\mathrm{w}}/\dot{m}_{\mathrm{w}}\) |
+| Reference \(I_{\mathrm{sp}}=2000\,\mathrm{s}\) at \(\eta_{\mathrm{jet}}=0.55\) | **Soft fail / stretch** | Between gridded water-ion demos [24] and high-\(I_{\mathrm{sp}}\)/low-\(\eta\) water-MPD [27] — not jointly demonstrated |
+| Packaging \(\sim 320\,\mathrm{kW/kg}\) in \(3.1\,\mathrm{t}\) | **Fail / unobtainium** | Same class hole as stage 2 (§10.6, §13.3) |
+
+**Verdict:** Stage 3 **passes the propellant/energy smoke** (water, \(\Delta v\), and bus energy close on paper) and **does not pass the thruster-performance or packaging smoke** at the reference freeze. Next smoke tests worth building: (i) a 0D thruster I/O block \((P,\eta_{\mathrm{jet}},I_{\mathrm{sp}})\to(T,\dot{m}_{\mathrm{w}})\) with hard bounds from [24], [27], [28] that flags when the vehicle freeze leaves the demo envelope; (ii) burn the \(44\,\mathrm{t}\) water store in that block and check \(\Delta v\) vs \(4\,\mathrm{km/s}\); (iii) tank→injector feed pressure / vaporizer power draw as a hotel-load line item; (iv) later, FlightGear/JSBSim vacuum coast+burn using that same I/O map — orbit is where stage 3 actually lives.
 
 **Stage energy comparison — same peak power, very different mission phases.** \(P_2^{\star}=P_3^{\star}\) is a **bus-ceiling coincidence**, not a claim that the two phases are alike: stage 2 is a short, low-mass-flow hypersonic climb; stage 3 is a long, power-limited vacuum burn that expends the entire water store.
 
@@ -1583,7 +1633,8 @@ Table: External packages and tools used by the living design / paper build.
 | **Python** \(\ge 3.12\) + **Poetry** | Project environment; CAD scripts; assembly JSON tooling; paper build driver |
 | **NumPy** | Numeric support in OpenVSP figure export |
 | **Matplotlib** | Raster floorplan / profile renders from the OpenVSP model |
-| **OpenVSP** (optional Poetry group; upstream `.deb` + Python API) | Parametric vehicle CAD (`.vsp3`); source of the orthographic floorplan and profile figures |
+| **OpenVSP** (optional Poetry group; upstream `.deb` + Python API; NOSA 1.3) | Parametric vehicle CAD (`.vsp3`); source of the orthographic floorplan and profile figures |
+| **VSPAERO** (bundled with OpenVSP; NOSA 1.3) | Digital wind tunnel on `catskills_ssto.vsp3` — Mach×α VLM polar (`make cad-vspaero` → `research/figures/cad/vspaero/`); cross-checks §10.2 \(C_D(M)\) in the subsonic/transonic band |
 | **Blender** 5.x (snap `/snap/bin/blender`) | Drop-in cutaways from `assembly.json` (crew capsule, airlock, cargo skid, fusion plant skid top-down; `make cad-drop-ins`) |
 | **NumPy** (`research/figures/cad/constants_model.py`) | Single source for every sizing-constraint number in §6–§9 and the CHARM bottom-up mass roll-up (§9.6); regenerates `<!--gen-->` spans in this file and patches `assembly.json` / `vehicle_spec.json` — plain arithmetic, never an LLM call |
 | **Pillow** | Image handling when the paper build ingests raster figure assets |

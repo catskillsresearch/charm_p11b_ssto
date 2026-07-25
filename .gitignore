@@ -263,3 +263,6 @@ research/figures/cad/__pycache__/
 !/research/figures/cad/lib/
 !/research/figures/cad/lib/**
 research/figures/cad/lib/__pycache__/
+
+# VSPAERO digital-tunnel working files (keep summary.json / polar.csv / polar.png)
+research/figures/cad/vspaero/run/

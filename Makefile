@@ -40,7 +40,7 @@ UPDATE_ARXIV_CONSTANTS := $(ROOT)/scripts/update_arxiv_constants.py
 APPLY_CONSTANTS_TO_ASSEMBLY := $(ROOT)/scripts/apply_constants_to_assembly.py
 UPDATE_ARXIV_MERMAID := $(ROOT)/scripts/update_arxiv_mermaid.py
 
-.PHONY: help cad-figures cad-crew-capsule cad-airlock cad-cargo-skid cad-fusion-skid cad-drop-ins paper-constants paper-render install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
+.PHONY: help cad-figures cad-vspaero smoke-stage1 smoke-stage2 cad-crew-capsule cad-airlock cad-cargo-skid cad-fusion-skid cad-drop-ins paper-constants paper-render install-openvsp zenodo zenodo-tex zenodo-pdf zenodo-zip arxiv clean-figures
 
 help:
 	@echo "Targets:"
@@ -48,6 +48,9 @@ help:
 	@echo "  make zenodo-tex      - paper-render + arxiv.md → zenodo.tex (+ mermaid/assets)"
 	@echo "  make paper-constants - constants_model.py (numpy) → constants.generated.json"
 	@echo "  make paper-render    - paper-constants + regenerate arxiv.md <!--gen--> spans + patch assembly.json/vehicle_spec.json + regenerate Figs 7-9 mermaid from assembly.json"
+	@echo "  make cad-vspaero     - OpenVSP/VSPAERO Mach×α digital tunnel → cad/vspaero/"
+	@echo "  make smoke-stage1    - Stage 1 VSPAERO outline go/no-go (§10.2.1)"
+	@echo "  make smoke-stage2    - Stage 2 climb/energy go/no-go (§10.4)"
 	@echo "  make cad-figures     - vehicle_spec → OpenVSP (+constraints) → figures"
 	@echo "  make cad-drop-ins    - crew capsule + airlock + cargo skid + fusion plant skid (Blender)"
 	@echo "  make cad-crew-capsule - assembly.json → Blender crew cutaway PNG + .blend"
@@ -63,6 +66,19 @@ install-openvsp:
 	$(ROOT)/scripts/install_openvsp.sh
 
 CAD_VALIDATE := $(CAD_DIR)/validate_vehicle_constraints.py
+
+cad-vspaero: $(CAD_DIR)/catskills_ssto.vsp3
+	@test -d $(ROOT)/third_party/openvsp/opt/OpenVSP || \
+	  (echo "OpenVSP not extracted. Run: make install-openvsp" >&2; exit 1)
+	cd $(CAD_DIR) && \
+	  LD_LIBRARY_PATH="$(OPENVSP_LIB)$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}" \
+	  $(POETRY) run python $(CAD_DIR)/run_vspaero_tunnel.py
+
+smoke-stage1:
+	$(POETRY) run python $(CAD_DIR)/smoke_stage1.py
+
+smoke-stage2:
+	$(POETRY) run python $(CAD_DIR)/smoke_stage2.py
 
 cad-figures: $(CAD_PNGS)
 

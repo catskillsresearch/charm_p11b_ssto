@@ -11,7 +11,8 @@
 | [`constants_model.py`](constants_model.py) | **Numeric sizing constraints** — numpy/dataclass model for the CHARM bottom-up mass roll-up (magnets, cryo) and the full `m_dry`/`mu`/`m_w`/`m0` chain; writes `constants.generated.json`, consumed by `arxiv.md`'s `<!--gen-->` spans, `assembly.json`, `vehicle_spec.json`, and `build_fusion_plant_skid_blender.py` |
 
 ```text
-assembly.json  →  OpenVSP exterior (VSPAERO later)  →  .stl shell
+assembly.json  →  OpenVSP exterior  →  .stl shell
+               →  VSPAERO digital tunnel (`make cad-vspaero` → `vspaero/`)
                →  Blender cutaway / interior placement along the same tree
 constants_model.py (numpy)  →  constants.generated.json  →  arxiv.md <!--gen--> spans
                                                           →  assembly.json / vehicle_spec.json size blocks
@@ -144,4 +145,7 @@ HTML/JS + Mermaid CDN.
 make install-openvsp   # once
 make cad-figures
 make cad-validate
+make cad-vspaero       # VSPAERO Mach×α polar → vspaero/{summary.json,polar.csv,polar.png}
 ```
+
+`run_vspaero_tunnel.py` deletes landing-gear pods from a working copy, builds thin-surface DegenGeom, and sweeps \(\alpha\in\{0,4,8\}^\circ\) at \(M\in\{0.3,0.6,0.8,0.95\}\). Raw solver files stay under `vspaero/run/` (gitignored); the committed artifacts are the summary/CSV/plot used by §10.2.1.
