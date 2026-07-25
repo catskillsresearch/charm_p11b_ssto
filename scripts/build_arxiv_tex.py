@@ -249,6 +249,23 @@ def render_mermaid(code: str, idx: int, *, scale: float = 1.0) -> str:
     return pdf_path.relative_to(ROOT).as_posix()
 
 
+def _write_paper_png(src: Path, dest: Path, *, max_width: int = 2400, colors: int = 128) -> None:
+    """Write a print-sized, palette-compressed PNG for the arXiv/zenodo asset tree.
+
+    Source renders in ``research/figures/`` stay full-resolution; only the
+    paper copy under ``figures/assets/`` is downscaled.
+    """
+    from PIL import Image
+
+    im = Image.open(src).convert("RGB")
+    if im.width > max_width:
+        new_h = max(1, round(im.height * max_width / im.width))
+        im = im.resize((max_width, new_h), Image.Resampling.LANCZOS)
+    im.convert("P", palette=Image.ADAPTIVE, colors=colors).save(
+        dest, format="PNG", optimize=True
+    )
+
+
 def convert_research_asset(src_name: str) -> str:
     """Copy/convert ``research/figures/<src_name>`` → ``figures/assets/<safe>``."""
     src = RESEARCH_FIGURES / src_name
@@ -261,8 +278,20 @@ def convert_research_asset(src_name: str) -> str:
 
     if suffix in {".png", ".jpg", ".jpeg", ".pdf"}:
         dest = ASSETS_DIR / src.name
-        if not dest.is_file() or dest.stat().st_mtime < src.stat().st_mtime:
-            shutil.copy2(src, dest)
+        heavy_png = suffix == ".png" and src.stat().st_size > 1_500_000
+        stale = (
+            not dest.is_file()
+            or dest.stat().st_mtime < src.stat().st_mtime
+            or (heavy_png and dest.stat().st_size > 2_000_000)
+        )
+        if stale:
+            if heavy_png:
+                # Blender drop-ins are multi-MB RGB; palette+downscale keeps
+                # engineering-drawing edges sharp while staying under arXiv's
+                # ~20 MB submission-zip limit.
+                _write_paper_png(src, dest)
+            else:
+                shutil.copy2(src, dest)
         _WRITTEN_ASSETS.add(dest.resolve())
         return dest.relative_to(ROOT).as_posix()
 
@@ -501,10 +530,10 @@ def figure_latex(
     landscape: bool = False,
     short_caption: str | None = None,
 ) -> str:
-    # Landscape: long page edge becomes \\linewidth, so wide LR charts can grow.
+    # Landscape: fill nearly the whole rotated page (caption still fits below).
     include = (
         f"\\includegraphics[width=\\linewidth,"
-        f"height=0.72\\textheight,keepaspectratio]{{{rel_path}}}"
+        f"height=0.90\\textheight,keepaspectratio]{{{rel_path}}}"
         if landscape
         else (
             f"\\includegraphics[max width=\\linewidth,"
@@ -1235,6 +1264,48 @@ def promote_remaining_survey_tables(latex: str) -> str:
     return latex
 
 
+def fix_appendix_numbering(latex: str) -> str:
+    """Turn hand-titled ``Appendix A. …`` / ``A.1 …`` headings into real ``\\appendix`` numbering.
+
+    ``arxiv.md`` keeps human-readable ``## Appendix A. Design software`` /
+    ``### A.1 …`` for GitHub; without this step pandoc emits a normal
+    ``\\section{Appendix A. …}`` that continues the Arabic counter
+    (``16 Appendix A. …``). After ``\\appendix``, article sections become
+    A, A.1, A.2, …
+    """
+    # First appendix section: switch to letter numbering and drop the
+    # redundant "Appendix A." title prefix (LaTeX will print "A").
+    latex, n = re.subn(
+        r"(\\section\{)Appendix\s+[A-Z]\.?\s+",
+        r"\\appendix\n\1",
+        latex,
+        count=1,
+    )
+    if n:
+        # Further ``Appendix B. …`` sections (if any): strip prefix only.
+        latex = re.sub(
+            r"(\\section\{)Appendix\s+[A-Z]\.?\s+",
+            r"\1",
+            latex,
+        )
+    # Strip hand-written ``A.1 `` / ``A.2.3 `` prefixes from sub*sections
+    # (same role as the numeric strip below for main-matter headings).
+    for cmd in ("subsection", "subsubsection", "paragraph"):
+        latex = re.sub(
+            rf"(\\{cmd}\{{)[A-Z](?:\.\d+)+\.?\s+",
+            r"\1",
+            latex,
+        )
+    # Acknowledgments / References must not become Appendix B / C.
+    for title in ("Acknowledgments", "Acknowledgements", "References"):
+        latex = re.sub(
+            rf"(\\section)\{{{re.escape(title)}\}}",
+            rf"\1*{{{title}}}",
+            latex,
+        )
+    return latex
+
+
 def cleanup_pandoc_latex(latex: str) -> str:
     latex = latex.replace("\\pandocbounded{", "{")
     latex = re.sub(r"\\tightlist\n", "", latex)
@@ -1244,6 +1315,7 @@ def cleanup_pandoc_latex(latex: str) -> str:
             r"\1",
             latex,
         )
+    latex = fix_appendix_numbering(latex)
     # Pandoc emits bare \includegraphics{path} for markdown images; scale to page.
     latex = re.sub(
         r"\\includegraphics\{([^}]+)\}",

@@ -344,117 +344,114 @@ def build_crew_capsule(asm: dict) -> dict:
     # Leader-line callouts (dot on the part, line out to readable text) instead
     # of bare floating labels — keeps each label visibly tied to its part.
     z_lab = wall_h + 0.05
+    # Lettering sized for paper readability (~50 px body at 3200 px render),
+    # matching the cargo-skid figure's scale relative to its frame.
     callout(
         "CO_rcs",
         anchor_xyz=(x0 - 0.55, 0.0, 0.0),
-        label_xyz=(x0 - 1.0, 1.9, 0.0),
+        label_xyz=(x0 - 1.4, 2.3, 0.0),
         text="Forward RCS",
         collection=c_lab,
         z=z_lab,
-        text_size=0.15,
+        text_size=0.38,
     )
     callout(
         "CO_cdr",
         anchor_xyz=(deck_x, 0.55, 0.0),
-        label_xyz=(deck_x, 1.5, 0.0),
+        label_xyz=(deck_x, 1.85, 0.0),
         text="CDR",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.36,
     )
     callout(
         "CO_plt",
         anchor_xyz=(deck_x, -0.55, 0.0),
-        label_xyz=(deck_x, -1.5, 0.0),
+        label_xyz=(deck_x, -1.85, 0.0),
         text="PLT",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.36,
     )
-    text_label("LBL_pax", "6 passenger seats", (row_xs[1], 1.55, z_lab), c_lab, size=0.15)
+    text_label("LBL_pax", "6 passenger seats", (row_xs[1], 1.85, z_lab), c_lab, size=0.40)
     callout(
         "CO_earth",
         anchor_xyz=(hatch_x, y_half, 0.0),
-        label_xyz=(hatch_x, y_half + 0.9, 0.0),
+        label_xyz=(hatch_x, y_half + 1.2, 0.0),
         text="Earth hatch",
         collection=c_lab,
         z=z_lab,
-        text_size=0.14,
+        text_size=0.36,
     )
     callout(
         "CO_aft",
         anchor_xyz=(x1, 0.35, 0.0),
-        label_xyz=(x1 + 0.7, 1.4, 0.0),
+        label_xyz=(x1 + 1.1, 1.7, 0.0),
         text="Aft hatch → airlock",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.36,
     )
     callout(
         "CO_food",
         anchor_xyz=(food_x, food_y, 0.0),
-        label_xyz=(food_x, food_y - 1.1, 0.0),
+        label_xyz=(food_x, food_y - 1.4, 0.0),
         text="Food pouches + warmer",
         collection=c_lab,
         z=z_lab,
-        text_size=0.12,
+        text_size=0.34,
     )
     callout(
         "CO_wcs",
         anchor_xyz=(wcs_x, wcs_y, 0.0),
-        label_xyz=(wcs_x - 0.7, wcs_y + 0.55, 0.0),
+        label_xyz=(wcs_x - 1.0, wcs_y + 0.75, 0.0),
         text="WCS",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.36,
     )
     callout(
         "CO_eclss",
         anchor_xyz=(x0 + 10.2, -y_half + 0.6, 0.0),
-        label_xyz=(x0 + 10.2, -y_half - 0.55, 0.0),
+        label_xyz=(x0 + 10.2, -y_half - 0.85, 0.0),
         text="ECLSS + O2/N2",
         collection=c_lab,
         z=z_lab,
-        text_size=0.12,
+        text_size=0.34,
     )
     callout(
         "CO_lock",
         anchor_xyz=(locker_x, -(y_half - wall_t - locker_d / 2.0), 0.0),
-        label_xyz=(locker_x, -y_half - 0.55, 0.0),
+        label_xyz=(locker_x, -y_half - 0.85, 0.0),
         text="Luggage 0.6 m deep",
         collection=c_lab,
         z=z_lab,
-        text_size=0.12,
+        text_size=0.34,
     )
-    text_label("LBL_roof", "Roof cover (same footprint)", (cx, cover_y - 0.55, z_lab), c_lab, size=0.14)
-    text_label(
-        "LBL_title",
-        "CREW CAPSULE (assembly.json)",
-        (cx, cover_y - width * 0.55, z_lab),
-        c_lab,
-        size=0.26,
-    )
+    text_label("LBL_roof", "Roof cover (same footprint)", (cx, cover_y - 0.7, z_lab), c_lab, size=0.36)
 
     # Dimension lines: length along the top, width ahead of the nose.
     dimension_line(
         "DIM_length",
         p0=(x0, y_half),
         p1=(x1, y_half),
-        offset=1.1,
+        offset=1.5,
         text=f"{length:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.18,
+        text_size=0.45,
+        line_t=0.035,
     )
     dimension_line(
         "DIM_width",
         p0=(x0, -y_half),
         p1=(x0, y_half),
-        offset=1.8,
+        offset=2.4,
         text=f"{width:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.18,
+        text_size=0.45,
+        line_t=0.035,
     )
 
     # Subsystem color legend, clear of the vessel in the left margin.
@@ -467,9 +464,13 @@ def build_crew_capsule(asm: dict) -> dict:
             (m_sys, "ECLSS systems"),
             (m_tank, "Gas tanks"),
         ],
-        (x0 - 5.4, 1.2, z_lab),
+        (x0 - 6.6, 1.6, z_lab),
         c_lab,
         title="LEGEND",
+        swatch=0.36,
+        row_gap=0.62,
+        label_dx=0.65,
+        text_size=0.34,
     )
 
     # Keep aisle visually empty (no geometry in |Y| < aisle_half for furniture)
@@ -503,18 +504,19 @@ def main() -> int:
     meta = build_crew_capsule(asm)
 
     # Composition is asymmetric in both axes (legend in the left margin,
-    # dimension lines above, parked roof cover + title well below; camera x
-    # is pinned to cx), so fit content bounds explicitly.
+    # dimension lines above, parked roof cover below; camera x is pinned to
+    # cx), so fit content bounds explicitly. No in-figure title: the LaTeX
+    # \caption already names the figure.
     render_w, render_h = 3200, 2000
-    y_top = meta["y_half"] + 1.5
-    y_bottom = meta["cover_y"] - meta["width"] * 0.55 - 0.3
+    y_top = meta["y_half"] + 2.2
+    y_bottom = meta["cover_y"] - 1.1
     cam_y = (y_top + y_bottom) / 2.0
     half_height_needed = (y_top - y_bottom) / 2.0
 
     x0 = meta["cx"] - meta["length"] / 2.0
     x1 = meta["cx"] + meta["length"] / 2.0
-    x_left = x0 - 5.7  # legend origin (x0 - 5.4) minus swatch/text margin
-    x_right = x1 + 1.8  # aft-hatch callout label margin
+    x_left = x0 - 8.0  # legend margin (larger lettering)
+    x_right = x1 + 2.8  # aft-hatch callout label margin
     half_width_needed = max(meta["cx"] - x_left, x_right - meta["cx"])
 
     ortho_scale = max(

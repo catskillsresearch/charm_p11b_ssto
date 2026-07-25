@@ -149,67 +149,61 @@ def build_airlock(asm: dict) -> dict:
     callout(
         "CO_cabin",
         anchor_xyz=(x0, 0.3, 0.0),
-        label_xyz=(x0 - 1.1, 0.6, 0.0),
+        label_xyz=(x0 - 1.6, 0.85, 0.0),
         text="Hatch → cabin",
         collection=c_lab,
         z=z_lab,
-        text_size=0.11,
+        text_size=0.32,
     )
     callout(
         "CO_bay",
         anchor_xyz=(x1, 0.3, 0.0),
-        label_xyz=(x1 + 1.1, 0.6, 0.0),
+        label_xyz=(x1 + 1.6, 0.85, 0.0),
         text="Hatch → cargo bay",
         collection=c_lab,
         z=z_lab,
-        text_size=0.11,
+        text_size=0.32,
     )
     callout(
         "CO_tank",
         anchor_xyz=(tank_x, tank_y, 0.0),
-        label_xyz=(tank_x - 0.1, tank_y + 0.55, 0.0),
+        label_xyz=(tank_x - 0.1, tank_y + 0.85, 0.0),
         text="Air tank (press/depress)",
         collection=c_lab,
         z=z_lab,
-        text_size=0.10,
+        text_size=0.28,
     )
     callout(
         "CO_pack",
         anchor_xyz=(pack_x, pack_y, 0.0),
-        label_xyz=(pack_x + 0.1, pack_y - 0.55, 0.0),
+        label_xyz=(pack_x + 0.1, pack_y - 0.85, 0.0),
         text="Cycle gadgets",
         collection=c_lab,
         z=z_lab,
-        text_size=0.10,
+        text_size=0.28,
     )
-    text_label("LBL_roof", "Roof cover", (cx, cover_y - width * 0.15, z_lab), c_lab, size=0.10)
-    text_label(
-        "LBL_title",
-        "AIRLOCK (assembly.json)",
-        (cx, cover_y - width * 0.5, z_lab),
-        c_lab,
-        size=0.18,
-    )
+    text_label("LBL_roof", "Roof cover", (cx, cover_y - width * 0.15, z_lab), c_lab, size=0.28)
 
     dimension_line(
         "DIM_length",
         p0=(x0, y_half),
         p1=(x1, y_half),
-        offset=1.0,
+        offset=1.4,
         text=f"{length:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.36,
     )
+    # Width dim on the aft (cargo-bay) end so it does not cross the legend.
     dimension_line(
         "DIM_width",
-        p0=(x0, -y_half),
-        p1=(x0, y_half),
-        offset=1.6,
+        p0=(x1, -y_half),
+        p1=(x1, y_half),
+        offset=-2.0,
         text=f"{width:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.36,
     )
 
     legend(
@@ -219,11 +213,13 @@ def build_airlock(asm: dict) -> dict:
             (m_tank, "Air tank"),
             (m_pack, "Cycle gadgets"),
         ],
-        (x0 - 2.6, y_half + 0.3, z_lab),
+        (x0 - 3.6, y_half + 0.5, z_lab),
         c_lab,
         title="LEGEND",
-        row_gap=0.28,
-        text_size=0.10,
+        swatch=0.32,
+        row_gap=0.55,
+        label_dx=0.55,
+        text_size=0.28,
     )
 
     return {
@@ -247,19 +243,20 @@ def main() -> int:
     clear_scene()
     meta = build_airlock(asm)
 
-    # Legend (left), dimension lines (above), parked roof cover + title
-    # (well below) make this asymmetric — fit content bounds explicitly.
+    # Legend (left), dimension lines (above), parked roof cover (below)
+    # make this asymmetric — fit content bounds explicitly. No in-figure
+    # title: the LaTeX \caption already names the figure.
     render_w, render_h = 2400, 2000
     y_half = meta["y_half"]
-    y_top = y_half + 1.3
-    y_bottom = meta["cover_y"] - meta["width"] * 0.5 - 0.2
+    y_top = y_half + 1.9
+    y_bottom = meta["cover_y"] - meta["width"] * 0.25 - 0.25
     cam_y = (y_top + y_bottom) / 2.0
     half_height_needed = (y_top - y_bottom) / 2.0
 
     x0 = meta["cx"] - meta["length"] / 2.0
     x1 = meta["cx"] + meta["length"] / 2.0
-    x_left = x0 - 3.8  # legend margin
-    x_right = x1 + 2.7  # "Hatch -> cargo bay" callout margin
+    x_left = x0 - 5.2  # legend margin
+    x_right = x1 + 4.0  # hatch callout + width dim
     half_width_needed = max(meta["cx"] - x_left, x_right - meta["cx"])
 
     ortho_scale = max(

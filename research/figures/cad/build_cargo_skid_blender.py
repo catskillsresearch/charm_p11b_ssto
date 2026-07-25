@@ -155,65 +155,64 @@ def build_cargo_skid(asm: dict) -> dict:
     door_outer = y_half + panel_width
     z_lab = wall_h + 0.15
 
+    # World-space text must be large: this station is ~18 m long and the ortho
+    # camera spans ~28 m, so 0.15 m letters render at ~20 px (microtype in the
+    # paper). Target ~55–70 px body at 3600 px render width.
     callout(
         "CO_fwd",
         anchor_xyz=(x0, 0.0, 0.0),
-        label_xyz=(x0 - 1.7, 1.6, 0.0),
+        label_xyz=(x0 - 1.2, door_outer + 0.85, 0.0),
         text="Fwd interface\n(airlock aft hatch)",
         collection=c_lab,
         z=z_lab,
-        text_size=0.15,
+        text_size=0.48,
     )
     callout(
         "CO_aft",
         anchor_xyz=(x1, 0.0, 0.0),
-        label_xyz=(x1 + 1.9, 1.6, 0.0),
+        label_xyz=(x1 + 1.4, door_outer + 0.85, 0.0),
         text="Open aft — no pressure door\n(EVA to CHARM/engine wells)",
         collection=c_lab,
         z=z_lab,
-        text_size=0.15,
+        text_size=0.48,
     )
-    text_label("LBL_payload", "Payload envelope (≤24.4 t)", (cx, 0.0, z_lab), c_lab, size=0.18)
-    text_label("LBL_left", "Left cargo door (open)", (cx, door_outer * 0.55, z_lab), c_lab, size=0.17)
-    text_label("LBL_right", "Right cargo door (open)", (cx, -door_outer * 0.55, z_lab), c_lab, size=0.17)
+    text_label("LBL_payload", "Payload envelope (≤24.4 t)", (cx, 0.0, z_lab), c_lab, size=0.52)
+    text_label("LBL_left", "Left cargo door (open)", (cx, door_outer * 0.55, z_lab), c_lab, size=0.50)
+    text_label("LBL_right", "Right cargo door (open)", (cx, -door_outer * 0.55, z_lab), c_lab, size=0.50)
     # Kept entirely below y_half (never crosses under the tilted door panels,
     # whose rotated outer edge rises in Z and would occlude a top-side label).
     callout(
         "CO_tie",
-        anchor_xyz=(x0 + 1.5, -(y_half - 0.7), 0.0),
-        label_xyz=(x0 + 1.5, -(y_half - 0.15), 0.0),
+        anchor_xyz=(x0 + 2.2, -(y_half - 0.7), 0.0),
+        label_xyz=(x0 + 2.2, -(y_half + 0.05), 0.0),
         text="Tie-down grid",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.42,
     )
-    text_label(
-        "LBL_title",
-        "CARGO SKID (assembly.json)",
-        (cx, -(door_outer + 0.9), z_lab),
-        c_lab,
-        size=0.30,
-    )
-
     dimension_line(
         "DIM_length",
         p0=(x0, -door_outer),
         p1=(x1, -door_outer),
-        offset=-0.35,
+        offset=-0.75,
         text=f"{length:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.20,
+        text_size=0.55,
+        line_t=0.035,
     )
+    # Width dim on the aft end so it does not collide with the forward
+    # callout / legend cluster.
     dimension_line(
         "DIM_width",
-        p0=(x0, -door_outer),
-        p1=(x0, door_outer),
-        offset=2.2,
+        p0=(x1, -door_outer),
+        p1=(x1, door_outer),
+        offset=-2.4,
         text=f"{width:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.20,
+        text_size=0.55,
+        line_t=0.035,
     )
 
     legend(
@@ -224,11 +223,13 @@ def build_cargo_skid(asm: dict) -> dict:
             (m_interface, "Hatch interface"),
             (m_tiedown, "Tie-down points"),
         ],
-        (x0 - 4.6, door_outer * 0.5, z_lab),
+        (x0 - 6.4, door_outer * 0.35, z_lab),
         c_lab,
         title="LEGEND",
-        row_gap=0.34,
-        text_size=0.14,
+        swatch=0.40,
+        row_gap=0.78,
+        label_dx=0.70,
+        text_size=0.42,
     )
 
     return {
@@ -251,20 +252,21 @@ def main() -> int:
     meta = build_cargo_skid(asm)
 
     # Composition is asymmetric: doors extend +/-door_outer, the legend sits
-    # in the fwd-left margin, and the title sits further below than the top
-    # margin — fit content bounds explicitly (ortho_scale maps to the wider
-    # render dimension, x here) rather than relying on the symmetric default.
+    # in the fwd-left margin — fit content bounds explicitly. No in-figure
+    # title: the LaTeX \caption already names the figure.
     door_outer = meta["door_outer"]
-    render_w, render_h = 3600, 1600
-    y_top = door_outer + 0.35
-    y_bottom = -(door_outer + 1.4)
+    # Slightly taller aspect so door panels + callouts fill more of the frame
+    # (less empty side gutter → lettering reads larger on the page).
+    render_w, render_h = 3600, 2000
+    y_top = door_outer + 2.0  # forward/aft callouts sit above the open doors
+    y_bottom = -(door_outer + 1.5)  # length dimension
     cam_y = (y_top + y_bottom) / 2.0
     half_height_needed = (y_top - y_bottom) / 2.0
 
     x0 = meta["cx"] - meta["length"] / 2.0
     x1 = meta["cx"] + meta["length"] / 2.0
-    x_left = x0 - 6.3  # legend margin
-    x_right = x1 + 3.7  # "Open aft" callout label margin
+    x_left = x0 - 8.8  # legend margin
+    x_right = x1 + 4.0  # aft callout + width dim
     half_width_needed = max(meta["cx"] - x_left, x_right - meta["cx"])
 
     ortho_scale = max(

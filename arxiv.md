@@ -23,7 +23,7 @@ Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real c
 
 Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [14,21], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **$L \approx 52\,\mathrm{m}$**. ECLSS = **Environmental Control and Life Support System**. Depth $\approx 6.5$–$7\,\mathrm{m}$, span $\approx 28\,\mathrm{m}$.
 
-Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell doors); **fusion electric plant** $33.3$–$49\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, water tanks $35.5$–$39.5\,\mathrm{m}$ — relocated ahead of CHARM as a supplemental radiation shield, §9.9 — fuel services $39.5$–$41.5\,\mathrm{m}$, CHARM island incl. permanent shield bulkhead $41.5$–$49\,\mathrm{m}$); **combined-cycle engine** $49$–$52\,\mathrm{m}$ (stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}) is 1–1 with that JSON tree. The floorplan is a top-down cutaway (no landing gear). The profile shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
+Figs.~\ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, top clamshell doors); **fusion electric plant** $33.3$–$49\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, water tanks $35.5$–$39.5\,\mathrm{m}$ — relocated ahead of CHARM as a supplemental radiation shield, §9.9 — fuel services $39.5$–$41.5\,\mathrm{m}$, CHARM island incl. permanent shield bulkhead $41.5$–$49\,\mathrm{m}$); **combined-cycle engine** $49$–$52\,\mathrm{m}$ (stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant}) is 1–1 with that JSON tree. Fig.~\ref{fig:charm-ssto-interior-floorplan} is a top-down cutaway (no landing gear). Fig.~\ref{fig:charm-ssto-exterior-profile} shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
 
 <!-- figure-landscape -->
 ![Vehicle floor plan.](research/figures/charm_ssto_interior_floorplan.png)
@@ -33,7 +33,7 @@ Figures \ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior
 
 ### Forward drop-ins (top-down, covers off)
 
-All four drop-ins below are **Blender** orthographic top views built procedurally from `assembly.json` (`make cad-drop-ins`; see `research/figures/cad/build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py`, `build_fusion_plant_skid_blender.py`, and the shared helpers in `research/figures/cad/lib/`). No AI-generated imagery remains in this section.
+Figs.~\ref{fig:crew-capsule-top}–\ref{fig:fusion-plant-skid-top} are **Blender** orthographic top views built procedurally from `assembly.json` (`make cad-drop-ins`; see `research/figures/cad/build_crew_capsule_blender.py`, `build_airlock_blender.py`, `build_cargo_skid_blender.py`, `build_fusion_plant_skid_blender.py`, and the shared helpers in `research/figures/cad/lib/`). No AI-generated imagery remains in this section.
 
 <!-- figure-landscape -->
 ![Crew capsule, Blender top-down cutaway from assembly.json.](research/figures/crew_capsule_top.png)
@@ -49,9 +49,11 @@ All four drop-ins below are **Blender** orthographic top views built procedurall
 
 ### Fusion electric plant (assembly SSOT)
 
-Schematic below is auto-generated from `research/figures/cad/assembly.json` on every build (`scripts/update_arxiv_mermaid.py`, same visible-set algorithm as the interactive outliner — see `research/figures/cad/lib/mermaid_builder.py`). Boxes are plant parts/collections, not a separate physics cartoon; this figure is hard-scoped to the fusion plant assembly, so the one connection leaving it (to the combined-cycle engine) is drawn as a dashed boundary stub rather than pulling in the engine's own parts.
+Fig.~\ref{fig:mermaid-fusion-electric-plant} is auto-generated from `research/figures/cad/assembly.json` on every build (`scripts/update_arxiv_mermaid.py`, same visible-set algorithm as the interactive outliner — see `research/figures/cad/lib/mermaid_builder.py`). Boxes are plant parts/collections, not a separate physics cartoon; this figure is hard-scoped to the fusion plant assembly, so the one connection leaving it (to the combined-cycle engine) is drawn as a dashed boundary stub rather than pulling in the engine's own parts.
 
+<!-- mermaid-landscape -->
 <!-- mermaid-caption: Fusion electric plant (assembly.json) -->
+<!-- mermaid-label: fig:mermaid-fusion-electric-plant -->
 <!--mermaid-gen fusion_electric_plant-->
 ```mermaid
 flowchart TB
@@ -181,9 +183,11 @@ flowchart TB
 
 ### Profile stations
 
-Stations match assembly envelopes: crew \(0\)–\(11\,\mathrm{m}\), airlock \(11\)–\(15\,\mathrm{m}\), cargo \(15\)–\(33.3\,\mathrm{m}\), fusion plant \(33.3\)–\(49\,\mathrm{m}\) (battery + water + fuel + CHARM on one skid — water relocated ahead of CHARM as a supplemental shield, §9.9), engine \(49\)–\(52\,\mathrm{m}\). Auto-generated (whole-vehicle scope, one level into the fusion plant and engine) by the same `scripts/update_arxiv_mermaid.py` pipeline as Fig.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}.
+Stations match assembly envelopes: crew \(0\)–\(11\,\mathrm{m}\), airlock \(11\)–\(15\,\mathrm{m}\), cargo \(15\)–\(33.3\,\mathrm{m}\), fusion plant \(33.3\)–\(49\,\mathrm{m}\) (battery + water + fuel + CHARM on one skid — water relocated ahead of CHARM as a supplemental shield, §9.9), engine \(49\)–\(52\,\mathrm{m}\). Fig.~\ref{fig:mermaid-profile-stations} is auto-generated (whole-vehicle scope, one level into the fusion plant and engine) by the same `scripts/update_arxiv_mermaid.py` pipeline as Fig.~\ref{fig:mermaid-fusion-electric-plant}.
 
+<!-- mermaid-landscape -->
 <!-- mermaid-caption: Profile stations from assembly envelopes -->
+<!-- mermaid-label: fig:mermaid-profile-stations -->
 <!--mermaid-gen profile_stations-->
 ```mermaid
 flowchart TD
@@ -1236,6 +1240,8 @@ P_3^{\star} &= <!--gen stage.p3_star_mw:.0f-->995<!--/gen-->\,\mathrm{MW}
 
 \(P_2^{\star}=P_3^{\star}\) by the shared bus ceiling — §10.4/§10.5 now derive \(t_2\), \(h_{\mathrm{seal}}\), and \(E_2\) independently of that ceiling coincidence, and show \(E_2\ll E_3\) despite it (comparison table, §10.5).
 
+**How to read the equal peak loads.** The plant is sized so that a feasible flight envelope exists in *both* stage 2 and stage 3 when the bus is run at its ceiling \(P_{\star}-P_{\mathrm{hotel}}\). The CHARM plant is assumed throttleable (§5; stage 1 only needs \(\sim P_1^{\star}\)), but the reference mission holds stages 2 and 3 at that same maximum: stage 2 because the constant-\(Q\) climb *requires* that power to close \(t_2\) and \(h_{\mathrm{seal}}\) on a municipal-runway GLOW; stage 3 because \(E_3\) is fixed by \((m_{\mathrm{w}},I_{\mathrm{sp}})\) and \(t_3=E_3/P_3\), so running below the ceiling only lengthens an already multi-hour insertion. The equal ratings therefore imply an asymmetry of *need*, not of physics: **stage 2 is the power-sizing driver** (it sets how large \(P_{\star}\) must be for the envelope to close), while **stage 3 is somewhat underpowered** relative to a short vacuum burn — even flat-out at the stage-2-sized plant it still takes \(t_3\sim <!--gen stage.t3_h:.2f-->4.33<!--/gen-->\,\mathrm{h}\). A bigger plant would shorten stage 3 without changing \(E_3\); a smaller plant would break stage 2 first.
+
 **Engine mass budget** (reference hole \(m_{\mathrm{eng}}=15\,\mathrm{t}\)):
 
 Table: Engine component mass allocation and implied packaging specific power.
@@ -1282,9 +1288,11 @@ Table: Longitudinal station and bay layout.
 | \(49\)–\(52\) | Engine | Combined-cycle nacelle + nozzle |
 | Wings | Controls | Elevons, rudder (gear not drawn on this figure) |
 
-**Doors (Shuttle pattern).** (1) **Side/forward crew door** — runway/ground only; (2) **airlock** — on-orbit cabin ↔ cargo bay / vacuum for suited operations [21]. Auto-generated (whole-vehicle scope; crew capsule expanded to system level, airlock/cargo bay as single boxes, plant/engine one level) by the same pipeline as Figs.~\ref{fig:mermaid-fusion-electric-plant-assembly-json}–\ref{fig:mermaid-profile-stations-from-assembly-envelopes}.
+**Doors (Shuttle pattern).** (1) **Side/forward crew door** — runway/ground only; (2) **airlock** — on-orbit cabin ↔ cargo bay / vacuum for suited operations [21]. Fig.~\ref{fig:mermaid-floorplan} is auto-generated (whole-vehicle scope; crew capsule expanded to system level, airlock/cargo bay as single boxes, plant/engine one level) by the same pipeline as Figs.~\ref{fig:mermaid-fusion-electric-plant}–\ref{fig:mermaid-profile-stations}.
 
+<!-- mermaid-landscape -->
 <!-- mermaid-caption: Top-down floorplan from assembly.json -->
+<!-- mermaid-label: fig:mermaid-floorplan -->
 <!--mermaid-gen floorplan-->
 ```mermaid
 flowchart LR
@@ -1526,7 +1534,39 @@ Sections 1–12 are a **requirements mirror** held up to CHARM: they say what a 
 
 ## 14. Conclusion
 
-Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. The pressurized nose is **lengthened (\(\approx 52\,\mathrm{m}\) OML)** so the cabin can hold a real **ECLSS with O₂/N₂**, **luggage**, a **suited-size airlock** into the bay, plus visible **battery** and **fusion-fuel tank** bays. Crew: **forward-facing flight deck**, **six passenger seats**, **solid ground side hatch**, **solid aft hatch into airlock**. **Landing gear (\(4\,\mathrm{t}\))** and **control surfaces (\(3\,\mathrm{t}\))** sit in the mass bill (gear drawn on the profile, not the floorplan). The MWh budget is linear in inserted mass: about **\(9.2\,\mathrm{kWh}\) per kg** orbital, times \(\kappa_E\sim 2\)–\(4\) at the CHARM bus. Water scales only with **dry mass** and vacuum \(\Delta v/I_{\mathrm{sp}}\). Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**, with CHARM as a **\(67\,\mathrm{t}\), \(\lesssim 120\,\mathrm{m}^3\)** island using **DEC**, lit by **magnets + RF + rotation** (\(50\)–\(200\,\mathrm{kWh}\) class light-off; space restart from a \(2\,\mathrm{t}\) battery), and a **single combined-cycle engine** spanning electric ducted fan → microwave air plasma → water plasma. Vision figures (§1) show planform, plant, and profile. Those are the numbers the in-silico CHARM plant and engine maps must satisfy.
+Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**. Vision figures (Figs.~\ref{fig:charm-ssto-interior-floorplan}–\ref{fig:mermaid-profile-stations}) show the interior floorplan, exterior profile, drop-in cutaways, and assembly trees that those numbers must fit.
+
+### CHARM reactor performance goals (what this airframe invoices)
+
+The plant that closes the mass/energy budget must deliver, as a single flight-packaged island:
+
+- **Continuous \(p\text{-}^{11}\mathrm{B}\) fusion** with multi-chamber rotating-mirror confinement, species separation, ash strain, and **DEC** onto a **\(1\,\mathrm{GW}\) electrical bus**.
+- **Mission source energy** \(\sim 5\,\mathrm{GWh}\) class per ascent (\(\kappa_E\sim 3\)), not a pulsed shot.
+- **Island mass / volume** \(m_{\mathrm{C}}\approx 67\,\mathrm{t}\), \(V_{\mathrm{C}}\lesssim 120\,\mathrm{m}^3\) \(\Rightarrow\) \(\alpha_{\mathrm{C}}\ge 15\,\mathrm{kW/kg}\) and \(\bar{p}_{\mathrm{C}}\gtrsim 8\,\mathrm{MW/m}^3\).
+- **Light-off / space restart** at \(50\)–\(200\,\mathrm{kWh}\) class from a \(\sim 2\,\mathrm{t}\) battery (no multi-MW NBI farm).
+- **Continuous throttleable duty** through climb and multi-hour insertion, under flight loads and airport-compatible dose with the plant in fan mode.
+
+These are the numbers the in-silico CHARM plant must satisfy; they are a requirements mirror, not a claim that present CHARM hardware has them (§13).
+
+### Unmet materials-science and packaging challenges
+
+The still-open gaps that would break this close if false are materials/packaging as much as plasma physics (§13.3):
+
+- **Flight-weight cryogenics** for six HTS mirror magnets — remanufactured industrial AL630-class coolers are assumed; demonstrated flight cryocooler specific mass alone could consume most of \(m_{\mathrm{C}}\).
+- **REBCO / cryostat structure** that survives ascent vibration and \(\alpha\)/X-ray loads at WHAM-class field without a tokamak-scale cryoplant hall.
+- **DEC electrodes / open-field HV structures** that take continuous \(\alpha\) and bremsstrahlung while feeding a GW bus.
+- **Permanent radiation/RF shield** (polyethylene bulkhead + Faraday skin) already carved out of the mass remainder; **RF hardware and backbone/chamber structure** (\(\approx 31.5\,\mathrm{t}\)) remain an **unsized placeholder**, not fabricated engineering.
+- **Integrated \(p\text{-}^{11}\mathrm{B}\) power balance** with chambered species, ash removal, and tolerable synchrotron/bremsstrahlung simultaneously — still open in the CHARM literature.
+
+### Propulsion maturity: stages 1, 2, and 3
+
+| Stage | Maturity judgment for this vehicle |
+|-------|-------------------------------------|
+| **1 — Electric ducted fan** | **Relatively vanilla engineering** at the architecture level. NASA HEMM-class MW motors [25] and ducted-fan propulsion are demonstrated families; the stretch is packaging a \(\sim 65\,\mathrm{MW}\) string at the assumed motor/fan mass, not inventing a new thruster physics. |
+| **2 — Microwave air plasma** | **Experimental / unproven at vehicle scale.** Lab microwave-air-plasma ducts exist [23], but published thrust claims are contested [26], and there is **no** demonstrated GW-class, flight-packaged, air-breathing microwave plasma jet. Architecture is real; the power, \(C_D(M)\), and specific-mass closes are not. |
+| **3 — Water plasma** | **Experimental / unproven at the reference point.** Water microwave / MET thrusters and water-MPD paths are real [24], [27], [28], but demo \(I_{\mathrm{sp}}\) and \(\eta\) do **not** jointly support the vehicle freeze (\(I_{\mathrm{sp}}=2000\,\mathrm{s}\) at \(\eta_{\mathrm{jet}}\sim 0.55\) in a few tonnes). Stage 3 is a mid-stretch between gridded water-ion demos and high-\(I_{\mathrm{sp}}\)/low-\(\eta\) MPD — not flight-qualified engineering. |
+
+In short: **stage 1 is near-term electric-propulsion packaging; stages 2 and 3 are the propulsion unobtainiums.** If CHARM physics closes but stages 2–3 packaging fails, CHARM may still be a ground plant while this spaceplane does not.
 
 ---
 

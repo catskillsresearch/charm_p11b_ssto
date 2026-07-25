@@ -278,142 +278,132 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
     safe_y_top = y_half - 0.3
     safe_y_bot = -(y_half - 0.3)
 
-    # --- Battery / fuel: plain labels directly over their own low boxes
-    # (well below z_lab, so no leader line is needed) ---
-    text_label("LBL_battery", "FLIGHT BATTERY", (battery_cx, 0.0, z_lab), c_lab, size=0.16)
+    # Lettering sized for paper readability. Narrow forward stations get short
+    # on-center names (long strings at this size would collide across bay
+    # boundaries); detail lives in the callouts.
+    text_label("LBL_battery", "BATTERY", (battery_cx, 0.0, z_lab), c_lab, size=0.36)
     text_label(
         "LBL_water",
-        f"WATER TANKS ({m_w_t:.0f} t) \u2014 shield bonus, \u00a79.9",
+        f"WATER\n{m_w_t:.0f} t",
         (water_cx, 0.0, z_lab),
         c_lab,
-        size=0.15,
+        size=0.36,
     )
-    text_label("LBL_fuel", "p-\u00b9\u00b9B FUEL TANKS", (fuel_cx, 0.0, z_lab), c_lab, size=0.16)
+    text_label("LBL_fuel", "FUEL", (fuel_cx, 0.0, z_lab), c_lab, size=0.36)
 
-    # --- Callouts: top row (magnets / RF / DEC), spread wide in X so the
-    # long "mirror magnets" text and the RF/DEC labels never collide ---
     callout(
         "CO_magnets",
         anchor_xyz=(coil_positions[2], hex_r + 0.14, 0.0),
-        label_xyz=(lf_cx - 0.6, safe_y_top, 0.0),
+        label_xyz=(lf_cx - 0.8, safe_y_top, 0.0),
         text=(
-            f"Mirror magnets \u00d7{n_coil} ({m_magnet_each_t:.1f} t each,\n"
-            f"{m_magnets_t:.1f} t total) \u2014 WHAM-anchored, \u00a79.6"
+            f"Mirror magnets \u00d7{n_coil}\n"
+            f"({m_magnets_t:.1f} t) \u2014 \u00a79.6"
         ),
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.34,
     )
     callout(
         "CO_rf_rack",
         anchor_xyz=(coil_positions[1] + 0.15, rf_y, 0.0),
-        label_xyz=(hex_cx - 0.5, safe_y_top, 0.0),
-        text="RF racks\n(launchers + amps)",
+        label_xyz=(hex_cx - 0.3, safe_y_top, 0.0),
+        text="RF racks",
         collection=c_lab,
         z=z_lab,
-        text_size=0.12,
+        text_size=0.34,
     )
     callout(
         "CO_dec",
         anchor_xyz=(hex_cx, rf_y, 0.0),
-        label_xyz=(rfc_cx + 0.6, safe_y_top, 0.0),
-        text="DEC\n(alpha collector)",
+        label_xyz=(rfc_cx + 0.5, safe_y_top, 0.0),
+        text="DEC",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.34,
     )
 
-    # --- Callouts: bottom row (chambers / PSU / cryo), spread wide in X;
-    # the AL630 cryo text is the widest label in the figure so it gets its
-    # own generously spaced slot rather than sharing a column with a chamber ---
     callout(
         "CO_shield",
         anchor_xyz=(shield_cx, width * 0.46, 0.0),
-        label_xyz=(fuel_cx - 0.9, safe_y_top, 0.0),
+        label_xyz=(fuel_cx - 1.2, safe_y_top - 0.05, 0.0),
         text=(
-            f"Permanent shield bulkhead\n"
-            f"({shield_thickness_m:.2f} m poly, {shield_mass_t:.1f} t) \u2014 \u00a79.9"
+            f"Shield bulkhead\n"
+            f"({shield_thickness_m:.2f} m, {shield_mass_t:.1f} t)"
         ),
         collection=c_lab,
         z=z_lab,
-        text_size=0.115,
+        text_size=0.32,
     )
     callout(
         "CO_lf",
         anchor_xyz=(lf_cx, -lf_r, 0.0),
-        label_xyz=(island_x0 - 0.6, safe_y_bot, 0.0),
+        label_xyz=(island_x0 - 0.4, safe_y_bot, 0.0),
         text="Left fusion\nchamber",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.34,
     )
     callout(
         "CO_cryo",
         anchor_xyz=(cryo_x0 + cryo_step, cryo_y, 0.0),
-        label_xyz=(lf_cx + 0.9, safe_y_bot, 0.0),
+        label_xyz=(lf_cx + 0.7, safe_y_bot, 0.0),
         text=(
-            f"Cryo bay \u00d7{n_al630} AL630-class\n"
-            f"(flight-reman.: {m_cryo_t:.2f} t, {p_cryo_kw:.0f} kW)"
+            f"Cryo \u00d7{n_al630} AL630\n"
+            f"({m_cryo_t:.1f} t, {p_cryo_kw:.0f} kW)"
         ),
         collection=c_lab,
         z=z_lab,
-        text_size=0.115,
+        text_size=0.32,
     )
     callout(
         "CO_hex",
         anchor_xyz=(hex_cx, -hex_r, 0.0),
-        label_xyz=(hex_cx + 1.3, safe_y_bot, 0.0),
+        label_xyz=(hex_cx + 1.1, safe_y_bot, 0.0),
         text="Heat-exchange\nchamber",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.34,
     )
     callout(
         "CO_psu",
         anchor_xyz=(reactor_x0 + island_len * 0.5, psu_y, 0.0),
-        label_xyz=(rfc_cx, safe_y_bot, 0.0),
+        label_xyz=(rfc_cx - 0.2, safe_y_bot, 0.0),
         text="Magnet\nPSU bay",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
+        text_size=0.34,
     )
     callout(
         "CO_rf_chamber",
         anchor_xyz=(rfc_cx, -rfc_r, 0.0),
-        label_xyz=(island_x1 + 1.3, safe_y_bot, 0.0),
+        label_xyz=(island_x1 + 1.1, safe_y_bot, 0.0),
         text="Right fusion\nchamber",
         collection=c_lab,
         z=z_lab,
-        text_size=0.13,
-    )
-
-    text_label(
-        "LBL_title",
-        "FUSION PLANT SKID (assembly.json + constants_model.py)",
-        (cx, -(door_outer + 1.0), z_lab),
-        c_lab,
-        size=0.30,
+        text_size=0.34,
     )
 
     dimension_line(
         "DIM_length",
         p0=(x0, -door_outer),
         p1=(x1, -door_outer),
-        offset=-0.35,
+        offset=-0.65,
         text=f"{length:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.20,
+        text_size=0.48,
+        line_t=0.035,
     )
     dimension_line(
         "DIM_width",
-        p0=(x0, -door_outer),
-        p1=(x0, door_outer),
-        offset=2.5,
+        p0=(x1, -door_outer),
+        p1=(x1, door_outer),
+        offset=-2.6,
         text=f"{width:.1f} m",
         collection=c_lab,
         z=z_lab,
-        text_size=0.20,
+        text_size=0.48,
+        line_t=0.035,
     )
 
     legend(
@@ -431,11 +421,13 @@ def build_fusion_plant_skid(asm: dict, gen: dict) -> dict:
             (m_dec, "DEC"),
             (m_door, "Bay doors"),
         ],
-        (x0 - 4.8, door_outer + 1.0, z_lab),
+        (x0 - 6.2, door_outer + 1.2, z_lab),
         c_lab,
         title="LEGEND",
-        row_gap=0.34,
-        text_size=0.14,
+        swatch=0.36,
+        row_gap=0.58,
+        label_dx=0.65,
+        text_size=0.32,
     )
 
     return {
@@ -462,13 +454,13 @@ def main() -> int:
 
     door_outer = meta["door_outer"]
     render_w, render_h = 3600, 2000
-    y_top = door_outer + 2.6  # legend margin
-    y_bottom = -(door_outer + 2.1)  # lower callouts + title margin
+    y_top = door_outer + 3.4  # legend margin (larger lettering)
+    y_bottom = -(door_outer + 1.5)  # length dimension (no in-figure title)
     cam_y = (y_top + y_bottom) / 2.0
     half_height_needed = (y_top - y_bottom) / 2.0
 
-    x_left = meta["x0"] - 5.1  # legend margin
-    x_right = meta["x1"] + 3.2  # "Right fusion chamber" callout label margin
+    x_left = meta["x0"] - 8.0  # legend margin
+    x_right = meta["x1"] + 4.2  # aft callouts + width dim
     half_width_needed = max(meta["cx"] - x_left, x_right - meta["cx"])
 
     ortho_scale = max(
