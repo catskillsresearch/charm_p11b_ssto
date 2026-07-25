@@ -6,14 +6,15 @@
     "description": "Pure geometry / topology assembly. Drop-in modules mate at named ports.",
     "architecture": "Drop-ins each with own skid and bay doors: cargo, Fusion electric plant, combined-cycle engine. Plant \u2194 engine by power cable (DEC \u2192 bus coupler). Tail bolts to fuselage around the engine nozzle cutout; nozzle belongs to the engine only.",
     "skids": "Cargo, Fusion power plant, and combined-cycle engine are separate drop-in packages.",
-    "rev": "2026-07-24-figure-ssot",
+    "rev": "2026-07-24-air-scoop-duct",
     "outliner_check": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "charm_cad": "CHARM expands to left fusion chamber | heat exchange chamber | right fusion chamber + central axis \u2014 match Fisch multi-chamber centrifugal mirror figure.",
     "packaging": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "ash_handling": "interim_bay_pollution: He ash after DEC \u2192 fusion_plant_bay_atmosphere; not freeze/liquefy hazard; replace with buffer+purge later.",
     "engine_stages": "1=EDF, 2=microwave air plasma (Ye 2020), 3=water microwave plasma (Nakagawa 2019 lineage)",
     "engine_sizing": "P1=65MW P2=P3=995MW meng=15t mw=44t Isp=2000s",
-    "figure_ssot": "Paper mermaid figures must match this assembly.json; ground cart / vacuum pack / plant bus added from paper schematic."
+    "figure_ssot": "Paper mermaid figures must match this assembly.json; ground cart / vacuum pack / plant bus added from paper schematic.",
+    "engine_air_path": "freestream \u2192 external scoops \u2192 inlet duct \u2192 (EDF | stage-2 precomp) \u2192 shared flared nozzle"
   },
   "frame": {
     "id": "vehicle",
@@ -1908,6 +1909,10 @@
                   {
                     "id": "stage3_mount",
                     "role": "engine_mount"
+                  },
+                  {
+                    "id": "inlet_duct_mount",
+                    "role": "engine_mount"
                   }
                 ],
                 "children": [],
@@ -1946,7 +1951,7 @@
             "id": "stage1_edf",
             "label": "Stage-1 electric ducted fan",
             "kind": "equipment",
-            "note": "Stage 1: P1*\u224865 MW at m0=240 t (T/W=0.25, v_to=80 m/s, \u03b71=0.72). Mass budget \u22485.0 t (HEMM-class \u03b1_mot~16 kW/kg [Jansen 2018]). Free air reaction mass.",
+            "note": "Stage-1 electric ducted fan (HEMM-class). Lives IN the inlet duct behind the external air scoops \u2014 not a freestanding fan on the skid face. Outside air: scoops \u2192 inlet duct \u2192 fan face \u2192 bypass \u2192 shared flared nozzle. P1*\u224865 MW at m0=240 t; mass budget \u22485.0 t.",
             "ports": [
               {
                 "id": "mount",
@@ -2143,7 +2148,7 @@
                 "note": "To water injector"
               }
             ],
-            "note": "Stage-3 reaction mass only. Reference mw\u224844.3 t at Isp=2000 s (166 t if Isp=665 s demo; 27 t if Isp=3150 s MPD-class)."
+            "note": "Stage-3 reaction mass only. Reference mw\u224844.3 t \u224844 m\u00b3 liquid water at Isp=2000 s (166 t if Isp=665 s demo; 27 t if Isp=3150 s MPD-class). Envelope x=45\u201349 m must visually dominate the engine skid \u2014 not small service bottles."
           },
           {
             "id": "water_injector",
@@ -2186,11 +2191,12 @@
                 "id": "mount",
                 "role": "engine_mount"
               }
-            ]
+            ],
+            "note": "Engine nacelle / fairing blended to fuselage. Carries external scoop lips in the OML; opens for skid service."
           },
           {
             "id": "variable_inlets",
-            "label": "Air inlets with close-off shutters",
+            "label": "External air scoops / variable inlets",
             "kind": "inlet",
             "ports": [
               {
@@ -2205,14 +2211,49 @@
                 "id": "edf_air_out",
                 "role": "air_path",
                 "note": "Bifurcation to stage-1 EDF when in fan mode"
+              },
+              {
+                "id": "freestream",
+                "role": "air_capture",
+                "note": "Outside air into scoop lip"
+              },
+              {
+                "id": "plenum_out",
+                "role": "air_path",
+                "note": "To inlet duct / plenum"
+              }
+            ],
+            "note": "OML-facing air scoops (belly / cheek) with close-off shutters. This is the outside-air capture \u2014 NOT the EDF face. Scoops feed an inlet plenum/duct; shutters seal for stage-3 / reentry."
+          },
+          {
+            "id": "inlet_duct",
+            "label": "Inlet duct / plenum",
+            "kind": "structure",
+            "note": "Internal ducting from external scoops into the engine skid. Splits to (1) stage-1 EDF face and (2) stage-2 precompressor. EDF is in-duct \u2014 not a bare fan hanging on the skid nose.",
+            "ports": [
+              {
+                "id": "skid_mount",
+                "role": "engine_mount"
+              },
+              {
+                "id": "scoop_in",
+                "role": "air_path"
+              },
+              {
+                "id": "edf_face",
+                "role": "air_path"
+              },
+              {
+                "id": "stage2_feed",
+                "role": "air_path"
               }
             ]
           },
           {
             "id": "shared_nozzle",
-            "label": "Shared exhaust nozzle",
+            "label": "Shared flared exhaust nozzle",
             "kind": "nozzle",
-            "note": "Combined-cycle exhaust. Pokes aft under the Tail assembly / through the cradle tail cutout. Tail bolts to the fuselage around this nozzle; Tail does not own or joint to the nozzle.",
+            "note": "Common aft exit for ALL three stages: stage-1 EDF bypass + stage-2 air plasma + stage-3 water plasma. Substantial outward flare / C-D contour. Exits under Tail through cradle cutout; Tail does not own it. Not a tiny stub pipe.",
             "ports": [
               {
                 "id": "mount",
@@ -3153,13 +3194,6 @@
       "type": "fixed"
     },
     {
-      "id": "j_inlet_to_precomp",
-      "a": "variable_inlets.air_out",
-      "b": "air_precompressor.air_in",
-      "type": "air_path",
-      "note": "Inlets \u2192 precompressor (port reuse: functional air path)"
-    },
-    {
       "id": "j_precomp_to_applicator",
       "a": "air_precompressor.air_out",
       "b": "mw_air_applicator.air_in",
@@ -3241,13 +3275,6 @@
       "note": "Stage-1 EDF bypass \u2192 shared nozzle"
     },
     {
-      "id": "j_inlet_to_edf",
-      "a": "variable_inlets.edf_air_out",
-      "b": "stage1_edf.air_in",
-      "type": "air_path",
-      "note": "Inlets \u2192 stage-1 EDF"
-    },
-    {
       "id": "j_dec_to_plant_bus",
       "a": "dec.bus_out",
       "b": "plant_electrical_bus.dec_in",
@@ -3293,6 +3320,33 @@
       "b": "cryocooler.startup_in",
       "type": "startup_power",
       "note": "Ground cart kindling (Earth only)"
+    },
+    {
+      "id": "j_inlet_duct_on_skid",
+      "a": "inlet_duct.skid_mount",
+      "b": "combined_cycle_engine_skid.inlet_duct_mount",
+      "type": "fixed"
+    },
+    {
+      "id": "j_scoop_to_duct",
+      "a": "variable_inlets.plenum_out",
+      "b": "inlet_duct.scoop_in",
+      "type": "air_path",
+      "note": "External scoops \u2192 inlet duct/plenum"
+    },
+    {
+      "id": "j_duct_to_edf",
+      "a": "inlet_duct.edf_face",
+      "b": "stage1_edf.air_in",
+      "type": "air_path",
+      "note": "Inlet duct \u2192 stage-1 EDF face (in-duct fan)"
+    },
+    {
+      "id": "j_duct_to_precomp",
+      "a": "inlet_duct.stage2_feed",
+      "b": "air_precompressor.air_in",
+      "type": "air_path",
+      "note": "Inlet duct \u2192 stage-2 precompressor"
     }
   ],
   "stations": [

@@ -875,8 +875,10 @@ If stage-2/3 hardware were packaged at a more literal \(\alpha_{\mu}\sim 8\,\mat
 
 ### 10.7 Physical envelope
 
-- One nacelle; variable inlets with shutters; shared nozzle (stages 2–3 plasma path; stage-1 bypass into same aft exhaust).  
-- Water tanks on the engine skid; MW farm shared in packaging intent between stages 2 and 3.  
+- One nacelle with **external air scoops** (OML lips + close-off shutters) feeding an **inlet duct/plenum**.  
+- Stage-1 EDF sits **in-duct** behind the scoops (not a bare fan on the skid face); duct also feeds stage-2 precompressor.  
+- **Shared flared** aft nozzle — common exit for **all three** stages (stage-1 EDF bypass + stages 2–3 plasma).  
+- Water tanks on the engine skid (\(m_{\mathrm{w}}\approx 44\,\mathrm{t}\approx 44\,\mathrm{m}^{3}\) at the reference \(I_{\mathrm{sp}}\); envelope \(45\)–\(49\,\mathrm{m}\), not small service bottles); MW farm shared in packaging intent between stages 2 and 3.  
 - \(m_{\mathrm{eng}}=15\,\mathrm{t}\) reference as in §10.6.
 ---
 
@@ -926,11 +928,16 @@ flowchart LR
     BAT --- FUEL --- R --- DEC2
   end
   subgraph ENG ["Combined-cycle engine skid"]
+    SC["External air scoops"]
+    DU["Inlet duct / plenum"]
     W["Water tanks"]
-    S1["Stage-1 EDF"]
+    S1["Stage-1 EDF<br/>in-duct"]
     S2["Stage-2 air plasma"]
     S3["Stage-3 water plasma"]
-    NZ["Shared nozzle"]
+    NZ["Shared flared nozzle<br/>stages 1–3"]
+    SC --> DU
+    DU --> S1
+    DU --> S2
     W --- S3
     S1 --- NZ
     S2 --- NZ
@@ -1032,6 +1039,42 @@ Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal r
 
 ---
 
+## Appendix A. Design software
+
+This appendix inventories **software still in active use** for the vehicle packaging model and this paper’s figure/PDF pipeline. Tools tried and discarded are omitted. Further subsections will be added as the toolchain grows.
+
+### A.1 Imported packages actually used
+
+Table: External packages and tools used by the living design / paper build.
+
+| Package / tool | Role in this project |
+|----------------|----------------------|
+| **Python** \(\ge 3.12\) + **Poetry** | Project environment; CAD scripts; assembly JSON tooling; paper build driver |
+| **NumPy** | Numeric support in OpenVSP figure export |
+| **Matplotlib** | Raster floorplan / profile renders from the OpenVSP model |
+| **OpenVSP** (optional Poetry group; upstream `.deb` + Python API) | Parametric vehicle CAD (`.vsp3`); source of the orthographic floorplan and profile figures |
+| **Pillow** | Image handling when the paper build ingests raster figure assets |
+| **Pandoc** | `arxiv.md` → LaTeX body conversion inside `scripts/build_arxiv_tex.py` |
+| **Mermaid CLI** (`mmdc` / `@mermaid-js/mermaid-cli`) | Paper mermaid fences → `figures/figure-NNN.pdf` |
+| **latexmk** + **LuaLaTeX** | Local `arxiv.pdf` / `zenodo.pdf` compile (`.latexmkrc`) |
+| **Mermaid.js** v11 (CDN, browser) | Live diagram engine inside the assembly outliner (§A.2) |
+
+Python’s standard library (**json**, **http.server**, etc.) serves assembly I/O and the outliner static server; it is not listed as an imported third-party package.
+
+### A.2 Assembly outliner
+
+The **assembly outliner** is a small local web app under `research/figures/cad/hierarchy_app/`. It is the interactive view of the vehicle packaging tree.
+
+**Source of truth.** `research/figures/cad/assembly.json` holds the hierarchy (collections vs parts), ports, and joints. Paper mermaid plant/station figures are reconciled to this file (§1). A companion emitter writes `assembly_hierarchy.mmd` for offline diffs.
+
+**UI.** Left pane: Blender-style tree (expand/collapse, collections marked). Right pane: Mermaid flowchart of the **visible** subtree — grey containment edges, teal functional joints; collapsed mates **proxy** to the nearest expanded ancestor; neighboring expanded siblings get distinct tints so stage-1/2/3 (and plant sub-racks) read at a glance.
+
+**How to run.** From the repo root: `make cad-outliner` (or `./research/figures/cad/serve_hierarchy_app.sh`) → open `http://127.0.0.1:8765/hierarchy_app/`. The server sends `Cache-Control: no-store`; use **Reload data** after editing `assembly.json`.
+
+**Stack.** Static HTML/CSS/JS; Mermaid.js in the browser; no build step. The serve script is a tiny Python `ThreadingHTTPServer`.
+
+---
+
 ## Acknowledgments
 
 CHARM denotes the chambered aneutronic rotating-mirror architecture developed at Princeton Plasma Physics Laboratory (PPPL) under the ARPA-E economical \(p\text{-}^{11}\mathrm{B}\) program [1]–[11] and discussed toward Pale Blue Fusion. This vehicle sketch is an independent systems exercise and does not speak for that program.
@@ -1098,4 +1141,4 @@ CHARM denotes the chambered aneutronic rotating-mirror architecture developed at
 
 ---
 
-*Working draft for arxiv-style systems sizing. Not a license to operate a reactor.*
+*Working draft for HAL.science deposit. Not a license to operate a reactor.*
