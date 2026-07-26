@@ -22,7 +22,13 @@ the model:
 
 Frequencies/timbre/timeline pacing ARE stylized (no fan blade count, duct
 geometry, or Strouhal-scaled spectrum exists for this airframe) and are
-flagged as such in arxiv.md prose.
+flagged as such in arxiv.md prose. Each stage still gets a distinct,
+motivated sound-design mechanism rather than one flat noise wash: Stage 1
+spools up from standstill with a faint electric inverter/PWM whine, Stage
+2 adds a plasma-discharge crackle and a slow turbulent surge on top of the
+broadband roar, and the vacuum segment is a percussive cryocooler "bump
+and grind," not a smooth hum. Output is stereo (a lightweight Haas/comb
+widener over the mono mix) with gentle soft saturation for some punch.
 
 Outputs:
   - research/figures/audio/charm_ssto_ascent_soundscape.wav (listen to it)
@@ -89,6 +95,35 @@ def _fade(n: int, in_s: float = 0.0, out_s: float = 0.0) -> np.ndarray:
     return env
 
 
+def _crackle(n: int, rate_hz: float, lo_hz: float, hi_hz: float, decay_s: float = 0.006) -> np.ndarray:
+    """Sparse impulsive crackle/sizzle (Poisson-arrival short decaying
+    broadband clicks) -- a real microwave/arc air-plasma discharge
+    crackles and buzzes; it is not just smooth turbulent-mixing hiss."""
+    sig = np.zeros(n)
+    click_n = max(int(decay_s * FS), 4)
+    t_click = np.arange(click_n) / FS
+    env = np.exp(-t_click / decay_s)
+    i = 0
+    lam = max(rate_hz, 1e-3)
+    while i < n:
+        i += max(int(RNG.exponential(FS / lam)), 1)
+        if i >= n:
+            break
+        click_len = min(click_n, n - i)
+        amp = RNG.uniform(0.35, 1.0)
+        sig[i : i + click_len] += _bandpass_noise(click_len, lo_hz, hi_hz) * env[:click_len] * amp
+    return sig
+
+
+def _widen(mono: np.ndarray, delay_ms: float = 11.0, mix: float = 0.35) -> np.ndarray:
+    """Cheap Haas/comb stereo widener applied to the finished mono mix."""
+    delay_n = max(int(delay_ms * FS / 1000), 1)
+    delayed = np.concatenate([np.zeros(delay_n), mono[:-delay_n]])
+    left = mono
+    right = (1.0 - mix) * mono + mix * delayed
+    return np.stack([left, right], axis=-1)
+
+
 def _n_wave(duration_s: float = 0.09, peak: float = 1.0) -> np.ndarray:
     """Classic sonic-boom N-wave: sharp rise, linear ramp through zero,
     sharp return to ambient. Shape only (no overpressure physics)."""
@@ -104,25 +139,48 @@ def _n_wave(duration_s: float = 0.09, peak: float = 1.0) -> np.ndarray:
 
 def stage1_edf_segment(duration_s: float, amp: float, fan_hz: float = 96.0) -> np.ndarray:
     """Big slow ducted fan: blade-passage tone + harmonics over a modest
-    broadband whoosh -- no combustion roar, no turbine whine."""
+    broadband whoosh, plus the two things that actually make it read as
+    *electric*: a spool-up from standstill (real EDFs don't switch on at
+    full RPM) and a high-frequency inverter/PWM whine -- no combustion
+    roar, no turbine whine, but very much a motor-driven fan. Level and
+    brightness build across the segment as ground-roll speed builds
+    toward V_lof (§10.3), not a flat static wash."""
     n = int(duration_s * FS)
     t = np.arange(n) / FS
-    tone = sum(
-        (0.5**k) * np.sin(2 * np.pi * fan_hz * (k + 1) * t + RNG.uniform(0, 2 * np.pi))
-        for k in range(4)
+    frac = np.clip(t / max(duration_s, 1e-9), 0.0, 1.0)
+
+    spool = np.clip(t / 1.3, 0.05, 1.0)  # RPM ramp over the first ~1.3 s
+    phase = 2 * np.pi * fan_hz * np.cumsum(spool) / FS
+    tone = sum((0.5**k) * np.sin((k + 1) * phase) for k in range(4))
+    flutter = 1.0 + 0.06 * np.sin(2 * np.pi * 1.3 * t) + 0.03 * np.sin(2 * np.pi * 4.7 * t)
+
+    lo_whoosh = _bandpass_noise(n, 150.0, 1200.0)
+    hi_whoosh = _bandpass_noise(n, 800.0, 2600.0)
+    whoosh = _norm(lo_whoosh) * (1.0 - 0.4 * frac) + _norm(hi_whoosh) * (0.3 + 0.4 * frac)
+
+    whine_carrier = 7200.0 + 900.0 * np.sin(2 * np.pi * 0.6 * t)
+    whine = np.sin(2 * np.pi * np.cumsum(whine_carrier) / FS)
+    whine *= 0.5 + 0.5 * np.sin(2 * np.pi * 23.0 * t)  # PWM-ish beat
+
+    level = 0.55 + 0.45 * frac  # ground-roll speed building toward V_lof
+    sig = (
+        0.5 * _norm(tone) * flutter * spool
+        + 0.6 * whoosh
+        + 0.05 * whine
     )
-    flutter = 1.0 + 0.05 * np.sin(2 * np.pi * 1.3 * t)
-    whoosh = _bandpass_noise(n, 150.0, 1800.0)
-    sig = 0.55 * _norm(tone) * flutter + 0.65 * _norm(whoosh)
-    sig *= _fade(n, in_s=min(1.0, duration_s * 0.2))
+    sig *= _fade(n, in_s=min(0.3, duration_s * 0.05)) * level
     return amp * _norm(sig)
 
 
 def stage2_plasma_segment(duration_s: float, amp0: float, amp1: float) -> np.ndarray:
     """Broadband air-plasma jet roar: harsher / higher-frequency broadband
-    mixing noise than Stage 1, consistent with its higher v_jet (§10.4/§10.8).
-    Slow brightening + rising level models the constant-Q climb; the final
-    taper models thinning atmosphere as intakes approach sealing (§10.4)."""
+    mixing noise than Stage 1, consistent with its higher v_jet (§10.4/§10.8),
+    with a plasma-discharge crackle layered on top (a real microwave/arc air
+    plasma sizzles and buzzes, it does not just hiss like a clean thermal
+    jet) and a slow turbulent "surge" so the roar breathes instead of
+    sitting static. Brightening + rising level models the constant-Q climb;
+    the final taper models thinning atmosphere as intakes approach sealing
+    (§10.4)."""
     n = int(duration_s * FS)
     t = np.arange(n) / FS
     frac = t / max(duration_s, 1e-9)
@@ -130,22 +188,58 @@ def stage2_plasma_segment(duration_s: float, amp0: float, amp1: float) -> np.nda
     hi = _bandpass_noise(n, 1500.0, 9000.0)
     mix = _norm(lo) * (1.0 - 0.5 * frac) + _norm(hi) * (0.4 + 0.5 * frac)
     rumble = _lowpass_noise(n, 120.0)
-    sig = 0.85 * _norm(mix) + 0.25 * _norm(rumble)
+    crackle = _crackle(n, rate_hz=120.0, lo_hz=2500.0, hi_hz=9500.0)
+    surge = 1.0 + 0.18 * np.sin(2 * np.pi * 2.6 * t + 0.4) + 0.10 * np.sin(2 * np.pi * 0.7 * t)
+    sig = (0.80 * _norm(mix) + 0.22 * _norm(rumble) + 0.35 * _norm(crackle)) * surge
     level = amp0 + (amp1 - amp0) * np.clip(frac / 0.85, 0.0, 1.0)
     tail = _fade(n, out_s=min(3.0, duration_s * 0.3))
     return level * _norm(sig) * tail
 
 
-def vacuum_hum_segment(duration_s: float, amp: float, thump_hz: float = 1.6) -> np.ndarray:
+def vacuum_hum_segment(duration_s: float, amp: float, thump_hz: float = 1.4) -> np.ndarray:
     """Cabin structure-borne noise only, once intakes seal and there is no
     external medium left to carry airborne jet/plasma sound (§9.5/§9.6
-    cryocooler duty-cycle callback): a low hum plus a periodic cold-head
-    thump, both far below the atmospheric-flight levels above."""
+    cryocooler duty-cycle callback): magnet/pump tonal hum, a low broadband
+    "grind" texture (bearing/mechanical friction, amplitude-jittered rather
+    than pure-tone), and a periodic cold-head "thump" — a real
+    Gifford-McMahon cryocooler's displacer stroke is a percussive knock,
+    not a slow smooth swell, so this is synthesized as a short decaying
+    broadband impulse repeated at thump_hz, not a sine envelope. All of it
+    sits far below the atmospheric-flight levels above, but should still
+    read as a distinct "bump and grind," not near-silence."""
     n = int(duration_s * FS)
     t = np.arange(n) / FS
-    hum = 0.6 * np.sin(2 * np.pi * 52.0 * t) + 0.3 * np.sin(2 * np.pi * 78.0 * t)
-    thump_env = 0.5 * (1.0 + np.sin(2 * np.pi * thump_hz * t - np.pi / 2)) ** 4
-    sig = 0.5 * _norm(hum) + 0.9 * thump_env
+
+    hum = (
+        0.5 * np.sin(2 * np.pi * 52.0 * t)
+        + 0.25 * np.sin(2 * np.pi * 78.0 * t)
+        + 0.15 * np.sin(2 * np.pi * 131.0 * t)
+    )
+
+    grind = _bandpass_noise(n, 40.0, 220.0)
+    jitter = (
+        0.65
+        + 0.35 * np.sin(2 * np.pi * 0.35 * t + 1.1)
+        + 0.25 * np.sin(2 * np.pi * 0.9 * t + 2.7)
+    )
+    grind = grind * np.clip(jitter, 0.15, None)
+
+    period_s = 1.0 / thump_hz
+    knock_dur_s = 0.12
+    knock_n = int(knock_dur_s * FS)
+    t_knock = np.arange(knock_n) / FS
+    knock_env = np.exp(-t_knock / 0.025)
+    knock = _bandpass_noise(knock_n, 30.0, 500.0) * knock_env
+    thump_track = np.zeros(n)
+    n_knocks = int(duration_s / period_s) + 1
+    for i in range(n_knocks):
+        start = int(i * period_s * FS)
+        if start >= n:
+            break
+        end = min(start + knock_n, n)
+        thump_track[start:end] += knock[: end - start]
+
+    sig = 0.40 * _norm(hum) + 0.45 * _norm(grind) + 1.1 * thump_track
     sig *= _fade(n, in_s=min(1.5, duration_s * 0.3))
     return amp * _norm(sig)
 
@@ -189,15 +283,15 @@ def build_timeline(r_values: dict) -> tuple[np.ndarray, list[tuple[float, float,
     marks.append((t_cursor, t_cursor + d, "Stage 2 — microwave air plasma (hypersonic climb)"))
     t_cursor += d
 
-    d = 6.0
+    d = 3.5
     hush = np.zeros(int(d * FS))
     segs.append(hush)
     marks.append((t_cursor, t_cursor + d, "Intakes seal / atmosphere thins (§10.4 h_seal)"))
     t_cursor += d
 
-    d = 8.0
-    segs.append(vacuum_hum_segment(d, 0.06))
-    marks.append((t_cursor, t_cursor + d, "Vacuum: cabin structure-borne hum only (§9.5/§9.6)"))
+    d = 13.0
+    segs.append(vacuum_hum_segment(d, 0.16))
+    marks.append((t_cursor, t_cursor + d, "Vacuum: cabin structure-borne hum + cryocooler thump (§9.5/§9.6)"))
     t_cursor += d
 
     audio = np.concatenate(segs)
@@ -208,12 +302,21 @@ def build_timeline(r_values: dict) -> tuple[np.ndarray, list[tuple[float, float,
 def main() -> int:
     p = Params()
     r = compute(p)
-    audio, marks = build_timeline(r.values)
+    mono, marks = build_timeline(r.values)
+
+    # Gentle soft saturation for some punch/warmth instead of a flat linear
+    # normalize (illustrative mastering step, not a physics claim), then a
+    # cheap Haas/comb stereo widener so the file isn't a dead-center mono
+    # wash end to end.
+    mono = np.tanh(1.35 * mono)
+    mono = _norm(mono) * 0.97
+    stereo = _widen(mono)
 
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
-    wavfile.write(WAV_OUT, FS, (audio * 32767 * 0.95).astype(np.int16))
-    print(f"wrote {WAV_OUT} ({len(audio) / FS:.1f} s)")
+    wavfile.write(WAV_OUT, FS, (stereo * 32767).astype(np.int16))
+    print(f"wrote {WAV_OUT} ({len(mono) / FS:.1f} s, stereo)")
 
+    audio = mono  # mono downmix drives the figure below
     f, t_spec, Sxx = spectrogram(audio, fs=FS, nperseg=2048, noverlap=1536)
     Sxx_db = 10 * np.log10(Sxx + 1e-12)
 
