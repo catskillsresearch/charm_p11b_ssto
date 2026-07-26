@@ -1,0 +1,5 @@
+Tool: Google Nano Banana Pro (Gemini 3 Pro Image), via the Gemini app.
+Reference images (attached, in order): research/figures/charm_ssto_interior_floorplan.png (crew cabin rough schematic — flight deck seating, station map), research/figures/catskills_ssto_beauty_shot.png (prior-turn exterior render, for window shape/placement reference).
+
+Prompt:
+Here is the crew cabin rough schematic. Imagine the view from the rear seats of the flight deck as the SSTO is taking off. The windows indicated in your prior turn rendering which are small ovals. One window per seat. Astronauts should be in protective gear. window shape should match first rendering. Don't put any small screens on the walls. Crew is looking forward, not back. They are in spacesuits with the helmets on. Helmets have "Catskills Research" written on them. 6 crew in seats, captain and copilot in front. The front of the cockpit should have controls like SpaceX Crew Dragon, and seats should be like Crew Dragon. SSTO is tilted up as it is just starting to lift off. You see the astronauts from behind facing towards the cockpit.

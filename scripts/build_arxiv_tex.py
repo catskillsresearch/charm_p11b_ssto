@@ -24,6 +24,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPTS))
+from ai_model_cards import inject_model_cards  # noqa: E402
 
 SRC = ROOT / "arxiv.md"
 PREAMBLE = SCRIPTS / "tex_preamble_arxiv.tex"
@@ -1465,6 +1467,7 @@ def main(argv: list[str] | None = None) -> int:
     body = strip_title_line(raw)
     body = strip_markdown_author_block(body)
     body = apply_prose_ascii_fallbacks(body)
+    body = inject_model_cards(body)
     body = strip_html_comments(body)
     abstract_md, body = extract_abstract(body)
     body = strip_manual_section_numbers(body)

@@ -19,6 +19,18 @@ We specify a single-stage-to-orbit (SSTO) spaceplane that flies Space Shuttle–
 
 Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real cargo bay, a single-deck crew module, and a continuous CHARM \(p\text{-}^{11}\mathrm{B}\) plant driving a three-stage combined-cycle engine (electric ducted fan → microwave air plasma → water plasma). The figures below are the vehicle picture; the equations that close the mass and energy budgets follow.
 
+### AI concept render
+
+Fig.~\ref{fig:catskills-ssto-beauty-shot} is an AI-rendered concept illustration, not an engineering drawing: **Google Nano Banana Pro** (Gemini 3 Pro Image) was given the two CAD wireframes below as reference images and prompted to render the vehicle's true fuselage/wing contour — the grey wireframe lines, not the blocky bounding box — taking off from a municipal airport [47]. Proportions, panel lines, livery, and the runway scene are AI interpretation; the dimensioned CAD wireframes immediately below remain the source of truth for station layout and outer mold line.
+
+<!-- figure-landscape -->
+![CATSKILLS SSTO, AI concept render (Google Nano Banana Pro / Gemini 3 Pro Image) of the vehicle taking off from a municipal airport, prompted from the CAD floorplan and profile wireframes below.](research/figures/catskills_ssto_beauty_shot.png)
+
+Fig.~\ref{fig:catskills-ssto-cabin-liftoff-view} is a companion AI concept render of the flight deck at the same moment, from the rear seats looking forward: six crew in Crew-Dragon-style seats and suits (captain and copilot forward, four aft), helmets marked "Catskills Research," small oval windows sized to match Fig.~\ref{fig:catskills-ssto-beauty-shot}, and Crew-Dragon-style forward flight-deck controls. Illustrative only — seat count, suit design, and cockpit layout are AI interpretation prompted from the interior floorplan schematic (Fig.~\ref{fig:charm-ssto-interior-floorplan}), not an engineering cabin design.
+
+<!-- figure-landscape -->
+![CATSKILLS SSTO crew cabin at liftoff, AI concept render (Google Nano Banana Pro / Gemini 3 Pro Image): view from the rear seats of the flight deck as the vehicle rotates off the runway, prompted from the interior floorplan schematic and the prior exterior-render window shape.](research/figures/catskills_ssto_cabin_liftoff_view.png)
+
 ### Interior floorplan and exterior profile
 
 Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [14,21], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **$L \approx 52\,\mathrm{m}$**. ECLSS = **Environmental Control and Life Support System**. Depth $\approx 6.5$–$7\,\mathrm{m}$, span $\approx 28\,\mathrm{m}$.
@@ -1707,6 +1719,15 @@ In short: **stage 1 is near-term electric-propulsion packaging; stages 2 and 3 a
 
 CHARM denotes the chambered aneutronic rotating-mirror architecture developed at Princeton Plasma Physics Laboratory (PPPL) under the ARPA-E economical \(p\text{-}^{11}\mathrm{B}\) program [1]–[11] and discussed toward Pale Blue Fusion. This vehicle sketch is an independent systems exercise and does not speak for that program.
 
+### AI-assisted development
+
+The human author retains sole responsibility for the vehicle-sizing methodology, every modeling choice, and every technical claim in this work; no large language model or image model is listed as a co-author. We gratefully acknowledge assistance from the following tools (auto-generated from [`scripts/ai_model_cards.py`](scripts/ai_model_cards.py) when building `arxiv.tex`):
+
+<!-- AI_MODEL_TOOL_BULLETS -->
+<!-- /AI_MODEL_TOOL_BULLETS -->
+
+All derived numbers, pipeline code, and final prose were reviewed by the human author, who takes full responsibility for them.
+
 ---
 
 ## References
@@ -1796,6 +1817,11 @@ CHARM denotes the chambered aneutronic rotating-mirror architecture developed at
 [42] Pratt & Whitney, JT8D turbofan family technical data: JT8D-9 rated air mass flow \(144.7\,\mathrm{kg/s}\) (\(19{,}140\,\mathrm{lb/min}\)), max thrust class \(54\)–\(77\,\mathrm{kN}\) depending on variant. (§10.8: reference engine for the 727 three-engine mass-flow baseline.)
 
 [43] Federal Aviation Administration, *Advisory Circular AC 36-1H: Noise Levels for U.S. Certificated and Foreign Aircraft*, type-certification noise data under 14 CFR Part 36 Appendix C. (§10.8: B727-200/JT8D-15QN, \(190{,}500\,\mathrm{lb}\) configuration, \(100.0\,\mathrm{EPNdB}\) takeoff — reference EPNdB level; unmodified pre-hush-kit JT8D-9/-17 727-200s measured \(7\)–\(8\,\mathrm{EPNdB}\) higher per [41], consistent with why the type needed hush kits at all.)
+
+AI development-tool references (§ Acknowledgments, auto-generated from [`scripts/ai_model_cards.py`](scripts/ai_model_cards.py)):
+
+<!-- AI_MODEL_REFERENCES -->
+<!-- /AI_MODEL_REFERENCES -->
 
 ---
 

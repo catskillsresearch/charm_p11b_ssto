@@ -1,0 +1,5 @@
+Tool: Google Nano Banana Pro (Gemini 3 Pro Image), via the Gemini app.
+Reference images (attached, in order): research/figures/charm_ssto_interior_floorplan.png (overhead/top-down), research/figures/charm_ssto_exterior_profile.png (side profile).
+
+Prompt:
+This is a profile of an SSTO fusion powered spaceplane. Flesh it out. It is called CATSKILLS SSTO. Imagine it taking off from a municipal airport. The contour of the plane is in the grey lines, not the blocky square outline. It has wings with outline as shown in 2nd overhead image.
