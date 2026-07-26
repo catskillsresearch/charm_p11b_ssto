@@ -206,7 +206,7 @@ def main() -> int:
         circ = plt.Circle((0, 0), r_ref, fill=False, ls=style, lw=1.0, color="#666666", zorder=1, alpha=0.7)
         ax.add_patch(circ)
 
-    ax.plot([1.0], [0.0], marker="^", color="black", ms=8, zorder=5)
+    ax.plot([1.0], [0.0], marker="o", color="black", ms=7, zorder=5)
     ax.annotate(
         STATESVILLE_LABEL,
         xy=(1.0, 0.0),
@@ -217,7 +217,14 @@ def main() -> int:
         zorder=5,
         arrowprops=dict(arrowstyle="-", lw=0.7, color="#444444"),
     )
-    ax.plot([x[-1]], [y[-1]], marker="o", color="black", ms=7, zorder=5)
+    # Arrowhead at the trajectory terminus, pointing in the direction of travel.
+    ax.annotate(
+        "",
+        xy=(x[-1], y[-1]),
+        xytext=(x[-2], y[-2]),
+        zorder=5,
+        arrowprops=dict(arrowstyle="-|>", color="black", lw=1.6, mutation_scale=18, shrinkA=0, shrinkB=0),
+    )
     ax.annotate(
         f"ISS-alt LEO\n{ISS_ALT_KM:.0f} km, {ISS_INCL_DEG:.1f}$^\\circ$ [15]",
         xy=(x[-1], y[-1]),
