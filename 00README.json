@@ -48,6 +48,10 @@
       "usage": "include"
     },
     {
+      "filename": "figures/assets/orbital_ascent_profile.png",
+      "usage": "include"
+    },
+    {
       "filename": "figures/assets/stage1_audio_signature.png",
       "usage": "include"
     },
