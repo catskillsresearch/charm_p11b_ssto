@@ -39,7 +39,7 @@ _WRITTEN_ASSETS: set[Path] = set()
 
 AUTHOR = "Lars Warren Ericson"
 COMPANY = "Catskills Research Company"
-GITHUB_URL = r"https://github.com/catskillsresearch/p11b"
+GITHUB_URL = r"https://github.com/catskillsresearch/charm_p11b_ssto"
 ORCID = "0000-0001-8299-9361"
 EMAIL = "lars.ericson@catskillsresearch.com"
 VERSION = "0.1.0"
