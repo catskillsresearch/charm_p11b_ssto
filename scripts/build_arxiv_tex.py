@@ -118,7 +118,7 @@ def strip_html_comments(text: str) -> str:
     def repl(match: re.Match[str]) -> str:
         body = match.group(0)
         if re.match(
-            r"<!--\s*(mermaid-(caption|landscape|label)|figure-(landscape|caption))\b",
+            r"<!--\s*(mermaid-(caption|landscape|label)|figure-(landscape|caption)|float-barrier)\b",
             body,
             re.IGNORECASE,
         ):
@@ -389,6 +389,27 @@ def caption_md_to_latex(caption: str) -> str:
     out = re.sub(r"\s+\n\s*", " ", out)
     out = out.replace("\n", " ")
     return out
+
+
+FLOAT_BARRIER_RE = re.compile(r"<!--\s*float-barrier\s*-->", re.IGNORECASE)
+
+
+def replace_float_barriers(text: str) -> tuple[str, dict[str, str]]:
+    """Turn a standalone ``<!-- float-barrier -->`` comment into a
+    ``\\FloatBarrier`` (``placeins`` package), forcing any pending floats
+    (e.g. a figure placed just above) to flush before the point the
+    comment appears -- typically right before the next section heading."""
+    placeholders: dict[str, str] = {}
+    idx = 0
+
+    def repl(match: re.Match[str]) -> str:
+        nonlocal idx
+        key = f"FLOATBARRIER{idx:03d}"
+        idx += 1
+        placeholders[key] = "\\FloatBarrier\n"
+        return f"\n\n{key}\n\n"
+
+    return FLOAT_BARRIER_RE.sub(repl, text), placeholders
 
 
 def replace_markdown_images(text: str) -> tuple[str, dict[str, str]]:
@@ -1472,9 +1493,10 @@ def main(argv: list[str] | None = None) -> int:
     abstract_md, body = extract_abstract(body)
     body = strip_manual_section_numbers(body)
     body, image_placeholders = replace_markdown_images(body)
+    body, float_barrier_placeholders = replace_float_barriers(body)
     body = github_math_to_tex(body)
     body, placeholders = replace_fences(body)
-    placeholders = {**image_placeholders, **placeholders}
+    placeholders = {**image_placeholders, **float_barrier_placeholders, **placeholders}
     prune_stale_listings()
     prune_stale_assets()
 
