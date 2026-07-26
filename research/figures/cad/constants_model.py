@@ -191,6 +191,29 @@ def integrate_stage2_climb(
     return t2_s, float(h_of_v[-1]), float(mach[-1])
 
 
+def mach1_crossing_altitude_m(
+    v1_m_s: float,
+    v_ab_m_s: float,
+    q_ascent_pa: float,
+    n_steps: int = 4000,
+) -> tuple[float, float]:
+    """Altitude and speed where the constant-\\(Q\\) stage-2 climb path
+    (same \\(\\rho(h)=2Q/v^2\\) schedule as `integrate_stage2_climb`) first
+    crosses \\(M=1\\) -- used only for the §10.8 sonic-boom flag, not the
+    mass/energy chain. Returns (h_m, v_m_s) at the crossing; if the whole
+    path is sub- or supersonic, returns the nearest endpoint."""
+    v_grid = np.linspace(v1_m_s, v_ab_m_s, n_steps + 1)
+    h_grid = np.linspace(0.0, 84000.0, 20000)
+    rho_grid, T_grid, _ = us_standard_atmosphere(h_grid)
+    target_rho = 2.0 * q_ascent_pa / v_grid**2
+    h_of_v = np.interp(target_rho, rho_grid[::-1], h_grid[::-1])
+    T_of_v = np.interp(h_of_v, h_grid, T_grid)
+    mach = v_grid / np.sqrt(_GAMMA_AIR * _R_AIR * T_of_v)
+    idx = int(np.searchsorted(mach, 1.0))
+    idx = min(max(idx, 0), len(v_grid) - 1)
+    return float(h_of_v[idx]), float(v_grid[idx])
+
+
 def sci(value: float, sig: int) -> tuple[str, int]:
     """Split `value` into (mantissa string, base-10 exponent) at `sig`
     significant figures, e.g. sci(196100, 4) -> ("1.961", 5).
@@ -345,6 +368,23 @@ class Params:
     rf_freq_hz: float = 2.45e9  # flagged: representative RF frequency, unspecified in [1]
     rf_skin_thickness_mm: float = 1.0  # representative structural Al skin
     rf_conductivity_s_per_m: float = 3.5e7  # aluminum
+
+    # --- §10.8 Atmospheric acoustic order-of-magnitude estimate. Own-vehicle
+    # jet velocities/mass flows are backed out from numbers already frozen in
+    # §10.3/§10.4 (T1, v_lof, eta_prop, T2, v_j2) via ideal actuator-disk
+    # (Froude) theory for stage 1 -- an assumption, not a new design choice,
+    # flagged in prose. The 727/JT8D reference and the velocity-noise
+    # exponent are real, cited hardware numbers, not textbook Lighthill
+    # n=8 taken on faith: NASA's JT8D->JT8D-109 "Refan" program measured a
+    # mixed takeoff jet-velocity cut from 1470 to 1140 ft/s (448.1 to
+    # 347.5 m/s) that bought 7-8 EPNdB [41] -- that historical (Δv, ΔdB)
+    # pair calibrates the exponent n in P_acoustic ∝ mdot * v_jet^n below. ---
+    v727_jet_takeoff_m_s: float = 448.1  # 1470 ft/s, JT8D-9 mixed jet velocity, takeoff [41]
+    v727_jet_refan_m_s: float = 347.5  # 1140 ft/s, refanned JT8D-109, takeoff [41] (calibration only)
+    epndb_refan_reduction: float = 7.5  # 7-8 EPNdB measured reduction from that cut [41]
+    n727_engines: int = 3
+    mdot727_per_engine_kg_s: float = 144.7  # JT8D-9 rated takeoff air mass flow [42]
+    epndb_727_ref: float = 100.0  # FAA/DOT AC 36-1H: 727-200/JT8D-15QN, 190,500 lb, takeoff EPNdB [43]
 
 
 # ---------------------------------------------------------------------------
@@ -534,6 +574,44 @@ def compute(p: Params = Params()) -> Results:
     r.set("stage.mach_seal", mach_seal)
     e2_j = r.set("stage.e2_j", p2_star_w * t2_s)
     r.set("stage.e2_mwh", e2_j / 3.6e9)
+
+    # ----- §10.8 Atmospheric acoustic order-of-magnitude estimate -----
+    v727 = p.v727_jet_takeoff_m_s
+    mdot727 = r.set("acoustic.mdot727_kg_s", p.n727_engines * p.mdot727_per_engine_kg_s)
+    r.set("acoustic.v727_m_s", v727)
+    r.set("acoustic.epndb_727_ref", p.epndb_727_ref)
+    # Empirical (not textbook-n=8) velocity exponent for P_acoustic ~ mdot*v^n,
+    # calibrated from the real JT8D->refan (Δv, ΔEPNdB) pair [41].
+    n_exp = r.set(
+        "acoustic.n_exponent",
+        p.epndb_refan_reduction
+        / (10.0 * math.log10(p.v727_jet_takeoff_m_s / p.v727_jet_refan_m_s)),
+    )
+    # Stage 1: ideal actuator-disk (Froude) backsolve of an *effective* fan
+    # exit velocity from the already-frozen eta_prop = 2V/(V+Vj) -- flagged
+    # assumption, not a new design number.
+    v_j1 = r.set("acoustic.v_j1_m_s", v_lof * (2.0 / p.eta_prop - 1.0))
+    mdot1 = r.set("acoustic.mdot1_kg_s", t1_n / (v_j1 - v_lof))
+    # Stage 2: mass flow implied by the already-frozen T2, v_j2 (§10.4).
+    mdot2 = r.set("acoustic.mdot2_kg_s", t2_n / p.v_j2_m_s)
+
+    def _rel_db(mdot_kg_s: float, v_jet_m_s: float) -> float:
+        ratio = (mdot_kg_s / mdot727) * (v_jet_m_s / v727) ** n_exp
+        return 10.0 * math.log10(ratio)
+
+    db1 = r.set("acoustic.stage1_rel_db", _rel_db(mdot1, v_j1))
+    db2 = r.set("acoustic.stage2_rel_db", _rel_db(mdot2, p.v_j2_m_s))
+    r.set("acoustic.stage1_epndb", p.epndb_727_ref + db1)
+    r.set("acoustic.stage2_epndb", p.epndb_727_ref + db2)
+
+    # Sonic-boom flag: altitude where the constant-Q stage-2 climb path
+    # first crosses M=1 (own atmosphere model; no boom-overpressure formula
+    # applied -- flagged as unresolved in prose, only the crossing altitude
+    # is reported here).
+    h_boom_m, v_boom_m_s = mach1_crossing_altitude_m(p.v1_m_s, p.v_ab_m_s, p.q_ascent_pa)
+    r.set("acoustic.h_boom_m", h_boom_m)
+    r.set("acoustic.h_boom_km", h_boom_m / 1e3)
+    r.set("acoustic.v_boom_m_s", v_boom_m_s)
 
     # ----- Stage 3 (water plasma): closed-form invariant E3 -----
     p3_star_w = r.set("stage.p3_star_w", p.P_star_w - p.P_hotel_w)

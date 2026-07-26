@@ -1354,6 +1354,52 @@ If stage-2/3 hardware were packaged at a more literal \(\alpha_{\mu}\sim 8\,\mat
 - **Shared flared** aft nozzle — common exit for **all three** stages (stage-1 EDF bypass + stages 2–3 plasma).  
 - Water tanks moved to the **fusion plant skid**, ahead of CHARM (\(m_{\mathrm{w}}\approx <!--gen mass.m_w_t:.0f-->44<!--/gen-->\,\mathrm{t}\approx 44\,\mathrm{m}^{3}\) at the reference \(I_{\mathrm{sp}}\); envelope \(35.5\)–\(39.5\,\mathrm{m}\), not small service bottles) — a supplemental radiation shield when full, §9.9; fed to the engine skid by a long cross-skid duct (`j_water_to_injector`). MW farm shared in packaging intent between stages 2 and 3.  
 - \(m_{\mathrm{eng}}=15\,\mathrm{t}\) reference as in §10.6.
+
+### 10.8 Audio signature in atmosphere
+
+There is no muffler for this. A jet, a fan, and a plasma torch are all doing the same physical thing — dumping kinetic energy into a compressible fluid — and every way of doing that quietly amounts to spreading the same thrust over more mass flow at a lower exit velocity (exactly how a modern high-bypass turbofan buries the shriek of a 1960s low-bypass one, at equal thrust). CHARM SSTO's three propulsion regimes sit at three very different points on that trade, so the atmospheric soundprint is expected to **change character across the ascent**, not hold one hum like a cruising airliner:
+
+- **Stage 1 (EDF, municipal takeoff/climb).** An electric ducted fan has no combustor and no turbine — the two loudest tonal sources on a jet engine are simply absent. What is left is blade-passage tone(s) plus broadband turbulent-mixing "whoosh," the same two mechanisms that make a modern turbofan's fan stage its dominant noise source.
+- **Stage 2 (microwave air plasma, hypersonic climb).** A hotter, faster heated-air jet (\(v_{\mathrm{j},2}=600\,\mathrm{m/s}\), §10.4) — mechanically a jet, physically indifferent to how the enthalpy got there (combustion or microwaves) — so the same turbulent-mixing jet-noise physics applies, and at a materially higher jet velocity than Stage 1 or a legacy low-bypass turbojet.
+- **Stage 3 (water plasma, vacuum).** Intakes are sealed (§10.4's \(h_{\mathrm{seal}}\)) — there is no external medium left to carry airborne noise. Atmospheric acoustic signature is, by construction, a Stage-1/Stage-2-only question.
+
+**A real calibration, not textbook \(v^8\) taken on faith.** Lighthill's classic result [41] is that subsonic jet-mixing acoustic power scales as \(\dot m\,v_{\mathrm{jet}}^{\,n}\) with \(n\approx 8\) in the far field. Rather than adopt that exponent by citation alone, this section calibrates \(n\) from real hardware: NASA's JT8D→JT8D-109 "Refan" program [41] cut the JT8D's mixed takeoff jet velocity from \(1470\) to \(1140\,\mathrm{ft/s}\) (\(448.1\to 347.5\,\mathrm{m/s}\)) and measured a **\(7\)–\(8\,\mathrm{EPNdB}\)** reduction on a B727-200 at the FAR Part 36 measuring stations — a real \((\Delta v,\Delta\mathrm{dB})\) pair, not a simulation:
+
+\[
+\boxed{
+P_{\mathrm{acoustic}} \propto \dot m\,v_{\mathrm{jet}}^{\,n},\qquad
+n = \frac{\Delta\mathrm{EPNdB}}{10\log_{10}(v_{727}/v_{727,\mathrm{refan}})}
+\approx <!--gen acoustic.n_exponent:.2f-->6.79<!--/gen-->
+}
+\]
+
+— close to Lighthill's \(n=8\), not identical, which is exactly what a real measured EPNL (loudness/duration/tone-corrected) should look like next to an idealized far-field acoustic-power law.
+
+**Own-vehicle jet velocities and mass flows**, backed out of numbers already frozen in §10.3/§10.4 (not new design choices): Stage 1's \(v_{\mathrm{j},1}\) comes from inverting the already-assumed \(\eta_{\mathrm{prop}}=T v/P_{\mathrm{shaft}}=0.80\) through ideal actuator-disk (Froude) theory, \(\eta_{\mathrm{prop}}=2V/(V+v_{\mathrm{j},1})\) — a flagged modeling assumption, since \(\eta_{\mathrm{prop}}\) was frozen as a flat efficiency, not derived from a jet velocity in §10.3:
+
+\[
+v_{\mathrm{j},1} = V_{\mathrm{lof}}\!\left(\frac{2}{\eta_{\mathrm{prop}}}-1\right) \approx <!--gen acoustic.v_j1_m_s:.0f-->170<!--/gen-->\,\mathrm{m/s},\qquad
+\dot m_1 = \frac{T_1}{v_{\mathrm{j},1}-V_{\mathrm{lof}}} \approx <!--gen acoustic.mdot1_kg_s:.0f-->10430<!--/gen-->\,\mathrm{kg/s}.
+\]
+
+That implied mass flow is enormous — roughly \(7\)–\(10\times\) a modern widebody turbofan's — which is itself a **flagged packaging caveat** (no fan diameter this large is sized anywhere in §10.3/§10.7); it is also *why* Stage 1 comes out quiet despite \(T_1\approx 589\,\mathrm{kN}\) being nearly \(3\times\) a whole 727's static thrust. Stage 2's mass flow follows directly from the already-frozen \(T_2\), \(v_{\mathrm{j},2}\) (§10.4): \(\dot m_2 = T_2/v_{\mathrm{j},2}\approx <!--gen acoustic.mdot2_kg_s:.0f-->1368<!--/gen-->\,\mathrm{kg/s}\).
+
+Table: Atmospheric acoustic order-of-magnitude estimate vs. a real, comparably sized reference jet.
+
+| | \(v_{\mathrm{jet}}\) | \(\dot m\) | rel. to 727 (dB) | \(\approx\) EPNdB |
+|---|---|---|---|---|
+| 727 (3× JT8D-9, ref.) [41], [42], [43] | \(448\,\mathrm{m/s}\) | \(434\,\mathrm{kg/s}\) | \(0\) | \(<!--gen acoustic.epndb_727_ref:.0f-->100<!--/gen-->\) (ref.) |
+| **Stage 1 — EDF** | \(<!--gen acoustic.v_j1_m_s:.0f-->170<!--/gen-->\,\mathrm{m/s}\) | \(<!--gen acoustic.mdot1_kg_s:.0f-->10430<!--/gen-->\,\mathrm{kg/s}\) | \(<!--gen acoustic.stage1_rel_db:.0f-->-15<!--/gen-->\) | \(\sim <!--gen acoustic.stage1_epndb:.0f-->85<!--/gen-->\) |
+| **Stage 2 — air plasma** | \(600\,\mathrm{m/s}\) | \(<!--gen acoustic.mdot2_kg_s:.0f-->1368<!--/gen-->\,\mathrm{kg/s}\) | \(+<!--gen acoustic.stage2_rel_db:.0f-->14<!--/gen-->\) | \(\sim <!--gen acoustic.stage2_epndb:.0f-->114<!--/gen-->\) |
+
+Reading these as everyday loudness (a rough translation, not a rigorous EPNdB→dBA conversion): \(\sim 85\,\mathrm{dB}\) is heavy truck traffic at the curb — noticeable, not hazardous; \(\sim 114\,\mathrm{dB}\) is jackhammer/front-row-concert territory — genuinely hazardous without hearing protection at close range, and louder than an unmodified 727 was. **Stage 1, despite carrying \(3\times\) a 727's static thrust, is estimated \(\sim 15\,\mathrm{dB}\) *quieter*** than a 727 at the reference distance — the same "spread the thrust over more mass flow at lower velocity" trade that quieted every high-bypass turbofan since the 1970s, taken further by an electric fan with no combustor. **Stage 2 is estimated \(\sim 14\,\mathrm{dB}\) *louder*** — a real, flagged community-noise problem for the portion of the climb still low enough to matter, not resolved by "it's not chemical."
+
+**Sonic boom.** The constant-\(Q\) climb path already integrated in §10.4 crosses \(M=1\) at \(h\approx <!--gen acoustic.h_boom_km:.1f-->8.0<!--/gen-->\,\mathrm{km}\) (own atmosphere model, not an assumption) — far lower than Concorde's \(\sim 16\)–\(18\,\mathrm{km}\) supersonic-cruise altitude, where its well-documented \(\sim 1\)–\(2\,\mathrm{psf}\) boom overpressure was already enough to end civil overland supersonic flight. No boom-overpressure model is applied here (that requires a dedicated ascent-corridor acoustic study, flagged as future work, §13), but boom overpressure falls off with slant range from the shock, so a crossing at half Concorde's altitude points toward a **louder** ground boom, not a quieter one — an unresolved noise-abatement problem, not a solved one.
+
+**A stylized listen.** [`charm_ssto_ascent_soundscape.wav`](research/figures/audio/charm_ssto_ascent_soundscape.wav) (repo, \(\sim 50\,\mathrm{s}\), generated by [`emit_audio_signature.py`](research/figures/cad/emit_audio_signature.py)) is a **time-compressed sound-design pass**, not a validated psychoacoustic or CFD acoustic simulation: real stage durations are \(t_1\approx 133\,\mathrm{s}\), \(t_2\approx 29\,\mathrm{min}\), \(t_3\approx 4.3\,\mathrm{h}\) (§10.5/§10.6), obviously not literal audio length. What *is* grounded in the numbers above: the two "roars" really are mixed at the \(\dot m\,v_{\mathrm{jet}}^{\,n}\) ratio from the table (dynamic range compressed \(2\times\) for audibility, not hidden), and a stylized N-wave "crack" transient sits exactly at the timeline fraction corresponding to the \(M=1\) crossing computed above. Frequencies and timbre are illustrative — no fan blade count, duct geometry, or Strouhal-scaled spectrum exists for this airframe to compute a real one. The final segment renders the Stage-3 vacuum silence from the cabin's perspective: no jet roar reaches the hull once there is no air outside it to carry one, only the low-frequency cryocooler/pump hum and cold-head thump already described in §9.5/§9.6, rendered here at a fraction of the atmospheric-flight levels.
+
+![Ascent soundscape: waveform (top) and spectrogram (bottom) of the stylized audio signature — Stage 1 EDF, the modeled \(M=1\) crack, Stage 2 air-plasma roar, and the Stage-3 vacuum hum, in relative-loudness proportion from the table above.](research/figures/stage1_audio_signature.png)
+
 ---
 
 ## 11. Layout details
@@ -1657,6 +1703,102 @@ In short: **stage 1 is near-term electric-propulsion packaging; stages 2 and 3 a
 
 ---
 
+## Acknowledgments
+
+CHARM denotes the chambered aneutronic rotating-mirror architecture developed at Princeton Plasma Physics Laboratory (PPPL) under the ARPA-E economical \(p\text{-}^{11}\mathrm{B}\) program [1]–[11] and discussed toward Pale Blue Fusion. This vehicle sketch is an independent systems exercise and does not speak for that program.
+
+---
+
+## References
+
+[1] N. J. Fisch et al. (Princeton Plasma Physics Laboratory), “Why pB11?” ARPA-E Fusion Annual Meeting slides (Day2\_08\_Fisch.pdf), Aug. 2025. Primary public overview of the Chambered Aneutronic Rotating Mirror (CHARM) / chambered rotating-mirror \(p\text{-}^{11}\mathrm{B}\) architecture. [Online]. Available: https://arpa-e.energy.gov/sites/default/files/2025-08/Day2_08_Fisch.pdf
+
+[2] Advanced Research Projects Agency–Energy (ARPA-E), “Economical Proton-Boron11 Fusion,” Award No. DE-AR0001554, OPEN 2021.
+
+[3] E. J. Kolmes, I. E. Ochs, and N. J. Fisch, “Wave-supported hybrid fast-thermal \(p\)-\({}^{11}\)B fusion,” *Phys. Plasmas*, vol. 29, no. 11, Art. no. 110701, 2022, doi: 10.1063/5.0118337.
+
+[4] I. E. Ochs, E. J. Kolmes, M. E. Mlodik, T. Rubin, and N. J. Fisch, “Improving the feasibility of economical proton–boron-11 fusion via alpha channeling with a hybrid fast and thermal proton scheme,” arXiv:2210.08076 [physics.plasm-ph], 2022.
+
+[5] I. E. Ochs and N. J. Fisch, “Lowering the reactor breakeven requirements for proton–boron 11 fusion,” *Phys. Plasmas*, 2024, doi: 10.1063/5.0184945. (ARPA-E DE-AR0001554.)
+
+[6] I. E. Ochs, E. J. Kolmes, and N. J. Fisch, “Preventing ash from poisoning proton–boron 11 fusion,” *Phys. Plasmas*, 2025. [Online]. Available: https://w3.pppl.gov/~fisch/fischpapers/2025/Ochs.poisoning.POP2025.pdf
+
+[7] I. E. Ochs, E. J. Kolmes, and N. J. Fisch, “On the feasibility of radiation-trapping regimes in compressed proton-boron-11 plasmas,” *Phys. Plasmas*, vol. 32, no. 2, Art. no. 022504, 2025, doi: 10.1063/5.024504.
+
+[8] N. J. Fisch, I. E. Ochs, E. J. Kolmes, M. E. Mlodik, and T. Rubin, “Nonthermal Proton-Boron11 Fusion with Separated Reactant Regions,” U.S. Patent Application 19/083,790, filed Mar. 19, 2025.
+
+[9] T. Rubin, J.-M. Rax, N. J. Fisch, I. E. Ochs, and E. J. Kolmes, “Enhanced Particle Confinement with Positive and Negative Ponderomotive Potentials,” U.S. Patent Application 19/084,168, filed Mar. 19, 2025.
+
+[10] N. J. Fisch et al., “Systems and Methods for Producing Ultra-high DC Voltages in Open Field Line Traps…,” U.S. Patent Application 19/175,473, filed Apr. 10, 2025.
+
+[11] E. J. Kolmes, I. E. Ochs, and N. J. Fisch, “Method and Apparatus for Differential Confinement, Mixing, and Demixing…,” U.S. Provisional Patent 63/794,470, filed Apr. 25, 2025.
+
+[12] N. J. Fisch, “Theory of current drive in plasmas,” *Rev. Mod. Phys.*, vol. 59, no. 1, pp. 175–208, 1987, doi: 10.1103/RevModPhys.59.175. (Alpha-channeling / wave–particle foundations.)
+
+[13] N. J. Fisch and J.-M. Rax, “Interaction of energetic alpha particles with intense lower hybrid waves,” *Phys. Rev. Lett.*, vol. 69, no. 4, pp. 612–615, 1992, doi: 10.1103/PhysRevLett.69.612.
+
+[14] National Aeronautics and Space Administration, *Space Shuttle Orbiter / OV-105 Atlantis* dimensional and mass data (cargo bay \(18.3\times 4.6\,\mathrm{m}\); payload to LEO \(\approx 24\,400\,\mathrm{kg}\); empty mass \(\approx 78\,000\,\mathrm{kg}\) class). NASA fact sheets and Orbiter inventory documentation.
+
+[15] International Space Station Program, nominal orbital altitude \(\approx 400\,\mathrm{km}\) and inclination \(51.6^\circ\). NASA ISS reference.
+
+[16] D. A. Vallado, *Fundamentals of Astrodynamics and Applications*, 4th ed. Hawthorne, CA: Microcosm Press / Springer, 2013. (Two-body orbital energy; LEO \(\Delta\varepsilon\).)
+
+[17] G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th ed. Hoboken, NJ: Wiley, 2017. (Rocket equation; \(I_{\mathrm{sp}}\)–\(v_e\) relation.)
+
+[18] J. D. Anderson Jr., *Modern Compressible Flow*, 3rd ed. New York, NY: McGraw-Hill, 2003. (Ram drag / inlet thermo context for stage-2 air path.)
+
+[19] W. J. D. Escher, E. H. Hyde, and D. M. Anderson, “A preliminary systems assessment of the ‘Star-Raker’… airbreathing SSTO concept,” AIAA Paper, 1980s SABRE/airbreathing SSTO literature context for multi-regime airbreathing logic (this paper replaces scramjet claims with microwave air plasma [23]).
+
+[20] T. H. Rider, “Fundamental limitations on plasma fusion systems not in thermodynamic equilibrium,” Ph.D. dissertation, Massachusetts Institute of Technology, Cambridge, MA, 1995. (Non-equilibrium / radiation-limit context motivating chambered \(p\text{-}^{11}\mathrm{B}\) approaches.)
+
+[21] NASA, *Space Shuttle Vehicle Familiarization* (SSV FAM), crew module description: flight deck; middeck galley, personal hygiene, airlock, and **side hatch** for ground ingress/egress; equipment bay ECLSS. Training document SSV-FAM-1107 and NASA *Space Shuttle News Reference* crew-cabin arrangement figures (flight deck p.\ 3-9; middeck p.\ 3-10).
+
+[22] NASA, “A Walk Around the Space Shuttle,” crew compartment summary: flight deck controls; middeck living; side hatch; airlock hatch into the cargo bay. [Online]. Available: https://www.nasa.gov/wp-content/uploads/2016/08/113009main_walkaround.pdf
+
+[23] D. Ye, J. Li, and J. Tang, “Jet propulsion by microwave air plasma in the atmosphere,” *AIP Advances*, vol. 10, no. 5, Art. no. 055002, 2020, doi: 10.1063/5.0005814. (Stage-2 anchor: magnetron → compressed-air microwave plasma jet.)
+
+[24] Y. Nakagawa, H. Koizumi, H. Kawahara, and K. Komurasaki, “Performance characterization of a miniature microwave discharge ion thruster operated with water,” *Acta Astronautica*, vol. 157, pp. 294–299, 2019, doi: 10.1016/j.actaastro.2018.12.031. (Stage-3 architecture: water + microwave plasma; demo \(I_{\mathrm{sp}}\sim 665\,\mathrm{s}\), \(\mu\mathrm{N}\) thrust.)
+
+[25] R. H. Jansen et al., “High Efficiency Megawatt Motor conceptual design,” AIAA Propulsion and Energy Forum, 2018 (NASA/TM / NTRS). (Stage-1: \(\gtrsim 16\,\mathrm{kW/kg}\) EM mass, \(\eta\gtrsim 0.98\) stretch for MW-class motors.)
+
+[26] Comment on Ye et al., “Jet propulsion by microwave air plasma in the atmosphere,” *AIP Advances*, vol. 10, 2020, doi: 10.1063/5.0013575. (Stage-2: Ye’s \(\sim 28\,\mathrm{N/kW}\) is stagnation pressure, not jet thrust — use electrothermal \(T/P=2\eta/v_{\mathrm{j}}\).)
+
+[27] D. Komatsu, K. Nishii, and A. Kakami, “Study on electrodes design for MPD thruster using water propellant,” *Trans. JSASS*, vol. 68, 2025, doi: 10.2322/tjsass.68.108. (Stage-3 high-\(I_{\mathrm{sp}}\) water-MPD path: \(\sim 3150\,\mathrm{s}\) class at \(\eta\sim 0.07\)–\(0.11\), \(\sim 5\,\mathrm{mN/kW}\).)
+
+[28] J. E. Brandenburg, J. Kline, and D. Sullivan, “The microwave electro-thermal (MET) thruster using water vapor propellant,” *IEEE Trans. Plasma Sci.*, vol. 33, no. 2, pp. 776–782, 2005, doi: 10.1109/TPS.2005.845252. (Stage-3 water MET / electrothermal lineage; \(I_{\mathrm{sp}}\gtrsim 800\,\mathrm{s}\) reported class.)
+
+[29] Z. S. Hartwig et al., “The SPARC Toroidal Field Model Coil Program,” *IEEE Trans. Appl. Supercond.*, vol. 34, no. 2, Art. no. 0600316, Mar. 2024, doi: 10.1109/TASC.2023.3332613; arXiv:2308.12301. (§9.6 anchor: \(10{,}058\,\mathrm{kg}\) TFMC test coil at \(20.1\,\mathrm{T}\); \(18{,}025\,\mathrm{kg}\) per production SPARC TF coil, 18 coils per tokamak.)
+
+[30] P. C. Michael et al., “A 20-K, 600-W, Cryocooler-Based, Supercritical Helium Circulation System for the SPARC Toroidal Field Model Coil Program,” *IEEE Trans. Appl. Supercond.*, vol. 34, no. 2, Art. no. 0600313, Mar. 2024, doi: 10.1109/TASC.2023.3332266. (§9.6 anchor: measured \(600\,\mathrm{W}\) at \(20\,\mathrm{K}\) via eight Cryomech AL630 cryocoolers, cooling one HTS test coil.)
+
+[31] A. Dalesandro et al., “The SPARC cryogenic system,” *IOP Conf. Ser.: Mater. Sci. Eng.*, vol. 1301, Art. no. 012107, 2024, doi: 10.1088/1757-899X/1301/1/012107. (§9.6 full-scale contrast: \(17\,\mathrm{kW}\) steady-state \(4.5\,\mathrm{K}\)-equivalent cryoplant plus a separate \(2.9\,\mathrm{MW}\) blowdown system for pulse heat removal.)
+
+[32] B. T. Nugent, R. J. Grotenrath, and W. L. Johnson (NASA Glenn Research Center), “20 Watt 20 Kelvin Reverse Turbo-Brayton Cycle Cryocooler Testing and Applications,” 22nd Int. Cryocooler Conf. (ICC), Bethlehem, PA, Jun. 27–30, 2022, NASA/TM (NTRS 20220009350). (§9.6 flight-cryocooler ceiling check: \(4.4\)–\(5.5\,\mathrm{kg/W}\) goal vs. \(18.7\,\mathrm{kg/W}\) state-of-the-art specific mass at \(20\,\mathrm{K}\).)
+
+[33] Cryomech, Inc., “AL630 Gifford-McMahon Cryocooler” datasheet: \(100\,\mathrm{W}\) at \(20\,\mathrm{K}\), \(44\,\mathrm{kg}\) cold head + \(191\,\mathrm{kg}\) CPA1114 compressor package, \(11.7\)–\(12.7\,\mathrm{kW}\) electrical input. [Online]. Available: https://bluefors.com/products/gifford-mcmahon-cryocoolers/al630-gifford-mcmahon-cryocooler/
+
+[34] Commonwealth Fusion Systems, “Commonwealth Fusion Systems Delivers Superconducting Magnets to University of Wisconsin’s WHAM Project,” press release, Jul. 12, 2024. (§9.6 magnet anchor: two \(<2\,\mathrm{t}\) REBCO magnets, \(17\,\mathrm{T}\) warm bore / \(20\,\mathrm{T}\) on tape, self-contained with integrated cryo/vacuum/controls.) [Online]. Available: https://www.cfs.energy/news-and-media/commonwealth-fusion-systems-delivers-hts-magnets-to-uw-wham-project/
+
+[35] A. Radovinsky et al., “Design of High Field HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 33, no. 5, 2023, doi: 10.1109/TASC.2023.3240377. (§9.6 magnet anchor: preliminary design of the \(<2\,\mathrm{t}\), \(\sim 20\,\mathrm{T}\)-on-tape, conduction-cooled WHAM mirror coil.)
+
+[36] “Manufacturing and Testing HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 35, 2025, doi: 10.1109/TASC.2025.3542351. (§9.6 magnet anchor: as-built/tested confirmation of the \(<2\,\mathrm{t}\) WHAM magnet pair, conduction-cooled to \(20\,\mathrm{K}\).)
+
+[37] National Oceanic and Atmospheric Administration (NOAA), National Aeronautics and Space Administration (NASA), and U.S. Air Force, *U.S. Standard Atmosphere, 1976*, NOAA-S/T 76-1562. (§10.2/§10.4 atmosphere model: closed-form piecewise density/temperature/pressure layers used by the stage-2 climb integrator in `constants_model.py`.)
+
+[38] J. D. Anderson Jr., *Hypersonic and High-Temperature Gas Dynamics*, 3rd ed. Reston, VA: American Institute of Aeronautics and Astronautics (AIAA), 2019. (§10.4 generic hypersonic lifting-body \(C_D(M)\) drag-coefficient shape and constant-dynamic-pressure ascent-trajectory design point — a flagged non-CHARM-specific stand-in for the stage-2 climb, in lieu of any CFD/wind-tunnel data for this airframe.)
+
+[39] National Institute of Standards and Technology (NIST), “X-Ray Mass Attenuation Coefficients (XCOM),” NIST Standard Reference Database 8. (§9.9 photon-shielding order-of-magnitude estimate: \(\mu/\rho\) for water and polyethylene.) [Online]. Available: https://www.nist.gov/pml/xcom-photon-cross-sections-database
+
+[40] J. K. Shultis and R. E. Faw, *Fundamentals of Nuclear Science and Engineering*, 3rd ed. Boca Raton, FL: CRC Press, 2016. (§9.9 neutron-shielding order-of-magnitude estimate: standard fast-neutron removal cross sections for water and polyethylene.)
+
+[41] J. B. Large, T. G. Wilkinson, and D. W. Hoefs (Boeing Commercial Airplane Company), “Reduction of JT8D Powered Aircraft Noise by Engine Refanning,” NASA CR-134855, 1974, NTRS 19740015229. (§10.8 acoustic anchor: JT8D-9→JT8D-109 refan cut mixed takeoff jet velocity from \(1470\) to \(1140\,\mathrm{ft/s}\) for a measured \(7\)–\(8\,\mathrm{EPNdB}\) reduction on a B727-200 at FAR Part 36 stations — calibrates the §10.8 \(\dot m\,v_{\mathrm{jet}}^{\,n}\) exponent from real hardware instead of assuming Lighthill's textbook \(n=8\); also the source of Lighthill's own jet-noise theory reference frame.) M. J. Lighthill, “On sound generated aerodynamically I. General theory,” *Proc. R. Soc. Lond. A*, vol. 211, no. 1107, pp. 564–587, 1952, doi: 10.1098/rspa.1952.0060.
+
+[42] Pratt & Whitney, JT8D turbofan family technical data: JT8D-9 rated air mass flow \(144.7\,\mathrm{kg/s}\) (\(19{,}140\,\mathrm{lb/min}\)), max thrust class \(54\)–\(77\,\mathrm{kN}\) depending on variant. (§10.8: reference engine for the 727 three-engine mass-flow baseline.)
+
+[43] Federal Aviation Administration, *Advisory Circular AC 36-1H: Noise Levels for U.S. Certificated and Foreign Aircraft*, type-certification noise data under 14 CFR Part 36 Appendix C. (§10.8: B727-200/JT8D-15QN, \(190{,}500\,\mathrm{lb}\) configuration, \(100.0\,\mathrm{EPNdB}\) takeoff — reference EPNdB level; unmodified pre-hush-kit JT8D-9/-17 727-200s measured \(7\)–\(8\,\mathrm{EPNdB}\) higher per [41], consistent with why the type needed hush kits at all.)
+
+---
+
 ## Appendix A. Design software
 
 This appendix inventories **software still in active use** for the vehicle packaging model and this paper’s figure/PDF pipeline. Tools tried and discarded are omitted. Further subsections will be added as the toolchain grows.
@@ -1755,97 +1897,16 @@ flowchart LR
   P3 --> MD
 ```
 
-Make targets: `make cad-vspaero`, `make cad-snappy`, `make su2-ssto`, `poetry run python research/figures/cad/emit_stage2_climb_plot.py`, then `make arxiv`.
+Make targets:
 
----
-
-## Acknowledgments
-
-CHARM denotes the chambered aneutronic rotating-mirror architecture developed at Princeton Plasma Physics Laboratory (PPPL) under the ARPA-E economical \(p\text{-}^{11}\mathrm{B}\) program [1]–[11] and discussed toward Pale Blue Fusion. This vehicle sketch is an independent systems exercise and does not speak for that program.
-
----
-
-## References
-
-[1] N. J. Fisch et al. (Princeton Plasma Physics Laboratory), “Why pB11?” ARPA-E Fusion Annual Meeting slides (Day2\_08\_Fisch.pdf), Aug. 2025. Primary public overview of the Chambered Aneutronic Rotating Mirror (CHARM) / chambered rotating-mirror \(p\text{-}^{11}\mathrm{B}\) architecture. [Online]. Available: https://arpa-e.energy.gov/sites/default/files/2025-08/Day2_08_Fisch.pdf
-
-[2] Advanced Research Projects Agency–Energy (ARPA-E), “Economical Proton-Boron11 Fusion,” Award No. DE-AR0001554, OPEN 2021.
-
-[3] E. J. Kolmes, I. E. Ochs, and N. J. Fisch, “Wave-supported hybrid fast-thermal \(p\)-\({}^{11}\)B fusion,” *Phys. Plasmas*, vol. 29, no. 11, Art. no. 110701, 2022, doi: 10.1063/5.0118337.
-
-[4] I. E. Ochs, E. J. Kolmes, M. E. Mlodik, T. Rubin, and N. J. Fisch, “Improving the feasibility of economical proton–boron-11 fusion via alpha channeling with a hybrid fast and thermal proton scheme,” arXiv:2210.08076 [physics.plasm-ph], 2022.
-
-[5] I. E. Ochs and N. J. Fisch, “Lowering the reactor breakeven requirements for proton–boron 11 fusion,” *Phys. Plasmas*, 2024, doi: 10.1063/5.0184945. (ARPA-E DE-AR0001554.)
-
-[6] I. E. Ochs, E. J. Kolmes, and N. J. Fisch, “Preventing ash from poisoning proton–boron 11 fusion,” *Phys. Plasmas*, 2025. [Online]. Available: https://w3.pppl.gov/~fisch/fischpapers/2025/Ochs.poisoning.POP2025.pdf
-
-[7] I. E. Ochs, E. J. Kolmes, and N. J. Fisch, “On the feasibility of radiation-trapping regimes in compressed proton-boron-11 plasmas,” *Phys. Plasmas*, vol. 32, no. 2, Art. no. 022504, 2025, doi: 10.1063/5.024504.
-
-[8] N. J. Fisch, I. E. Ochs, E. J. Kolmes, M. E. Mlodik, and T. Rubin, “Nonthermal Proton-Boron11 Fusion with Separated Reactant Regions,” U.S. Patent Application 19/083,790, filed Mar. 19, 2025.
-
-[9] T. Rubin, J.-M. Rax, N. J. Fisch, I. E. Ochs, and E. J. Kolmes, “Enhanced Particle Confinement with Positive and Negative Ponderomotive Potentials,” U.S. Patent Application 19/084,168, filed Mar. 19, 2025.
-
-[10] N. J. Fisch et al., “Systems and Methods for Producing Ultra-high DC Voltages in Open Field Line Traps…,” U.S. Patent Application 19/175,473, filed Apr. 10, 2025.
-
-[11] E. J. Kolmes, I. E. Ochs, and N. J. Fisch, “Method and Apparatus for Differential Confinement, Mixing, and Demixing…,” U.S. Provisional Patent 63/794,470, filed Apr. 25, 2025.
-
-[12] N. J. Fisch, “Theory of current drive in plasmas,” *Rev. Mod. Phys.*, vol. 59, no. 1, pp. 175–208, 1987, doi: 10.1103/RevModPhys.59.175. (Alpha-channeling / wave–particle foundations.)
-
-[13] N. J. Fisch and J.-M. Rax, “Interaction of energetic alpha particles with intense lower hybrid waves,” *Phys. Rev. Lett.*, vol. 69, no. 4, pp. 612–615, 1992, doi: 10.1103/PhysRevLett.69.612.
-
-[14] National Aeronautics and Space Administration, *Space Shuttle Orbiter / OV-105 Atlantis* dimensional and mass data (cargo bay \(18.3\times 4.6\,\mathrm{m}\); payload to LEO \(\approx 24\,400\,\mathrm{kg}\); empty mass \(\approx 78\,000\,\mathrm{kg}\) class). NASA fact sheets and Orbiter inventory documentation.
-
-[15] International Space Station Program, nominal orbital altitude \(\approx 400\,\mathrm{km}\) and inclination \(51.6^\circ\). NASA ISS reference.
-
-[16] D. A. Vallado, *Fundamentals of Astrodynamics and Applications*, 4th ed. Hawthorne, CA: Microcosm Press / Springer, 2013. (Two-body orbital energy; LEO \(\Delta\varepsilon\).)
-
-[17] G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th ed. Hoboken, NJ: Wiley, 2017. (Rocket equation; \(I_{\mathrm{sp}}\)–\(v_e\) relation.)
-
-[18] J. D. Anderson Jr., *Modern Compressible Flow*, 3rd ed. New York, NY: McGraw-Hill, 2003. (Ram drag / inlet thermo context for stage-2 air path.)
-
-[19] W. J. D. Escher, E. H. Hyde, and D. M. Anderson, “A preliminary systems assessment of the ‘Star-Raker’… airbreathing SSTO concept,” AIAA Paper, 1980s SABRE/airbreathing SSTO literature context for multi-regime airbreathing logic (this paper replaces scramjet claims with microwave air plasma [23]).
-
-[20] T. H. Rider, “Fundamental limitations on plasma fusion systems not in thermodynamic equilibrium,” Ph.D. dissertation, Massachusetts Institute of Technology, Cambridge, MA, 1995. (Non-equilibrium / radiation-limit context motivating chambered \(p\text{-}^{11}\mathrm{B}\) approaches.)
-
-[21] NASA, *Space Shuttle Vehicle Familiarization* (SSV FAM), crew module description: flight deck; middeck galley, personal hygiene, airlock, and **side hatch** for ground ingress/egress; equipment bay ECLSS. Training document SSV-FAM-1107 and NASA *Space Shuttle News Reference* crew-cabin arrangement figures (flight deck p.\ 3-9; middeck p.\ 3-10).
-
-[22] NASA, “A Walk Around the Space Shuttle,” crew compartment summary: flight deck controls; middeck living; side hatch; airlock hatch into the cargo bay. [Online]. Available: https://www.nasa.gov/wp-content/uploads/2016/08/113009main_walkaround.pdf
-
-[23] D. Ye, J. Li, and J. Tang, “Jet propulsion by microwave air plasma in the atmosphere,” *AIP Advances*, vol. 10, no. 5, Art. no. 055002, 2020, doi: 10.1063/5.0005814. (Stage-2 anchor: magnetron → compressed-air microwave plasma jet.)
-
-[24] Y. Nakagawa, H. Koizumi, H. Kawahara, and K. Komurasaki, “Performance characterization of a miniature microwave discharge ion thruster operated with water,” *Acta Astronautica*, vol. 157, pp. 294–299, 2019, doi: 10.1016/j.actaastro.2018.12.031. (Stage-3 architecture: water + microwave plasma; demo \(I_{\mathrm{sp}}\sim 665\,\mathrm{s}\), \(\mu\mathrm{N}\) thrust.)
-
-[25] R. H. Jansen et al., “High Efficiency Megawatt Motor conceptual design,” AIAA Propulsion and Energy Forum, 2018 (NASA/TM / NTRS). (Stage-1: \(\gtrsim 16\,\mathrm{kW/kg}\) EM mass, \(\eta\gtrsim 0.98\) stretch for MW-class motors.)
-
-[26] Comment on Ye et al., “Jet propulsion by microwave air plasma in the atmosphere,” *AIP Advances*, vol. 10, 2020, doi: 10.1063/5.0013575. (Stage-2: Ye’s \(\sim 28\,\mathrm{N/kW}\) is stagnation pressure, not jet thrust — use electrothermal \(T/P=2\eta/v_{\mathrm{j}}\).)
-
-[27] D. Komatsu, K. Nishii, and A. Kakami, “Study on electrodes design for MPD thruster using water propellant,” *Trans. JSASS*, vol. 68, 2025, doi: 10.2322/tjsass.68.108. (Stage-3 high-\(I_{\mathrm{sp}}\) water-MPD path: \(\sim 3150\,\mathrm{s}\) class at \(\eta\sim 0.07\)–\(0.11\), \(\sim 5\,\mathrm{mN/kW}\).)
-
-[28] J. E. Brandenburg, J. Kline, and D. Sullivan, “The microwave electro-thermal (MET) thruster using water vapor propellant,” *IEEE Trans. Plasma Sci.*, vol. 33, no. 2, pp. 776–782, 2005, doi: 10.1109/TPS.2005.845252. (Stage-3 water MET / electrothermal lineage; \(I_{\mathrm{sp}}\gtrsim 800\,\mathrm{s}\) reported class.)
-
-[29] Z. S. Hartwig et al., “The SPARC Toroidal Field Model Coil Program,” *IEEE Trans. Appl. Supercond.*, vol. 34, no. 2, Art. no. 0600316, Mar. 2024, doi: 10.1109/TASC.2023.3332613; arXiv:2308.12301. (§9.6 anchor: \(10{,}058\,\mathrm{kg}\) TFMC test coil at \(20.1\,\mathrm{T}\); \(18{,}025\,\mathrm{kg}\) per production SPARC TF coil, 18 coils per tokamak.)
-
-[30] P. C. Michael et al., “A 20-K, 600-W, Cryocooler-Based, Supercritical Helium Circulation System for the SPARC Toroidal Field Model Coil Program,” *IEEE Trans. Appl. Supercond.*, vol. 34, no. 2, Art. no. 0600313, Mar. 2024, doi: 10.1109/TASC.2023.3332266. (§9.6 anchor: measured \(600\,\mathrm{W}\) at \(20\,\mathrm{K}\) via eight Cryomech AL630 cryocoolers, cooling one HTS test coil.)
-
-[31] A. Dalesandro et al., “The SPARC cryogenic system,” *IOP Conf. Ser.: Mater. Sci. Eng.*, vol. 1301, Art. no. 012107, 2024, doi: 10.1088/1757-899X/1301/1/012107. (§9.6 full-scale contrast: \(17\,\mathrm{kW}\) steady-state \(4.5\,\mathrm{K}\)-equivalent cryoplant plus a separate \(2.9\,\mathrm{MW}\) blowdown system for pulse heat removal.)
-
-[32] B. T. Nugent, R. J. Grotenrath, and W. L. Johnson (NASA Glenn Research Center), “20 Watt 20 Kelvin Reverse Turbo-Brayton Cycle Cryocooler Testing and Applications,” 22nd Int. Cryocooler Conf. (ICC), Bethlehem, PA, Jun. 27–30, 2022, NASA/TM (NTRS 20220009350). (§9.6 flight-cryocooler ceiling check: \(4.4\)–\(5.5\,\mathrm{kg/W}\) goal vs. \(18.7\,\mathrm{kg/W}\) state-of-the-art specific mass at \(20\,\mathrm{K}\).)
-
-[33] Cryomech, Inc., “AL630 Gifford-McMahon Cryocooler” datasheet: \(100\,\mathrm{W}\) at \(20\,\mathrm{K}\), \(44\,\mathrm{kg}\) cold head + \(191\,\mathrm{kg}\) CPA1114 compressor package, \(11.7\)–\(12.7\,\mathrm{kW}\) electrical input. [Online]. Available: https://bluefors.com/products/gifford-mcmahon-cryocoolers/al630-gifford-mcmahon-cryocooler/
-
-[34] Commonwealth Fusion Systems, “Commonwealth Fusion Systems Delivers Superconducting Magnets to University of Wisconsin’s WHAM Project,” press release, Jul. 12, 2024. (§9.6 magnet anchor: two \(<2\,\mathrm{t}\) REBCO magnets, \(17\,\mathrm{T}\) warm bore / \(20\,\mathrm{T}\) on tape, self-contained with integrated cryo/vacuum/controls.) [Online]. Available: https://www.cfs.energy/news-and-media/commonwealth-fusion-systems-delivers-hts-magnets-to-uw-wham-project/
-
-[35] A. Radovinsky et al., “Design of High Field HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 33, no. 5, 2023, doi: 10.1109/TASC.2023.3240377. (§9.6 magnet anchor: preliminary design of the \(<2\,\mathrm{t}\), \(\sim 20\,\mathrm{T}\)-on-tape, conduction-cooled WHAM mirror coil.)
-
-[36] “Manufacturing and Testing HTS Coils for Magnetic Mirror,” *IEEE Trans. Appl. Supercond.*, vol. 35, 2025, doi: 10.1109/TASC.2025.3542351. (§9.6 magnet anchor: as-built/tested confirmation of the \(<2\,\mathrm{t}\) WHAM magnet pair, conduction-cooled to \(20\,\mathrm{K}\).)
-
-[37] National Oceanic and Atmospheric Administration (NOAA), National Aeronautics and Space Administration (NASA), and U.S. Air Force, *U.S. Standard Atmosphere, 1976*, NOAA-S/T 76-1562. (§10.2/§10.4 atmosphere model: closed-form piecewise density/temperature/pressure layers used by the stage-2 climb integrator in `constants_model.py`.)
-
-[38] J. D. Anderson Jr., *Hypersonic and High-Temperature Gas Dynamics*, 3rd ed. Reston, VA: American Institute of Aeronautics and Astronautics (AIAA), 2019. (§10.4 generic hypersonic lifting-body \(C_D(M)\) drag-coefficient shape and constant-dynamic-pressure ascent-trajectory design point — a flagged non-CHARM-specific stand-in for the stage-2 climb, in lieu of any CFD/wind-tunnel data for this airframe.)
-
-[39] National Institute of Standards and Technology (NIST), “X-Ray Mass Attenuation Coefficients (XCOM),” NIST Standard Reference Database 8. (§9.9 photon-shielding order-of-magnitude estimate: \(\mu/\rho\) for water and polyethylene.) [Online]. Available: https://www.nist.gov/pml/xcom-photon-cross-sections-database
-
-[40] J. K. Shultis and R. E. Faw, *Fundamentals of Nuclear Science and Engineering*, 3rd ed. Boca Raton, FL: CRC Press, 2016. (§9.9 neutron-shielding order-of-magnitude estimate: standard fast-neutron removal cross sections for water and polyethylene.)
+```bash
+make cad-vspaero
+make cad-snappy
+make su2-ssto
+poetry run python research/figures/cad/emit_stage2_climb_plot.py
+poetry run python research/figures/cad/emit_audio_signature.py
+make arxiv
+```
 
 ---
 

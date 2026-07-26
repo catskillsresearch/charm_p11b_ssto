@@ -12,6 +12,10 @@
       "usage": "include"
     },
     {
+      "filename": "listings/snippet-005.txt",
+      "usage": "include"
+    },
+    {
       "filename": "figures/assets/airlock_top.png",
       "usage": "include"
     },
@@ -33,6 +37,10 @@
     },
     {
       "filename": "figures/assets/fusion_plant_skid_top.png",
+      "usage": "include"
+    },
+    {
+      "filename": "figures/assets/stage1_audio_signature.png",
       "usage": "include"
     },
     {

@@ -1296,11 +1296,12 @@ def fix_appendix_numbering(latex: str) -> str:
             r"\1",
             latex,
         )
-    # Acknowledgments / References must not become Appendix B / C.
+    # Acknowledgments / References must not become Appendix B / C, but
+    # should still show up in the table of contents despite being starred.
     for title in ("Acknowledgments", "Acknowledgements", "References"):
         latex = re.sub(
             rf"(\\section)\{{{re.escape(title)}\}}",
-            rf"\1*{{{title}}}",
+            rf"\1*{{{title}}}\\addcontentsline{{toc}}{{section}}{{{title}}}",
             latex,
         )
     return latex
@@ -1359,8 +1360,11 @@ def cleanup_pandoc_latex(latex: str) -> str:
 
 
 def insert_lists_of_floats(latex: str) -> str:
-    """Insert List of Figures and List of Tables after the abstract block."""
+    """Insert Table of Contents, List of Figures, and List of Tables after
+    the abstract block."""
     lists = (
+        "\\clearpage\n"
+        "\\tableofcontents\n"
         "\\clearpage\n"
         "\\listoffigures\n"
         "\\listoftables\n"
