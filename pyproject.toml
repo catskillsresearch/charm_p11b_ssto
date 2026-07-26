@@ -1,7 +1,7 @@
 [project]
-name = "p11b"
+name = "charm_p11b_ssto"
 version = "0.1.0"
-description = "General-purpose digital-twin simulator for proton-boron-11 fusion architectures"
+description = "Vehicle-integration paper and CAD/mass-closure toolchain for a CHARM p-11B fusion-electric SSTO"
 authors = [{ name = "Catskills Research Company" }]
 readme = "README.md"
 license = "Apache-2.0"
@@ -9,25 +9,11 @@ requires-python = ">=3.12,<3.15"
 dependencies = [
     "numpy>=2.0,<3.0",
     "scipy>=1.17.1,<2.0",
-    "pyqtgraph>=0.14,<0.15",
     "pillow>=12.2,<13.0",
-    "scikit-image (>=0.26.0,<0.27.0)",
-    "tetgen (>=0.8.4,<0.9.0)",
 ]
 
 [tool.poetry]
 package-mode = false
-
-[tool.poetry.group.simulator]
-optional = true
-
-[tool.poetry.group.simulator.dependencies]
-PySide6 = ">=6.8,<6.12"
-
-[project.scripts]
-p11b-operator = "simulator.app:main"
-
-
 
 [tool.poetry.group.dev]
 optional = true

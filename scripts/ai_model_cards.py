@@ -7,9 +7,9 @@ Pattern borrowed from the sibling repo `catskillsresearch/scott_models`
   <!-- AI_MODEL_TOOL_BULLETS --> ... <!-- /AI_MODEL_TOOL_BULLETS -->
   <!-- AI_MODEL_REFERENCES --> ... <!-- /AI_MODEL_REFERENCES -->
 
-`arxiv.md` uses plain numeric bracket citations ([1]-[43] as of this writing),
-not the bracket-key style scott_models uses, so each card's ``cite_key`` here
-is the next free reference number, kept in sync by hand.
+`arxiv.md` uses plain numeric bracket citations, not the bracket-key style
+scott_models uses, so each card's ``cite_key`` here is the next free
+reference number, kept in sync by hand.
 """
 
 from __future__ import annotations
@@ -28,13 +28,14 @@ class ModelCard:
 MODEL_CARDS: tuple[ModelCard, ...] = (
     ModelCard(
         label="Cursor",
-        cite_key="44",
+        cite_key="18",
         tool_note=(
-            "agent-assisted development environment for this repository: the CAD/CFD "
-            "figure pipeline (OpenVSP, OpenFOAM `snappyHexMesh`/RANS, SU2 Euler, VSPAERO, "
-            "Blender drop-in cutaways), the `constants_model.py` sizing derivations, the "
-            "interactive assembly outliner, and drafting/maintaining this narrative "
-            "(`arxiv.md`)."
+            "agent-assisted development environment for this repository: the OpenVSP "
+            "floorplan/profile CAD and Blender drop-in-cutaway pipeline, the "
+            "`constants_model.py` mass/energy-closure derivations, the interactive assembly "
+            "outliner, and drafting/maintaining this narrative (`arxiv.md`), including "
+            "splitting the original monorepo into this vehicle-integration paper plus the "
+            "companion CHARM reactor and combined-cycle-engine papers."
         ),
         reference=(
             "Anysphere, Inc. *Cursor: AI-native code editor and agent environment*. "
@@ -43,13 +44,12 @@ MODEL_CARDS: tuple[ModelCard, ...] = (
     ),
     ModelCard(
         label="xAI Grok 4.5",
-        cite_key="45",
+        cite_key="19",
         tool_note=(
-            "primary agent model for large stretches of the vehicle-packaging and "
-            "CFD-pipeline work: OpenVSP geometry iteration (body flap, OMS pods), "
-            "`snappyHexMesh`/SU2/VSPAERO debugging, the CHARM bottom-up mass roll-up in "
-            "`constants_model.py`, and the `assembly.json`-driven Blender drop-in figures. "
-            "Used via the Cursor agent environment."
+            "primary agent model for large stretches of the vehicle-packaging work: "
+            "OpenVSP geometry iteration (body flap, OMS pods), the CHARM/engine bottom-up "
+            "mass roll-up in `constants_model.py`, and the `assembly.json`-driven Blender "
+            "drop-in figures. Used via the Cursor agent environment."
         ),
         reference=(
             "xAI. *Grok 4.5*. Model documentation, "
@@ -59,14 +59,13 @@ MODEL_CARDS: tuple[ModelCard, ...] = (
     ),
     ModelCard(
         label="Anthropic Claude Sonnet 5",
-        cite_key="46",
+        cite_key="20",
         tool_note=(
-            "session work including full-airframe CFD camera framing and "
-            "streamline-artifact fixes on the OpenFOAM/SU2 renders, the \u00a710.8 "
-            "audio-signature derivation and stylized ascent-soundscape synthesis "
-            "(`emit_audio_signature.py`), and narrative maintenance (table of contents, "
-            "appendix reordering, this AI-assistance disclosure). Used via the Cursor "
-            "agent environment."
+            "session work including narrative maintenance (table of contents, appendix "
+            "reordering), rewriting \u00a79/\u00a710 into short vehicle-level summaries that cite the "
+            "companion reactor and engine papers for full derivations, pruning the "
+            "generic multi-architecture survey scaffold from this repository, and this "
+            "AI-assistance disclosure. Used via the Cursor agent environment."
         ),
         reference=(
             "Anthropic. *Claude Sonnet 5*. System card, "
@@ -76,7 +75,7 @@ MODEL_CARDS: tuple[ModelCard, ...] = (
     ),
     ModelCard(
         label="Google Nano Banana Pro (Gemini 3 Pro Image)",
-        cite_key="47",
+        cite_key="21",
         tool_note=(
             "generated Fig.~\\ref{fig:catskills-ssto-beauty-shot}, an illustrative exterior "
             "concept render of the vehicle taking off from a municipal airport, and "

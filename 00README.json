@@ -12,10 +12,6 @@
       "usage": "include"
     },
     {
-      "filename": "listings/snippet-005.txt",
-      "usage": "include"
-    },
-    {
       "filename": "figures/assets/airlock_top.png",
       "usage": "include"
     },
@@ -48,34 +44,6 @@
       "usage": "include"
     },
     {
-      "filename": "figures/assets/orbital_ascent_profile.png",
-      "usage": "include"
-    },
-    {
-      "filename": "figures/assets/stage1_audio_signature.png",
-      "usage": "include"
-    },
-    {
-      "filename": "figures/assets/stage1_rans_wing.png",
-      "usage": "include"
-    },
-    {
-      "filename": "figures/assets/stage1_snappy_wall.png",
-      "usage": "include"
-    },
-    {
-      "filename": "figures/assets/stage1_takeoff_check.png",
-      "usage": "include"
-    },
-    {
-      "filename": "figures/assets/stage1_vspaero_polar.png",
-      "usage": "include"
-    },
-    {
-      "filename": "figures/assets/stage2_climb_check.png",
-      "usage": "include"
-    },
-    {
       "filename": "figures/figure-000.pdf",
       "usage": "include"
     },
@@ -85,10 +53,6 @@
     },
     {
       "filename": "figures/figure-002.pdf",
-      "usage": "include"
-    },
-    {
-      "filename": "figures/figure-003.pdf",
       "usage": "include"
     }
   ]
