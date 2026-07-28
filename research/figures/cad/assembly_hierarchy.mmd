@@ -12,7 +12,17 @@ flowchart TB
   fuselage_cradle["Fuselage cradle"]
   nose_landing_gear["Nose landing gear"]
   left_aft_steering_pod["Left aft steering pod"]
+  left_aft_rcs_propellant_tank["Left aft LMP-103S tank"]
+  left_aft_rcs_pressurant["Left aft He pressurant"]
+  left_aft_rcs_manifold["Left aft RCS manifold"]
+  left_aft_rcs_primary_bank["Left aft primary RCS bank"]
+  left_aft_rcs_vernier_bank["Left aft vernier RCS bank"]
   right_aft_steering_pod["Right aft steering pod"]
+  right_aft_rcs_propellant_tank["Right aft LMP-103S tank"]
+  right_aft_rcs_pressurant["Right aft He pressurant"]
+  right_aft_rcs_manifold["Right aft RCS manifold"]
+  right_aft_rcs_primary_bank["Right aft primary RCS bank"]
+  right_aft_rcs_vernier_bank["Right aft vernier RCS bank"]
   body_flap["Body flap"]
   crew_capsule(["Crew capsule"])
   pressure_vessel["Pressure vessel"]
@@ -31,6 +41,11 @@ flowchart TB
   hatch_aft_door["Aft pressure hatch door (to airlock)"]
   side_hatch["Left-side ground hatch (runway only)"]
   forward_steering_module["Forward steering module (nose)"]
+  forward_rcs_propellant_tank["Forward LMP-103S tank"]
+  forward_rcs_pressurant["Forward He pressurant"]
+  forward_rcs_manifold["Forward RCS manifold"]
+  forward_rcs_primary_bank["Forward primary RCS bank"]
+  forward_rcs_vernier_bank["Forward vernier RCS bank"]
   airlock(["Airlock"])
   airlock_pressure_vessel["Pressure vessel"]
   hatch_cabin_al["Door between cabin and airlock"]
@@ -119,12 +134,22 @@ flowchart TB
   left_main_landing_gear["Left main landing gear"]
   right_main_landing_gear["Right main landing gear"]
   class vehicle,fuselage,crew_capsule,airlock,cargo_bay,charm_power_plant,fusion_plant_skid,charm,charm_chamber_string,charm_magnet_rack,charm_rf_rack,charm_drive_rack,charm_thermal_rack,magnet_psu_bay,cryo_compressor_bay,fuel_services,combined_cycle_engine,engine_skid,stage2_air_plasma,stage3_water_plasma_rack,tail_assembly,wing,main_landing_gear collection
-  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,right_aft_steering_pod,body_flap,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,hatch_aft_door,side_hatch,forward_steering_module,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,charm_skid,left_fusion_plant_door,right_fusion_plant_door,fusion_plant_bay_atmosphere,charm_shield_bulkhead,charm_backbone,left_fusion_chamber,heat_exchange_chamber,right_fusion_chamber,charm_axis,charm_magnet_rack_frame,mirror_magnets,magnet_cryostats,charm_rf_rack_frame,rf_launchers,rf_amps,charm_drive_rack_frame,rotation_drive,charm_thermal_rack_frame,coolant_bath,dec,plant_electrical_bus,magnet_psu_bay_frame,magnet_psu,cryo_compressor_bay_frame,cryocooler,vacuum_controls,fuel_services_frame,proton_tank,boron11_container,boron11_injector,flight_battery,water_tanks,ground_cart,combined_cycle_engine_skid,left_engine_bay_door,right_engine_bay_door,stage1_edf,stage2_frame,air_precompressor,mw_magnetron_farm,mw_air_applicator,stage3_frame,water_vaporizer,stage3_water_plasma,water_injector,propulsion_bus_coupler,nacelle,variable_inlets,inlet_duct,shared_nozzle,vertical_stabilizer,left_rudder_speedbrake,right_rudder_speedbrake,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
+  class fuselage_cradle,nose_landing_gear,left_aft_steering_pod,left_aft_rcs_propellant_tank,left_aft_rcs_pressurant,left_aft_rcs_manifold,left_aft_rcs_primary_bank,left_aft_rcs_vernier_bank,right_aft_steering_pod,right_aft_rcs_propellant_tank,right_aft_rcs_pressurant,right_aft_rcs_manifold,right_aft_rcs_primary_bank,right_aft_rcs_vernier_bank,body_flap,pressure_vessel,flight_deck,captain_chair,pilot_chair,glare_shield,crew_compartment,seat_row,wcs,galley,luggage,eclss_rack,o2_tankage,n2_tankage,hatch_aft_door,side_hatch,forward_steering_module,forward_rcs_propellant_tank,forward_rcs_pressurant,forward_rcs_manifold,forward_rcs_primary_bank,forward_rcs_vernier_bank,airlock_pressure_vessel,hatch_cabin_al,hatch_al_bay,airlock_air_tank,airlock_cycle_pack,cargo_skid,left_cargo_door,right_cargo_door,charm_skid,left_fusion_plant_door,right_fusion_plant_door,fusion_plant_bay_atmosphere,charm_shield_bulkhead,charm_backbone,left_fusion_chamber,heat_exchange_chamber,right_fusion_chamber,charm_axis,charm_magnet_rack_frame,mirror_magnets,magnet_cryostats,charm_rf_rack_frame,rf_launchers,rf_amps,charm_drive_rack_frame,rotation_drive,charm_thermal_rack_frame,coolant_bath,dec,plant_electrical_bus,magnet_psu_bay_frame,magnet_psu,cryo_compressor_bay_frame,cryocooler,vacuum_controls,fuel_services_frame,proton_tank,boron11_container,boron11_injector,flight_battery,water_tanks,ground_cart,combined_cycle_engine_skid,left_engine_bay_door,right_engine_bay_door,stage1_edf,stage2_frame,air_precompressor,mw_magnetron_farm,mw_air_applicator,stage3_frame,water_vaporizer,stage3_water_plasma,water_injector,propulsion_bus_coupler,nacelle,variable_inlets,inlet_duct,shared_nozzle,vertical_stabilizer,left_rudder_speedbrake,right_rudder_speedbrake,wing_body,left_elevon,right_elevon,left_main_landing_gear,right_main_landing_gear part
   vehicle --> fuselage
   fuselage --> fuselage_cradle
   fuselage --> nose_landing_gear
   fuselage --> left_aft_steering_pod
+  left_aft_steering_pod --> left_aft_rcs_propellant_tank
+  left_aft_steering_pod --> left_aft_rcs_pressurant
+  left_aft_steering_pod --> left_aft_rcs_manifold
+  left_aft_steering_pod --> left_aft_rcs_primary_bank
+  left_aft_steering_pod --> left_aft_rcs_vernier_bank
   fuselage --> right_aft_steering_pod
+  right_aft_steering_pod --> right_aft_rcs_propellant_tank
+  right_aft_steering_pod --> right_aft_rcs_pressurant
+  right_aft_steering_pod --> right_aft_rcs_manifold
+  right_aft_steering_pod --> right_aft_rcs_primary_bank
+  right_aft_steering_pod --> right_aft_rcs_vernier_bank
   fuselage --> body_flap
   vehicle --> crew_capsule
   crew_capsule --> pressure_vessel
@@ -143,6 +168,11 @@ flowchart TB
   crew_compartment --> hatch_aft_door
   crew_capsule --> side_hatch
   crew_capsule --> forward_steering_module
+  forward_steering_module --> forward_rcs_propellant_tank
+  forward_steering_module --> forward_rcs_pressurant
+  forward_steering_module --> forward_rcs_manifold
+  forward_steering_module --> forward_rcs_primary_bank
+  forward_steering_module --> forward_rcs_vernier_bank
   vehicle --> airlock
   airlock --> airlock_pressure_vessel
   airlock --> hatch_cabin_al
@@ -360,5 +390,26 @@ flowchart TB
   variable_inlets ==>|air_path| inlet_duct
   inlet_duct ==>|air_path| stage1_edf
   inlet_duct ==>|air_path| air_precompressor
-  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
-  linkStyle 110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f
+  left_aft_rcs_propellant_tank ==>|bolted to| left_aft_steering_pod
+  left_aft_rcs_pressurant ==>|bolted to| left_aft_steering_pod
+  left_aft_rcs_manifold ==>|bolted to| left_aft_steering_pod
+  left_aft_rcs_propellant_tank ==>|propellant_feed| left_aft_rcs_manifold
+  left_aft_rcs_pressurant ==>|pressurant| left_aft_rcs_manifold
+  left_aft_rcs_manifold ==>|propellant_feed| left_aft_rcs_primary_bank
+  left_aft_rcs_manifold ==>|propellant_feed| left_aft_rcs_vernier_bank
+  right_aft_rcs_propellant_tank ==>|bolted to| right_aft_steering_pod
+  right_aft_rcs_pressurant ==>|bolted to| right_aft_steering_pod
+  right_aft_rcs_manifold ==>|bolted to| right_aft_steering_pod
+  right_aft_rcs_propellant_tank ==>|propellant_feed| right_aft_rcs_manifold
+  right_aft_rcs_pressurant ==>|pressurant| right_aft_rcs_manifold
+  right_aft_rcs_manifold ==>|propellant_feed| right_aft_rcs_primary_bank
+  right_aft_rcs_manifold ==>|propellant_feed| right_aft_rcs_vernier_bank
+  forward_rcs_propellant_tank ==>|bolted to| forward_steering_module
+  forward_rcs_pressurant ==>|bolted to| forward_steering_module
+  forward_rcs_manifold ==>|bolted to| forward_steering_module
+  forward_rcs_propellant_tank ==>|propellant_feed| forward_rcs_manifold
+  forward_rcs_pressurant ==>|pressurant| forward_rcs_manifold
+  forward_rcs_manifold ==>|propellant_feed| forward_rcs_primary_bank
+  forward_rcs_manifold ==>|propellant_feed| forward_rcs_vernier_bank
+  linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124 stroke:#9a9a9a,stroke-width:1.5px,color:#9a9a9a
+  linkStyle 125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274 stroke:#0d7a6f,stroke-width:2.5px,color:#0d7a6f

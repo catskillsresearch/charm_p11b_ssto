@@ -15,7 +15,7 @@
     "engine_sizing": "P1=65MW P2=P3=995MW meng=15t; Plan A TA m_pl=0 m_dry~172t mw~39t Isp=2000s",
     "figure_ssot": "Paper mermaid figures must match this assembly.json; ground cart / vacuum pack / plant bus added from paper schematic.",
     "engine_air_path": "freestream \u2192 twin OMS-shoulder scoops \u2192 cross-duct plenum \u2192 (EDF | stage-2) \u2192 shared flared nozzle; belly boat unpierced; aft RCS retained",
-    "plan_a": "no cargo; m_land~190t; S~480m2; b~33m; airport KEDW 4572m; carbon sandwich + reusable TPS only (arxiv.md §1.2b)"
+    "plan_a": "no cargo; m_land~190t; S~480m2; b~33m; airport KEDW 4572m; carbon sandwich + reusable TPS only (arxiv.md \u00a71.2b)"
   },
   "frame": {
     "id": "vehicle",
@@ -34,7 +34,7 @@
       "length_m": 37.24,
       "wingspan_m": 23.79,
       "height_fin_tip_m": 17.25,
-      "note": "Kitbash DNA / FG mesh; Plan A envelope span/area sized to plant (arxiv.md §1.2b)"
+      "note": "Kitbash DNA / FG mesh; Plan A envelope span/area sized to plant (arxiv.md \u00a71.2b)"
     }
   },
   "root": {
@@ -267,12 +267,14 @@
             "kind": "thruster_pod",
             "placement": "aft fuselage, left of tail fin (Shuttle OMS/RCS pod)",
             "size": {
-              "shuttle_oms_engines": 1,
               "shuttle_jets": {
                 "primary": 12,
                 "vernier": 2
               },
-              "length_m": 6.5
+              "length_m": 6.5,
+              "propellant": "LMP-103S",
+              "thruster_class": "Bradford/ECAPS HPGP",
+              "oms_engines": 0
             },
             "ports": [
               {
@@ -287,9 +289,128 @@
                   1,
                   0
                 ]
+              },
+              {
+                "id": "rcs_tank_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "rcs_press_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "rcs_manifold_mount",
+                "role": "keel_mount"
               }
             ],
-            "note": "Shuttle-style left aft OMS/RCS pod; bolts to fuselage cradle."
+            "note": "Shuttle-style left aft pod: OMS engines deleted; shoulder scoop + full RCS nozzle set. Internal LMP-103S / He / manifold feed Bradford/ECAPS-class thrusters at heritage ports. Bolts to fuselage cradle.",
+            "children": [
+              {
+                "id": "left_aft_rcs_propellant_tank",
+                "label": "Left aft LMP-103S tank",
+                "kind": "tank",
+                "form": "LMP-103S",
+                "note": "ADN-based green monopropellant for aft primary+vernier banks. OMS hypergol deleted.",
+                "ports": [
+                  {
+                    "id": "pod_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "propellant_feed"
+                  }
+                ]
+              },
+              {
+                "id": "left_aft_rcs_pressurant",
+                "label": "Left aft He pressurant",
+                "kind": "tank",
+                "form": "He",
+                "note": "Helium pressurant for LMP-103S feed.",
+                "ports": [
+                  {
+                    "id": "pod_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "pressurant"
+                  }
+                ]
+              },
+              {
+                "id": "left_aft_rcs_manifold",
+                "label": "Left aft RCS manifold",
+                "kind": "equipment",
+                "note": "Feed/isolation manifold to Bradford/ECAPS-class thruster banks.",
+                "ports": [
+                  {
+                    "id": "pod_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "propellant_in",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "pressurant_in",
+                    "role": "pressurant"
+                  },
+                  {
+                    "id": "primary_out",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "vernier_out",
+                    "role": "propellant_feed"
+                  }
+                ]
+              },
+              {
+                "id": "left_aft_rcs_primary_bank",
+                "label": "Left aft primary RCS bank",
+                "kind": "thruster_bank",
+                "size": {
+                  "count": 12,
+                  "propellant": "LMP-103S",
+                  "thruster_class": "Bradford/ECAPS HPGP",
+                  "heritage_ports": "Shuttle aft OMS/RCS pod primaries"
+                },
+                "note": "Heritage nozzle locations/counts; green mono thrusters behind existing ports. Attitude only.",
+                "ports": [
+                  {
+                    "id": "manifold_mate",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "pod_skin",
+                    "role": "nozzle_port"
+                  }
+                ]
+              },
+              {
+                "id": "left_aft_rcs_vernier_bank",
+                "label": "Left aft vernier RCS bank",
+                "kind": "thruster_bank",
+                "size": {
+                  "count": 2,
+                  "propellant": "LMP-103S",
+                  "thruster_class": "Bradford/ECAPS HPGP vernier",
+                  "heritage_ports": "Shuttle aft verniers"
+                },
+                "ports": [
+                  {
+                    "id": "manifold_mate",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "pod_skin",
+                    "role": "nozzle_port"
+                  }
+                ]
+              }
+            ]
           },
           {
             "id": "right_aft_steering_pod",
@@ -297,12 +418,14 @@
             "kind": "thruster_pod",
             "placement": "aft fuselage, right of tail fin (Shuttle OMS/RCS pod)",
             "size": {
-              "shuttle_oms_engines": 1,
               "shuttle_jets": {
                 "primary": 12,
                 "vernier": 2
               },
-              "length_m": 6.5
+              "length_m": 6.5,
+              "propellant": "LMP-103S",
+              "thruster_class": "Bradford/ECAPS HPGP",
+              "oms_engines": 0
             },
             "ports": [
               {
@@ -317,9 +440,128 @@
                   -1,
                   0
                 ]
+              },
+              {
+                "id": "rcs_tank_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "rcs_press_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "rcs_manifold_mount",
+                "role": "keel_mount"
               }
             ],
-            "note": "Shuttle-style right aft OMS/RCS pod; bolts to fuselage cradle."
+            "note": "Shuttle-style right aft pod: OMS engines deleted; shoulder scoop + full RCS nozzle set. Internal LMP-103S / He / manifold feed Bradford/ECAPS-class thrusters at heritage ports. Bolts to fuselage cradle.",
+            "children": [
+              {
+                "id": "right_aft_rcs_propellant_tank",
+                "label": "Right aft LMP-103S tank",
+                "kind": "tank",
+                "form": "LMP-103S",
+                "note": "ADN-based green monopropellant for aft primary+vernier banks. OMS hypergol deleted.",
+                "ports": [
+                  {
+                    "id": "pod_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "propellant_feed"
+                  }
+                ]
+              },
+              {
+                "id": "right_aft_rcs_pressurant",
+                "label": "Right aft He pressurant",
+                "kind": "tank",
+                "form": "He",
+                "note": "Helium pressurant for LMP-103S feed.",
+                "ports": [
+                  {
+                    "id": "pod_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "pressurant"
+                  }
+                ]
+              },
+              {
+                "id": "right_aft_rcs_manifold",
+                "label": "Right aft RCS manifold",
+                "kind": "equipment",
+                "note": "Feed/isolation manifold to Bradford/ECAPS-class thruster banks.",
+                "ports": [
+                  {
+                    "id": "pod_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "propellant_in",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "pressurant_in",
+                    "role": "pressurant"
+                  },
+                  {
+                    "id": "primary_out",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "vernier_out",
+                    "role": "propellant_feed"
+                  }
+                ]
+              },
+              {
+                "id": "right_aft_rcs_primary_bank",
+                "label": "Right aft primary RCS bank",
+                "kind": "thruster_bank",
+                "size": {
+                  "count": 12,
+                  "propellant": "LMP-103S",
+                  "thruster_class": "Bradford/ECAPS HPGP",
+                  "heritage_ports": "Shuttle aft OMS/RCS pod primaries"
+                },
+                "note": "Heritage nozzle locations/counts; green mono thrusters behind existing ports. Attitude only.",
+                "ports": [
+                  {
+                    "id": "manifold_mate",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "pod_skin",
+                    "role": "nozzle_port"
+                  }
+                ]
+              },
+              {
+                "id": "right_aft_rcs_vernier_bank",
+                "label": "Right aft vernier RCS bank",
+                "kind": "thruster_bank",
+                "size": {
+                  "count": 2,
+                  "propellant": "LMP-103S",
+                  "thruster_class": "Bradford/ECAPS HPGP vernier",
+                  "heritage_ports": "Shuttle aft verniers"
+                },
+                "ports": [
+                  {
+                    "id": "manifold_mate",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "pod_skin",
+                    "role": "nozzle_port"
+                  }
+                ]
+              }
+            ]
           },
           {
             "id": "body_flap",
@@ -629,7 +871,9 @@
                 "primary": 14,
                 "vernier": 2
               },
-              "length_m": 2.2
+              "length_m": 2.2,
+              "propellant": "LMP-103S",
+              "thruster_class": "Bradford/ECAPS HPGP"
             },
             "ports": [
               {
@@ -646,9 +890,126 @@
                 ],
                 "role": "module_mount",
                 "note": "Bolts to pressure-vessel nose hardpoint"
+              },
+              {
+                "id": "rcs_tank_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "rcs_press_mount",
+                "role": "keel_mount"
+              },
+              {
+                "id": "rcs_manifold_mount",
+                "role": "keel_mount"
               }
             ],
-            "note": "Hedgehog of small space-steering jets on the pressure-vessel nose (Crew Dragon\u2013style). Bolts to the vessel; not inside the pressurized volume."
+            "note": "Nose RCS module: Shuttle nozzle locations/counts retained; LMP-103S green monoprop + Bradford/ECAPS-class thrusters. Bolts to pressure-vessel nose; not inside pressurized volume.",
+            "children": [
+              {
+                "id": "forward_rcs_propellant_tank",
+                "label": "Forward LMP-103S tank",
+                "kind": "tank",
+                "form": "LMP-103S",
+                "note": "Nose RCS green monopropellant store.",
+                "ports": [
+                  {
+                    "id": "module_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "propellant_feed"
+                  }
+                ]
+              },
+              {
+                "id": "forward_rcs_pressurant",
+                "label": "Forward He pressurant",
+                "kind": "tank",
+                "form": "He",
+                "ports": [
+                  {
+                    "id": "module_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "outlet",
+                    "role": "pressurant"
+                  }
+                ]
+              },
+              {
+                "id": "forward_rcs_manifold",
+                "label": "Forward RCS manifold",
+                "kind": "equipment",
+                "ports": [
+                  {
+                    "id": "module_mount",
+                    "role": "keel_mount"
+                  },
+                  {
+                    "id": "propellant_in",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "pressurant_in",
+                    "role": "pressurant"
+                  },
+                  {
+                    "id": "primary_out",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "vernier_out",
+                    "role": "propellant_feed"
+                  }
+                ]
+              },
+              {
+                "id": "forward_rcs_primary_bank",
+                "label": "Forward primary RCS bank",
+                "kind": "thruster_bank",
+                "size": {
+                  "count": 14,
+                  "propellant": "LMP-103S",
+                  "thruster_class": "Bradford/ECAPS HPGP",
+                  "heritage_ports": "Shuttle forward RCS primaries"
+                },
+                "note": "Heritage nose nozzle locations/counts; attitude / abort only.",
+                "ports": [
+                  {
+                    "id": "manifold_mate",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "skin",
+                    "role": "nozzle_port"
+                  }
+                ]
+              },
+              {
+                "id": "forward_rcs_vernier_bank",
+                "label": "Forward vernier RCS bank",
+                "kind": "thruster_bank",
+                "size": {
+                  "count": 2,
+                  "propellant": "LMP-103S",
+                  "thruster_class": "Bradford/ECAPS HPGP vernier",
+                  "heritage_ports": "Shuttle forward verniers"
+                },
+                "ports": [
+                  {
+                    "id": "manifold_mate",
+                    "role": "propellant_feed"
+                  },
+                  {
+                    "id": "skin",
+                    "role": "nozzle_port"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -3438,6 +3799,153 @@
       "b": "air_precompressor.air_in",
       "type": "air_path",
       "note": "Inlet duct \u2192 stage-2 precompressor"
+    },
+    {
+      "id": "j_left_aft_rcs_tank",
+      "a": "left_aft_rcs_propellant_tank.pod_mount",
+      "b": "left_aft_steering_pod.rcs_tank_mount",
+      "type": "fixed",
+      "note": "Aft LMP-103S tank in pod"
+    },
+    {
+      "id": "j_left_aft_rcs_press",
+      "a": "left_aft_rcs_pressurant.pod_mount",
+      "b": "left_aft_steering_pod.rcs_press_mount",
+      "type": "fixed",
+      "note": "Aft He bottle in pod"
+    },
+    {
+      "id": "j_left_aft_rcs_manifold",
+      "a": "left_aft_rcs_manifold.pod_mount",
+      "b": "left_aft_steering_pod.rcs_manifold_mount",
+      "type": "fixed",
+      "note": "Aft RCS manifold in pod"
+    },
+    {
+      "id": "j_left_aft_rcs_prop_feed",
+      "a": "left_aft_rcs_propellant_tank.outlet",
+      "b": "left_aft_rcs_manifold.propellant_in",
+      "type": "propellant_feed",
+      "note": "LMP-103S to manifold"
+    },
+    {
+      "id": "j_left_aft_rcs_he_feed",
+      "a": "left_aft_rcs_pressurant.outlet",
+      "b": "left_aft_rcs_manifold.pressurant_in",
+      "type": "pressurant",
+      "note": "He to manifold"
+    },
+    {
+      "id": "j_left_aft_rcs_primary",
+      "a": "left_aft_rcs_manifold.primary_out",
+      "b": "left_aft_rcs_primary_bank.manifold_mate",
+      "type": "propellant_feed",
+      "note": "Primary bank feed"
+    },
+    {
+      "id": "j_left_aft_rcs_vernier",
+      "a": "left_aft_rcs_manifold.vernier_out",
+      "b": "left_aft_rcs_vernier_bank.manifold_mate",
+      "type": "propellant_feed",
+      "note": "Vernier bank feed"
+    },
+    {
+      "id": "j_right_aft_rcs_tank",
+      "a": "right_aft_rcs_propellant_tank.pod_mount",
+      "b": "right_aft_steering_pod.rcs_tank_mount",
+      "type": "fixed",
+      "note": "Aft LMP-103S tank in pod"
+    },
+    {
+      "id": "j_right_aft_rcs_press",
+      "a": "right_aft_rcs_pressurant.pod_mount",
+      "b": "right_aft_steering_pod.rcs_press_mount",
+      "type": "fixed",
+      "note": "Aft He bottle in pod"
+    },
+    {
+      "id": "j_right_aft_rcs_manifold",
+      "a": "right_aft_rcs_manifold.pod_mount",
+      "b": "right_aft_steering_pod.rcs_manifold_mount",
+      "type": "fixed",
+      "note": "Aft RCS manifold in pod"
+    },
+    {
+      "id": "j_right_aft_rcs_prop_feed",
+      "a": "right_aft_rcs_propellant_tank.outlet",
+      "b": "right_aft_rcs_manifold.propellant_in",
+      "type": "propellant_feed",
+      "note": "LMP-103S to manifold"
+    },
+    {
+      "id": "j_right_aft_rcs_he_feed",
+      "a": "right_aft_rcs_pressurant.outlet",
+      "b": "right_aft_rcs_manifold.pressurant_in",
+      "type": "pressurant",
+      "note": "He to manifold"
+    },
+    {
+      "id": "j_right_aft_rcs_primary",
+      "a": "right_aft_rcs_manifold.primary_out",
+      "b": "right_aft_rcs_primary_bank.manifold_mate",
+      "type": "propellant_feed",
+      "note": "Primary bank feed"
+    },
+    {
+      "id": "j_right_aft_rcs_vernier",
+      "a": "right_aft_rcs_manifold.vernier_out",
+      "b": "right_aft_rcs_vernier_bank.manifold_mate",
+      "type": "propellant_feed",
+      "note": "Vernier bank feed"
+    },
+    {
+      "id": "j_fwd_rcs_tank",
+      "a": "forward_rcs_propellant_tank.module_mount",
+      "b": "forward_steering_module.rcs_tank_mount",
+      "type": "fixed",
+      "note": "Nose LMP-103S tank"
+    },
+    {
+      "id": "j_fwd_rcs_press",
+      "a": "forward_rcs_pressurant.module_mount",
+      "b": "forward_steering_module.rcs_press_mount",
+      "type": "fixed",
+      "note": "Nose He bottle"
+    },
+    {
+      "id": "j_fwd_rcs_manifold",
+      "a": "forward_rcs_manifold.module_mount",
+      "b": "forward_steering_module.rcs_manifold_mount",
+      "type": "fixed",
+      "note": "Nose RCS manifold"
+    },
+    {
+      "id": "j_fwd_rcs_prop_feed",
+      "a": "forward_rcs_propellant_tank.outlet",
+      "b": "forward_rcs_manifold.propellant_in",
+      "type": "propellant_feed",
+      "note": "LMP-103S to nose manifold"
+    },
+    {
+      "id": "j_fwd_rcs_he_feed",
+      "a": "forward_rcs_pressurant.outlet",
+      "b": "forward_rcs_manifold.pressurant_in",
+      "type": "pressurant",
+      "note": "He to nose manifold"
+    },
+    {
+      "id": "j_fwd_rcs_primary",
+      "a": "forward_rcs_manifold.primary_out",
+      "b": "forward_rcs_primary_bank.manifold_mate",
+      "type": "propellant_feed",
+      "note": "Nose primary feed"
+    },
+    {
+      "id": "j_fwd_rcs_vernier",
+      "a": "forward_rcs_manifold.vernier_out",
+      "b": "forward_rcs_vernier_bank.manifold_mate",
+      "type": "propellant_feed",
+      "note": "Nose vernier feed"
     }
   ],
   "stations": [
