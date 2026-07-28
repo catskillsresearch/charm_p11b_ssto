@@ -36,7 +36,6 @@ PARTS = [
     ("02_Grenadier", "Grenadier/grenadier_nozzle.ac", "Grenadier_Nozzle"),
     ("02_Grenadier", "Grenadier/grenadier_internals.ac", "Grenadier_Internals"),
     ("02_Grenadier", "Grenadier/grenadier_scoop.ac", "Grenadier_Scoops"),
-    ("02_Grenadier", "Grenadier/grenadier_wing_te_closeout.ac", "Wing_TE_Closeout"),
     ("03_Bay_Plant", "Grenadier/grenadier_bay_plant.ac", "Bay_Plant_Water_CHARM"),
     ("04_RCS_Green", "Grenadier/grenadier_rcs.ac", "RCS_LMP103S"),
 ]
