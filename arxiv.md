@@ -33,7 +33,7 @@ This paper is a **systems closure** for plant and propulsion, not a proposal to 
 
 Major OML zones retained as frozen geometry: forward fuselage / RCC nose cap; mid-fuselage and double-delta wings (entry cross-range + unpowered landing); aft fuselage with OMS-pod shoulders (scoop conversion) and the former three-SSME termination replaced by a single combined-cycle nozzle fairing.
 
-That framing is deliberate: holding aero, TPS, and RCS fixed isolates the experiment (reactor plant + three-cycle engine) the way a production chassis isolates a new powertrain. The reference designation used in the companion FlightGear operator model is **CATSKILLS-SSTO-TA-GRENADIER**. **Early TA:** stay on heritage \(L_{\mathrm{OML}}\), \(b_{\mathrm{OML}}\) and fit plant/engine inside the existing bay/aft envelope where possible. **Production packaging study** in the CAD below uses a stretched length \(L\approx 52\,\mathrm{m}\) and span \(\approx 28\,\mathrm{m}\) only where single-deck crew, airlock, CHARM island, and water demand more station length—explicitly labeled as a stretch relative to \(L_{\mathrm{OML}}\), not as a claim that the frozen aero baseline already grew.
+That framing is deliberate: holding aero, TPS, and RCS cues isolates the experiment (reactor plant + three-cycle engine). The reference designation used in the companion FlightGear operator model is **CATSKILLS-SSTO-TA-GRENADIER**. **Locked TA path (Plan A, §1.2b):** no cargo; keep Shuttle-derived kitbash DNA (cockpit, bay volume as plant bay, RCS, reusable TPS language); **grow wing and gear to the plant weight**; fly from a **15{,}000 ft-class** runway. Packaging length \(L\approx 52\,\mathrm{m}\) and Plan-A span \(\approx 33\,\mathrm{m}\) are OML-*derived*, not unmodified OV.
 
 ### 1.2 Heritage-OML TA fit (pass/fail)
 
@@ -46,24 +46,46 @@ That framing is deliberate: holding aero, TPS, and RCS fixed isolates the experi
 | Plant length in bay | \(15.7\,\mathrm{m}\) | \(18.3\,\mathrm{m}\) bay | **PASS** (\(+2.6\,\mathrm{m}\) margin) |
 | Engine length in aft | \(3\,\mathrm{m}\) | \(5.5\,\mathrm{m}\) aft | **PASS** |
 | Bay volume (CHARM \(\bar{p}_{\mathrm{C}}\gtrsim 8\,\mathrm{MW/m}^3\) floor + water + ancillaries) | \(\sim 210\,\mathrm{m}^3\) | \(\sim 300\,\mathrm{m}^3\) | **PASS** (tight; CHARM alone \(\sim 125\,\mathrm{m}^3\) fills \(\sim 7.6\,\mathrm{m}\) of bay at full diameter) |
-| Bay still carries \(24.4\,\mathrm{t}\) cargo | plant + water in bay | mutually exclusive | **FAIL** (TA must give up Shuttle-class payload or the bay) |
+| Bay still carries \(24.4\,\mathrm{t}\) cargo | plant + water in bay | mutually exclusive | **FAIL** (TA carries **no cargo**) |
 | Landing-mass proxy \(m_{\mathrm{dry}}\) (with \(m_{\mathrm{pl}}=24.4\,\mathrm{t}\)) | \(196\,\mathrm{t}\) | orbiter landing \(\sim 104\,\mathrm{t}\) class [12] | **FAIL** |
-| Zero-payload TA (\(m_{\mathrm{pl}}=0\); bay carries only reactor + engine) | \(m_{\mathrm{dry}}\approx 172\,\mathrm{t}\) | \(\sim 104\,\mathrm{t}\) | **FAIL** (\(\sim 68\,\mathrm{t}\) over) |
+| Zero-payload on stock gear (\(m_{\mathrm{pl}}=0\)) | \(m_{\mathrm{dry}}\approx 172\,\mathrm{t}\) | \(\sim 104\,\mathrm{t}\) | **FAIL** (\(\sim 68\,\mathrm{t}\) over) |
 
-**OVERALL: FAIL** on mass. Length/volume can host the plant+water in the bay and the engine in the aft **only if the bay is not a cargo bay on that flight**. Even with **zero payload**, \(m_{\mathrm{dry}}\approx 172\,\mathrm{t}\) is still \(\sim 1.7\times\) a Shuttle landing weight—the CHARM island alone (\(m_{\mathrm{C}}\approx 67\,\mathrm{t}\)) plus structure (\(m_{\mathrm{str}}\approx 87.5\,\mathrm{t}\)) and engine (\(15\,\mathrm{t}\)) already exceed the gear/landing limit. Paper structure plus engine alone sits near that ceiling **before** any GW-class CHARM island. Raising \(\alpha_{\mathrm{C}}\) to \(25\)–\(60\,\mathrm{kW/kg}\) with zero payload still leaves \(m_{\mathrm{dry}}\gtrsim 120\,\mathrm{t}\). The geometric OML fit is not the blocker—the **landed mass** is.
+**OVERALL (unmodified OV): FAIL** on mass. Length/volume can host the plant+water in the bay and the engine in the aft **only if the bay is not a cargo bay**. Stock landing gear/weight is the blocker—not 1 GW energy closure.
 
-**Rethink forks** (pick explicitly; do not silently keep both “heritage TA” and “196 t dry”):
+### 1.2b Locked path — Plan A (no-cargo TA closes)
 
-1. **Aero-only heritage OML** — keep Shuttle shape for CFD/TPS/RCS ops; accept a **stretched or reinforced** airframe for mass closure (packaging study \(L\approx 52\,\mathrm{m}\) stays). Honest label: *OML-derived*, not *unmodified OV*.
-2. **Reduced-energy TA** — fly a subscale plant / shorter \(\Delta v\) / less water so \(m_{\mathrm{dry}}\) approaches landing limits; full ISS-class closure remains a later article.
-3. **Breakthrough \(\alpha_{\mathrm{C}}\)** — only extreme specific power (well above \(60\,\mathrm{kW/kg}\)) plus a lighter structure than the paper’s \(87.5\,\mathrm{t}\) \(m_{\mathrm{str}}\) could approach an unmodified OV landing weight; that is a reactor packaging claim, not an airframe claim.
-4. **Drop full-mission payload on the TA** — necessary for bay packaging but **insufficient** alone to pass landing mass.
+**Decision:** do **not** force \(m_{\mathrm{dry}}\) under \(\sim 104\,\mathrm{t}\). Redesign the **lander** for the plant. Full \(P_{\star}=1\,\mathrm{GW}\) @ \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) stays.
 
-Executable check: `python3 research/figures/cad/ta_oml_fit.py`.
+| Quantity | Plan A TA value | Rationale |
+|----------|-----------------|-----------|
+| Payload | \(m_{\mathrm{pl}}=0\) | Bay = plant + water only; no cargo story on this article |
+| Dry mass | \(m_{\mathrm{dry}}\approx 172\,\mathrm{t}\) | \(m_{\mathrm{str}}+m_{\mathrm{C}}+m_{\mathrm{eng}}+m_{\mathrm{bat}}+m_{\mathrm{f}}\) |
+| Water / GLOW | \(m_w\approx 39\,\mathrm{t}\), \(m_0\approx 211\,\mathrm{t}\) | Same \(\mu\approx 1.23\) closure |
+| Design landing mass | \(m_{\mathrm{land}}\approx 190\,\mathrm{t}\) | \(\approx m_{\mathrm{dry}}\) + 10\% gear margin |
+| Wing area | \(S\approx 480\,\mathrm{m}^2\) (\(\approx 1.9\times\) Shuttle \(250\,\mathrm{m}^2\)) | Match Shuttle takeoff wing-loading class at GLOW (\(\sim 440\,\mathrm{kg/m}^2\)) |
+| Span (derived) | \(b\approx 33\,\mathrm{m}\) | Geometric scale from heritage planform; kitbash lifting body OK |
+| Primary structure | Carbon sandwich (Scaled-style); Al/Ti fittings | Less aluminum; “fishing rods” cold structure |
+| TPS | **Reusable only** (blankets / advanced tile or metallic / CMC on stagnation) | No ablatives; zoned hot faces where composites would melt |
+| Home runway | **KEDW** Edwards AFB (15{,}000 ft / \(4572\,\mathrm{m}\) class; lakebed abort) | Alternate: KTTS Shuttle Landing Facility, same length class |
+
+**Plan A fit checks (no cargo):**
+
+| Check | Need | Plan A | Result |
+|-------|------|--------|--------|
+| Plant + engine in bay/aft volume | as §1.2 | same envelopes / stretch \(L\approx 52\,\mathrm{m}\) | **PASS** |
+| \(m_{\mathrm{pl}}=0\) | required | required | **PASS** |
+| Landing vs **design** gear | \(172\,\mathrm{t}\) dry | \(m_{\mathrm{land}}=190\,\mathrm{t}\) | **PASS** |
+| Wing loading at GLOW | \(\lesssim 440\,\mathrm{kg/m}^2\) class | \(211\,\mathrm{t}/480\,\mathrm{m}^2\approx 440\,\mathrm{kg/m}^2\) | **PASS** |
+| Runway length | heavy TO roll | \(4572\,\mathrm{m}\) (KEDW/KTTS) | **PASS** |
+| 1 GW upstairs | \(\sim 5\,\mathrm{GWh}\) class / hours | unchanged energy hole; longer roll OK | **PASS** |
+
+**OVERALL (Plan A TA): PASS** — closed by raising land/wing/runway to the reactor, not by shrinking the reactor. Production cargo (\(m_{\mathrm{pl}}=24.4\,\mathrm{t}\)) remains a **later** vehicle, not this test article.
+
+Executable check: `python3 research/figures/cad/ta_oml_fit.py` (prints both unmodified-OV FAIL and Plan A PASS).
 
 ### AI concept render
 
-Fig.~\ref{fig:catskills-ssto-beauty-shot} is an AI-rendered concept illustration, not an engineering drawing: **Google Nano Banana Pro** (Gemini 3 Pro Image) was given the two CAD wireframes below as reference images and prompted to render the vehicle's true fuselage/wing contour — the grey wireframe lines, not the blocky bounding box — taking off from a municipal airport [21]. Proportions, panel lines, livery, and the runway scene are AI interpretation; the dimensioned CAD wireframes immediately below remain the source of truth for station layout and outer mold line.
+Fig.~\ref{fig:catskills-ssto-beauty-shot} is an AI-rendered concept illustration, not an engineering drawing: **Google Nano Banana Pro** (Gemini 3 Pro Image) was given the two CAD wireframes below as reference images and prompted to render the vehicle's true fuselage/wing contour — the grey wireframe lines, not the blocky bounding box — taking off from a municipal airport [21]. Proportions, panel lines, livery, and the runway scene are AI interpretation; the dimensioned CAD wireframes immediately below remain the source of truth for station layout and outer mold line. **Ops baseline for the TA is now KEDW-class**, not a short municipal strip.
 
 <!-- figure-landscape -->
 ![CATSKILLS SSTO, AI concept render (Google Nano Banana Pro / Gemini 3 Pro Image) of the vehicle taking off from a municipal airport, prompted from the CAD floorplan and profile wireframes below.](research/figures/catskills_ssto_beauty_shot.png)
@@ -75,7 +97,7 @@ Fig.~\ref{fig:catskills-ssto-cabin-liftoff-view} is a companion AI concept rende
 
 ### Interior floorplan and exterior profile
 
-Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [12,13], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. **Packaging-study** overall length **$L \approx 52\,\mathrm{m}$** (vs heritage \(L_{\mathrm{OML}}=37.24\,\mathrm{m}\)); fuselage depth $\approx 6.5$–$7\,\mathrm{m}$; packaging span $\approx 28\,\mathrm{m}$ (vs heritage \(b_{\mathrm{OML}}=23.79\,\mathrm{m}\)). ECLSS = **Environmental Control and Life Support System**. The FlightGear TA and aero baseline remain on the heritage OML numbers in §1.1 unless a stretch is explicitly selected.
+Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [12,13], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. **Plan A packaging:** length **$L \approx 52\,\mathrm{m}$** (vs heritage \(L_{\mathrm{OML}}=37.24\,\mathrm{m}\)); fuselage depth $\approx 6.5$–$7\,\mathrm{m}$; **span \(b\approx 33\,\mathrm{m}\)** and **wing area \(S\approx 480\,\mathrm{m}^2\)** so GLOW wing-loading stays Shuttle-class (§1.2b). ECLSS = **Environmental Control and Life Support System**. FlightGear Grenadier still boots on a kitbash Shuttle mesh for ops training; Plan A geometry is the mass/aero closure target.
 
 Figs.~\ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, clamshell doors on the cargo-skid drop-in; exterior OML is an unbroken tube); **fusion electric plant** $33.3$–$49\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, water tanks $35.5$–$39.5\,\mathrm{m}$ — relocated ahead of CHARM as a supplemental radiation shield, §9.3 — fuel services $39.5$–$41.5\,\mathrm{m}$, CHARM island incl. permanent shield bulkhead $41.5$–$49\,\mathrm{m}$); **combined-cycle engine** $49$–$52\,\mathrm{m}$ (stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant}) is 1–1 with that JSON tree. Fig.~\ref{fig:charm-ssto-interior-floorplan} is a top-down cutaway (no landing gear). Fig.~\ref{fig:charm-ssto-exterior-profile} shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
 
@@ -376,13 +398,14 @@ Table: Design goals for the plane.
 | G1 | **SSTO** | Single stage from runway to ISS-class LEO; no discarded boosters or external tank |
 | G2 | **Heritage orbiter OML** | Freeze Shuttle OML as aero/TPS/ops baseline (§1.1): \(L_{\mathrm{OML}}=37.24\,\mathrm{m}\), \(b_{\mathrm{OML}}=23.79\,\mathrm{m}\), \(H_{\mathrm{OML}}=17.25\,\mathrm{m}\) [12]—not a clean-sheet airframe. **Unmodified OV mass fit fails** at reference closure (§1.2) |
 | G2b | **Single-deck crew** | Flatten Shuttle cabin to one deck: flight deck; six reclining seats; O₂/N₂ + ECLSS; luggage; forward/side ground door; large aft airlock into bay |
-| G2c | **Packaging stretch** | Lengthen beyond \(L_{\mathrm{OML}}\) for airlock, ECLSS, battery, water, and CHARM—reference packaging study \(L \approx 52\,\mathrm{m}\), span \(\approx 28\,\mathrm{m}\); required for full-mission \(m_{\mathrm{dry}}\) unless a rethink fork in §1.2 is chosen |
+| G2c | **Packaging stretch** | Lengthen beyond \(L_{\mathrm{OML}}\) for airlock, ECLSS, battery, water, and CHARM—Plan A: \(L \approx 52\,\mathrm{m}\), \(b\approx 33\,\mathrm{m}\), \(S\approx 480\,\mathrm{m}^2\) (§1.2b) |
 | G2d | **Full Shuttle RCS** | Retain the complete orbiter RCS nozzle complement (forward + aft pod thrusters) for attitude/RCS ops; do not delete thrusters when converting OMS pods |
 | G2e | **OMS → shoulder scoops** | Delete OMS engines; convert left/right OMS-pod forward faces to sealed twin intakes feeding σ1/σ2; belly TPS stays a solid boat (no ventral scoop) |
-| G3 | **Shuttle cargo bay** | Usable bay \(\approx 18.3\,\mathrm{m}\times 4.6\,\mathrm{m}\) class for payload—not filled with reactors |
-| G4 | **Payload** | Shuttle-class cargo: \(m_{\mathrm{pl}} = 24\,400\,\mathrm{kg}\) reference |
+| G2f | **Plan A lander** | Size wing/gear to plant weight (\(m_{\mathrm{land}}\approx 190\,\mathrm{t}\)); carbon sandwich primary; reusable-only zoned TPS; no ablatives |
+| G3 | **Bay volume** | Keep \(\approx 18.3\,\mathrm{m}\times 4.6\,\mathrm{m}\) class bay geometry; **TA uses it for plant+water only** (no cargo). Production cargo is a later vehicle |
+| G4 | **Payload** | **TA: \(m_{\mathrm{pl}}=0\)**. Production reference remains \(24\,400\,\mathrm{kg}\) for a follow-on article |
 | G5 | **Destination** | Circular LEO compatible with ISS altitude (\(\approx 400\,\mathrm{km}\)); plane-change to \(51.6^\circ\) treated as margin |
-| G6 | **Municipal airport** | Takeoff/landing on long civil runways; first gear cool enough for noise/oversight; no vertical pad |
+| G6 | **Long runway** | Takeoff/landing on **15{,}000 ft-class** strips (**KEDW** Edwards primary; KTTS SLF alternate); lakebed abort preferred; no vertical pad |
 | G7 | **One engine** | Single combined-cycle propulsion string; deadstick glide if plant fails |
 | G8 | **Clean fuel** | \(p + {}^{11}\mathrm{B} \rightarrow 3\alpha + 8.7\,\mathrm{MeV}\); CHARM bottle; DEC-first electricity |
 | G9 | **Power** | Plant electrical bus peak \(P_{\star} = 1\,\mathrm{GW}\) (design target) |
@@ -407,7 +430,11 @@ Table: Physical constants and reference symbols.
 | \(L_{\mathrm{OML}}\) | Heritage orbiter length | \(37.24\,\mathrm{m}\) (\(122.17\,\mathrm{ft}\)) [12] |
 | \(b_{\mathrm{OML}}\) | Heritage orbiter wingspan | \(23.79\,\mathrm{m}\) (\(78.06\,\mathrm{ft}\)) [12] |
 | \(H_{\mathrm{OML}}\) | Heritage orbiter height (fin tip) | \(17.25\,\mathrm{m}\) (\(56.58\,\mathrm{ft}\)) [12] |
-| \(L\) | Packaging-study length (if stretched) | \(52.0\,\mathrm{m}\) |
+| \(L\) | Packaging-study length (Plan A) | \(52.0\,\mathrm{m}\) |
+| \(b\) | Plan A span (wing∝weight) | \(33.0\,\mathrm{m}\) |
+| \(S\) | Plan A wing area | \(480\,\mathrm{m}^2\) |
+| \(m_{\mathrm{land}}\) | Plan A design landing mass | \(1.90\times 10^5\,\mathrm{kg}\) |
+| Runway | Plan A home field | KEDW / \(4572\,\mathrm{m}\) (15{,}000 ft) |
 
 Masses (all kg):
 
@@ -1196,7 +1223,7 @@ Sections 1–12 are a **requirements mirror** held up to CHARM: they say what a 
 
 ## 14. Conclusion
 
-Design goals fix an SSTO with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO, using a **heritage Shuttle orbiter OML** as the frozen aero/TPS/RCS baseline and a **CHARM + three-cycle electric engine** as the experiment (§1.1, G2–G2e). A strict **unmodified-OV TA fit fails** on landed mass (\(m_{\mathrm{dry}}\approx 196\,\mathrm{t}\) vs \(\sim 104\,\mathrm{t}\) class) even though bay/aft **length and volume** can host the plant and engine if the bay is not carrying Shuttle-class cargo (§1.2)—so the honest vehicle is **OML-derived** (stretch/reinforce as needed), not a drop-in plant into a stock orbiter. Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**. Vision figures (Figs.~\ref{fig:charm-ssto-interior-floorplan}–\ref{fig:mermaid-profile-stations}) show the interior floorplan, exterior profile, drop-in cutaways, and assembly trees that those numbers must fit.
+Design goals fix an SSTO test article with **no cargo**, ISS-altitude LEO, and a **Shuttle-derived** aero/TPS/RCS kitbash whose **wing and gear are sized to the plant** (**Plan A**, §1.2b): \(m_{\mathrm{pl}}=0\), \(m_{\mathrm{dry}}\approx 172\,\mathrm{t}\), \(m_{\mathrm{land}}\approx 190\,\mathrm{t}\), \(S\approx 480\,\mathrm{m}^2\), \(b\approx 33\,\mathrm{m}\), home field **KEDW** (15{,}000 ft). Unmodified-OV landing mass remains a documented **FAIL** (§1.2); Plan A **PASS**es by raising the lander, not by cutting \(P_{\star}=1\,\mathrm{GW}\). Closing at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) with no cargo yields about **\(172\,\mathrm{t}\) dry, \(39\,\mathrm{t}\) water, \(211\,\mathrm{t}\) GLOW**. Vision figures (Figs.~\ref{fig:charm-ssto-interior-floorplan}–\ref{fig:mermaid-profile-stations}) show the interior floorplan, exterior profile, drop-in cutaways, and assembly trees that those numbers must fit.
 
 The plant that closes the mass/energy budget must deliver, as a single flight-packaged island: continuous \(p\text{-}^{11}\mathrm{B}\) fusion with multi-chamber rotating-mirror confinement onto a \(1\,\mathrm{GW}\) electrical bus, \(\sim 5\,\mathrm{GWh}\)-class mission source energy per ascent, an island mass/volume implying \(\alpha_{\mathrm{C}}\ge 15\,\mathrm{kW/kg}\) and \(\bar{p}_{\mathrm{C}}\gtrsim 8\,\mathrm{MW/m}^3\), light-off/space restart at \(50\)–\(500\,\mathrm{kWh}\) class, and continuous throttleable duty through climb and insertion (§9). The engine that closes the propulsion side must deliver three stage powers around \(1\,\mathrm{GW}\) peak inside a \(15\,\mathrm{t}\) mass hole, with stage-2/3 packaging specific power (\(\sim 230\)–\(320\,\mathrm{kW/kg}\)) well beyond demonstrated hardware (§10). Twin shoulder scoops replace OMS engines while the **full Shuttle RCS nozzle set** remains for attitude control (§10.1b). These are requirements mirrors, not claims that present CHARM or propulsion hardware already has them — the honest gap, itemized with citations, is carried by the two companion papers: **"Compact CHARM p-¹¹B fusion reactor for electricity generation for aerospace propulsion"** [16] for the reactor unobtainiums (flight-weight cryogenics, REBCO/cryostat structure under ascent loads, DEC electrode structures, the unsized RF/backbone-structure remainder) and **"Three cycle electric SSTO rocket engine"** [17] for the propulsion unobtainiums (stage-1 ducted-fan packaging is comparatively vanilla engineering; stages 2–3 microwave-air-plasma and water-plasma packaging are the open items).
 

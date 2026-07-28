@@ -5,12 +5,19 @@
   "fuselage_height_m": 6.5,
   "bay_width_m": 4.6,
   "bay_height_m": 4.6,
-  "wingspan_m": 28.0,
+  "wingspan_m": 33.0,
+  "wing_area_m2": 480.0,
+  "plan_a": {
+    "m_pl_kg": 0,
+    "m_land_design_t": 190,
+    "airport_icao": "KEDW",
+    "runway_m": 4572
+  },
   "heritage_orbiter_oml": {
     "length_m": 37.24,
     "wingspan_m": 23.79,
     "height_fin_tip_m": 17.25,
-    "note": "Frozen TA aero baseline (arxiv.md §1.1); length_m/wingspan_m above are packaging stretch"
+    "note": "Kitbash DNA / FG mesh; Plan A span/area above sized to plant (arxiv.md §1.2b)"
   },
   "stations": [
     {
@@ -39,7 +46,7 @@
       "id": "cargo",
       "x0": 15.0,
       "x1": 33.3,
-      "label": "CARGO BAY 18.3\u00d74.6 m",
+      "label": "PLANT BAY 18.3\u00d74.6 m (TA: no cargo)",
       "color": [
         0.88,
         0.88,

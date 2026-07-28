@@ -4,14 +4,32 @@
     "source": "arxiv.md §1, §7.1, §11",
     "assembly_truth": "assembly.json",
     "role_of_this_file": "TEMPORARY OpenVSP build binding (builders + xform checks). Geometry/topology/hierarchy lives in assembly.json — not here.",
-    "doctrine": "Heritage Shuttle orbiter OML is the frozen aero/TPS/RCS baseline (TA); packaging-study length/span below are an optional stretch for plant+crew."
+    "doctrine": "Plan A TA (§1.2b): no cargo; Shuttle-derived kitbash; wing/gear/runway sized to 1 GW plant; unmodified OV land mass is FAIL."
+  },
+  "plan_a": {
+    "m_pl_kg": 0,
+    "m_dry_t_approx": 172,
+    "m_land_design_t": 190,
+    "m_glow_t_approx": 211,
+    "wing_area_m2": 480,
+    "wingspan_m": 33.0,
+    "length_m": 52.0,
+    "airport_icao": "KEDW",
+    "airport_name": "Edwards AFB",
+    "runway_m": 4572,
+    "runway_ft": 15000,
+    "alternate_icao": "KTTS",
+    "structure": "carbon_sandwich_primary_reusable_zoned_tps",
+    "ablatives": false,
+    "source": "arxiv.md §1.2b"
   },
   "oml": {
     "length_m": 52.0,
     "fuselage_height_m": 6.5,
     "fuselage_height_range_m": [6.5, 7.0],
     "fuselage_width_m": 5.2,
-    "wingspan_m": 28.0,
+    "wingspan_m": 33.0,
+    "wing_area_m2": 480,
     "tess_u": 33,
     "tess_w": 25,
     "heritage_orbiter": {
@@ -21,13 +39,15 @@
       "wingspan_ft": 78.06,
       "height_fin_tip_m": 17.25,
       "height_fin_tip_ft": 56.58,
+      "wing_area_m2": 249.9,
       "source": "NASA orbiter inventory / fact sheets (arxiv.md [12])",
-      "role": "Frozen OML for CATSKILLS-SSTO-TA-GRENADIER aero/TPS/RCS baseline"
+      "role": "Kitbash DNA / FG mesh baseline; not the Plan A land-mass limit"
     },
     "scale_from_orbiter": {
       "length": 1.396,
-      "span": 1.177,
-      "comment": "Packaging stretch only: 52/37.24 and 28/23.79. TA prefers unscaled heritage OML; bay clear length held at 18.3 m."
+      "span": 1.387,
+      "wing_area": 1.921,
+      "comment": "Plan A: 52/37.24 length; span/area grown for ~440 kg/m² W/S at ~211 t GLOW. Bay clear length held at 18.3 m as plant bay."
     }
   },
   "stations_m": [
@@ -65,12 +85,12 @@
       "id": "cargo",
       "x0": 15.0,
       "x1": 33.3,
-      "label": "CARGO BAY 18.3×4.6 m",
+      "label": "PLANT BAY 18.3×4.6 m (TA: no cargo)",
       "bay_length_m": 18.3,
       "bay_width_m": 4.6,
       "bay_height_m": 4.6,
-      "payload_kg": 24400,
-      "contents": ["usable_payload_only", "no_reactors"],
+      "payload_kg": 0,
+      "contents": ["plant_and_water_on_TA", "no_mission_cargo", "production_cargo_deferred"],
       "color": [0.88, 0.88, 0.90]
     },
     {

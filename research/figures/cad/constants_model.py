@@ -326,7 +326,7 @@ class Params:
     mu_roll: float = 0.025
     cl_ground_roll: float = 0.55  # partial lift during roll (flagged)
     cd_ground_roll: float = 0.090  # gear+flaps parasite (flagged)
-    runway_available_m: float = 3500.0  # long municipal / G6 class
+    runway_available_m: float = 4572.0  # Plan A: KEDW/KTTS 15,000 ft class
 
     # --- Stage 2 (microwave air plasma): existing §10.2/§10.4 constants,
     # reused as-is, plus new ascent-physics inputs for the climb integrator.

@@ -12,9 +12,10 @@
     "packaging": "CHARM owns Magnet/RF/Drive/Thermal sub-racks (bolt into CHARM before skid drop-in); skid owns PSU + cryo compressor + fuel + DEC + battery. INTERIM: DEC He ash dumps into fusion plant bay atmosphere (pollutes bay).",
     "ash_handling": "interim_bay_pollution: He ash after DEC \u2192 fusion_plant_bay_atmosphere; not freeze/liquefy hazard; replace with buffer+purge later.",
     "engine_stages": "1=EDF, 2=microwave air plasma (Ye 2020), 3=water microwave plasma (Nakagawa 2019 lineage)",
-    "engine_sizing": "P1=65MW P2=P3=995MW meng=15t mw=44t Isp=2000s",
+    "engine_sizing": "P1=65MW P2=P3=995MW meng=15t; Plan A TA m_pl=0 m_dry~172t mw~39t Isp=2000s",
     "figure_ssot": "Paper mermaid figures must match this assembly.json; ground cart / vacuum pack / plant bus added from paper schematic.",
-    "engine_air_path": "freestream \u2192 twin OMS-shoulder scoops \u2192 cross-duct plenum \u2192 (EDF | stage-2) \u2192 shared flared nozzle; belly boat unpierced; aft RCS retained"
+    "engine_air_path": "freestream \u2192 twin OMS-shoulder scoops \u2192 cross-duct plenum \u2192 (EDF | stage-2) \u2192 shared flared nozzle; belly boat unpierced; aft RCS retained",
+    "plan_a": "no cargo; m_land~190t; S~480m2; b~33m; airport KEDW 4572m; carbon sandwich + reusable TPS only (arxiv.md §1.2b)"
   },
   "frame": {
     "id": "vehicle",
@@ -27,12 +28,13 @@
     "length_m": 52.0,
     "width_m": 5.2,
     "height_m": 6.5,
-    "wingspan_m": 28.0,
+    "wingspan_m": 33.0,
+    "wing_area_m2": 480.0,
     "heritage_orbiter_oml": {
       "length_m": 37.24,
       "wingspan_m": 23.79,
       "height_fin_tip_m": 17.25,
-      "note": "Frozen TA OML (arxiv.md §1.1); envelope length/span are packaging stretch"
+      "note": "Kitbash DNA / FG mesh; Plan A envelope span/area sized to plant (arxiv.md §1.2b)"
     }
   },
   "root": {
@@ -812,10 +814,10 @@
               "length_m": 18.3,
               "width_m": 4.6,
               "height_m": 4.6,
-              "payload_kg": 24400,
+              "payload_kg": 0,
               "form": "semi-circular skid / half-capsule"
             },
-            "note": "Pull-out cargo skid \u2014 the physical cargo bay. Doors hinge to this skid; skid sits in the fuselage cradle well. No pressure door aft \u2014 EVA into the open CHARM / engine wells for maintenance.",
+            "note": "Plan A TA: bay skid carries plant support / empty cargo role deferred (m_pl=0). Doors hinge to this skid; skid sits in the fuselage cradle well. No pressure door aft \u2014 EVA into the open CHARM / engine wells for maintenance.",
             "ports": [
               {
                 "id": "cradle_mount",
@@ -2435,9 +2437,9 @@
         "note": "Collection: mono-wing body, elevons, and main landing gear. The physical wing bolts to the fuselage cradle belly saddle.",
         "size": {
           "span_m": {
-            "min": 26.0,
-            "nom": 28.0,
-            "max": 30.0
+            "min": 30.0,
+            "nom": 33.0,
+            "max": 36.0
           },
           "root_chord_m": 18.5,
           "kink_chord_m": 7.2,

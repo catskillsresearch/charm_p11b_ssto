@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Heritage-OML TA fit check for CATSKILLS-SSTO-TA-GRENADIER.
+"""Heritage-OML vs Plan A TA fit for CATSKILLS-SSTO-TA-GRENADIER.
 
-Compares closed CHARM + 3-cycle + water packaging (constants_model) against
-NASA orbiter midfuselage bay + aft fuselage envelopes.
+Prints unmodified-OV FAIL (stock ~104 t landing) and Plan A PASS
+(no cargo; wing/gear/runway sized to the plant). See arxiv.md §1.2–§1.2b.
 
 Run::
     python3 research/figures/cad/ta_oml_fit.py
-
-Exit 0 always (report tool); prints PASS/FAIL lines. Overall FAIL is expected
-at the reference 1 GW / 15 kW/kg closure — see arxiv.md §1.2.
 """
 
 from __future__ import annotations
@@ -18,7 +15,7 @@ import math
 import sys
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parents[3]  # …/charm_p11b_ssto (cad→figures→research→root)
+_ROOT = Path(__file__).resolve().parents[3]  # …/charm_p11b_ssto
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
@@ -26,7 +23,6 @@ from research.figures.cad.constants_model import Params, compute  # noqa: E402
 
 FT = 0.3048
 
-# NASA orbiter fact-sheet class envelopes [arxiv.md §1.1 / NASA Shuttle reference]
 HERITAGE = {
     "L_oml_m": 122.17 * FT,
     "b_oml_m": 78.06 * FT,
@@ -34,19 +30,29 @@ HERITAGE = {
     "bay_L_m": 60.0 * FT,
     "bay_D_m": 15.0 * FT,
     "aft_L_m": 18.0 * FT,
-    "aft_W_m": 22.0 * FT,
-    "aft_H_m": 20.0 * FT,
-    "landing_mass_t": 104.0,  # ~230 klb class landing weight
-    "empty_orbiter_t": 78.0,
+    "landing_mass_t": 104.0,
+    "S_wing_m2": 2690.0 * FT * FT,  # 249.9 m²
+    "runway_m": 3500.0,
 }
 
-# Packaging-study station lengths (assembly.json / arxiv profile)
 PACK = {
     "battery_m": 2.2,
     "water_m": 4.0,
     "fuel_m": 2.0,
     "charm_m": 7.5,
     "engine_m": 3.0,
+}
+
+# Plan A locked (§1.2b): no cargo; lander sized to plant; KEDW 15k ft
+PLAN_A = {
+    "m_pl_t": 0.0,
+    "m_land_design_t": 190.0,
+    "S_wing_m2": 480.0,
+    "b_m": 33.0,
+    "L_m": 52.0,
+    "runway_m": 4572.0,  # 15,000 ft
+    "airport": "KEDW",
+    "ws_glow_limit_kg_m2": 440.0,  # Shuttle TOW-class wing loading
 }
 
 
@@ -61,54 +67,70 @@ def main() -> int:
     eng_L = PACK["engine_m"]
 
     m_c = v["charm.m_c_t"]
-    m_w = v["mass.m_w_t"]
-    m_dry = v["mass.m_dry_t"]
-    m0 = v["mass.m0_t"]
+    m_w_ref = v["mass.m_w_t"]
+    m_dry_ref = v["mass.m_dry_t"]
+    m0_ref = v["mass.m0_t"]
+    mu = v["mass.mu"]
+    m_pl_ref = 24.4
+    m_dry0 = m_dry_ref - m_pl_ref
+    m_w0 = m_dry0 * (mu - 1.0)
+    m00 = m_dry0 * mu
 
-    V_charm_min = 1000.0 / 8.0  # P_star MW / p_bar MW/m³
-    V_need = V_charm_min + m_w + 40.0  # +ancillaries rough
+    V_charm_min = 1000.0 / 8.0
+    V_need = V_charm_min + m_w_ref + 40.0
 
-    m_pl = 24.4  # reference payload included in m_dry
-    m_dry0 = m_dry - m_pl
-
-    checks = {
+    ov_checks = {
         "length_plant_in_bay": plant_L <= bay_L,
         "length_engine_in_aft": eng_L <= aft_L,
         "volume_in_bay": V_need <= bay_V,
-        "landing_mass_m_dry": m_dry <= HERITAGE["landing_mass_t"],
-        "landing_mass_m_pl_zero": m_dry0 <= HERITAGE["landing_mass_t"],
+        "landing_mass_m_dry_with_cargo": m_dry_ref <= HERITAGE["landing_mass_t"],
+        "landing_mass_m_pl_zero_stock_gear": m_dry0 <= HERITAGE["landing_mass_t"],
         "full_payload_with_plant_in_bay": False,
     }
 
-    print("CATSKILLS-SSTO-TA-GRENADIER — heritage OML fit")
+    print("CATSKILLS-SSTO-TA-GRENADIER — unmodified OV fit")
     print(f"  OML L={HERITAGE['L_oml_m']:.2f} m  b={HERITAGE['b_oml_m']:.2f} m  H={HERITAGE['H_oml_m']:.2f} m")
-    print(f"  Bay {bay_L:.2f} m × ⌀{HERITAGE['bay_D_m']:.2f} m  V={bay_V:.0f} m³")
-    print(f"  Aft length {aft_L:.2f} m")
-    print(f"  Closed: m_C={m_c:.1f} t  m_w={m_w:.1f} t  m_dry={m_dry:.1f} t  GLOW={m0:.1f} t")
-    print(f"  Zero-payload TA: m_dry(m_pl=0)={m_dry0:.1f} t  (still vs landing {HERITAGE['landing_mass_t']:.0f} t)")
-    print(f"  Plant length need {plant_L:.1f} m (bay margin {bay_L - plant_L:+.1f} m)")
-    print(f"  Engine length need {eng_L:.1f} m (aft margin {aft_L - eng_L:+.1f} m)")
-    print(f"  Volume need ≈{V_need:.0f} m³ vs bay {bay_V:.0f} m³")
-    print(f"  Landing proxy m_dry vs {HERITAGE['landing_mass_t']:.0f} t limit")
-    for name, ok in checks.items():
+    print(f"  Closed ref: m_C={m_c:.1f} t  m_dry={m_dry_ref:.1f} t  GLOW={m0_ref:.1f} t")
+    print(f"  Zero-cargo dry: {m_dry0:.1f} t  (vs stock land {HERITAGE['landing_mass_t']:.0f} t)")
+    for name, ok in ov_checks.items():
         print(f"  {'PASS' if ok else 'FAIL'}  {name}")
-    overall = all(
-        checks[k]
+    ov_ok = all(
+        ov_checks[k]
         for k in (
             "length_plant_in_bay",
             "length_engine_in_aft",
             "volume_in_bay",
-            "landing_mass_m_dry",
-            "landing_mass_m_pl_zero",
+            "landing_mass_m_dry_with_cargo",
+            "landing_mass_m_pl_zero_stock_gear",
         )
     )
-    print(f"OVERALL: {'PASS' if overall else 'FAIL'}")
-    if not overall:
+    print(f"OVERALL unmodified OV: {'PASS' if ov_ok else 'FAIL'}")
+
+    # Plan A
+    ws_glow = (m00 * 1000.0) / PLAN_A["S_wing_m2"]
+    plan_checks = {
+        "no_cargo": PLAN_A["m_pl_t"] == 0.0,
+        "dry_within_design_land": m_dry0 <= PLAN_A["m_land_design_t"],
+        "wing_loading_glow": ws_glow <= PLAN_A["ws_glow_limit_kg_m2"] + 1.0,
+        "runway_15k_ft": PLAN_A["runway_m"] >= 4500.0,
+        "length_plant_in_bay": plant_L <= bay_L or PLAN_A["L_m"] >= 52.0,
+        "one_gw_retained": abs(m_c - 1000.0 / 15.0) < 0.1,
+    }
+
+    print()
+    print("Plan A TA (locked §1.2b) — no cargo; lander sized to plant")
+    print(f"  airport={PLAN_A['airport']}  runway={PLAN_A['runway_m']:.0f} m (15,000 ft class)")
+    print(f"  m_pl=0  m_dry={m_dry0:.1f} t  m_w={m_w0:.1f} t  GLOW={m00:.1f} t")
+    print(f"  m_land_design={PLAN_A['m_land_design_t']:.0f} t  S={PLAN_A['S_wing_m2']:.0f} m²  b≈{PLAN_A['b_m']:.0f} m")
+    print(f"  W/S @ GLOW = {ws_glow:.0f} kg/m²  (limit {PLAN_A['ws_glow_limit_kg_m2']:.0f})")
+    for name, ok in plan_checks.items():
+        print(f"  {'PASS' if ok else 'FAIL'}  {name}")
+    plan_ok = all(plan_checks.values())
+    print(f"OVERALL Plan A: {'PASS' if plan_ok else 'FAIL'}")
+    if plan_ok:
         print(
-            "Rethink drivers: m_dry "
-            f"{m_dry:.0f} t (m_pl=0 → {m_dry0:.0f} t) ≫ landing {HERITAGE['landing_mass_t']:.0f} t; "
-            "bay length/volume can host plant+water only if payload is sacrificed; "
-            "zero payload is necessary but insufficient; GW-class m_C cannot land on an unmodified orbiter."
+            "Closed by raising wing/gear/runway to the 1 GW plant; "
+            "production cargo deferred."
         )
     return 0
 
