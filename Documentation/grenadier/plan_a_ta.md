@@ -6,7 +6,7 @@ Locked in `arxiv.md` §1.2b.
 - **1 GW retained** @ 15 kW/kg → dry ≈ 172 t, GLOW ≈ 211 t.
 - **Lander sized to plant** — design land ≈ 190 t; wing ≈ 480 m²; span ≈ 33 m.
 - **Structure** — carbon sandwich primary; reusable-only zoned TPS (no ablatives).
-- **Home airport** — **KEDW** Edwards AFB runway **22L** (15,000 ft). Alternate **KTTS** SLF.
+- **Home airport** — **KEDW** Edwards AFB runway **22** (FG id for the long paved strip; real-world name is 22L). Alternate **KTTS** SLF.
 - **Spawn** — level on gear, parking brake, CHARM **OFF**, throttle 0; onboard battery charged for cold start (no ground cart required).
 - **No drag chute** — brakes + long runway only.
 - Launch: `./fs.sh` from the charm repo.
