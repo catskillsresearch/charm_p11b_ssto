@@ -14,7 +14,7 @@
     "engine_stages": "1=EDF, 2=microwave air plasma (Ye 2020), 3=water microwave plasma (Nakagawa 2019 lineage)",
     "engine_sizing": "P1=65MW P2=P3=995MW meng=15t mw=44t Isp=2000s",
     "figure_ssot": "Paper mermaid figures must match this assembly.json; ground cart / vacuum pack / plant bus added from paper schematic.",
-    "engine_air_path": "freestream \u2192 external scoops \u2192 inlet duct \u2192 (EDF | stage-2 precomp) \u2192 shared flared nozzle"
+    "engine_air_path": "freestream \u2192 twin OMS-shoulder scoops \u2192 cross-duct plenum \u2192 (EDF | stage-2) \u2192 shared flared nozzle; belly boat unpierced; aft RCS retained"
   },
   "frame": {
     "id": "vehicle",
@@ -27,7 +27,13 @@
     "length_m": 52.0,
     "width_m": 5.2,
     "height_m": 6.5,
-    "wingspan_m": 28.0
+    "wingspan_m": 28.0,
+    "heritage_orbiter_oml": {
+      "length_m": 37.24,
+      "wingspan_m": 23.79,
+      "height_fin_tip_m": 17.25,
+      "note": "Frozen TA OML (arxiv.md §1.1); envelope length/span are packaging stretch"
+    }
   },
   "root": {
     "id": "vehicle",

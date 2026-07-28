@@ -4,7 +4,7 @@
     "source": "arxiv.md §1, §7.1, §11",
     "assembly_truth": "assembly.json",
     "role_of_this_file": "TEMPORARY OpenVSP build binding (builders + xform checks). Geometry/topology/hierarchy lives in assembly.json — not here.",
-    "doctrine": "Shuttle-style orbiter OML; crew capsule and airlock are drop-in modules mated at ports."
+    "doctrine": "Heritage Shuttle orbiter OML is the frozen aero/TPS/RCS baseline (TA); packaging-study length/span below are an optional stretch for plant+crew."
   },
   "oml": {
     "length_m": 52.0,
@@ -14,10 +14,20 @@
     "wingspan_m": 28.0,
     "tess_u": 33,
     "tess_w": 25,
+    "heritage_orbiter": {
+      "length_m": 37.24,
+      "length_ft": 122.17,
+      "wingspan_m": 23.79,
+      "wingspan_ft": 78.06,
+      "height_fin_tip_m": 17.25,
+      "height_fin_tip_ft": 56.58,
+      "source": "NASA orbiter inventory / fact sheets (arxiv.md [12])",
+      "role": "Frozen OML for CATSKILLS-SSTO-TA-GRENADIER aero/TPS/RCS baseline"
+    },
     "scale_from_orbiter": {
       "length": 1.396,
       "span": 1.177,
-      "comment": "Anisotropic: longer pressurized nose + aft plant; bay clear length held at 18.3 m."
+      "comment": "Packaging stretch only: 52/37.24 and 28/23.79. TA prefers unscaled heritage OML; bay clear length held at 18.3 m."
     }
   },
   "stations_m": [

@@ -11,13 +11,55 @@ July 22, 2026
 
 ## Abstract
 
-We specify a single-stage-to-orbit (SSTO) spaceplane that flies Space Shuttle–style operations—including a Shuttle-class cargo bay—from a municipal airport to International Space Station (ISS) altitude in low Earth orbit (LEO), powered by a continuous Chambered Aneutronic Rotating Mirror (CHARM) \(p\text{-}^{11}\mathrm{B}\) plant [1] with direct energy conversion (DEC). Flight regimes use three electric stages: ducted fan on free air, microwave air plasma on climb, then carried-water plasma with intakes sealed. Each design step is written as a closed set of equations. We guesstimate the reactor mass hole, constrain water as a function of dry mass and vacuum \(\Delta v\), impose a \(1\,\mathrm{GW}\) plant with space restart and DEC, and solve a reference all-up mass. Combined-cycle engine maps and CHARM size/performance constraints follow.
+We specify a single-stage-to-orbit (SSTO) spaceplane that flies Space Shuttle–class operations—including a Shuttle-class cargo bay—from a municipal airport to International Space Station (ISS) altitude in low Earth orbit (LEO), powered by a continuous Chambered Aneutronic Rotating Mirror (CHARM) \(p\text{-}^{11}\mathrm{B}\) plant [1] with direct energy conversion (DEC). As a flight **test article**, the design freezes a Space Shuttle orbiter outer mold line (OML), thermal protection system (TPS), landing gear, flight controls, and the full Shuttle reaction-control system (RCS) nozzle complement as the aero/ops baseline, and substitutes the propulsion and powertrain: a CHARM plant driving a three-stage electric combined-cycle engine (ducted fan on free air → microwave air plasma on climb → carried-water plasma with intakes sealed). Twin shoulder intakes occupy the former OMS-pod forward faces and feed stages 1–2; OMS engines are deleted. Each design step is written as a closed set of equations. We guesstimate the reactor mass hole, constrain water as a function of dry mass and vacuum \(\Delta v\), impose a \(1\,\mathrm{GW}\) plant with space restart and DEC, and solve a reference all-up mass. Combined-cycle engine maps and CHARM size/performance constraints follow.
 
 ---
 
 ## 1. Vehicle vision
 
-Municipal runway to ISS-class LEO: a Shuttle-style SSTO spaceplane with a real cargo bay, a single-deck crew module, and a continuous CHARM \(p\text{-}^{11}\mathrm{B}\) plant driving a three-stage combined-cycle engine (electric ducted fan → microwave air plasma → water plasma). The figures below are the vehicle picture; the equations that close the mass and energy budgets follow.
+Municipal runway to ISS-class LEO: an SSTO spaceplane with a real cargo bay, a single-deck crew module, and a continuous CHARM \(p\text{-}^{11}\mathrm{B}\) plant driving a three-stage combined-cycle engine (electric ducted fan → microwave air plasma → water plasma). The figures below are the vehicle picture; the equations that close the mass and energy budgets follow.
+
+### 1.1 Test-article doctrine (heritage orbiter OML)
+
+This paper is a **systems closure** for plant and propulsion, not a proposal to redesign the Shuttle as an art project. The **outer mold line (OML)**—the exact geometric outer surface of the vehicle—is the responsible engineering baseline for aero, TPS tile/blanket layout, structural packaging limits, and CFD of ascent/entry [12]. Freezing a **Space Shuttle orbiter OML** [12,13] therefore freezes wing–body aerodynamics, the black-tile belly boat, gear, elevons/body flap/rudder, forward and aft RCS thruster geometry, and the Shuttle-class cargo bay. What changes is the **powertrain**—CHARM + DEC bus + one combined-cycle nozzle string—and the **OMS pods**, whose forward faces become twin air scoops feeding stages 1–2 while **every existing RCS nozzle** on those pods (and the nose RCS) is retained for attitude control. Primary \(\Delta v\) is electric; RCS remains the fine-pointing and abort-attitude layer.
+
+**Heritage orbiter OML footprint** (NASA orbiter inventory / fact-sheet class numbers [12]):
+
+| Quantity | Imperial | SI |
+|----------|----------|-----|
+| Length | \(122.17\,\mathrm{ft}\) | \(L_{\mathrm{OML}} = 37.24\,\mathrm{m}\) |
+| Wingspan | \(78.06\,\mathrm{ft}\) | \(b_{\mathrm{OML}} = 23.79\,\mathrm{m}\) |
+| Height (to vertical-stabilizer tip) | \(56.58\,\mathrm{ft}\) | \(H_{\mathrm{OML}} = 17.25\,\mathrm{m}\) |
+
+Major OML zones retained as frozen geometry: forward fuselage / RCC nose cap; mid-fuselage and double-delta wings (entry cross-range + unpowered landing); aft fuselage with OMS-pod shoulders (scoop conversion) and the former three-SSME termination replaced by a single combined-cycle nozzle fairing.
+
+That framing is deliberate: holding aero, TPS, and RCS fixed isolates the experiment (reactor plant + three-cycle engine) the way a production chassis isolates a new powertrain. The reference designation used in the companion FlightGear operator model is **CATSKILLS-SSTO-TA-GRENADIER**. **Early TA:** stay on heritage \(L_{\mathrm{OML}}\), \(b_{\mathrm{OML}}\) and fit plant/engine inside the existing bay/aft envelope where possible. **Production packaging study** in the CAD below uses a stretched length \(L\approx 52\,\mathrm{m}\) and span \(\approx 28\,\mathrm{m}\) only where single-deck crew, airlock, CHARM island, and water demand more station length—explicitly labeled as a stretch relative to \(L_{\mathrm{OML}}\), not as a claim that the frozen aero baseline already grew.
+
+### 1.2 Heritage-OML TA fit (pass/fail)
+
+**Question:** can the reference closure (\(P_{\star}=1\,\mathrm{GW}\), \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\), \(m_{\mathrm{C}}\approx 67\,\mathrm{t}\), \(m_w\approx 44\,\mathrm{t}\), \(m_{\mathrm{dry}}\approx 196\,\mathrm{t}\)) package and fly inside an **unmodified** orbiter OML?
+
+**Usable heritage envelopes** [12]: payload bay \(60\,\mathrm{ft}\times 15\,\mathrm{ft}\) diameter (\(18.29\,\mathrm{m}\times 4.57\,\mathrm{m}\), \(\approx 300\,\mathrm{m}^3\)); aft fuselage length \(18\,\mathrm{ft}\) (\(5.49\,\mathrm{m}\)). Packaging-study plant skid length \(\approx 15.7\,\mathrm{m}\) (battery + water + fuel + CHARM) and engine \(\approx 3\,\mathrm{m}\).
+
+| Check | Need | Heritage | Result |
+|-------|------|----------|--------|
+| Plant length in bay | \(15.7\,\mathrm{m}\) | \(18.3\,\mathrm{m}\) bay | **PASS** (\(+2.6\,\mathrm{m}\) margin) |
+| Engine length in aft | \(3\,\mathrm{m}\) | \(5.5\,\mathrm{m}\) aft | **PASS** |
+| Bay volume (CHARM \(\bar{p}_{\mathrm{C}}\gtrsim 8\,\mathrm{MW/m}^3\) floor + water + ancillaries) | \(\sim 210\,\mathrm{m}^3\) | \(\sim 300\,\mathrm{m}^3\) | **PASS** (tight; CHARM alone \(\sim 125\,\mathrm{m}^3\) fills \(\sim 7.6\,\mathrm{m}\) of bay at full diameter) |
+| Bay still carries \(24.4\,\mathrm{t}\) cargo | plant + water in bay | mutually exclusive | **FAIL** (TA must give up Shuttle-class payload or the bay) |
+| Landing-mass proxy \(m_{\mathrm{dry}}\) (with \(m_{\mathrm{pl}}=24.4\,\mathrm{t}\)) | \(196\,\mathrm{t}\) | orbiter landing \(\sim 104\,\mathrm{t}\) class [12] | **FAIL** |
+| Zero-payload TA (\(m_{\mathrm{pl}}=0\); bay carries only reactor + engine) | \(m_{\mathrm{dry}}\approx 172\,\mathrm{t}\) | \(\sim 104\,\mathrm{t}\) | **FAIL** (\(\sim 68\,\mathrm{t}\) over) |
+
+**OVERALL: FAIL** on mass. Length/volume can host the plant+water in the bay and the engine in the aft **only if the bay is not a cargo bay on that flight**. Even with **zero payload**, \(m_{\mathrm{dry}}\approx 172\,\mathrm{t}\) is still \(\sim 1.7\times\) a Shuttle landing weight—the CHARM island alone (\(m_{\mathrm{C}}\approx 67\,\mathrm{t}\)) plus structure (\(m_{\mathrm{str}}\approx 87.5\,\mathrm{t}\)) and engine (\(15\,\mathrm{t}\)) already exceed the gear/landing limit. Paper structure plus engine alone sits near that ceiling **before** any GW-class CHARM island. Raising \(\alpha_{\mathrm{C}}\) to \(25\)–\(60\,\mathrm{kW/kg}\) with zero payload still leaves \(m_{\mathrm{dry}}\gtrsim 120\,\mathrm{t}\). The geometric OML fit is not the blocker—the **landed mass** is.
+
+**Rethink forks** (pick explicitly; do not silently keep both “heritage TA” and “196 t dry”):
+
+1. **Aero-only heritage OML** — keep Shuttle shape for CFD/TPS/RCS ops; accept a **stretched or reinforced** airframe for mass closure (packaging study \(L\approx 52\,\mathrm{m}\) stays). Honest label: *OML-derived*, not *unmodified OV*.
+2. **Reduced-energy TA** — fly a subscale plant / shorter \(\Delta v\) / less water so \(m_{\mathrm{dry}}\) approaches landing limits; full ISS-class closure remains a later article.
+3. **Breakthrough \(\alpha_{\mathrm{C}}\)** — only extreme specific power (well above \(60\,\mathrm{kW/kg}\)) plus a lighter structure than the paper’s \(87.5\,\mathrm{t}\) \(m_{\mathrm{str}}\) could approach an unmodified OV landing weight; that is a reactor packaging claim, not an airframe claim.
+4. **Drop full-mission payload on the TA** — necessary for bay packaging but **insufficient** alone to pass landing mass.
+
+Executable check: `python3 research/figures/cad/ta_oml_fit.py`.
 
 ### AI concept render
 
@@ -33,7 +75,7 @@ Fig.~\ref{fig:catskills-ssto-cabin-liftoff-view} is a companion AI concept rende
 
 ### Interior floorplan and exterior profile
 
-Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [12,13], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. Reference overall length **$L \approx 52\,\mathrm{m}$**. ECLSS = **Environmental Control and Life Support System**. Depth $\approx 6.5$–$7\,\mathrm{m}$, span $\approx 28\,\mathrm{m}$.
+Crew volume flattens the **Space Shuttle crew module** from two decks to **one** [12,13], then **stretches** the pressurized nose so life support and a suited airlock are not cartoon-thin. **Packaging-study** overall length **$L \approx 52\,\mathrm{m}$** (vs heritage \(L_{\mathrm{OML}}=37.24\,\mathrm{m}\)); fuselage depth $\approx 6.5$–$7\,\mathrm{m}$; packaging span $\approx 28\,\mathrm{m}$ (vs heritage \(b_{\mathrm{OML}}=23.79\,\mathrm{m}\)). ECLSS = **Environmental Control and Life Support System**. The FlightGear TA and aero baseline remain on the heritage OML numbers in §1.1 unless a stretch is explicitly selected.
 
 Figs.~\ref{fig:charm-ssto-interior-floorplan} and \ref{fig:charm-ssto-exterior-profile} are orthographic CAD views of the same station map as `assembly.json` (nose left, length $52\,\mathrm{m}$): crew capsule $0$–$11\,\mathrm{m}$ (flight deck + seats, internal O₂/N₂, port **ground-only** side hatch); airlock $11$–$15\,\mathrm{m}$ (hatches cabin↔airlock and airlock↔bay only); cargo bay $15$–$33.3\,\mathrm{m}$ ($18.3\times 4.6\,\mathrm{m}$, clamshell doors on the cargo-skid drop-in; exterior OML is an unbroken tube); **fusion electric plant** $33.3$–$49\,\mathrm{m}$ on one skid (flight battery $33.3$–$35.5\,\mathrm{m}$, water tanks $35.5$–$39.5\,\mathrm{m}$ — relocated ahead of CHARM as a supplemental radiation shield, §9.3 — fuel services $39.5$–$41.5\,\mathrm{m}$, CHARM island incl. permanent shield bulkhead $41.5$–$49\,\mathrm{m}$); **combined-cycle engine** $49$–$52\,\mathrm{m}$ (stages 1–3 + nozzle). The plant schematic (Fig.~\ref{fig:mermaid-fusion-electric-plant}) is 1–1 with that JSON tree. Fig.~\ref{fig:charm-ssto-interior-floorplan} is a top-down cutaway (no landing gear). Fig.~\ref{fig:charm-ssto-exterior-profile} shows white upper OML, dark TPS belly, extended gear, the port crew hatch, and closed top bay doors.
 
@@ -332,9 +374,11 @@ Table: Design goals for the plane.
 | ID | Goal | Statement |
 |----|------|-----------|
 | G1 | **SSTO** | Single stage from runway to ISS-class LEO; no discarded boosters or external tank |
-| G2 | **Shuttle style** | Orbiter-like airframe: wing–body, thermal protection system (TPS), runway landing, gear, control surfaces; crew systems (toilet, ECLSS, food) |
+| G2 | **Heritage orbiter OML** | Freeze Shuttle OML as aero/TPS/ops baseline (§1.1): \(L_{\mathrm{OML}}=37.24\,\mathrm{m}\), \(b_{\mathrm{OML}}=23.79\,\mathrm{m}\), \(H_{\mathrm{OML}}=17.25\,\mathrm{m}\) [12]—not a clean-sheet airframe. **Unmodified OV mass fit fails** at reference closure (§1.2) |
 | G2b | **Single-deck crew** | Flatten Shuttle cabin to one deck: flight deck; six reclining seats; O₂/N₂ + ECLSS; luggage; forward/side ground door; large aft airlock into bay |
-| G2c | **Length** | Stretch OML as needed for airlock, ECLSS tanks, battery, and fusion-fuel tanks—reference \(L \approx 52\,\mathrm{m}\) |
+| G2c | **Packaging stretch** | Lengthen beyond \(L_{\mathrm{OML}}\) for airlock, ECLSS, battery, water, and CHARM—reference packaging study \(L \approx 52\,\mathrm{m}\), span \(\approx 28\,\mathrm{m}\); required for full-mission \(m_{\mathrm{dry}}\) unless a rethink fork in §1.2 is chosen |
+| G2d | **Full Shuttle RCS** | Retain the complete orbiter RCS nozzle complement (forward + aft pod thrusters) for attitude/RCS ops; do not delete thrusters when converting OMS pods |
+| G2e | **OMS → shoulder scoops** | Delete OMS engines; convert left/right OMS-pod forward faces to sealed twin intakes feeding σ1/σ2; belly TPS stays a solid boat (no ventral scoop) |
 | G3 | **Shuttle cargo bay** | Usable bay \(\approx 18.3\,\mathrm{m}\times 4.6\,\mathrm{m}\) class for payload—not filled with reactors |
 | G4 | **Payload** | Shuttle-class cargo: \(m_{\mathrm{pl}} = 24\,400\,\mathrm{kg}\) reference |
 | G5 | **Destination** | Circular LEO compatible with ISS altitude (\(\approx 400\,\mathrm{km}\)); plane-change to \(51.6^\circ\) treated as margin |
@@ -343,7 +387,7 @@ Table: Design goals for the plane.
 | G8 | **Clean fuel** | \(p + {}^{11}\mathrm{B} \rightarrow 3\alpha + 8.7\,\mathrm{MeV}\); CHARM bottle; DEC-first electricity |
 | G9 | **Power** | Plant electrical bus peak \(P_{\star} = 1\,\mathrm{GW}\) (design target) |
 
-**Not goals:** expendable stages; D–T breeding plant; filling the bay with the fusion island.
+**Not goals:** expendable stages; D–T breeding plant; filling the bay with the fusion island; reinventing orbiter aero/TPS when the experiment is the powertrain.
 
 ---
 
@@ -360,6 +404,10 @@ Table: Physical constants and reference symbols.
 | \(g_0\) | Standard gravity | \(9.80665\,\mathrm{m/s}^2\) |
 | \(m_{\mathrm{pl}}\) | Cargo-bay payload | \(2.44\times 10^4\,\mathrm{kg}\) |
 | \(P_{\star}\) | CHARM bus peak power | \(1.00\times 10^9\,\mathrm{W}\) |
+| \(L_{\mathrm{OML}}\) | Heritage orbiter length | \(37.24\,\mathrm{m}\) (\(122.17\,\mathrm{ft}\)) [12] |
+| \(b_{\mathrm{OML}}\) | Heritage orbiter wingspan | \(23.79\,\mathrm{m}\) (\(78.06\,\mathrm{ft}\)) [12] |
+| \(H_{\mathrm{OML}}\) | Heritage orbiter height (fin tip) | \(17.25\,\mathrm{m}\) (\(56.58\,\mathrm{ft}\)) [12] |
+| \(L\) | Packaging-study length (if stretched) | \(52.0\,\mathrm{m}\) |
 
 Masses (all kg):
 
@@ -865,6 +913,10 @@ Switching between stages is by atmospheric density and Mach number:
 \end{cases}
 \]
 
+### 10.1b Intakes, OMS deletion, and RCS retention
+
+Stages 1–2 need free air. On the heritage orbiter OML, the natural place for twin intakes is the **OMS pod shoulders**: convert each pod’s **forward face** into a scoop, duct both sides into a center plenum feeding the σ1 EDF and σ2 microwave plasma path, and **delete the OMS engines** (primary \(\Delta v\) is the combined-cycle nozzle). The **aft RCS thruster nozzles** on those pods—and the **forward RCS** set on the nose—remain in the design at Shuttle locations and counts [12,13]. Propellant for RCS is a separate (heritage-class hypergolic or later electric) budget; this paper does not claim RCS \(\Delta v\) replaces stage 3. σ3 seals the shoulder scoops (`inlet-sealed`) so the water-plasma path does not ingest rarefied air. The belly black-tile “boat” is not pierced by a ventral scoop—TPS stays continuous.
+
 ### 10.2 Engine mass budget
 
 Table: Engine component mass allocation and implied packaging specific power (reference hole \(m_{\mathrm{eng}}=15\,\mathrm{t}\); full sizing/literature anchors [17]).
@@ -1068,7 +1120,7 @@ Table: Systems checklist: equations to constraints.
 
 | Step | Governing relations | Binding output |
 |------|---------------------|----------------|
-| Goals | G1–G9 + single-deck crew | Shuttle bay + municipal SSTO to ISS |
+| Goals | G1–G9 + G2d/G2e RCS + scoops | Heritage OML TA; Shuttle bay; municipal SSTO to ISS |
 | LEO energy | \(E_{\mathrm{orb}}=m_{\mathrm{ins}}\Delta\varepsilon\), \(E_{\mathrm{src}}=\kappa_E E_{\mathrm{orb}}\) | **\(\sim 1.8\,\mathrm{GWh}\)** orbital @ \(196\,\mathrm{t}\); **\(\sim 5.4\,\mathrm{GWh}\)** source @ \(\kappa_E=3\) |
 | Regimes | Stages 1–3 mass-flow logic | EDF → microwave air plasma → water plasma |
 | Water | \(m_{\mathrm{w}}=m_{\mathrm{dry}}(e^{\Delta v_{\mathrm{vac}}/v_e}-1)\) | **\(\sim 23\%\) of dry mass** @ ref |
@@ -1144,9 +1196,9 @@ Sections 1–12 are a **requirements mirror** held up to CHARM: they say what a 
 
 ## 14. Conclusion
 
-Design goals fix a **Shuttle-style SSTO** with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO. Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**. Vision figures (Figs.~\ref{fig:charm-ssto-interior-floorplan}–\ref{fig:mermaid-profile-stations}) show the interior floorplan, exterior profile, drop-in cutaways, and assembly trees that those numbers must fit.
+Design goals fix an SSTO with a **real cargo bay**, municipal runway ops, and ISS-altitude LEO, using a **heritage Shuttle orbiter OML** as the frozen aero/TPS/RCS baseline and a **CHARM + three-cycle electric engine** as the experiment (§1.1, G2–G2e). A strict **unmodified-OV TA fit fails** on landed mass (\(m_{\mathrm{dry}}\approx 196\,\mathrm{t}\) vs \(\sim 104\,\mathrm{t}\) class) even though bay/aft **length and volume** can host the plant and engine if the bay is not carrying Shuttle-class cargo (§1.2)—so the honest vehicle is **OML-derived** (stretch/reinforce as needed), not a drop-in plant into a stock orbiter. Closing \(P_{\star}=1\,\mathrm{GW}\) at \(\alpha_{\mathrm{C}}=15\,\mathrm{kW/kg}\) yields a reference vehicle of about **\(196\,\mathrm{t}\) dry, \(44\,\mathrm{t}\) water, \(240\,\mathrm{t}\) GLOW**. Vision figures (Figs.~\ref{fig:charm-ssto-interior-floorplan}–\ref{fig:mermaid-profile-stations}) show the interior floorplan, exterior profile, drop-in cutaways, and assembly trees that those numbers must fit.
 
-The plant that closes the mass/energy budget must deliver, as a single flight-packaged island: continuous \(p\text{-}^{11}\mathrm{B}\) fusion with multi-chamber rotating-mirror confinement onto a \(1\,\mathrm{GW}\) electrical bus, \(\sim 5\,\mathrm{GWh}\)-class mission source energy per ascent, an island mass/volume implying \(\alpha_{\mathrm{C}}\ge 15\,\mathrm{kW/kg}\) and \(\bar{p}_{\mathrm{C}}\gtrsim 8\,\mathrm{MW/m}^3\), light-off/space restart at \(50\)–\(500\,\mathrm{kWh}\) class, and continuous throttleable duty through climb and insertion (§9). The engine that closes the propulsion side must deliver three stage powers around \(1\,\mathrm{GW}\) peak inside a \(15\,\mathrm{t}\) mass hole, with stage-2/3 packaging specific power (\(\sim 230\)–\(320\,\mathrm{kW/kg}\)) well beyond demonstrated hardware (§10). These are requirements mirrors, not claims that present CHARM or propulsion hardware already has them — the honest gap, itemized with citations, is carried by the two companion papers: **"Compact CHARM p-¹¹B fusion reactor for electricity generation for aerospace propulsion"** [16] for the reactor unobtainiums (flight-weight cryogenics, REBCO/cryostat structure under ascent loads, DEC electrode structures, the unsized RF/backbone-structure remainder) and **"Three cycle electric SSTO rocket engine"** [17] for the propulsion unobtainiums (stage-1 ducted-fan packaging is comparatively vanilla engineering; stages 2–3 microwave-air-plasma and water-plasma packaging are the open items).
+The plant that closes the mass/energy budget must deliver, as a single flight-packaged island: continuous \(p\text{-}^{11}\mathrm{B}\) fusion with multi-chamber rotating-mirror confinement onto a \(1\,\mathrm{GW}\) electrical bus, \(\sim 5\,\mathrm{GWh}\)-class mission source energy per ascent, an island mass/volume implying \(\alpha_{\mathrm{C}}\ge 15\,\mathrm{kW/kg}\) and \(\bar{p}_{\mathrm{C}}\gtrsim 8\,\mathrm{MW/m}^3\), light-off/space restart at \(50\)–\(500\,\mathrm{kWh}\) class, and continuous throttleable duty through climb and insertion (§9). The engine that closes the propulsion side must deliver three stage powers around \(1\,\mathrm{GW}\) peak inside a \(15\,\mathrm{t}\) mass hole, with stage-2/3 packaging specific power (\(\sim 230\)–\(320\,\mathrm{kW/kg}\)) well beyond demonstrated hardware (§10). Twin shoulder scoops replace OMS engines while the **full Shuttle RCS nozzle set** remains for attitude control (§10.1b). These are requirements mirrors, not claims that present CHARM or propulsion hardware already has them — the honest gap, itemized with citations, is carried by the two companion papers: **"Compact CHARM p-¹¹B fusion reactor for electricity generation for aerospace propulsion"** [16] for the reactor unobtainiums (flight-weight cryogenics, REBCO/cryostat structure under ascent loads, DEC electrode structures, the unsized RF/backbone-structure remainder) and **"Three cycle electric SSTO rocket engine"** [17] for the propulsion unobtainiums (stage-1 ducted-fan packaging is comparatively vanilla engineering; stages 2–3 microwave-air-plasma and water-plasma packaging are the open items).
 
 In short: if CHARM physics and reactor packaging close (per [16]) but engine stage‑2/3 packaging fails (per [17]), CHARM may still be a viable ground plant while this spaceplane does not close — and vice versa. This vehicle paper's contribution is the mass/energy closure that ties the two together (§4–§8, §11–§12), not a claim that either companion technology is already in hand.
 
@@ -1191,7 +1243,7 @@ All derived numbers, pipeline code, and final prose were reviewed by the human a
 
 [11] E. J. Kolmes, I. E. Ochs, and N. J. Fisch, “Method and Apparatus for Differential Confinement, Mixing, and Demixing…,” U.S. Provisional Patent 63/794,470, filed Apr. 25, 2025.
 
-[12] National Aeronautics and Space Administration, *Space Shuttle Orbiter / OV-105 Atlantis* dimensional and mass data (cargo bay \(18.3\times 4.6\,\mathrm{m}\); payload to LEO \(\approx 24\,400\,\mathrm{kg}\); empty mass \(\approx 78\,000\,\mathrm{kg}\) class). NASA fact sheets and Orbiter inventory documentation.
+[12] National Aeronautics and Space Administration, *Space Shuttle Orbiter* dimensional and mass data: OML length \(122.17\,\mathrm{ft}\) (\(37.24\,\mathrm{m}\)), wingspan \(78.06\,\mathrm{ft}\) (\(23.79\,\mathrm{m}\)), height to vertical stabilizer \(56.58\,\mathrm{ft}\) (\(17.25\,\mathrm{m}\)); cargo bay \(18.3\times 4.6\,\mathrm{m}\); payload to LEO \(\approx 24\,400\,\mathrm{kg}\); empty mass \(\approx 78\,000\,\mathrm{kg}\) class (e.g.\ OV-105 *Atlantis* inventory / NASA orbiter fact sheets). See also NASA *Space Shuttle News Reference* and orbiter familiarization dimensional drawings.
 
 [13] NASA, *Space Shuttle Vehicle Familiarization* (SSV FAM), crew module description: flight deck; middeck galley, personal hygiene, airlock, and **side hatch** for ground ingress/egress; equipment bay ECLSS. Training document SSV-FAM-1107 and NASA *Space Shuttle News Reference* crew-cabin arrangement figures (flight deck p.\ 3-9; middeck p.\ 3-10).
 

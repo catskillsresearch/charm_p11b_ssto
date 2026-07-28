@@ -3,6 +3,10 @@
 Three-cycle electric rocket: σ1 EDF (air), σ2 air-plasma, σ3 water-plasma (intakes sealed).
 Plant couples **only** by power cable (`charm/bus-mw`).
 
+**Intakes:** twin shoulder scoops in the former OMS-pod bulges (left/right). Both feed a
+cross-duct plenum into σ1/σ2. Belly TPS stays a clean boat — no ventral scoop. σ3 seals
+those shoulder mouths (`inlet-sealed`).
+
 ## Property bus
 
 Prefix: `/fdm/jsbsim/systems/grenadier/engine/`
@@ -13,8 +17,11 @@ Prefix: `/fdm/jsbsim/systems/grenadier/engine/`
 | `sigma-recommended` | int | From altitude (and optional Q) |
 | `sigma-allowed` | int | Max stage permitted by sensors + plant |
 | `inlet-sealed` | bool | Intakes sealed (required for σ3) |
-| `throttle` | double | 0–1 thrust demand |
-| `thrust-kn` | double | Surrogate thrust |
+| `throttle` | double | 0–1 thrust demand (mirrored from pilot lever) |
+| `thrust-kn` | double | Coupled thrust (0 unless plant × engine both ready) |
+| `thrust-lbf` | double | Same force for JSBSim `grenadier_thrust` |
+| `coupled-ok` | bool | Plant POWER **and** stage-go **and** throttle |
+| `bus-frac` | double | Fraction after CHARM bus limit |
 | `power-draw-mw` | double | Bus demand |
 | `water-kg` | double | Carried water |
 | `water-flow-kgps` | double | σ3 mass flow |
@@ -34,11 +41,15 @@ Prefix: `/fdm/jsbsim/systems/grenadier/engine/`
 Altitude thresholds are editable props for tuning. Crew may command a higher stage;
 UI shows INHIBIT if sensors say no; hard block only when water empty (σ3) or plant not POWER.
 
+## Dual-control thrust
+
+See [thrust_coupling.md](thrust_coupling.md). Summary: CHARM must be in **POWER** with live bus; engine must have an allowed **sigma** and **throttle**. JSBSim applies `thrust-lbf` via `external_reactions/grenadier_thrust`. Heritage SSME/OMS stay cold.
+
 ## Screens
 
 `Nasal/canvas/cdlg_grenadier_engine.nas`:
 
 - Stage commanded / recommended / allowed
 - Altimeter (primary sensor strip)
-- Inlet sealed, water kg, thrust, power draw, plant-ok
+- Inlet sealed, water kg, thrust, power draw, plant-ok / coupled-ok
 - Buttons: σ1 / σ2 / σ3, SEAL, throttle ±

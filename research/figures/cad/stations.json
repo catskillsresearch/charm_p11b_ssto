@@ -6,6 +6,12 @@
   "bay_width_m": 4.6,
   "bay_height_m": 4.6,
   "wingspan_m": 28.0,
+  "heritage_orbiter_oml": {
+    "length_m": 37.24,
+    "wingspan_m": 23.79,
+    "height_fin_tip_m": 17.25,
+    "note": "Frozen TA aero baseline (arxiv.md §1.1); length_m/wingspan_m above are packaging stretch"
+  },
   "stations": [
     {
       "id": "crew",
