@@ -13,4 +13,4 @@ Locked in `arxiv.md` §1.2b.
 
 Unmodified OV ~104 t landing remains FAIL; Plan A PASS by raising gear/wing/runway, not by shrinking the reactor.
 
-Note: FG still uses the heritage Shuttle mesh (no visible stretch yet); Plan A span/area is the paper/CAD closure target.
+Note: FG **visual** mesh is still heritage-sized; **JSBSim** metrics/mass/gear are Plan A (`Models/Grenadier/PLAN_A_FDM.md`) so flyability uses the stretched numbers.
