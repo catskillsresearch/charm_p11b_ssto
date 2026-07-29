@@ -3,9 +3,9 @@
 FlightGear **test article** identity for the Shuttle-derived Grenadier vehicle
 (CHARM plant + 3-cycle electric engine in bay/tail skids).
 
-**Canonical FG implementation** lives in the sibling aircraft repo:
-[`CatskillsFusionSSTO/Documentation/grenadier/`](../../../Aircraft/CatskillsFusionSSTO/Documentation/grenadier/)
-(and Nasal under `Nasal/grenadier/`).
+**Canonical FG implementation** lives in-repo at
+[`CatskillsFusionSSTO/Documentation/grenadier/`](../../CatskillsFusionSSTO/Documentation/grenadier/)
+(and Nasal under `CatskillsFusionSSTO/Nasal/grenadier/`).
 
 This folder mirrors operator-facing runbooks for the paper workspace.
 

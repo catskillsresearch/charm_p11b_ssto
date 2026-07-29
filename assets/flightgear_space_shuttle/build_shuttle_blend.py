@@ -23,7 +23,8 @@ import bpy
 from mathutils import Euler, Vector
 
 HERE = Path(__file__).resolve().parent
-FG_MODELS = (HERE / "fg_models").resolve()
+REPO = HERE.parents[1]
+FG_MODELS = REPO / "CatskillsFusionSSTO" / "Models"
 BLEND_OUT = HERE / "space_shuttle_assembled.blend"
 
 # FG PropertyList offsets are metres in the aircraft frame used by this model.

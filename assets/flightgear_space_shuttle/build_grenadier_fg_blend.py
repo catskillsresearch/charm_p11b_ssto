@@ -20,7 +20,7 @@ from mathutils import Vector
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 CAD = REPO / "research" / "figures" / "cad"
-FG = Path("/home/catskills/Desktop/Aircraft/CatskillsFusionSSTO/Models")
+FG = REPO / "CatskillsFusionSSTO" / "Models"
 BLEND_OUT = HERE / "grenadier_fg_now.blend"
 
 sys.path.insert(0, str(CAD))

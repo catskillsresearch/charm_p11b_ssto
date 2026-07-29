@@ -34,7 +34,7 @@ CACHE_DIR = CAD_DIR / "cache"
 ORBITER_CACHE = CACHE_DIR / "shuttle_o2_base.blend"
 GEAR_CACHE = CACHE_DIR / "shuttle_landing_gears.blend"
 
-AIRCRAFT = Path("/home/catskills/Desktop/Aircraft/CatskillsFusionSSTO")
+AIRCRAFT = ROOT / "CatskillsFusionSSTO"
 SHUTTLE_AC = AIRCRAFT / "Models" / "shuttle_o2.ac"
 LANDING_GEARS_AC = AIRCRAFT / "Models" / "LandingGears.ac"
 SSME_AC = AIRCRAFT / "Models" / "SSME.ac"
