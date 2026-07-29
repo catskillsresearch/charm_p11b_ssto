@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""Stamp Grenadier labels onto heritage Shuttle panel paint.
+"""Stamp / blank Grenadier panel paint on the Shuttle text map.
 
-Heritage paint still says APU / ENGINE POWER; hover tooltips + these short
-logos carry the Grenadier meaning:
+Heritage paint still says APU / ENGINE POWER / MPS; hover tooltips + these
+edits carry the Grenadier surplus-kitbash look:
 
   APU OPERATE 1/2/3     →  CART / BATT / CRYO
   APU CNTLR PWR 1/2/3   →  MAGNET / FUEL / RF
   ENGINE POWER          →  REACTOR POWER
   LEFT AC2 / CTR AC1 / RIGHT AC3  →  CHARM / DEC / VACUUM
+  Panel R4 MPS / fill-drain / prevalve / TVC / JETT  → blanked
+  Panel R4 BRAKE HEATER / BRAKE ISOL / LG EXTEND / LG-NWS  → kept
 
 Edits Models/fwd-cockpit-text-map-x.png in place.
 """
@@ -21,6 +23,20 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 TEX = ROOT / "Models" / "fwd-cockpit-text-map-x.png"
+
+# Panel R4 (4096² text map). Keep landing/brake paint; blank SSME/ET leftovers.
+R4_KEEP = (
+    (2305, 2555, 2445, 2765),  # BRAKE HEATER + BRAKE ISOL VLV
+    (2575, 2695, 2735, 2810),  # LG EXTEND ISO VALVE
+    (2465, 2810, 2695, 2895),  # LG/NWS HYD SYS + R4 mark
+)
+R4_BLANK = (
+    (2445, 2525, 2830, 2810),  # MPS / fill-drain / manf / prevalves
+    (2305, 2765, 2488, 2895),  # MPS/TVC ISOL under brakes
+    (2730, 2645, 2830, 2770),  # JETT 1/2 face
+    (2445, 2740, 2575, 2810),  # leftover prevalve strip
+)
+R4_GRAY = (156, 156, 149)
 
 
 def _font(size: int) -> ImageFont.ImageFont:
@@ -91,6 +107,19 @@ def _stamp_centered(
     d.text((int(cx - tw / 2), int(y - th / 2 - 1)), label, fill=(245, 245, 245), font=font)
 
 
+def _blank_r4_mps(arr: np.ndarray) -> None:
+    """Paint out surplus SSME/ET labels on R4; leave brake / LG paint."""
+    gray = np.array(R4_GRAY, dtype=np.uint8)
+    for x0, y0, x1, y1 in R4_BLANK:
+        yy, xx = np.mgrid[y0:y1, x0:x1]
+        mask = np.ones(xx.shape, dtype=bool)
+        for kx0, ky0, kx1, ky1 in R4_KEEP:
+            mask &= ~((xx >= kx0) & (xx < kx1) & (yy >= ky0) & (yy < ky1))
+        region = arr[y0:y1, x0:x1]
+        region[mask] = gray
+        arr[y0:y1, x0:x1] = region
+
+
 def main() -> None:
     img = Image.open(TEX).convert("RGB")
     arr = np.asarray(img)
@@ -115,7 +144,6 @@ def main() -> None:
         cover_h=11,
         font_size=8,
     )
-    # ENGINE POWER → REACTOR POWER (header + LEFT AC2 / CTR AC1 / RIGHT AC3)
     _stamp_centered(
         img,
         arr,
@@ -136,7 +164,10 @@ def main() -> None:
         cover_h=20,
         font_size=8,
     )
-    img.save(TEX)
+    # R4 blank after stamps (does not overlap APU / reactor regions).
+    out = np.array(img)
+    _blank_r4_mps(out)
+    Image.fromarray(out).save(TEX)
     print(f"wrote {TEX}")
 
 

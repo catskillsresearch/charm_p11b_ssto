@@ -50,7 +50,8 @@ GPC/IDP/MDU power, lighting, cabin fans, abort CWS (messages TBD).
 
 ## Physical engraving
 
-`fwd-cockpit-text-map-x.png` still shows Shuttle lettering on many keys. Hover
-tooltips for obsolete families are **blank** so unused switches do not advertise
-false systems. Remapped switches keep Grenadier hover names. UV blanking of
+`fwd-cockpit-text-map-x.png` still shows Shuttle lettering on many keys; R4
+MPS/propellant paint is UV-blanked (brakes/LG kept). Hover tooltips for obsolete
+families are **blank** so unused switches do not advertise false systems.
+Remapped switches keep Grenadier hover names. UV blanking of
 engraved text is a follow-on pass.

@@ -51,5 +51,7 @@ Also: SSME-right controller A = **vacuum ready** (needed for go-fuel), not SCRAM
 | Throttle axis | Engine throttle | `engine/throttle` (preferred) |
 
 Tooltips for remapped switches are Grenadier-named (see [control_map.md](control_map.md)).
-MEDS softkeys: STAGE / CHARM. Physical text-map engraving still Shuttle until UV pass.
+MEDS softkeys: STAGE / CHARM. Physical text-map engraving: APU/reactor logos stamped;
+R4 MPS/fill-drain/prevalve/TVC/JETT paint blanked (brake isol + LG extend/NWS kept) via
+`scripts/stamp_grenadier_apu_labels.py`.
 Fuel-cell reactant valves are unwired to inert props.

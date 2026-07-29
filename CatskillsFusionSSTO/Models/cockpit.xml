@@ -32064,7 +32064,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>tvc-iso-vlv-sys1</tooltip-id>
-                <label>MPS/TVC Isol Valve Cntrl Sys1: %s</label>
+                <label></label>
                 <property>/fdm/jsbsim/systems/apu/apu/tvc-isolation-valve-status</property>
                 <mapping>nasal</mapping>
                 <script>
@@ -32110,7 +32110,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>tvc-iso-vlv-sys2</tooltip-id>
-                <label>MPS/TVC Isol Valve Cntrl Sys2: %s</label>
+                <label></label>
                 <property>/fdm/jsbsim/systems/apu/apu[1]/tvc-isolation-valve-status</property>
                 <mapping>nasal</mapping>
                 <script>
@@ -32156,7 +32156,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>tvc-iso-vlv-sys3</tooltip-id>
-                <label>MPS/TVC Isol Valve Cntrl Sys3: %s</label>
+                <label></label>
                 <property>/fdm/jsbsim/systems/apu/apu[2]/tvc-isolation-valve-status</property>
                 <mapping>nasal</mapping>
                 <script>
