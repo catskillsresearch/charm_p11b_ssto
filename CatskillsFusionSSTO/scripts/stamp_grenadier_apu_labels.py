@@ -24,17 +24,16 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 TEX = ROOT / "Models" / "fwd-cockpit-text-map-x.png"
 
-# Panel R4 (4096² text map). Keep landing/brake paint; blank SSME/ET leftovers.
+# Panel R4 (4096² text map). Keep only landing/brake paint; blank all other
+# heritage MPS/ET/TVC/JETT labels (switch meshes stay; tooltips already empty).
 R4_KEEP = (
-    (2305, 2555, 2445, 2765),  # BRAKE HEATER + BRAKE ISOL VLV
+    (2305, 2555, 2445, 2778),  # BRAKE HEATER + BRAKE ISOL VLV (full)
     (2575, 2695, 2735, 2810),  # LG EXTEND ISO VALVE
     (2465, 2810, 2695, 2895),  # LG/NWS HYD SYS + R4 mark
 )
 R4_BLANK = (
-    (2445, 2525, 2830, 2810),  # MPS / fill-drain / manf / prevalves
-    (2305, 2765, 2488, 2895),  # MPS/TVC ISOL under brakes
-    (2730, 2645, 2830, 2770),  # JETT 1/2 face
-    (2445, 2740, 2575, 2810),  # leftover prevalve strip
+    # Whole R4 label plate (stops above R13U caution strip).
+    (2300, 2520, 2835, 2898),
 )
 R4_GRAY = (156, 156, 149)
 

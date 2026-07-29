@@ -29425,7 +29425,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>ctrl-pwr-sys-b-ac3-left</tooltip-id>
-                <label>Sys B AC3 (Left): %s</label>
+                <label></label>
                 <property>/fdm/jsbsim/systems/mps/engine/controller-B-power-switch-status</property>
                 <mapping>nasal</mapping>
                 <script>
@@ -29471,7 +29471,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>ctrl-pwr-sys-b-ac2-ctr</tooltip-id>
-                <label>Sys B AC2 (Ctr): %s</label>
+                <label></label>
                 <property>/fdm/jsbsim/systems/mps/engine[2]/controller-B-power-switch-status</property>
                 <mapping>nasal</mapping>
                 <script>
@@ -29517,7 +29517,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>ctrl-pwr-sys-b-ac1-right</tooltip-id>
-                <label>Sys B AC1 (Right): %s</label>
+                <label></label>
                 <property>/fdm/jsbsim/systems/mps/engine[1]/controller-B-power-switch-status</property>
                 <mapping>nasal</mapping>
                 <script>
