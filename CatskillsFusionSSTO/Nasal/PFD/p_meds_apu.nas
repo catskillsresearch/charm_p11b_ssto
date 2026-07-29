@@ -147,21 +147,20 @@ var PFD_addpage_p_meds_apu = func(device)
 	p_meds_apu.tape_h2o_qty2.setColorFill(0.0, 1.0, 0.0);
 	if (cryo) {p_meds_apu.tape_h2o_qty3.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_h2o_qty3.setColorFill(1.0, 0.0, 0.0);}
 
-	# "MAG T K / CRYO" → magnet T K, go-cryo, DEC+VAC
-	# Checklist "cryo/magnet cold": wait MAG T < 35 K and CRYO col = 0001 (green).
+	# "T·K / CRYO / VAC" → magnet T K, go-cryo, vacuum-ready (not packed with DEC).
+	# Checklist: wait T·K < 35 and CRYO col = 0001 (green). VAC is the VACUUM wall switch.
 	var gc = getprop(C ~ "go-cryo"); if (gc == nil) gc = 0;
 	p_meds_apu.oilT1.setText(sprintf("%04d", tk));
 	p_meds_apu.oilT2.setText(sprintf("%04d", gc));
-	p_meds_apu.oilT3.setText(sprintf("%04d", dec * 1000 + vac * 100));
+	p_meds_apu.oilT3.setText(sprintf("%04d", vac));
 	set_tape(p_meds_apu.tape_oilT1, (80.0 - tk) / 80.0, 170.4+60.7);
 	set_tape(p_meds_apu.tape_oilT2, gc, 170.4+60.7);
-	var oil3 = 0.0; if (dec and vac) oil3 = 1.0;
-	set_tape(p_meds_apu.tape_oilT3, oil3, 170.4+60.7);
+	set_tape(p_meds_apu.tape_oilT3, vac, 170.4+60.7);
 	if (gc) {p_meds_apu.tape_oilT1.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT1.setColorFill(1.0, 0.0, 0.0);}
 	if (gc) {p_meds_apu.tape_oilT2.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT2.setColorFill(1.0, 0.0, 0.0);}
-	if (dec and vac) {p_meds_apu.tape_oilT3.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT3.setColorFill(1.0, 0.0, 0.0);}
+	if (vac) {p_meds_apu.tape_oilT3.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT3.setColorFill(1.0, 0.0, 0.0);}
 
-	# p / B11 / H2O → proton (H2) kg, solid 11B kg, water kg — not the FUEL wall switch.
+	# H+ / B11 / H2O → proton (H2) kg, solid 11B kg, water kg — not the FUEL wall switch.
 	# Nominal full loads from grenadier_ops init: 40 / 120 / 44000 kg.
 	var pk = getprop(C ~ "fuel-proton-kg"); if (pk == nil) pk = 0;
 	var bk = getprop(C ~ "fuel-b11-kg"); if (bk == nil) bk = 0;

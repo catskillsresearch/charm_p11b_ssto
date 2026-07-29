@@ -7,6 +7,10 @@
     <inherits-from>Aircraft/CatskillsFusionSSTO/Models/Effects/shuttle-main</inherits-from>
     <object-name>grenadier-aft-fairing</object-name>
     <object-name>grenadier-aft-bulkhead</object-name>
+    <object-name>grenadier-interpod-top-cowl</object-name>
+    <object-name>grenadier-interpod-seal-L</object-name>
+    <object-name>grenadier-interpod-seal-R</object-name>
+    <object-name>grenadier-interpod-aft-face</object-name>
     <object-name>grenadier-stub-can-U</object-name>
     <object-name>grenadier-stub-can-L</object-name>
     <object-name>grenadier-stub-can-R</object-name>

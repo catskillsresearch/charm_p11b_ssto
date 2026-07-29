@@ -34,6 +34,10 @@ Scramble progression: **BATT → CRYO → MAGNET → FUEL → VACUUM → RF → 
 Flight controls, gear, **brake isol** (R4), RHC/THC, DAP/RCS, HUD/ADI/HSI,
 GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 
+**AFT LEFT/RIGHT RCS** paint (aft text map): green monoprop **LMP-103S** —
+`He (OXID)/(FUEL)` → **He (A)/(B)**; tank `OXID`/`FUEL` → **PROP**/**PROP**.
+Switches/manifold banks unchanged (A/B press + isolation).
+
 ## BLANK / INERT (mesh may remain; no Grenadier function)
 
 | Family | What you see | Why |
@@ -42,16 +46,44 @@ GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 | R4 surplus (heater / LG / MPS / TVC / …) | Paint blanked | Only brake isol is live |
 | Sys B controller row | Paint + hover blank | Duplicate SSME ctrl |
 | Fuel cells | Hover blank | CHARM bus + BATT |
-| ET / SRB / OMS engines | Unused | No stack; Stage ± only on OMS arm switches |
+| ET / SRB separation | Paint blanked | No stack |
+| MAIN ENGINE LEFT/RIGHT SD | Paint blanked | Single nozzle; CTR label kept |
+| FUEL CELL REAC VLV (C3) | Paint blanked | No fuel cells — CHARM bus + BATT |
+| OMS ENG arms | Relabeled **STAGE − / +** | Still the Stage knobs |
 | APU hydrazine / hyd pumps | Paint blanked | No hyd TVC story |
 
 ## CRT map
 
 | Softkey | Page | Content |
 |---------|------|---------|
+| CHARM (first) | `p_meds_apu` | see table below |
 | STAGE | `p_meds_oms_mps` | σ CMD/MAX, REC/SEAL, THR/PLT; ENGINE H2O/MW/kN, GO/CPL, σ1–3 THR% |
-| CHARM | `p_meds_apu` | SOC/MAGI/PLAS, V/MW/MODE, CART/BATT/CRYO, MAG K + go-cryo, PLANT p/B11/H2O qty + GO MAG/FUEL/BUS |
 | SPI | `p_meds_spi` | Keep |
+
+### CHARM page labels (what each tape means)
+
+| Block | Label | Meaning |
+|-------|-------|---------|
+| CHARM | **SOC** | Battery state of charge % |
+| CHARM | **MAGI** | Magnet current fraction % |
+| CHARM | **PLAS** | Plasma proxy % |
+| CHARM | **V** | Aux bus volts |
+| CHARM | **MW** | Plant bus megawatts (/10 on tape) |
+| CHARM | **MODE** | Mode index (OFF…POWER) |
+| CHARM | **CART** | Ground cart enable |
+| CHARM | **BATT** | Flight battery online |
+| CHARM | **CRYO** | Cryo plant enable (wall switch) |
+| CHARM | **T·K** | Magnet temperature (K) |
+| CHARM | **CRYO** (go) | `go-cryo` — magnet cold enough (&lt;35 K) |
+| CHARM | **VAC** | Vacuum ready (VACUUM wall switch) |
+| PLANT | **H+** | Proton / H₂ feed inventory % |
+| PLANT | **B11** | Solid ¹¹B inventory % |
+| PLANT | **H2O** | Engine water inventory % |
+| PLANT | **MAG** | `go-magnet` |
+| PLANT | **FUEL** | `go-fuel` (needs VACUUM + FUEL) |
+| PLANT | **BUS** | `go-bus` |
+
+**FREON LOOP** on the top-center caution light is ATCS coolant (avionics / heat rejection) — not part of the CHARM scramble. Freon pumps are heritage ECLSS; leave alone unless you are doing a full thermal startup.
 
 ## Physical engraving
 

@@ -16120,7 +16120,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>button_main_eng_sd_left</tooltip-id>
-                <label>Shutdown Left Main Engine</label>
+                <label></label>
             </binding>
         </hovered>
     </animation>
@@ -16234,7 +16234,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>button_main_eng_sd_right</tooltip-id>
-                <label>Shutdown Right Main Engine</label>
+                <label></label>
             </binding>
         </hovered>
     </animation>

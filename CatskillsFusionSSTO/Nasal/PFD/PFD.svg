@@ -68303,7 +68303,7 @@
 <path
        id="path4050"
        style="fill:none;fill-rule:evenodd;stroke:#1aca2f;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m 155,245.95 -160,0 0,14.375 m 300,-14.375 130,0 0,14.375"
+       d="m 175,245.95 -185,0 0,14.375 m 340,-14.375 120,0 0,14.375"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" /><rect
        y="272.775"
@@ -68795,17 +68795,17 @@
          id="tspan4501"
          x="221.86655"
          y="193.17645"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">MAG</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">T·K</tspan><tspan
          sodipodi:role="line"
          x="221.86655"
          y="204.11395"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan4503">K</tspan><tspan
+         id="tspan4503">CRYO</tspan><tspan
          sodipodi:role="line"
          x="221.86655"
          y="215.05145"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan4505">CRYO</tspan></text>
+         id="tspan4505">VAC</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text4507"
@@ -68817,22 +68817,17 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="318.57367"
          x="227.84801"
-         sodipodi:role="line">GO</tspan><tspan
+         sodipodi:role="line">MAG</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="329.51117"
          x="227.84801"
          sodipodi:role="line"
-         id="tspan4513b">MAG</tspan><tspan
+         id="tspan4513b">FUEL</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="340.44867"
          x="227.84801"
          sodipodi:role="line"
-         id="tspan4513c">FUEL</tspan><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         y="351.38617"
-         x="227.84801"
-         sodipodi:role="line"
-         id="tspan4513d">BUS</tspan></text>
+         id="tspan4513c">BUS</tspan></text>
 <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -68844,7 +68839,7 @@
          x="24.160591"
          y="323.57867"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan4522">p</tspan><tspan
+         id="tspan4522">H+</tspan><tspan
          sodipodi:role="line"
          x="24.160591"
          y="334.51617"

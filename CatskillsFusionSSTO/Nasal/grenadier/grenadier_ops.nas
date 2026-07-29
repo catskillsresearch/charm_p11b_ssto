@@ -510,6 +510,14 @@ var apply_cold_pad = func {
     setprop("/fdm/jsbsim/systems/mps/engine/controller-A-power-switch-status", 0);
     setprop("/fdm/jsbsim/systems/mps/engine[1]/controller-A-power-switch-status", 0);
     setprop("/fdm/jsbsim/systems/mps/engine[2]/controller-A-power-switch-status", 0);
+    # Dead-cold MDUs / IDPs — turn on only the screens you need
+    foreach (var sw; ["L1", "L2", "C1", "C2", "C3", "C4", "C5", "R1", "R2", "A6", "R11"]) {
+        setprop("/fdm/jsbsim/systems/electrical/display/" ~ sw ~ "-pwr-switch", 0);
+    }
+    setprop("/fdm/jsbsim/systems/dps/idp-power-status", 0);
+    setprop("/fdm/jsbsim/systems/dps/idp-power-status[1]", 0);
+    setprop("/fdm/jsbsim/systems/dps/idp-power-status[2]", 0);
+    setprop("/fdm/jsbsim/systems/dps/idp-power-status[3]", 0);
 };
 
 var start = func {

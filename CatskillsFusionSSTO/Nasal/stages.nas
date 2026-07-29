@@ -3953,6 +3953,14 @@ if (getprop("/sim/presets/stage") == 7) # Grenadier: runway, gear down, no stack
 		setprop("/controls/shuttle/drag-chute-deploy-timer", 0);
 		setprop("/controls/shuttle/drag-chute-jettison", 1);
 		setprop("/controls/shuttle/drag-chute-string", "removed");
+		# MDUs / IDPs off — cold cockpit; power only the CRTs you need
+		foreach (var sw; ["L1", "L2", "C1", "C2", "C3", "C4", "C5", "R1", "R2", "A6", "R11"]) {
+			setprop("/fdm/jsbsim/systems/electrical/display/" ~ sw ~ "-pwr-switch", 0);
+		}
+		setprop("/fdm/jsbsim/systems/dps/idp-power-status", 0);
+		setprop("/fdm/jsbsim/systems/dps/idp-power-status[1]", 0);
+		setprop("/fdm/jsbsim/systems/dps/idp-power-status[2]", 0);
+		setprop("/fdm/jsbsim/systems/dps/idp-power-status[3]", 0);
 	};
 	var _force_level_park = func {
 		_park_structure_contacts();

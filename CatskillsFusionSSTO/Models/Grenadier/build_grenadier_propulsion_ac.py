@@ -252,6 +252,53 @@ def build_nozzle():
     # Forward bay wall
     b.disk("grenadier-aft-bulkhead", 3.95, 11.90, segs, mat_tps_dk, normal="-x", twosided=True)
 
+    # Top inter-pod cowl: heritage 3×SSME + full OMS bells used to fill the
+    # portal between OMS pods above the nozzle. Grenadier hides SSMEs and
+    # trims OMS bells, so close that gap with an explicit aft-facing TPS plate
+    # from fairing top (~Y −0.25) up to the fin-root underside (~Y 0.95).
+    b.box(
+        "grenadier-interpod-top-cowl",
+        13.85,
+        14.65,
+        -0.20,
+        0.95,
+        -0.58,
+        0.58,
+        mat=mat_tps,
+    )
+    # Side seals to OMS inboard faces (kill edge see-through)
+    b.box(
+        "grenadier-interpod-seal-L",
+        13.90,
+        14.60,
+        -0.15,
+        0.90,
+        0.50,
+        0.72,
+        mat=mat_tps_dk,
+    )
+    b.box(
+        "grenadier-interpod-seal-R",
+        13.90,
+        14.60,
+        -0.15,
+        0.90,
+        -0.72,
+        -0.50,
+        mat=mat_tps_dk,
+    )
+    # Aft face cap (looks-into gap from behind)
+    b.box(
+        "grenadier-interpod-aft-face",
+        14.55,
+        14.70,
+        -0.10,
+        0.90,
+        -0.55,
+        0.55,
+        mat=mat_tps_dk,
+    )
+
     # Heritage fuselage still has three SSME cutouts at x≈13.0–13.45 (triangle
     # around CY). Thin disks lost the depth fight; use closed cans + a throat
     # bulkhead AFT of the hole plane so looking into the bell never sees them.

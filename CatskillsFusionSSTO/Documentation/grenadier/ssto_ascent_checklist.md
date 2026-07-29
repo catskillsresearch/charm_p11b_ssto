@@ -59,15 +59,19 @@ Stage 7 pads with a **charged flight battery**. Scramble on **BATT** alone — *
 8. **DEC** → On.
 9. Confirm CHARM CRT **mode = POWER** and bus MW rising.
 
-### 2. Engine (center)
-1. Stage = 1 (OMS L/R = Stage − / +).
-2. Throttle up for takeoff roll.
+### 2. Engine (center console — not a “MAIN ENGINE” button)
+There is no power-up button for the single nozzle. After CHARM is in **POWER**:
+
+1. Confirm Stage = 1 on the **STAGE − / +** switches (heritage **OMS ENG** arms — same knobs).
+2. Throttle up the **center** throttle lever for the takeoff roll.
 3. Climb: Stage 2 when schedule allows (inlets open).
 4. Before Stage 3: seal inlets; need water. Then Stage 3.
 5. MECO / circularize on bus; RCS for attitude only.
 
+Ignore blanked **MAIN ENGINE LEFT/RIGHT** shutdown labels (only CTR paint remains). Do not use blanked SRB/ET SEP or FUEL CELL REAC VLV.
+
 ### 3. If something breaks
-- **SCRAM**: Main Eng Limit → **Enable** (center).
+- **SCRAM**: Main Eng Limit → **Enable** (center console; keep that switch).
 
 ## CDR vs PLT
 

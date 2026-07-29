@@ -22,4 +22,4 @@ inside monorepo `charm_p11b_ssto` (`CatskillsFusionSSTO/` = this aircraft).
 | [panel_audit.md](panel_audit.md) | Keep / blank / remapped |
 | [bay_doors.md](bay_doors.md) | Bay / plant access |
 
-Panel logos: `scripts/stamp_grenadier_apu_labels.py` → **CART/BATT/CRYO**, **MAGNET/FUEL/RF**, **REACTOR POWER** / **CHARM/DEC/VACUUM**; R2/R4 surplus paint blanked (R4 keeps **BRAKE ISOL** only).
+Panel logos: `scripts/stamp_grenadier_apu_labels.py` → **CART/BATT/CRYO**, **MAGNET/FUEL/RF**, **REACTOR POWER** / **CHARM/DEC/VACUUM**; R2/R4 surplus paint blanked (R4 keeps **BRAKE ISOL** only); C3 blanks MAIN ENGINE L/R, SRB/ET SEP, FUEL CELL REAC VLV; OMS arms stamped **STAGE −/+**.
