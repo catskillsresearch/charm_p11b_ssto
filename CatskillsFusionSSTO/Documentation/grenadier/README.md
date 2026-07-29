@@ -1,23 +1,25 @@
 # CATSKILLS-SSTO-TA-GRENADIER
 
-Shuttle-derived FlightGear **test article**: CHARM reactor + 3-cycle electric engine
-operator layer (pre-FDM coupling).
+Shuttle-derived FlightGear **test article**: CHARM + 3-cycle electric engine
+inside monorepo `charm_p11b_ssto` (`CatskillsFusionSSTO/` = this aircraft).
 
 ## In sim
 
-- Menu **CATSKILLS-SSTO-TA-GRENADIER** → **CHARM Reactor Screens** / **3-Cycle Engine Screens**
+- `./fs.sh` from repo root
+- Menu **CATSKILLS-SSTO-TA-GRENADIER** → CHARM / Engine screens
 - Help → Checklist → **Grenadier — CHARM startup** / **Grenadier — Engine stage**
-- Ops Nasal: [`Nasal/grenadier/grenadier_ops.nas`](../../Nasal/grenadier/grenadier_ops.nas)
+- Ops: [`Nasal/grenadier/grenadier_ops.nas`](../../Nasal/grenadier/grenadier_ops.nas)
 
 ## Docs
 
 | File | Role |
 |------|------|
-| [reactor_startup.md](reactor_startup.md) | Startup checklist with tanks/state |
-| [reactor_operator_model.md](reactor_operator_model.md) | CHARM property bus |
-| [engine_operator_model.md](engine_operator_model.md) | Stage / altitude gates |
-| [panel_audit.md](panel_audit.md) | Keep / obsolete / repurpose |
-| [panel_tooltips_raw.csv](panel_tooltips_raw.csv) | All 542 cockpit tooltips |
-| [../shuttle_checklists_upstream/](../shuttle_checklists_upstream/) | Wiki checklist hub raw capture |
+| [ssto_ascent_checklist.md](ssto_ascent_checklist.md) | Scramble / ascent (current engravings) |
+| [control_map.md](control_map.md) | Engraving → switch → property |
+| [reactor_startup.md](reactor_startup.md) | CHARM light-off checklist |
+| [reactor_operator_model.md](reactor_operator_model.md) | Property bus |
+| [engine_operator_model.md](engine_operator_model.md) | Stage gates |
+| [panel_audit.md](panel_audit.md) | Keep / blank / remapped |
+| [bay_doors.md](bay_doors.md) | Bay / plant access |
 
-Paper-repo mirror: `charm_p11b_ssto/Documentation/grenadier/`.
+Panel logos: `scripts/stamp_grenadier_apu_labels.py` → **CART/BATT/CRYO**, **MAGNET/FUEL/RF**, **REACTOR POWER** / **CHARM/DEC/VACUUM**; R4 MPS blanked.

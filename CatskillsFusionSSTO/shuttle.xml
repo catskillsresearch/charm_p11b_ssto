@@ -317,16 +317,6 @@
    <!--SSME  -->
 
    <engine file="SSME">
-    <location unit="M">
-      <x> 17.00 </x>
-      <y>   -1.35 </y>
-      <z>   -3.45 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> -16.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>0</feed>    
     <feed>3</feed>    
     <thruster file="SSME_nozzle">
@@ -344,16 +334,6 @@
   </engine>   
 
   <engine file="SSME">
-    <location unit="M">
-      <x> 17.00 </x>
-      <y>   1.35 </y>
-      <z>   -3.45 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> -16.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>0</feed> 
     <feed>3</feed>    
     <thruster file="SSME_nozzle">
@@ -371,16 +351,6 @@
   </engine>   
 
   <engine file="SSME">
-    <location unit="M">
-      <x> 17.00 </x>
-      <y>   0.00 </y>
-      <z>   -1.0 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> -16.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>0</feed>
     <feed>3</feed>    
     <thruster file="SSME_nozzle">
@@ -418,16 +388,6 @@
 
 
    <engine file="SRB">
-    <location unit="M">
-      <x> 18.28 </x>
-      <y>  -6.10 </y>
-      <z>-10.6 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>    
     <feed>1</feed>
     <thruster file="SRB_nozzle">
      <location unit="M">
@@ -454,16 +414,6 @@
   </tank>
 
  <engine file="SRB">
-    <location unit="M">
-      <x> 18.28 </x>
-      <y>  6.10 </y>
-      <z>-10.6 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>    
     <feed>2</feed>  
     <thruster file="SRB_nozzle">
      <location unit="M">
@@ -507,16 +457,6 @@
    <!-- left OMS thruster -->
 
    <engine file="OMS">
-    <location unit="M">
-      <x> 17.0 </x>
-       <y> -2.2 </y>
-       <z> 0.27 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 4.0 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>    
     <feed>4</feed>   
     <feed>5</feed>     
     <thruster file="OMS_nozzle">
@@ -536,17 +476,7 @@
    <!-- right OMS thruster -->
 
    <engine file="OMS">
-    <location unit="M">
-      <x> 17.0 </x>
-       <y> 2.2 </y>
-       <z> 0.27 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 4.0 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>    
-     <feed>6</feed>   
+    <feed>6</feed>   
      <feed>7</feed>     
     <thruster file="OMS_nozzle">
      <location unit="M">
@@ -623,16 +553,6 @@
 <!-- F2F - rightmost forward-pointing thruster of nose module -->
 
   <engine file="RCS-887.9lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>0.4</y>
-      <z>-3.2</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>-7.80 </pitch>
-      <roll>   0.00 </roll>
-      <yaw> 181.70    </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -654,16 +574,6 @@
 <!-- F3F - middle forward-pointing thuster of nose module-->
 
   <engine file="RCS-887.9lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>0.0</y>
-      <z>-3.2</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>-8.0 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>  180 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -683,16 +593,6 @@
 <!-- F1F - leftmost forward-pointing thruster of nose module-->
 
   <engine file="RCS-887.9lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>-0.4</y>
-      <z>-3.2</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> -7.80</pitch>
-      <roll>   0.00 </roll>
-      <yaw>   178.30 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -714,16 +614,6 @@
 
 
    <engine file="RCS-874.2lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>-0.8</y>
-      <z>-3.4</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>-1.20 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   91.7 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -744,16 +634,6 @@
  
 
   <engine file="RCS-870.6lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>-0.8</y>
-      <z>-3.8</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  0.0 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   91.4 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -774,16 +654,6 @@
 
 
 <engine file="RCS-874.2lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>0.8</y>
-      <z>-3.4</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>-1.20 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   -91.7 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -803,16 +673,6 @@
 <!-- F4R - forward right-pointing thruster of nose module -->
 
  <engine file="RCS-870.6lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>0.8</y>
-      <z>-3.8</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  0.0 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   -91.4 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -832,16 +692,6 @@
 <!-- F2U - rightmost upward-pointing thruster of nose module -->
 
  <engine file="RCS-875.1lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>0.4</y>
-      <z>-3.2</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> -87.76 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   199.91 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -861,16 +711,6 @@
 <!-- F3U - middle upward-pointing thruster of nose module -->
 
  <engine file="RCS-874.2lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>0.0</y>
-      <z>-3.2</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> -87.91 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   180.00 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -890,16 +730,6 @@
 <!-- F1U -leftmost upward-pointing thruster of nose module -->
 
  <engine file="RCS-875.1lb">
-    <location unit="M">
-      <x>-15.0</x>
-      <y>-0.4</y>
-      <z>-3.2</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> -87.76 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   160.09 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -919,16 +749,6 @@
 <!-- F2D - front right-downward-pointing thruster of nose module -->
 
 <engine file="RCS-896.6lb">
-    <location unit="M">
-      <x>-15.2</x>
-      <y>0.8</y>
-      <z>-3.4</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 46.6 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   -91.8 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -949,16 +769,6 @@
 
 
 <engine file="RCS-896.6lb">
-    <location unit="M">
-      <x>-15.2</x>
-      <y>-0.8</y>
-      <z>-3.4</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 46.6 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   91.8 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -978,16 +788,6 @@
 <!-- F4D - rear right-downward pointing thruster of nose module -->
 
 <engine file="RCS-885.9lb">
-    <location unit="M">
-      <x>-14.8</x>
-      <y>0.8</y>
-      <z>-3.4</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 46.9 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   -91.6 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -1007,16 +807,6 @@
 <!-- F3D - rear left-downward pointing thruster of nose module -->
 
 <engine file="RCS-885.9lb">
-    <location unit="M">
-      <x>-14.8</x>
-      <y>-0.8</y>
-      <z>-3.4</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 46.9 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   91.6 </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -1039,16 +829,6 @@
 
 
  <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>3.35</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -10.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1068,16 +848,6 @@
 <!-- R1A - left backward-pointing thruster of right OMS pod module -->
 
  <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>3.05</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -10.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1098,16 +868,6 @@
 
 
  <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>-3.35</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -10.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1127,16 +887,6 @@
 <!-- L1A - right backward-pointing thruster of left OMS pod module -->
 
  <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>-3.05</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -10.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1156,16 +906,6 @@
 <!-- L4L - foremost left-pointing thruster of left OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.55</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    90.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1185,16 +925,6 @@
 <!-- L2L - second foremost left-pointing thruster of left OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.85</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    90.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1214,16 +944,6 @@
 <!-- L3L - second-to-last left-pointing thruster of left OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.15</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    90.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1243,16 +963,6 @@
 <!-- L1L - rearmost left-pointing thruster of left OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    90.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1273,16 +983,6 @@
 <!-- R4R - foremost right-pointing thruster of right OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.55</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -90.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1302,16 +1002,6 @@
 <!-- R2R - second foremost right-pointing thruster of right OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.85</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -90.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1331,16 +1021,6 @@
 <!-- R3R - second-to-last right-pointing thruster of right OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.15</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -90.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1360,16 +1040,6 @@
 <!-- R1R - rearmost right-pointing thruster of right OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.47 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -90.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1389,16 +1059,6 @@
 <!-- L4U - foremost upward-pointing thruster of left OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.85</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -90.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1418,16 +1078,6 @@
 <!-- L2U - middle upward-pointing thruster of left OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.15</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -90.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1447,16 +1097,6 @@
 <!-- L1U - rearmost upward-pointing thruster of left OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -90.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1476,16 +1116,6 @@
 <!-- R4U - foremost upward-pointing thruster of right OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.85</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -90.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1505,16 +1135,6 @@
 <!-- R2U - middle upward-pointing thruster of right OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.15</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -90.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1534,16 +1154,6 @@
 <!-- R1U - rearmost upward-pointing thruster of right OMS pod module -->
 
 <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  -90.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.00 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1563,16 +1173,6 @@
 <!-- L4D -foremost downward pointing thruster of left OMS pod module -->
 
   <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.85</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  67.15 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    50.80 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1592,16 +1192,6 @@
 <!-- L2D - middle downward pointing thruster of left OMS pod module -->
 
   <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.15</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  67.15 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    50.80 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1621,16 +1211,6 @@
 <!-- L3D - rear downward pointing thruster of left OMS pod module -->
 
   <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  67.15 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    50.80 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1650,16 +1230,6 @@
 <!-- R4D -foremost downward pointing thruster of right OMS pod module -->
 
   <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>16.85</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  67.15 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -50.80 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1679,16 +1249,6 @@
 <!-- R2D - middle downward pointing thruster of right OMS pod module -->
 
   <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.15</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  67.15 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -50.80 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1708,16 +1268,6 @@
 <!-- R3D - rear downward pointing thruster of right OMS pod module -->
 
   <engine file="RCS-870.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  67.15 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -50.80 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1739,16 +1289,6 @@
 <!-- F5R - right-downward pointing Vernier of nose module -->
 
  <engine file="RCS-24.5lb">
-    <location unit="M">
-      <x>-15.4</x>
-      <y>0.8</y>
-      <z>-3.8</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 46.0 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>  -91.8    </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -1768,16 +1308,6 @@
 <!-- F5L - left-downward pointing Vernier of nose module -->
 
  <engine file="RCS-24.5lb">
-    <location unit="M">
-      <x>-15.4</x>
-      <y>-0.8</y>
-      <z>-3.8</z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 46.0 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>  91.8    </yaw>
-    </orient>
     <feed>12</feed>
     <feed>13</feed>    
     <thruster file="RCS_nozzle">     
@@ -1797,16 +1327,6 @@
 <!-- L5D - downward pointing Vernier of left OMS pod module -->
 
  <engine file="RCS-24.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  90.0 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.0 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1826,16 +1346,6 @@
 <!-- R5D - downward pointing Vernier of right OMS pod module -->
 
  <engine file="RCS-24.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  90.0 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    0.0 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     
@@ -1855,16 +1365,6 @@
 <!-- L5L - left pointing Vernier of left OMS pod module -->
 
  <engine file="RCS-24.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>-3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.4 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    90.0 </yaw>
-    </orient>
     <feed>8</feed>
     <feed>9</feed>    
     <thruster file="RCS_nozzle">     
@@ -1884,16 +1384,6 @@
 <!-- R5R - right pointing Vernier of right OMS pod module -->
 
  <engine file="RCS-24.0lb">
-    <location unit="M">
-      <x>17.45</x>
-      <y>3.2</y>
-      <z>-0.5</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>  1.4 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>    -90.0 </yaw>
-    </orient>
     <feed>10</feed>
     <feed>11</feed>    
     <thruster file="RCS_nozzle">     

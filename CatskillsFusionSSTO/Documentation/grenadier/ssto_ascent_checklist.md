@@ -1,97 +1,86 @@
 # SSTO ascent checklist (Grenadier TA)
 
-Beginner path: **sit PLT (right seat)** for plant switches, use **center** for Stage ± / SCRAM / throttle. CDR can fly the stick, but the CHARM row lives on the **right sidewall (panel R2 area)** — from CDR you must look/lean right or switch seats.
+Beginner path: **sit PLT (right seat)** for plant switches; **center** for Stage ± / SCRAM / throttle.
 
-CHARM mode `OFF → CRYO → ARM → LIGHT → POWER` is **derived**. You do **not** have a five-position mode switch. Watch the **CHARM** MEDS page.
+Panel paint uses Grenadier logos (surplus Shuttle hull). Use the **engraved names** below — not Shuttle heritage lettering. If hover shows **nothing**, ignore that switch (blanked / unused).
+
+CHARM mode `OFF → CRYO → ARM → LIGHT → POWER` is **derived** (CHARM MEDS page). There is no five-position mode rotary.
 
 ## Where the live keys are
 
-| What you need | Heritage object (hover name) | Where on the flightdeck |
-|---------------|------------------------------|-------------------------|
-| Flight battery | `apu-operate-2` → **Flight battery** | **Right wall** (PLT), APU operate row |
-| Cryo | `apu-operate-3` → **Cryo enable** | same row |
-| Ground cart (optional) | `apu-operate-1` → **Ground cart** | same row — pad GSE only; not required for scramble |
-| Magnet | `apu-ctrl-pwr-1` → **Magnet arm** | **Right wall**, APU controller row |
-| Fuel | `apu-ctrl-pwr-2` → **Fuel enable** | same |
-| RF | `apu-ctrl-pwr-3` → **RF enable** | same |
-| LIGHT | `ctrl-pwr-sys-a-ac2-left` → **CHARM LIGHT** | **Right wall**, Sys A controller trio |
-| DEC | `ctrl-pwr-sys-a-ac1-ctr` → **DEC online** | same trio |
-| Vacuum | `ctrl-pwr-sys-a-ac3-right` → **Vacuum ready** | same trio |
-| Stage − / + | `oms-eng-left` / `oms-eng-right` | **Center console** (shared) |
-| SCRAM | `main-eng-limit-shut-dn` → Enable | **Center** (shared) |
-| Throttle | engine[0] lever | **Center** throttle |
+| What you need | Engraving (right wall) | Hover / object |
+|---------------|------------------------|----------------|
+| Flight battery | **BATT** (APU OPERATE row) | Flight battery · `apu-operate-2` |
+| Cryo | **CRYO** | Cryo enable · `apu-operate-3` |
+| Ground cart (optional) | **CART** | Ground cart · `apu-operate-1` — pad GSE only; not required for scramble |
+| Magnet | **MAGNET** (APU CNTLR row) | Magnet arm · `apu-ctrl-pwr-1` |
+| Fuel | **FUEL** | Fuel enable · `apu-ctrl-pwr-2` |
+| RF | **RF** | RF enable · `apu-ctrl-pwr-3` |
+| CHARM light-off | **CHARM** under **REACTOR POWER** | CHARM LIGHT · `ctrl-pwr-sys-a-ac2-left` |
+| DEC | **DEC** | DEC online · `ctrl-pwr-sys-a-ac1-ctr` |
+| Vacuum | **VACUUM** | Vacuum ready · `ctrl-pwr-sys-a-ac3-right` |
+| Stage − / + | Center console | Stage −/+ · `oms-eng-left` / `oms-eng-right` |
+| SCRAM | Center | Main Eng Limit → Enable · `main-eng-limit-shut-dn` |
+| Throttle | Center | Engine throttle |
 
-If hover shows **nothing**, that switch is blanked (unused for Grenadier). Ignore it.
+**Landing only (panel R4):** brake isol / brake heater / LG extend / LG–NWS stay labeled. All other R4 MPS/ET paint is blanked — leave it alone.
 
-## CRT pages to use
+## CRT pages
 
 On an MDU: **MAIN → SUBSYS STATUS**
 
 | Softkey | Page | Use for |
 |---------|------|---------|
-| **CHARM** | plant | mode, cart/batt/cryo, magnet/fuel/RF, bus |
+| **CHARM** | plant | mode, BATT/CRYO/MAGNET/FUEL/RF/DEC, bus |
 | **STAGE** | engine | Stage 1/2/3, throttle, seal, water, thrust |
 | SPI | leave | not required for scramble |
 
-Do **not** use DPS Fuel Cells or APU/HYD DISPs (titles blanked; heritage wallpaper).
+Ignore Fuel Cells / APU–HYD DISP pages (blanked titles).
 
 ## Scramble order
 
 ### 0. Seats / view
-1. Prefer **PLT** view so the right-wall CHARM row is in front of you.
-2. Open Cue cards → **CHARM startup** (menu) if you want the same steps as a popup.
+1. Prefer **PLT** so the right-wall plant row faces you.
+2. Cue cards → **CHARM startup** if you want the same steps as a popup.
 
 ### 1. Plant to POWER (right wall + CHARM CRT)
 
-Stage 7 pads with a **charged flight battery** (~500 kWh). Scramble on battery alone — **no ground cart**.
+Stage 7 pads with a **charged flight battery**. Scramble on **BATT** alone — **CART** off.
 
-1. Flight battery → Online (`apu-operate-2`).
-2. Cryo enable → Enable. Wait until CHARM page shows cryo/magnet temperature going cold.
-3. Magnet arm → Arm. Wait magnet current high (go-magnet).
-4. Fuel enable → Enable.
-5. Vacuum ready → Ready.
-6. RF enable → Enable.
-7. CHARM LIGHT → On.
-8. DEC online → On.
-9. Confirm **CHARM CRT mode = POWER** and bus MW rising.
-
-*(Ground cart / `apu-operate-1` stays Off unless you want pad-tied GSE for a long hold.)*
+1. **BATT** → On.
+2. **CRYO** → On. Wait CHARM page cryo/magnet cold.
+3. **MAGNET** → Arm. Wait go-magnet.
+4. **FUEL** → On.
+5. **VACUUM** → Ready.
+6. **RF** → On.
+7. **CHARM** (REACTOR POWER) → On.
+8. **DEC** → On.
+9. Confirm CHARM CRT **mode = POWER** and bus MW rising.
 
 ### 2. Engine (center)
 1. Stage = 1 (OMS L/R = Stage − / +).
 2. Throttle up for takeoff roll.
-3. Climb: Stage 2 when schedule/altitude allows (inlets open).
+3. Climb: Stage 2 when schedule allows (inlets open).
 4. Before Stage 3: seal inlets; need water. Then Stage 3.
-5. MECO / circularize on bus; RCS for attitude only (not main Δv).
+5. MECO / circularize on bus; RCS for attitude only.
 
 ### 3. If something breaks
 - **SCRAM**: Main Eng Limit → **Enable** (center).
-- Abort / divert cards only after that.
 
-## CDR vs PLT — can one seat do everything?
+## CDR vs PLT
 
-| Function | CDR (left) | PLT (right) | Center |
-|----------|------------|-------------|--------|
-| Stick / flight | yes | yes | — |
-| CHARM plant row | reach across / look right | **yes** | — |
+| Function | CDR | PLT | Center |
+|----------|-----|-----|--------|
+| Stick | yes | yes | — |
+| Plant row (BATT…DEC) | look right | **yes** | — |
 | Stage ±, SCRAM, throttle | yes | yes | **yes** |
-| MEDS CHARM/STAGE | yes (any MDU) | yes | — |
+| MEDS CHARM/STAGE | yes | yes | — |
 
-**Single-pilot scramble:** use **PLT** (or CDR with view slewed to the right wall). Dual-crew: PLT runs plant, CDR flies.
-
-## Screenshots
-
-Placeholder for FG grabs (reload aircraft after panel changes, then capture):
-
-1. PLT view of right-wall APU/CHARM cluster with tooltips  
-2. Center Stage ± and SCRAM  
-3. CHARM MEDS page at POWER  
-4. STAGE MEDS page at Stage 1  
-
-Drop images next to this file as `ssto_ascent_checklist_*.png` when captured.
+**Single-pilot scramble:** PLT (or CDR with view slewed to the right wall).
 
 ## Related
 
-- [control_map.md](control_map.md) — full remap table  
-- [panel_audit.md](panel_audit.md) — keep / obsolete / remapped  
-- Cue cards menu: CHARM startup → Engine Stage 1/2/3 → Ascent profile (Plan A)
+- [control_map.md](control_map.md) — remap + engraving table  
+- [panel_audit.md](panel_audit.md) — keep / blank / remapped  
+- Cue cards: CHARM startup → Engine Stage → Ascent (Plan A)  
+- Repo root: `charm_p11b_ssto` (aircraft under `CatskillsFusionSSTO/`)

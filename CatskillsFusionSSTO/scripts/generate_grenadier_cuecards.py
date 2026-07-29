@@ -76,8 +76,8 @@ POWERED: list[tuple[tuple[str, list[str]], tuple[str, list[str]]]] = [
         ("VEHICLE ID", ["CATSKILLS-SSTO-TA-GRENADIER", "", "CHARM + 3-cycle electric", "OMS engines deleted", "Full Shuttle RCS nozzles", "LMP-103S green mono"]),
     ),
     (
-        ("PLANT SERVICES", ["## APU row = pad/plant", "APU2 flight battery ONLINE", "APU3 cryo ENABLE", "APU1 ground cart = optional GSE", "", "APU ctrl1 Magnet ARM", "APU ctrl2 Fuel ENABLE", "APU ctrl3 RF ENABLE"]),
-        ("PLANT SERVICES (2)", ["SSME-right A = Vacuum READY", "OMS L/R = σ − / σ +", "Throttle = engine throttle", "Main Eng Limit→Enable = SCRAM", "", "Fuel cells = inert"]),
+        ("PLANT SERVICES", ["## Right wall engravings", "BATT = flight battery", "CRYO = cryo ENABLE", "CART = optional pad GSE", "", "MAGNET · FUEL · RF", "(APU CNTLR row)"]),
+        ("PLANT SERVICES (2)", ["## REACTOR POWER", "CHARM · DEC · VACUUM", "", "OMS L/R = Stage − / +", "Throttle = engine", "Main Eng Limit→Enable = SCRAM", "R4 MPS paint blanked"]),
     ),
     (
         ("AVIONICS KEEP", ["## Flight path", "RHC / THC / DAP / RCS", "HUD / ADI / HSI", "GPC / IDP / MEDS"]),
@@ -100,12 +100,12 @@ POWERED: list[tuple[tuple[str, list[str]], tuple[str, list[str]]]] = [
         ("CHARM POWER PATH", ["source = BATTERY", "√ battery ONLINE", "√ aux-bus-v", "Cart optional (pad GSE)"]),
     ),
     (
-        ("CHARM CRYO", ["Cryo ENABLE → √ go-cryo", "Magnet ARM → √ I≥0.95", "Mode → CRYO"]),
-        ("CHARM ARM", ["Fuel ENABLE → √ ready", "Vacuum READY", "Mode → ARM"]),
+        ("CHARM CRYO", ["CRYO On → √ go-cryo", "MAGNET Arm → √ I≥0.95", "Mode → CRYO"]),
+        ("CHARM ARM", ["FUEL On → √ ready", "VACUUM Ready", "Mode → ARM"]),
     ),
     (
-        ("CHARM LIGHT", ["RF ENABLE", "CHARM LIGHT", "√ plasma-proxy", "Mode → LIGHT"]),
-        ("CHARM POWER", ["DEC ONLINE", "√ bus-mw", "Mode → POWER", "Cart stays Off on scramble"]),
+        ("CHARM LIGHT", ["RF On", "CHARM On (REACTOR POWER)", "√ plasma-proxy", "Mode → LIGHT"]),
+        ("CHARM POWER", ["DEC On", "√ bus-mw", "Mode → POWER", "CART off on scramble"]),
     ),
     (
         ("CHARM SCRAM", ["Limit Shutdown → Enable", "mode SCRAM latched", "Inhibit RF/mag/fuel"]),
@@ -136,8 +136,8 @@ POWERED: list[tuple[tuple[str, list[str]], tuple[str, list[str]]]] = [
         ("ENTRY NOTE", ["RCS trim available", "σ3 inhibit if needed", "Plant SCRAM if ordered"]),
     ),
     (
-        ("LANDING KEDW", ["15,000 ft-class runway", "Gear / brakes / NWS", "Plan A m_land ~190 t"]),
-        ("NO STACK", ["No ET / SRB", "No MPS He story", "Single combined nozzle"]),
+        ("LANDING KEDW", ["15,000 ft-class runway", "Gear / brakes / NWS", "R4: BRAKE ISOL kept", "Plan A m_land ~190 t"]),
+        ("NO STACK", ["No ET / SRB", "R4 MPS paint blanked", "Single combined nozzle"]),
     ),
     (
         ("CHECKLISTS", ["Help → Checklist:", "Grenadier — CHARM startup", "Grenadier — Engine stage"]),
@@ -152,7 +152,7 @@ POWERED: list[tuple[tuple[str, list[str]], tuple[str, list[str]]]] = [
         ("PROFILE LAND", ["Gear down", "No chute / SRB", "TA recovery"]),
     ),
     (
-        ("CHARM QUICK", ["OFF→CRYO→ARM→LIGHT→POWER", "Panel: APU + vac + OMS σ"]),
+        ("CHARM QUICK", ["OFF→CRYO→ARM→LIGHT→POWER", "BATT→CRYO→MAGNET→FUEL", "VACUUM→RF→CHARM→DEC", "OMS L/R = Stage ±"]),
         ("ENGINE QUICK", ["σ1 open · σ2 open · σ3 sealed", "Throttle after POWER"]),
     ),
     (
@@ -168,7 +168,7 @@ POWERED: list[tuple[tuple[str, list[str]], tuple[str, list[str]]]] = [
         ("FUEL PATH", ["Proton + B11 → chambers", "CHARM only"]),
     ),
     (
-        ("CREW CALL", ["CDR: CHARM / SCRAM", "PLT: σ / throttle / seal"]),
+        ("CREW CALL", ["PLT: plant row (BATT…DEC)", "CDR: stick / Stage / SCRAM"]),
         ("END POWERED", ["26 spreads", "See glided binder for entry"]),
     ),
     (
@@ -241,11 +241,11 @@ def main() -> None:
         "CHARM STARTUP",
         [
             "## OFF → CRYO → ARM → LIGHT → POWER",
-            "0 √ inventories / battery charged / scram=0",
-            "1 Flight battery ONLINE (no cart)",
-            "2 Cryo ENABLE; Magnet ARM → CRYO",
-            "3 Fuel ENABLE; Vac READY → ARM",
-            "4 RF; LIGHT; DEC → POWER",
+            "0 √ inventories / BATT charged / scram=0",
+            "1 BATT On (CART off for scramble)",
+            "2 CRYO; MAGNET → mode CRYO",
+            "3 FUEL; VACUUM → mode ARM",
+            "4 RF; CHARM; DEC → POWER",
         ],
     )
     save_png(

@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """Stamp / blank Grenadier panel paint on the Shuttle text map.
 
-Heritage paint still says APU / ENGINE POWER / MPS; hover tooltips + these
-edits carry the Grenadier surplus-kitbash look:
+Current engravings (operator docs use these names):
 
-  APU OPERATE 1/2/3     →  CART / BATT / CRYO
-  APU CNTLR PWR 1/2/3   →  MAGNET / FUEL / RF
-  ENGINE POWER          →  REACTOR POWER
-  LEFT AC2 / CTR AC1 / RIGHT AC3  →  CHARM / DEC / VACUUM
-  Panel R4 MPS / fill-drain / prevalve / TVC / JETT  → blanked
-  Panel R4 BRAKE HEATER / BRAKE ISOL / LG EXTEND / LG-NWS  → kept
+  APU OPERATE     →  CART / BATT / CRYO
+  APU CNTLR PWR   →  MAGNET / FUEL / RF
+  ENGINE POWER    →  REACTOR POWER
+  Sys A AC labels →  CHARM / DEC / VACUUM
+  Panel R4        →  blank except brake heater/isol + LG extend/NWS
 
 Edits Models/fwd-cockpit-text-map-x.png in place.
 """

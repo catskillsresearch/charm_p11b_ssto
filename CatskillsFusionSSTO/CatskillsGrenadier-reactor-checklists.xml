@@ -36,35 +36,7 @@
     </item>
 
     <item>
-      <name>Ground cart ONLINE (Earth first light)</name>
-      <value>ON</value>
-      <condition>
-        <equals>
-          <property>/fdm/jsbsim/systems/grenadier/charm/ground-cart</property>
-          <value>1</value>
-        </equals>
-      </condition>
-    </item>
-
-    <item>
-      <name>Cart tied / aux bus live</name>
-      <value>TIED</value>
-      <condition>
-        <and>
-          <equals>
-            <property>/fdm/jsbsim/systems/grenadier/charm/cart-tied</property>
-            <value>1</value>
-          </equals>
-          <greater-than>
-            <property>/fdm/jsbsim/systems/grenadier/charm/aux-bus-v</property>
-            <value>200</value>
-          </greater-than>
-        </and>
-      </condition>
-    </item>
-
-    <item>
-      <name>Flight battery ONLINE</name>
+      <name>BATT Online (engraving; scramble — CART off)</name>
       <value>ON</value>
       <condition>
         <equals>
@@ -75,7 +47,17 @@
     </item>
 
     <item>
-      <name>Cryo ENABLE</name>
+      <name>√ Aux bus live (battery)</name>
+      <condition>
+        <greater-than>
+          <property>/fdm/jsbsim/systems/grenadier/charm/aux-bus-v</property>
+          <value>200</value>
+        </greater-than>
+      </condition>
+    </item>
+
+    <item>
+      <name>CRYO On (engraving)</name>
       <value>ON</value>
       <condition>
         <equals>
@@ -96,7 +78,7 @@
     </item>
 
     <item>
-      <name>Magnet ARM</name>
+      <name>MAGNET Arm (engraving)</name>
       <value>ARMED</value>
       <condition>
         <equals>
@@ -117,7 +99,7 @@
     </item>
 
     <item>
-      <name>Fuel services ENABLE + vacuum READY</name>
+      <name>FUEL + VACUUM Ready (engravings)</name>
       <condition>
         <equals>
           <property>/fdm/jsbsim/systems/grenadier/charm/go-fuel</property>
@@ -127,7 +109,7 @@
     </item>
 
     <item>
-      <name>RF ENABLE</name>
+      <name>RF On (engraving)</name>
       <value>ON</value>
       <condition>
         <equals>
@@ -138,7 +120,7 @@
     </item>
 
     <item>
-      <name>CHARM LIGHT</name>
+      <name>CHARM On (REACTOR POWER engraving)</name>
       <value>ON</value>
       <condition>
         <equals>
@@ -149,7 +131,7 @@
     </item>
 
     <item>
-      <name>DEC ONLINE</name>
+      <name>DEC On (engraving)</name>
       <value>ON</value>
       <condition>
         <equals>
@@ -176,8 +158,14 @@
     </item>
 
     <item>
-      <name>Detie ground cart when self-sustaining</name>
-      <value>DETIED</value>
+      <name>Detie CART if used (optional; scramble skips CART)</name>
+      <value>DETIED / N/A</value>
+      <condition>
+        <equals>
+          <property>/fdm/jsbsim/systems/grenadier/charm/cart-tied</property>
+          <value>0</value>
+        </equals>
+      </condition>
     </item>
   </checklist>
 

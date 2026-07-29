@@ -1,19 +1,18 @@
-# CATSKILLS-SSTO-TA-GRENADIER
+# CATSKILLS-SSTO-TA-GRENADIER (docs index)
 
-FlightGear **test article** identity for the Shuttle-derived Grenadier vehicle
-(CHARM plant + 3-cycle electric engine in bay/tail skids).
-
-**Canonical FG implementation** lives in-repo at
-[`CatskillsFusionSSTO/Documentation/grenadier/`](../../CatskillsFusionSSTO/Documentation/grenadier/)
-(and Nasal under `CatskillsFusionSSTO/Nasal/grenadier/`).
-
-This folder mirrors operator-facing runbooks for the paper workspace.
+Single repo: **`charm_p11b_ssto`**. FlightGear aircraft and operator docs live under
+[`CatskillsFusionSSTO/Documentation/grenadier/`](../../CatskillsFusionSSTO/Documentation/grenadier/).
 
 | Doc | Role |
 |-----|------|
-| [reactor_startup.md](reactor_startup.md) | Pre-0 CHARM light-off checklist |
-| [reactor_operator_model.md](reactor_operator_model.md) | Pre-1 property bus + screens |
-| [engine_operator_model.md](engine_operator_model.md) | Pre-2 stage operator model |
-| [panel_audit.md](panel_audit.md) | Pre-3 keep / obsolete / repurpose |
+| [ssto_ascent_checklist.md](../../CatskillsFusionSSTO/Documentation/grenadier/ssto_ascent_checklist.md) | Scramble / ascent |
+| [control_map.md](../../CatskillsFusionSSTO/Documentation/grenadier/control_map.md) | Engravings + remaps |
+| [reactor_startup.md](../../CatskillsFusionSSTO/Documentation/grenadier/reactor_startup.md) | CHARM startup |
+| [panel_audit.md](../../CatskillsFusionSSTO/Documentation/grenadier/panel_audit.md) | Keep / blank / remapped |
+| [reactor_operator_model.md](../../CatskillsFusionSSTO/Documentation/grenadier/reactor_operator_model.md) | Property bus |
+| [engine_operator_model.md](../../CatskillsFusionSSTO/Documentation/grenadier/engine_operator_model.md) | Stage model |
 
-Vehicle branding string: **`CATSKILLS-SSTO-TA-GRENADIER`**.
+Paper-only notes in this folder (Plan A TA, thrust coupling) stay here; panel/checklist
+truth is the aircraft tree above.
+
+Vehicle branding: **`CATSKILLS-SSTO-TA-GRENADIER`**.
