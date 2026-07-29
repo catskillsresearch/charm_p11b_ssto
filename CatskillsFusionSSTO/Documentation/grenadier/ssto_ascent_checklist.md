@@ -23,7 +23,7 @@ CHARM mode `OFF → CRYO → ARM → LIGHT → POWER` is **derived** (CHARM MEDS
 | SCRAM | Center | Main Eng Limit → Enable · `main-eng-limit-shut-dn` |
 | Throttle | Center | Engine throttle |
 
-**Landing only (panel R4):** brake isol / brake heater / LG extend / LG–NWS stay labeled. All other R4 MPS/ET paint is blanked — leave it alone.
+**Landing only (panel R4):** **BRAKE ISOL VLV** stays labeled (leave OPEN). All other R4 paint is blanked — leave those switches alone.
 
 ## CRT pages
 

@@ -9,8 +9,8 @@ Source inventory: 542 `set-tooltip` bindings in `Models/cockpit.xml`
 2. **APU CNTLR row** engraved **MAGNET / FUEL / RF**.
 3. **REACTOR POWER** trio engraved **CHARM / DEC / VACUUM** (light-off / DEC / vacuum).
 4. **SCRAM** = Main Engine Limit Shutdown → Enable (center).
-5. **Fuel cells / Sys B / R4 MPS** = inert; paint blanked where stamped; hover empty.
-6. **R4 brakes / LG** labels kept for landing.
+5. **Fuel cells / Sys B / R2 surplus / R4 MPS** = inert; paint blanked; hover empty where cleared.
+6. **R4 BRAKE ISOL VLV** label kept for landing; heater / LG / NWS paint blanked (unwired).
 
 ## Keep
 

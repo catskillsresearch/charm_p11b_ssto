@@ -31,18 +31,19 @@ Scramble progression: **BATT → CRYO → MAGNET → FUEL → VACUUM → RF → 
 
 ## KEEP (airframe / avionics)
 
-Flight controls, gear, **brakes / NWS** (R4 labels kept), RHC/THC, DAP/RCS, HUD/ADI/HSI,
+Flight controls, gear, **brake isol** (R4), RHC/THC, DAP/RCS, HUD/ADI/HSI,
 GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 
 ## BLANK / INERT (mesh may remain; no Grenadier function)
 
 | Family | What you see | Why |
 |--------|--------------|-----|
-| R4 MPS / ET | Paint blanked | No LO2/LH2/SSME |
-| Sys B controller row | Hover blank | Duplicate SSME ctrl |
+| R2 surplus (isol / He / hyd / boiler / ET door / …) | Paint blanked | Not aliased into Grenadier ops |
+| R4 surplus (heater / LG / MPS / TVC / …) | Paint blanked | Only brake isol is live |
+| Sys B controller row | Paint + hover blank | Duplicate SSME ctrl |
 | Fuel cells | Hover blank | CHARM bus + BATT |
 | ET / SRB / OMS engines | Unused | No stack; Stage ± only on OMS arm switches |
-| APU hydrazine / hyd pumps | Ignore | No hyd TVC story |
+| APU hydrazine / hyd pumps | Paint blanked | No hyd TVC story |
 
 ## CRT map
 
@@ -59,4 +60,5 @@ GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 - APU OPERATE → **CART / BATT / CRYO**
 - APU CNTLR PWR → **MAGNET / FUEL / RF**
 - ENGINE POWER → **REACTOR POWER** + **CHARM / DEC / VACUUM**
-- R4 plate → blank except brake heater/isol and LG extend/NWS
+- R2 plate → blank except those three plant groups
+- R4 plate → blank except **BRAKE ISOL VLV**
