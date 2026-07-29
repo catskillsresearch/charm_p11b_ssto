@@ -1,0 +1,103 @@
+# p-¹¹B Orbitron core physics — topology inspired by Avalanche Energy’s public D₂ Orbitron only.
+# Fuel: solid elemental ¹¹B + laser ablation (Reply 9, 19). See SOLID_B11_LASER_FUEL.md.
+
+schema_version: 1
+title: p-¹¹B Orbitron core physics (Catskills)
+
+narrative: |
+  **Machine class (topology only):** Magneto-electrostatic hybrid in the spirit of Avalanche’s public
+  **Orbitron** — electrostatic **orbitrap** ions, **magnetron** electrons, **gridless** plasma volume,
+  tangential keV injection, E×B space-charge neutralization, cathode-pulse shear vs **rotating mode**.
+
+  **Fuel (Catskills):** **p-¹¹B** — ``¹H + ¹¹B → 3 ⁴He``. **H₂** supplies protons; **solid elemental ¹¹B**
+  (99.9% enriched disks, Reply 9 suppliers) is introduced by **355 nm UV laser ablation** — not B₂H₆ or B₁₀H₁₄ gas.
+
+  **Excitation:** Design cathode **~−600 kV** (**400–600 kV** lab surrogate).
+
+  **Energy offload:** Fusion-heated **Brayton** air path (Phase 2, Reply 19 §2.1–2.2).
+
+architecture:
+  confinement_class: magneto_electrostatic_hybrid
+  ion_confinement: electrostatic_orbitrap
+  electron_confinement: magnetron_weak_axial_B
+  gridless_plasma_volume: true
+  topology_inspired_by_avalanche_d2_orbitron: true
+  avalanche_published_fuel: deuterium_only
+  catskills_fuel_not_avalanche_canon: p-11B
+
+fields_and_geometry:
+  cathode_potential_kv:
+    design_operating_kv: 600
+    operating_band_kv: [400, 600]
+    note: D2 Orbitron public milestone ~300 kV is reference for a different fuel only
+  axial_B_tesla:
+    lab_surrogate_pic: 2.0
+
+ion_injection:
+  mechanism: tangential_keV_beam_injection
+  injectant_streams:
+    - species: H2
+      role: proton_inventory_stability_co_injectant
+      mesh_trunk: Hydrogen_Trunk_Line
+    - species: B11_solid
+      role: laser_ablation_elemental_boron11
+      mesh_parts:
+        - Solid_Boron_11_Target
+        - Solid_Boron_11_Target_2
+        - Solid_B11_Target_Holder
+        - Q_Switched_NdYAG_Laser
+        - UV_Fused_Silica_Viewport
+  headline_channel: "¹H + ¹¹B → 3 ⁴He"
+  injectant_ratio_note: H₂ sccm vs laser_ablation_hz (~8 Hz per 80 sccm H₂ benchtop target).
+
+electron_space_charge:
+  mechanism: co_rotating_electron_cloud
+
+stability_and_density:
+  limiting_instability: rotating_mode
+  mitigation_design_arc:
+    - rotational_shear_relaminarization
+    - PSP2_Jin_cathode_pulse
+  density_milestones_per_cm3:
+    design_validation_target: 1.0e11
+    stretch_goal: 4.0e12
+  beam_current_ma:
+    integration_target_greater_than: 1.0
+
+fusion_products:
+  primary_ash: He4
+  mesh_exhaust: Helium_Ash_Vent_Line
+  destination: Nozzle_Inlet_Plenum
+
+mesh_instance_mapping:
+  cathode: Central_Cathode_Wire
+  anode: Outer_Anode_Grid
+  magnet: Magnet
+  tangential_injectors: NBI_Injector
+  hydrogen_supply: Tank_Hydrogen
+  hydrogen_trunk: Hydrogen_Trunk_Line
+  boron_target: Solid_Boron_11_Target
+  boron_holder: Solid_B11_Target_Holder
+  laser: Q_Switched_NdYAG_Laser
+  uv_viewport: UV_Fused_Silica_Viewport
+  helium_ash_vent: Helium_Ash_Vent_Line
+  hv_feed: High_Voltage_Umbilical
+  ssto_optional_ch4: Tank_Cryo_Methane
+
+reference_plant_spec: orbitron_reference_plant.yaml
+unobtainium_spec: ../UNOBTANIUM.md
+fuel_delivery_spec: ../SOLID_B11_LASER_FUEL.md
+operating_phases_spec: ../OPERATING_PHASES.md
+
+flightgear_controls:
+  ion_beam_command: /controls/reactor/throttle
+  cathode_pulse_shear: /controls/orbitron/cathode-pulse
+  compressor_airpath: /controls/orbitron/compressor
+  startup: /sim/model/reactor/startup-trigger
+
+picmi_deck:
+  script: ssto/orbitron/laminar_flow_2d_arcjet.py
+  cathode_v: -600000
+  inject_beams: [h_inject_beam, b_inject_beam]
+  tangential_dominant: uz
+  cathode_pulse_ramp: first 35% of steps (see orbitron_physics_surrogate.yaml cathode_pulse_ramp)

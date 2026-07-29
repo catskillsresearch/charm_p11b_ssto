@@ -1,0 +1,306 @@
+# Compiler input for Orbitron surrogate sweep: WarpX PIC case, reductions, engineering map.
+# Cursor session workflow (Plan/Agent, checkpoints): assembly_specs/orbitron_repo_session_workflow.yaml
+# Consumed by tools/build_surrogate_map.py (--physics-spec) and emitted PICMI overrides
+# for ssto/orbitron/laminar_flow_2d_arcjet.py (--overrides JSON).
+#
+# Formal blocks document intent; picmi.expression_bundle is the vetted machine contract
+# (preset names + numeric slots only) compiled by tools/warpx_expression_presets.py.
+
+schema_version: 1
+title: Orbitron 2D arcjet surrogate — physics spec
+
+narrative: |
+  **PIC** = **Particle-In-Cell**: time-stepped simulation (here **WarpX**) that tracks
+  ensembles of charged **particles** (electrons, ions) on a grid and solves **E** and **B**
+  (or applied fields) to advance velocities. It is **not** a fusion yield calculator unless
+  you add reactions; here it supplies **density / beam** *proxies* for the FlightGear surrogate.
+
+  A coarse 2D electrostatic slice drives deposited densities; the surrogate pipeline
+  reduces last-plotfile |rho_electrons| and beam charge in a notional viewport ROI,
+  then maps proxies to JSBSim-facing scalars. PICMI remains Python (WarpX); this file
+  is the single place to change grids, ROI geometry, sweep layout, and placeholder
+  engineering gains without editing reduction code.
+
+  **Fusion core alignment:** Field scales defer to ``orbitron_avalanche_core.yaml`` (p-¹¹B,
+  **~−600 kV** cathode class, 2 T B, E×B electrons, tangential keV beams). Avalanche **D₂ @ ~300 kV**
+  is not canon for this fuel.
+
+  **3.5 MW and thrust (design coherence):** ``surrogate_engineering.design_gross_fusion_power_mw``
+  is the **SSTO thermal headline** at full (throttle×compressor×PIC-proxy). A fraction
+  ``jet_propulsive_efficiency`` is treated as power that eventually appears as **air-path
+  jet kinetic power** (compressor + annulus + hot gas + CD nozzle story). For a 0D check,
+  use **F² ≈ 2 · P_jet · ṁ** with **P_jet = η · P_gross**, **F** = thrust (N), **ṁ** = mass flow;
+  scales below are chosen so at **full** surrogate, **~3.5 MW**, **~18 kN**, and **~80 kg/s**
+  sit on that line (~214 m/s equivalent exhaust in the working-fluid frame on the stand).
+
+  Human-readable rationale for the simpler legacy deck ``laminar_flow_2d.py`` (crossed-field
+  slice only), post-processing notes, and design-brief gap analysis are folded under
+  ``formal:`` as ``laminar_flow_2d_py_case_review``, ``design_brief_gaps_fusion_arcjet``,
+  and ``postprocessing_animate_plasma_note`` (migrated from the old WARPX_CASE_REVIEW.txt).
+
+avalanche_core_spec: orbitron_avalanche_core.yaml
+reference_plant_spec: orbitron_reference_plant.yaml
+
+formal:
+  reference_plant_surrogate_mapping: |
+    **Design intent** (``orbitron_reference_plant.yaml``): single-spool fusion-heated Brayton —
+    compressor raises air pressure; fusion heats gas via annulus walls + plenum mixer; turbine
+    returns shaft work to the compressor after pad electric start; nozzle produces thrust.
+
+    **This file / JSBSim** does not solve spool RPM or turbine–compressor matching. The bilinear
+    surrogate maps ``/controls/reactor/throttle`` × ``/controls/orbitron/compressor`` → thrust,
+    mdot, gross_power_mw as a **0D closure** consistent with full command (~3.5 MW gross, ~η_jet
+    in ``surrogate_engineering``). Treat ``compressor`` as **air-path / shaft-work demand**, not
+    literal battery kW in the FDM.
+  compiled_expressions_contract: |
+    Analytic E-field and species density/momentum strings are never taken verbatim from
+    YAML. Only picmi.expression_bundle is machine-read: each entry is { preset, slots }
+    where preset is a name registered in tools/warpx_expression_presets.py and slots
+    are bounded floats validated at compile time. Presets emit AMReX parser-safe
+    strings; laminar_flow_2d_arcjet.py injects pre-formatted numeric literals (_wx)
+    for geometry and densities. To add physics: register a new preset in Python, then
+    reference it here — do not add raw expression text to YAML.
+  picmi_case: |
+    Cartesian2D; cylindrical analytic E from cathode–anode radii; uniform B_y;
+    electron ring + arc_channel_seed densities scaled by throttle/compressor;
+    tangential H⁺ / B⁺ inject beams; field diagnostic rho_electrons, rho_arc_channel_seed,
+    rho_h_inject_beam, rho_b_inject_beam (legacy rho_stabilizing_beam accepted in reduction).
+  beam_viewport_reduction: |
+    On the last density_diag plotfile, mean |rho_beam| (sum of H⁺ and B⁺ deposit fields) where
+      x < x_cutoff_m  ∧  |z| < z_half_width_m  ∧  r_inner_m < sqrt(x^2+z^2) < r_outer_m
+    with r = sqrt(x^2+z^2) in simulation coordinates (horizontal stand: beam from +x).
+  surrogate_map: |
+    CSV targets use normalized rho_e vs sweep median and ROI beam charge vs median;
+    beam_screen_kw = beam_current_ma * beam_screen_kw_per_ma (~0.6 kW/mA at 600 kV: P_kW ≈ I_mA × V_kV / 1000).
+  thrust_sled_load_cells: |
+    **Where computed:** JSBSim ``arcjet_airbreather`` channel in ``tools/templates/orbitron-jsbsim.xml``
+    (every FDM frame). Coefficients are emitted to ``/sim/model/orbitron/thrust-sled/*`` from this file
+    when ``orbitron_aircraft_flightgear.yaml`` has ``fg_set.surrogate_from_physics: true``.
+
+    **Inputs:** ``systems/arcjet/thrust-lbf`` and ``systems/arcjet/mass-flow-kgps`` from the bilinear
+    surrogate in throttle ``/controls/reactor/throttle`` and compressor ``/controls/orbitron/compressor``
+    (air-path / “airflow” command); gated by ``systems/reactor/active``.
+
+    **Model:** each corner puck gets ``tare_lbf/4`` plus a share of axial thrust. Shares start at 0.25
+    and redistribute with compressor (intake on −X → more load on −X corners) and throttle (+Y vs −Y).
+    ``systems/arcjet/sled-load-total-lbf`` = thrust + tare (total sled compression). The operator screen
+    (``orbitron_nasal.yaml`` → generated ``reactor_ui.nas``) only **displays** these properties.
+
+    **Mesh alignment:** corner signs match ``LoadCell_0…3`` in ``orbitron_lab.yaml`` (+X+Y, −X+Y, +X−Y, −X−Y).
+
+  # --- Narratives migrated from WARPX_CASE_REVIEW.txt (laminar_flow_2d.py); not machine-read ---
+  laminar_flow_2d_py_case_review: |
+    Source script: ssto/orbitron/laminar_flow_2d.py — Orbitron crossed-field slice deck.
+    This is not the YAML-driven surrogate sweep (see warpx_sweep.arcjet_script); it shares
+    the same order-of-magnitude geometry and field scales but omits arc channel seed scaling.
+
+    Solver and dimensionality:
+    - PICMI ElectromagneticSolver on a Cartesian2DGrid (WarpX XY slice, not RZ).
+    - Active plane X–Z, invariant Y; By is “out of page” for E×B circulation in X–Z.
+    - Time step 1e-12 s, CFL 0.9, max_steps 400 — short diagnostic run (stable on local WarpX;
+      256×256 can SIGSEGV near step 440 on AMReX 26.04), not a converged
+      steady-state reactor discharge.
+
+    Geometry (analytic, not meshed CAD):
+    - r_anode = 0.04 m (first wall), r_cathode = 0.01 m — Phase-1 radial zoning; PIC domain to r_magnet_outer ≈ 0.10 m.
+    - Boundaries: Dirichlet fields on all sides; particles absorbing — walls are ideal sinks,
+      not a real high-voltage feedthrough stack.
+
+    Fields:
+    - E: radial analytic profile from V_cathode = -600 kV (p-¹¹B design class) between
+      concentric notional cylinders (log(r) potential). Implemented as Ex, Ez with a radial cutoff
+      mask at r >= r_cathode.
+    - B: uniform By = 2.0 T (applied field, not self-consistent superconductor).
+    - “Frozen” analytic applied fields — no magnetostatic solve, no coil geometry, no ferromagnetics.
+
+    Species and initial conditions:
+    - electrons: annular density 1 cm < r < 3 cm, n_e ~ 5e15 m^-3 (expression), initialized with
+      E×B drift momenta consistent with the analytic E field — diocotron / hollow-ring style setup,
+      not a fusion burn model.
+    - h_inject_beam / b_inject_beam: tangential keV lists (uz dominant, slight −ux) at +x injection
+      plane — p-¹¹B H⁺ and B⁺+ proxies (not radial fusor slam).
+    - Cathode V multiplied by time ramp (first ~35% of steps) scaled by cathode-pulse command.
+    - No nuclear burn, no ⁴He macroparticles, no neutrals / MCC yet.
+
+    What this case is good for:
+    - Visualizing low-order crossed-field electron dynamics and charge density evolution in a slice.
+    - Pipeline check: pywarpx → diags → yt animation / FG texture path.
+
+  design_brief_gaps_fusion_arcjet: |
+    Fusion: no nuclear burn modules, no fusor grids in the plasma volume.
+    Cathode scale **−600 kV** in picmi.electrostatic (p-¹¹B design; D₂ Orbitron ~300 kV not canon).
+    Cathode-pulse maps to V ramp depth and electron-ring density boost in laminar_flow_2d_arcjet.py.
+    Arcjet: no compressor inlet BC, no cold air mass flow, no neutral gas background,
+    no electron–neutral collisions in the PIC slice yet.
+    Next extension direction: laminar_flow_2d_arcjet.py (seed channel, optional heavy-ion tracer,
+    expanded diagnostics) and PICMI docs for the installed WarpX version for collisions / MCC /
+    field ionization.
+
+  postprocessing_animate_plasma_note: |
+    animate_plasma.py currently expects diags field rho_electrons only.
+    laminar_flow_2d_arcjet.py also requests rho_arc_channel_seed; extend the yt field list or
+    merge channels before GIF export when running the arcjet deck.
+
+  # Human + machine contract: inputs → proxies → engineering scalars → 0D jet closure.
+  # Validated in-repo by: ``python tools/surrogate_closure_check.py`` (optional ``--surrogate-json``).
+  traceability_chain: |
+    **Symbols**
+      - ``T`` = ``/controls/reactor/throttle`` (0…1). ``C`` = ``/controls/orbitron/compressor`` (0…1).
+      - ``r_n`` = PIC / density normalization from ``build_surrogate_map.py`` (1 at reference median).
+      - ``P_gross`` [MW] = gross fusion-side thermal headline from surrogate ``gross_power_mw`` / CSV
+        ``gross_power_mw`` column — scales with ``T·C·r_n`` and ``gross_power_mw_scale``.
+      - ``η`` = ``jet_propulsive_efficiency`` — fraction of ``P_gross`` booked to air-path jet kinetic gain (0D).
+      - ``P_jet`` [W] = ``η · P_gross · 1e6``.
+      - ``ṁ`` [kg/s] = ``mass_flow_kgps`` surrogate; ``F`` [N] = ``thrust_lbf · LBF_TO_N`` (``4.4482216152605``).
+
+    **JSBSim properties (stand):**
+      ``/fdm/jsbsim/systems/reactor/gross-power-mw``,
+      ``/fdm/jsbsim/systems/arcjet/thrust-lbf``,
+      ``/fdm/jsbsim/systems/arcjet/mass-flow-kgps``,
+      ``/fdm/jsbsim/systems/arcjet/thrust-newtons``,
+      ``/fdm/jsbsim/systems/arcjet/equiv-exhaust-velocity-mps`` (``F/ṁ``),
+      ``/fdm/jsbsim/systems/arcjet/jet-kinetic-power-mw`` (``½ ṁ v_e²``).
+
+    **0D closure (same frame as narrative):**
+      ``v_e ≈ F/ṁ``, ``P_jet ≈ ½ ṁ v_e² = F²/(2ṁ)``, equivalently ``F² ≈ 2 · P_jet · ṁ``.
+      Surrogate scales are chosen so at full ``T×C×r_n`` the triad ``(F, ṁ, P_gross)`` satisfies this with ``P_jet = η·P_gross``.
+
+    **What is *not* claimed:** PIC does not compute fusion yield; ``r_n`` modulates coupling proxies only.
+    ``beam_screen_kw`` / mA is a separate viewport story — not equated to ``P_gross`` unless explicitly tied in docs.
+
+warpx_sweep:
+  arcjet_script: ssto/orbitron/laminar_flow_2d_arcjet.py
+  work_dir: build/orbitron/warpx-runs
+  default_steps: 400
+  default_diag_period: 40
+  stability_note: |
+    Local pywarpx (AMReX 26.04): 256×256 cells reproducibly segfaults entering step 440.
+    Proof chain and surrogate sweeps use 128×128 + 400 steps unless WARPX_PIC_STEPS overrides.
+
+picmi:
+  # Vetted template layer: preset IDs + numeric slots only (see formal.compiled_expressions_contract).
+  expression_bundle:
+    version: 1
+    applied_E:
+      preset: orbitron_cylindrical_radial_e_xz
+      slots: {}
+    electron_ring_density:
+      preset: orbitron_annulus_uniform_density_xz
+      slots: {}
+    electron_ring_momentum:
+      preset: orbitron_exb_ring_momentum_xz
+      slots:
+        r_floor_m: 1.0e-4
+    arc_channel_seed_density:
+      preset: orbitron_annulus_uniform_density_xz
+      slots:
+        r_outer_scale: 0.98
+  base_n_e: 5.0e15
+  base_arc_seed: 1.0e14
+  ring_density_scale: { throttle_offset: 0.15, throttle_gain: 0.85 }
+  arc_seed_scale: { compressor_offset: 0.15, compressor_gain: 0.85 }
+  cathode_pulse_density: { offset: 0.65, gain: 0.35 }
+  cathode_pulse_ramp:
+    ramp_step_fraction: 0.35
+    v_start_scale: 0.30
+    v_end_scale: 0.88
+  grid:
+    # 128²: stable through 400+ steps on AMReX 26.04; 256² hits SIGSEGV ~step 440 (Tier-2 proxy only).
+    number_of_cells: [128, 128]
+  domain:
+    half_extent_m: 0.10
+  electrostatic:
+    r_anode_m: 0.04
+    r_cathode_m: 0.01
+    V_cathode_v: -600000.0
+    B_axial_tesla: 2.0
+  species_geometry:
+    electron_ring_inner_m: 0.012
+    electron_ring_outer_m: 0.036
+    arc_channel_inner_m: 0.038
+  timestep:
+    dt_s: 1.0e-12
+    cfl: 0.9
+  inject_beams:
+    h_beam:
+      x_m: 0.025
+      z_half_span_m: 0.008
+      n_particles: 60
+      u_tangential_m_s: 3.0e6
+      u_radial_m_s: -4.5e5
+      weight: 5.0e9
+      particle_type: proton
+      charge_state: 1
+    b_beam:
+      x_m: 0.026
+      z_half_span_m: 0.007
+      n_particles: 40
+      u_tangential_m_s: -2.8e6
+      u_radial_m_s: -4.0e5
+      weight: 8.0e9
+      particle_type: B
+      charge_state: 5
+
+reductions:
+  beam_viewport_roi:
+    x_cutoff_m: -0.005
+    z_half_width_m: 0.022
+    r_inner_m: 0.012
+    r_outer_m: 0.038
+
+surrogate_engineering:
+  # --- p-¹¹B + arcjet design headline (0D; bilinear maps use these at full T×C×proxy) ---
+  design_gross_fusion_power_mw: 3.5
+  # Fraction of gross fusion-side power booked to *jet* kinetic gain in the airstream (rest = losses, compressor, walls).
+  jet_propulsive_efficiency: 0.55
+  # beam_screen_kw = beam_current_ma * beam_screen_kw_per_ma (0.6 kW/mA @ 600 kV: 1 mA → 0.6 kW)
+  beam_screen_kw_per_ma: 0.6
+  beam_current_scale_ma: 5.0
+  # Full throttle ≈ 5 mA — Avalanche public integration milestone is >1 mA ion beam.
+  # Thrust / ṁ chosen with gross_power_mw_scale and jet_propulsive_efficiency so F² ≈ 2·η·P·ṁ at full power (see narrative).
+  thrust_lbf_scale: 4040.0
+  mass_flow_kgps_scale: 84.0
+  gross_power_mw_scale: 3.5
+  heat_kw_scale: 400.0
+
+# Static pad FDM (JSBSim @TOKENS@ in tools/templates/orbitron-jsbsim.xml).
+test_stand_fdm:
+  empty_weight_lbf: 120000
+  inertia_slug_ft2: 250000
+  pad_spring_lbs_ft: 50
+  pad_damping_lbs_ft_sec: 50
+  angular_rate_damp_lbf_ft: 2500000
+  thrust_arm_x_m: 0.0
+  thrust_arm_y_m: 0.0
+  thrust_arm_z_m: 0.0
+
+# Thrust-sled corner load model (JSBSim). See formal.thrust_sled_load_cells and assembly_specs/README.md.
+thrust_sled_load_cells:
+  narrative: |
+    Pad **thrust bookkeeping** and **four corner load cells** for the operator screen.
+    **Not** a structural solve—coarse 0D split for FlightGear telemetry.
+
+    **Compute:** JSBSim ``systems/arcjet/*`` every frame (`tools/templates/orbitron-jsbsim.xml`).
+    **Display:** ``orbitron_nasal.yaml`` → ``reactor_ui.nas`` on the ``Screen`` mesh (10 Hz readout).
+
+    **Inputs:** ``systems/arcjet/thrust-lbf`` and ``systems/arcjet/mass-flow-kgps`` from the
+    bilinear surrogate (`/controls/reactor/throttle`, `/controls/orbitron/compressor`, gated by
+    ``systems/reactor/active``). Intake on −X → raise ``compressor_moment_gain`` load on −X corners.
+
+    **Outputs (FG property suffix under /fdm/jsbsim/systems/arcjet/):**
+    thrust-lbf, mass-flow-kgps, sled-load-total-lbf, load-cell-0-lbf … load-cell-3-lbf.
+
+    **Corner weight example (+X+Y, cell 0):**
+    w0 = 0.25 - compressor_moment_gain*compressor - throttle_moment_gain*throttle
+    load0 = active * (tare_lbf/4 + thrust_lbf * w0)
+    sled-load-total-lbf = active * (thrust_lbf + tare_lbf)
+
+    Coefficients below are copied to ``/sim/model/orbitron/thrust-sled/*`` in *-set.xml.
+  tare_lbf: 180.0
+  compressor_moment_gain: 0.14
+  throttle_moment_gain: 0.07
+  corners:
+    "0": { label: "+X+Y", x_sign: 1, y_sign: 1 }
+    "1": { label: "-X+Y", x_sign: -1, y_sign: 1 }
+    "2": { label: "+X-Y", x_sign: 1, y_sign: -1 }
+    "3": { label: "-X-Y", x_sign: -1, y_sign: -1 }

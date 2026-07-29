@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+    <!-- Grenadier: pod shells + RCS only (OMS engine bells/bases stripped). -->
+    <path>Aircraft/CatskillsFusionSSTO/Models/OMSPods_grenadier.ac</path>
+
+ <effect>
+    <inherits-from>Aircraft/CatskillsFusionSSTO/Models/Effects/shuttle-main</inherits-from>
+	<object-name>omsLeft</object-name>
+	<object-name>omsRight</object-name>
+	<!-- Full aft RCS (the "4 dots" on each pod outboard face + other jets) -->
+	<object-name>rcsL1A</object-name>
+	<object-name>rcsL1L</object-name>
+	<object-name>rcsL1U</object-name>
+	<object-name>rcsL2D</object-name>
+	<object-name>rcsL2L</object-name>
+	<object-name>rcsL2U</object-name>
+	<object-name>rcsL3A</object-name>
+	<object-name>rcsL3D</object-name>
+	<object-name>rcsL3L</object-name>
+	<object-name>rcsL4D</object-name>
+	<object-name>rcsL4L</object-name>
+	<object-name>rcsL4U</object-name>
+	<object-name>rcsR1A</object-name>
+	<object-name>rcsR1R</object-name>
+	<object-name>rcsR1U</object-name>
+	<object-name>rcsR2D</object-name>
+	<object-name>rcsR2R</object-name>
+	<object-name>rcsR2U</object-name>
+	<object-name>rcsR3A</object-name>
+	<object-name>rcsR3D</object-name>
+	<object-name>rcsR3R</object-name>
+	<object-name>rcsR4D</object-name>
+	<object-name>rcsR4R</object-name>
+	<object-name>rcsR4U</object-name>
+ </effect>
+
+</PropertyList>

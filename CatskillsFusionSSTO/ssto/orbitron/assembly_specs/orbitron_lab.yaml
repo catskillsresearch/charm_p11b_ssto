@@ -1,0 +1,1730 @@
+schema_version: 2
+assembly:
+  id: orbitron_lab
+  title: Orbitron Phase 1+2 R&D stand (Reply 19 SSOT)
+  radial_thermal_stack: &id_radial
+    r_cathode_m: 0.01
+    r_first_wall_m: 0.04
+    r_air_outer_m: 0.06
+    r_cryostat_outer_m: 0.075
+    r_magnet_outer_m: 0.10
+    length_m: 1.2
+  narrative: "CadQuery assembly mirrors **proton_boron_rand.md Reply 19** subassemblies. **Fuel:**\
+    \ solid **\xB9\xB9B** disks + **355 nm** laser ablation (Reply 9, 11\u201312)\u2014not\
+    \ solid B-11. Integrated pad adds **H\u2082** proton feed and **CH\u2084** wall-thermal\
+    \ (not in Phase 1 BOM)."
+logical:
+  root: test_stand
+  scene_root_name: fusion_arcjet_engine
+  glossary:
+  - term: Orbitron-class core (topology)
+    definition: "Magneto-electrostatic hybrid per ``orbitron_avalanche_core.yaml`` \u2014\
+      \ inspired by Avalanche\u2019s public\n**D\u2082** Orbitron geometry only. **p-\xB9\xB9\
+      B** fuel and **~600 kV** excitation are Catskills assumptions,\nnot Avalanche publications.\n"
+  - term: Orbitrap (ion confinement)
+    definition: "Ions trapped in **elliptical orbits** between outer anode (+) and central\
+      \ cathode (\u2212) by\nelectrostatic potential\u2014not by striking internal accelerator\
+      \ grids (contrast fusor).\n"
+  - term: Magnetron electron confinement
+    definition: "Weak axial **B** traps electrons; combined with radial **E** they **E\xD7\
+      B drift** azimuthally,\nco-rotating with ions to mask space-charge repulsion and raise\
+      \ achievable density.\n"
+  - term: Tangential ion injection
+    definition: "External injectors fire ionized fuel **tangentially** into the anode\u2013\
+      cathode gap at **~10\u2013100+ keV**\nso ions miss the cathode rod and stay in closed\
+      \ orbits (Avalanche public narrative).\n"
+  - term: Rotating mode (instability)
+    definition: "Azimuthal plasma instability that concentrates the discharge and dumps particles\
+      \ to walls\u2014\nlimiting density. Mitigation in Avalanche\u2019s public arc includes\
+      \ **cathode pulsing** and\n**rotational shear** (PSP2 / Jin program); simulated in FG\
+      \ via ``/controls/orbitron/cathode-pulse``.\n"
+  - term: Annulus
+    definition: 'A ring-shaped passage: fluid moves in the gap between two concentric surfaces
+      (for example between an outer duct wall and an inner core or plug). It is used to route
+      bypass air, condition shocks, or feed gas around a central module before it rejoins
+      a core or nozzle.'
+  - term: Blast / shock detuner
+    definition: A short fluidic insert or multi-port cavity whose job is to tame abrupt pressure
+      spikes (blasts or strong shocks) so upstream hardware sees gentler gradients. This lab
+      mesh splits the coarse module into an annulus sleeve, a central insert, and a bolting
+      / seal flange at the nozzle interface.
+  - term: "CD (convergent\u2013divergent) nozzle"
+    definition: A supersonic nozzle with a converging section, a minimum-area throat, and
+      a diverging section. The lab exports three coarse solids (inlet plenum adapter, throat-forward
+      CD segment, divergent exit) that tile axially behind the reactor outlet ring.
+  - term: Ion beam injectors (NBI)
+    definition: "**Tangential keV ion beam** hardware on the core\u2014not a low-energy gas\
+      \ bleed. FG throttle\ncommands **beam current (mA)** toward the **>1 mA** design-validation\
+      \ target.\n"
+  - term: "p-\xB9\xB9B headline channel"
+    definition: "After dissociation in the discharge: ``\xB9H + \xB9\xB9B \u2192 3 \u2074\
+      He``. **B\u2081\u2080H\u2081\u2084** is the boron carrier;\n**H\u2082** supplies hydrogenic\
+      \ / proton inventory\u2014same tangential beam hardware as a D\u2082 Orbitron.\n"
+  - term: "Hydrogen injectant (H\u2082)"
+    definition: "**H\u2082** tank + ``Hydrogen_Trunk_Line`` feed tangential keV injectors\
+      \ (stability, laminarity,\nproton side of p-\xB9\xB9B). Not bottled fusion-product helium.\n"
+  - term: "Boron injectant (B\u2081\u2080H\u2081\u2084)"
+    definition: "**B\u2081\u2080H\u2081\u2084** tank + ``Boron_Trunk_Line`` feed the **same**\
+      \ injectors\u2014gaseous boron carrier, not solid B.\n"
+  - term: "Helium ash (\u2074He product)"
+    definition: "Fusion alphas from p-\xB9\xB9B vent via ``Helium_Ash_Vent_Line`` into the\
+      \ nozzle plenum\u2014not from supply tanks.\n"
+  - term: Cryo methane (wall thermal)
+    definition: "**Liquid CH\u2084** annulus cooling for anode / boundary heat (U2 in ``UNOBTANIUM.md``).\
+      \ Optional on the\npad mesh for early integration; physically required for steady full-power\
+      \ wall loads.\n"
+  - term: Reference plant (fusion-heated Brayton)
+    definition: "**Air** ingested at **\u2212X**, compressed on a **shaft**, heated in the\
+      \ **annulus** (wall losses)\nand **plenum mixer** (hot core exhaust + \u2074He ash),\
+      \ expanded in a **turbine** that powers the\n**compressor** after pad start, then expanded\
+      \ in the **nozzle** for thrust. Canonical write-up:\n``orbitron_reference_plant.yaml``.\n"
+  - term: Pad startup APU
+    definition: "**Pad_Startup_Cart** (ground power skid) \u2192 **Pad_Startup_Power_Cable**\
+      \ \u2192 **Pad_Startup_Motor**\non the compressor spool. Rig-only; **excluded from flight\
+      \ mass**; disconnected after the\nturbine drives the compressor.\n"
+  - term: Liquid methane thermal loop
+    definition: "Cryogenic liquid CH\u2084 used as a working fluid for **anode / boundary\
+      \ Bremsstrahlung heat removal** and related plant cryogenics in this concept; it is\
+      \ **not** the boron carrier. In the lab glTF, routing is through ``Cryo_Methane_Piping``\
+      \ under ``methane_tank_assy`` (the redundant CH\u2084 leg on the old combined injectant\
+      \ trunk was removed)."
+  - term: Engine mount frame
+    definition: "``Engine_Mount_Frame`` on ``thrust_sled`` \u2014 four posts on the load-cell\
+      \ tops and a shared plate (`engine_mount_frame` in ``arcjet_test_stand_cad.py``). The\
+      \ air-breathing engine pivot (`ENGINE_MOUNT_TOP_Z`) sits on that plate so the mesh shows\
+      \ a continuous load path: cells \u2192 posts \u2192 plate \u2192 engine."
+  - term: Thrust-sled load telemetry
+    definition: "Four corner **load-cell pucks** on ``thrust_sled`` (`LoadCell_0`\u2026`3`)\
+      \ represent pad bookkeeping, not strain-gauge FEA. **Thrust** and **airflow (mdot)**\
+      \ come from the JSBSim bilinear surrogate (``/controls/reactor/throttle``, ``/controls/orbitron/compressor``).\
+      \ Corner **lbf** values and **sled-load-total** are computed in ``orbitron-jsbsim.xml``\
+      \ from coeffs in ``orbitron_physics_surrogate.yaml`` (`thrust_sled_load_cells`) and\
+      \ shown on the operator **Screen** via ``orbitron_nasal.yaml``. See ``assembly_specs/README.md``."
+  connections:
+  - from: Tank_Hydrogen
+    to: Pipe_H2_Feed
+    label: tank fitting / flex jumper
+    kind: dotted
+  - from: Tank_Cryo_Methane
+    to: Pipe_CH4_Feed
+    label: CH4 service from cryo methane tank
+    kind: dotted
+  - from: Q_Switched_NdYAG_Laser
+    to: UV_Fused_Silica_Viewport
+    label: 355 nm beam — atmospheric laser to vacuum window (1.3)
+    kind: dotted
+  - from: UV_Fused_Silica_Viewport
+    to: Solid_Boron_11_Target
+    label: laser ablation focus on enriched 11B disk (1.2)
+    kind: dotted
+  - from: Pipe_H2_Feed
+    to: Hydrogen_Trunk_Line
+    label: H2 feed toward tangential ion beam injectors
+    kind: dotted
+  - from: Hydrogen_Trunk_Line
+    to: NBI_Injector
+    label: H2 tangential keV beam service
+    kind: solid
+  - from: Solid_Boron_11_Target
+    to: NBI_Injector
+    label: ablated B+ tangential keV service
+    kind: solid
+  - from: Fusion_Hot_Gas_Outlet
+    to: Helium_Ash_Vent_Line
+    label: "fusion \u2074He ash bleed from core exhaust plane"
+    kind: dotted
+  - from: Helium_Ash_Vent_Line
+    to: Nozzle_Inlet_Plenum
+    label: helium ash vents into nozzle plenum / jet mix
+    kind: solid
+  - from: Cryo_Methane_Piping
+    to: Tank_Cryo_Methane
+    label: cryostat / fill circuit (schematic)
+    kind: dotted
+  - from: Cryo_Methane_Piping
+    to: Compressor_Assembly
+    label: intercooling / heat rejection tie (concept)
+    kind: dotted
+  - from: High_Voltage_Umbilical
+    to: Central_Cathode_Wire
+    label: HV feed toward cathode stack (schematic)
+    kind: dotted
+  - from: Pad_Startup_Cart
+    to: Pad_Startup_Power_Cable
+    label: "APU cart receptacle \u2192 starter power cable"
+    kind: dotted
+  - from: Pad_Startup_Power_Cable
+    to: Pad_Startup_Motor
+    label: "starter power cable \u2192 intake motor pod"
+    kind: dotted
+  - from: Pad_Startup_Motor
+    to: Compressor_Assembly
+    label: "pad electric starter \u2192 compressor spool (light-off only)"
+    kind: dotted
+  - from: Bellmouth_Inlet
+    to: Compressor_Assembly
+    label: "inlet \u2192 compressor"
+    kind: solid
+  - from: Compressor_Assembly
+    to: Reactor_Bay_Inlet_Shroud
+    label: compressor discharge into reactor bay annulus jacket (outer shell)
+    kind: solid
+  - from: Reactor_Bay_Inlet_Shroud
+    to: Turbine_Assembly
+    label: hot mixed gas toward turbine (fusion-heated Brayton spool)
+    kind: solid
+  - from: Turbine_Assembly
+    to: Nozzle_Inlet_Plenum
+    label: turbine discharge into nozzle plenum
+    kind: solid
+  - from: Reactor_Bay_Inlet_Shroud
+    to: Magnet
+    label: jacket bridges gap to solenoid shell; bore clears niobium / plasma boundary
+    kind: solid
+  - from: Reactor_Bay_Inlet_Shroud
+    to: BD_Annulus_Sleeve
+    label: same annulus / bypass circuit continues downstream toward detuner
+    kind: dotted
+  - from: BD_Annulus_Sleeve
+    to: BD_Shock_Detuner_Core
+    label: annulus gas into detuner throat
+    kind: solid
+  - from: BD_Shock_Detuner_Core
+    to: BD_Bracket_Seals
+    label: pressure loads & seals
+    kind: solid
+  - from: BD_Shock_Detuner_Core
+    to: Magnet
+    label: shock management near magnetic volume (concept)
+    kind: dotted
+  - from: Fusion_Hot_Gas_Outlet
+    to: Nozzle_Inlet_Plenum
+    label: "core exhaust plane \u2192 nozzle inlet"
+    kind: solid
+  - from: Nozzle_Inlet_Plenum
+    to: Nozzle_CD_Contour
+    label: "inlet conditioning \u2192 CD contour"
+    kind: solid
+  - from: Nozzle_CD_Contour
+    to: Nozzle_Exit_Hardware
+    label: "contour \u2192 exit struts / flange"
+    kind: solid
+  - from: Nozzle_Inlet_Plenum
+    to: Fusion_Hot_Gas_Outlet
+    label: axis / interface alignment
+    kind: dotted
+  - from: BD_Bracket_Seals
+    to: Nozzle_Inlet_Plenum
+    label: detuner flange mates nozzle plenum
+    kind: dotted
+  groups:
+    test_stand:
+      title: Orbitron R&D test stand (Reply 19 Phase 1 + 2)
+      detail: "CadQuery assembly mirrors **proton_boron_rand.md Reply 19** subassemblies.\
+        \ **Fuel:** solid **\xB9\xB9B** disks + **355 nm** laser ablation (Reply 9, 11\u2013\
+        12)\u2014not solid B-11. Integrated pad adds **H\u2082** proton feed and **CH\u2084\
+        ** wall-thermal (not in Phase 1 BOM)."
+      members:
+      - phase_1_benchtop
+      - phase_2_wind_tunnel
+      - integrated_pad_services
+    phase_1_benchtop:
+      title: "Phase 1 \u2014 Benchtop physics demo"
+      detail: "Validate p-\xB9\xB9B cross-section and laminar Orbitron on laboratory scale\
+        \ (~$91k BOM)."
+      members:
+      - subassembly_1_1_vacuum_chamber_system
+      - subassembly_1_2_electrostatic_orbitron_core
+      - subassembly_1_3_laser_ablation_system
+      - subassembly_1_4_hv_power_safety
+      - subassembly_1_5_diagnostics_particle_detection
+    subassembly_1_1_vacuum_chamber_system:
+      title: "Subassembly 1.1 \u2014 Vacuum & Chamber System"
+      detail: "UHV for electrostatic orbits and laser-ablation **\xB9\xB9B** injection."
+      parts:
+      - Vacuum_Chamber
+      - Turbomolecular_Pump
+      - Roughing_Pump
+      - Full_Range_Vacuum_Gauge
+      - UV_Fused_Silica_Viewport
+      - Solid_B11_Target_Holder
+    subassembly_1_2_electrostatic_orbitron_core:
+      title: "Subassembly 1.2 \u2014 Electrostatic Orbitron Core"
+      detail: "Inside-out: cathode \u2192 plasma vacuum \u2192 hot first wall (anode) \u2192\
+        \ future air annulus \u2192 cryostat \u2192 HTS magnet outside. p-\xB9\xB9B fueling\
+        \ via NBI + solid \xB9\xB9B; not a single \"jacket = magnet\" part."
+      parts:
+      - Central_Cathode_Wire
+      - Outer_Anode_Grid
+      - Air_Annulus_Channel
+      - Cryostat_Vacuum_Gap
+      - HV_Vacuum_Feedthrough
+      - Solid_Boron_11_Target
+      - Solid_Boron_11_Target_2
+      - Magnet
+      - NBI_Injector
+      - Insulators
+    subassembly_1_3_laser_ablation_system:
+      title: "Subassembly 1.3 \u2014 Laser Ablation System"
+      detail: "Q-switched **Nd:YAG** 355 nm \u2014 cold ablation of solid **\xB9\xB9B** (Reply\
+        \ 11\u201312)."
+      parts:
+      - Q_Switched_NdYAG_Laser
+      - Optical_Breadboard
+      - UV_Focusing_Lens
+      - Laser_Power_Meter
+      - Kinematic_Mirror_Mounts
+    subassembly_1_4_hv_power_safety:
+      title: "Subassembly 1.4 \u2014 High-Voltage Power & Safety"
+      detail: Spellman-class DC bias, ballast, vacuum/interlock shutdown.
+      parts:
+      - Precision_DC_HVPS
+      - High_Voltage_Cable
+      - Ballast_Resistor
+      - Interlock_Safety_Controller
+      - High_Voltage_Umbilical
+    subassembly_1_5_diagnostics_particle_detection:
+      title: "Subassembly 1.5 \u2014 Diagnostics & Particle Detection"
+      detail: 3-alpha signature via PIPS + MCA; Faraday cup for beam current.
+      parts:
+      - Charged_Particle_Detector
+      - Preamplifier
+      - Spectroscopy_Amplifier
+      - Multichannel_Analyzer_MCA
+      - Faraday_Cup
+    phase_2_wind_tunnel:
+      title: "Phase 2 \u2014 Stationary wind tunnel rig"
+      detail: Full-scale jacket, Brayton spool, ground blower, MW HV, DAQ (~$697k BOM).
+      members:
+      - subassembly_2_1_engine_core_heat_exchanger
+      - subassembly_2_2_turbomachinery_airflow
+      - subassembly_2_3_ground_support_blower
+      - subassembly_2_4_mw_power_starting
+      - subassembly_2_5_thermal_aerodynamic_instrumentation
+      - air_breathing_nozzle_train
+    subassembly_2_1_engine_core_heat_exchanger:
+      title: "Subassembly 2.1 \u2014 Full-Scale Engine Core & Heat Exchanger"
+      detail: "Hot first-wall annulus + bay shroud for Brayton air; HTS magnet outside vacuum\
+        \ cryostat (see THERMAL_ZONING.md). Heat: bremsstrahlung + alphas + CX, not neutrons."
+      parts:
+      - Containment_Vessel_Jacket
+      - Heat_Exchanger_Channels
+      - Aerodynamic_Centerbody
+      - High_Temp_Metallic_Seals
+      - Reactor_Bay_Inlet_Shroud
+      - Fusion_Hot_Gas_Outlet
+    subassembly_2_2_turbomachinery_airflow:
+      title: "Subassembly 2.2 \u2014 Turbomachinery & Air Flow Conditioning"
+      detail: "Brayton: compressor \u2192 hot jacket \u2192 turbine (Reply 15 startup sequence)."
+      parts:
+      - Compressor_Assembly
+      - Turbine_Assembly
+      - Compressor_Shaft_Bearings
+      - Inlet_Guide_Vanes_IGVs
+      - Bellmouth_Inlet
+    subassembly_2_3_ground_support_blower:
+      title: "Subassembly 2.3 \u2014 Ground Support Blower (wind tunnel)"
+      detail: Simulates ram-air / S-duct distortion before compressor.
+      parts:
+      - Industrial_Blower
+      - S_Duct_Intake_Simulation
+      - Exhaust_Silencer_Ducting
+      - Airflow_Honeycomb_Filter
+    subassembly_2_4_mw_power_starting:
+      title: "Subassembly 2.4 \u2014 Megawatt-Scale Power & Starting"
+      detail: Pneumatic starter, Marx 600 kV class, turbo pump array, HV bushing.
+      parts:
+      - Pneumatic_Air_Starter
+      - Solid_State_Marx_Generator
+      - HV_Bushing_Feedthrough
+      - Vacuum_Turbo_Pump_Array
+      - Pad_Startup_Cart
+      - Pad_Startup_Power_Cable
+      - Pad_Startup_Motor
+    subassembly_2_5_thermal_aerodynamic_instrumentation:
+      title: "Subassembly 2.5 \u2014 Thermal & Aerodynamic Instrumentation"
+      detail: PXIe DAQ, thermocouples, pitot, mass flow, pyrometers.
+      parts:
+      - High_Temp_Thermocouples
+      - Pitot_Static_Tubes
+      - Mass_Flow_Sensor
+      - Infrared_Pyrometer
+      - Data_Acquisition_Chassis
+    air_breathing_nozzle_train:
+      title: Nozzle & bypass (lab segmentation)
+      detail: "CD nozzle + blast detuner \u2014 lab mesh segments beyond Reply 19 tables."
+      parts:
+      - Nozzle_Inlet_Plenum
+      - Nozzle_CD_Contour
+      - Nozzle_Exit_Hardware
+      - BD_Annulus_Sleeve
+      - BD_Shock_Detuner_Core
+      - BD_Bracket_Seals
+      - Helium_Ash_Vent_Line
+    integrated_pad_services:
+      title: Integrated pad services (extension)
+      detail: "Operator station, thrust sled, **H\u2082** proton inventory, **CH\u2084** wall\
+        \ thermal."
+      members:
+      - control_panel_stand
+      - thrust_sled
+      - proton_and_thermal_farm
+    proton_and_thermal_farm:
+      title: Proton feed & wall-thermal farm
+      detail: "**H\u2082** for p-\xB9\xB9B; **CH\u2084** for U2 cooling \u2014 not boron carriers."
+      parts:
+      - Tank_Farm_Platform
+      - Tank_Hydrogen
+      - Decal_H2
+      - Pipe_H2_Feed
+      - Hydrogen_Trunk_Line
+      - Tank_Cryo_Methane
+      - Decal_CH4
+      - Pipe_CH4_Feed
+      - Cryo_Methane_Piping
+    proton_h2_feed:
+      title: H\u2082 proton inventory (report INJ-H2-01 hero)
+      detail: "Tank farm **without** operator console \u2014 use for assembly report, not\
+        \ ``integrated_pad_services``."
+      parts:
+      - Tank_Farm_Platform
+      - Tank_Hydrogen
+      - Decal_H2
+      - Pipe_H2_Feed
+      - Hydrogen_Trunk_Line
+    thermal_ch4_feed:
+      title: CH\u2084 wall-thermal loop (report U2-CH4-01 hero)
+      detail: "Cryo methane loop **without** operator console or H\u2082 tanks."
+      parts:
+      - Tank_Cryo_Methane
+      - Decal_CH4
+      - Pipe_CH4_Feed
+      - Cryo_Methane_Piping
+      - Magnet_Service_Bosses
+    control_panel_stand:
+      title: Control panel and operator station
+      detail: "Reply 15/18 startup: APU \u2192 starter \u2192 bleed \u2192 vacuum OK \u2192\
+        \ laser \u2192 HV \u2192 ignite."
+      parts:
+      - Operator_Console
+      - Operator_Checklist_Plaque
+      - Operator_Checklist_Ink
+      - Operator_Panel
+      - Screen
+      - Big_Red_Button
+      - Panel_Label_APU
+      - Panel_Label_STARTER
+      - Panel_Label_BLEED
+      - Panel_Label_VAC
+      - Panel_Label_LASER
+      - Panel_Label_HV
+      - Panel_Label_IGNITE
+      - Panel_Label_BEAM
+      - Panel_Label_COMP
+    thrust_sled:
+      title: Thrust sled
+      parts:
+      - Rail_Left
+      - Rail_Right
+      - Thrust_Sled_Frame
+      - LoadCell_0
+      - LoadCell_1
+      - LoadCell_2
+      - LoadCell_3
+      - Engine_Mount_Frame
+instances:
+  Thrust_Sled_Frame:
+    narrative: 'Longitudinal rails, cross ties, and deck slab from arcjet_test_stand_cad;
+      sits
+
+      slightly dropped in Z so the deck top matches the bell pivot height used by the
+
+      engine YAMLs.
+
+      '
+    template: thrust_sled_frame
+    params:
+      length: 2.2
+      width: 1.0
+      rail_h: 0.08
+    color:
+    - 0.35
+    - 0.35
+    - 0.38
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - -0.12
+  Rail_Left:
+    narrative: 'Filleted beam spanning the pad along local X at +Y rail index; supports the
+      sled
+
+      rails narrative even though the mesh is only a stand-in block.
+
+      '
+    template: rail_beam
+    params:
+      span: 3.5
+    color:
+    - 0.35
+    - 0.35
+    - 0.38
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.55
+      - -0.1
+  Rail_Right:
+    narrative: "Partner rail at \u2212Y; keep parallel to Rail_Left so the sled can translate\
+      \ axially\nunder thrust without yawing (conceptually\u2014no wheel detail in this coarse\
+      \ mesh).\n"
+    template: rail_beam
+    params:
+      span: 3.5
+    color:
+    - 0.35
+    - 0.35
+    - 0.38
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - -0.55
+      - -0.1
+  Tank_Hydrogen:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_tank_hydrogen
+    params: &id001 {}
+    color: &id002
+    - 0.35
+    - 0.35
+    - 0.38
+    transform_chain: &id003 []
+  Tank_Farm_Platform:
+    narrative: "Steel skid under the +Y **fuel farm** row\u2014thin deck (tank bases at z=0)\
+      \ and four corner posts sized to the same XY layout as ``Tank_Hydrogen``, ``Solid_Boron_11_Target``,\
+      \ and ``Tank_Cryo_Methane`` in ``LabInfrastructure.build_fuel_farm()``.\n"
+    template: lab_tank_farm_platform
+    params: {}
+    color:
+    - 0.33
+    - 0.33
+    - 0.36
+    transform_chain: []
+  Tank_Cryo_Methane:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_tank_cryo_methane
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Decal_H2:
+    narrative: "Flat stencil text \u201CHYDROGEN\u201D on the tank\u2014marking only, not\
+      \ a separate fluid."
+    template: lab_decal_h2
+    params: {}
+    color:
+    - 0.9
+    - 0.9
+    - 0.9
+    transform_chain: []
+  Decal_CH4:
+    narrative: "Dark \u201CLIQUID METHANE\u201D stencil on the cryo dewar\u2014marks the **thermal\
+      \ / cryogenic** CH\u2084 inventory (anode / plant cooling loop), not the boron carrier.\n"
+    template: lab_decal_ch4
+    params: {}
+    color:
+    - 0.1
+    - 0.1
+    - 0.1
+    transform_chain: []
+  High_Voltage_Umbilical:
+    narrative: 'Schematic high-voltage umbilical from the operator console toward the reactor
+
+      solenoid shell (reference lab art: orange service reaches the magnet crown, not a
+
+      buried cathode tap). Real sequencing and interlocks stay in Nasal / XML; this
+
+      mesh only shows a plausible bus run the operator can see.
+
+      '
+    template: lab_hv_umbilical
+    params:
+      include_port_markers: false
+      connectivity_spec:
+        physical_story: "The console cluster energizes / supervises the core. The visible\
+          \ **orange** bus is schematic:\nit runs to a **ceramic feedthrough boss** on the\
+          \ solenoid OD (``Magnet_Service_Bosses``)\u2014console\npotential into the **yoke\
+          \ / magnet circuit** in this coarse mesh, not a cathode pigtail.\n"
+        links:
+        - link_id: hv_service
+          service: high_voltage_schematic
+          from_region: operator_console_cluster
+          to_region: reactor_magnet_shell
+          routing_intent: jog_clear_screen_then_climb_to_magnet_crown
+      connector_ports:
+      - id: console_hv_header
+        anchor: console_hv_header
+        offset:
+        - 0.0
+        - 0.0
+        - 0.0
+        description: HV header beside the shifted console / screen cluster.
+      - id: reactor_magnet_hv_feed
+        anchor: reactor_magnet_hv_feed
+        offset:
+        - 0.0
+        - 0.0
+        - 0.0
+        description: 'HV feedthrough boss on the solenoid OD (see ``Magnet_Service_Bosses``;
+          co-located anchor
+
+          in ``LabInfrastructure.magnet_shell_connector_anchors``).
+
+          '
+      connector_links:
+      - id: hv_service
+        service: high_voltage_schematic
+        from_port: console_hv_header
+        to_port: reactor_magnet_hv_feed
+        radius: 0.018
+        description: Segmented jog from console cluster toward the solenoid crown feed.
+        waypoints:
+        - - -0.35
+          - -3.15
+          - 1.32
+        - - 0.18
+          - -1.05
+          - 1.2
+        - - 0.46
+          - -0.12
+          - 0.78
+        - - 0.52
+          - 0.08
+          - 0.58
+        - - 0.58
+          - 0.11
+          - 0.5
+        - - 0.63
+          - 0.09
+          - 0.46
+    color:
+    - 0.9
+    - 0.4
+    - 0.0
+    transform_chain: []
+  Hydrogen_Trunk_Line:
+    narrative: "**H\u2082** service trunk from ``Tank_Hydrogen`` roof to tangential **ion\
+      \ beam injectors**\n(``NBI_Injector``). Bundled under ``hydrogen_tank_assy``.\n"
+    template: lab_h2_injectant_trunk
+    params: {}
+    color:
+    - 0.2
+    - 0.2
+    - 0.2
+    transform_chain: []
+  Helium_Ash_Vent_Line:
+    narrative: "**Fusion-product helium** (\u2074He ash) vent from the core exhaust plane\
+      \ into the **nozzle inlet plenum** \u2014 parallel to the main hot-gas path, not from\
+      \ ``Tank_Hydrogen``. Routed along +X with the propulsive train.\n"
+    template: lab_helium_ash_vent
+    params: {}
+    color:
+    - 0.45
+    - 0.72
+    - 0.92
+    transform_chain: []
+  UV_Fused_Silica_Viewport:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_uv_fused_silica_viewport
+    params: *id001
+    color:
+    - 0.22
+    - 0.22
+    - 0.28
+    transform_chain: *id003
+  B11_Ablation_Target:
+    narrative: "Enriched \xB9\xB9B ablation puck at the NBI focus \u2014 laser vaporizes solid B-11\
+      \ / B-11 into the beam path."
+    template: lab_b11_ablation_target
+    params: {}
+    color:
+    - 0.55
+    - 0.48
+    - 0.35
+    transform_chain: []
+  Cryo_Methane_Piping:
+    narrative: "Light-grey **cryostat** leg: liquid **CH\u2084** from the dewar to a high\
+      \ tap on the magnet shell for **anode / boundary thermal management** (paired with **Tank_Cryo_Methane**\
+      \ under ``methane_tank_assy``). Air-path compressor hardware stays under ``air_breathing_engine``.\n"
+    template: lab_cryo_methane_piping
+    params:
+      include_port_markers: false
+      connectivity_spec:
+        physical_story: "Light-grey **cryostat** leg: liquid CH\u2084 from the dewar to a\
+          \ **jacket / boundary thermal tap** on the solenoid OD (``Magnet_Service_Bosses``)\u2014\
+          SSTO anode / wall cooling narrative, not p-\xB9\xB9B fuel. Distinct from the turbofan\
+          \ process-air path under ``air_breathing_engine``.\n"
+        links:
+        - link_id: cryo_fill
+          service: cryo_ch4_cryostat_fill
+          from_region: fuel_farm_ch4_dewar
+          to_region: reactor_magnet_shell_high_tap
+          routing_intent: rise_then_bridge_deck_to_magnet_rim
+      connector_ports:
+      - id: cryo_ch4_dewar_out
+        anchor: cryo_ch4_dewar_out
+        offset:
+        - 0.0
+        - 0.0
+        - 0.0
+        description: "Dewar roof / cryostat breakout (same world point as fuel farm CH\u2084\
+          \ top)."
+      - id: reactor_magnet_cryo_ch4_tap
+        anchor: reactor_magnet_cryo_ch4_tap
+        offset:
+        - 0.0
+        - 0.0
+        - 0.0
+        description: 'Cryo jacket tap on the solenoid OD (``Magnet_Service_Bosses``; paired
+          with dewar routing).
+
+          '
+      connector_links:
+      - id: cryo_fill
+        service: cryo_ch4_cryostat_fill
+        from_port: cryo_ch4_dewar_out
+        to_port: reactor_magnet_cryo_ch4_tap
+        radius: 0.022
+        description: Rise from dewar, jog inboard, terminate high on the solenoid shell.
+        waypoints:
+        - - -0.48
+          - 0.9
+          - 0.9
+        - - -0.08
+          - 0.38
+          - 0.55
+        - - 0.18
+          - 0.22
+          - 0.5
+        - - 0.36
+          - 0.14
+          - 0.44
+        - - 0.4
+          - 0.12
+          - 0.43
+    color:
+    - 0.8
+    - 0.8
+    - 0.85
+    transform_chain: []
+  Operator_Checklist_Plaque:
+    narrative: 'Shuttle-style light-off card on the slanted control panel (cream plaque).
+
+      '
+    template: lab_operator_checklist_plaque
+    params: {}
+    color:
+    - 0.97
+    - 0.95
+    - 0.88
+    transform_chain: &id_ctrl_stand_pose
+    - op: translate
+      xyz:
+      - -1.4
+      - -2.3
+      - 0.0
+  Operator_Checklist_Ink:
+    narrative: "Checklist lettering on the desk card (steps 1\u20136).\n"
+    template: lab_operator_checklist_ink
+    params: {}
+    color:
+    - 0.1
+    - 0.08
+    - 0.06
+    transform_chain: *id_ctrl_stand_pose
+  Operator_Console:
+    narrative: 'Desk + battery block (slanted switch panel is Operator_Panel).
+
+      '
+    template: lab_operator_console_desk
+    params: {}
+    color:
+    - 0.22
+    - 0.24
+    - 0.26
+    transform_chain: *id_ctrl_stand_pose
+  Operator_Panel:
+    narrative: 'Slanted panel from podium front edge to monitor; shuttle toggles mount on
+      this face.
+
+      '
+    template: lab_operator_panel
+    params: {}
+    color:
+    - 0.78
+    - 0.8
+    - 0.82
+    transform_chain: *id_ctrl_stand_pose
+  Screen:
+    narrative: 'Flat display solid in front of the tilted panel; same offset as the desk so
+      it
+
+      rides with the console cluster.
+
+      '
+    template: lab_operator_screen
+    params: {}
+    color:
+    - 0.05
+    - 0.05
+    - 0.05
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_APU:
+    template: lab_panel_label_apu
+    params: {}
+    color:
+    - 0.12
+    - 0.12
+    - 0.14
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_STARTER:
+    template: lab_panel_label_starter
+    params: {}
+    color:
+    - 0.12
+    - 0.12
+    - 0.14
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_BLEED:
+    template: lab_panel_label_bleed
+    params: {}
+    color:
+    - 0.12
+    - 0.12
+    - 0.14
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_VAC:
+    template: lab_panel_label_vac
+    params: {}
+    color: [0.12, 0.12, 0.14]
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_LASER:
+    template: lab_panel_label_laser
+    params: {}
+    color: [0.12, 0.12, 0.14]
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_HV:
+    template: lab_panel_label_hv
+    params: {}
+    color: [0.12, 0.12, 0.14]
+    transform_chain: *id_ctrl_stand_pose
+  Big_Red_Button:
+    narrative: 'Red mushroom IGNITE pushbutton on the slanted panel (key 4 / SPACE).
+
+      '
+    template: lab_big_red_button
+    params: {}
+    color:
+    - 0.88
+    - 0.1
+    - 0.06
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_IGNITE:
+    template: lab_panel_label_ignite
+    params: {}
+    color:
+    - 0.75
+    - 0.08
+    - 0.06
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_BEAM:
+    template: lab_panel_label_beam
+    params: {}
+    color:
+    - 0.12
+    - 0.12
+    - 0.14
+    transform_chain: *id_ctrl_stand_pose
+  Panel_Label_COMP:
+    template: lab_panel_label_comp
+    params: {}
+    color:
+    - 0.12
+    - 0.12
+    - 0.14
+    transform_chain: *id_ctrl_stand_pose
+  Pipe_H2_Feed:
+    narrative: "H\u2082 service valve / flex-jumper boss at the hydrogen tank roof (tank-end\
+      \ fitting for ``Hydrogen_Trunk_Line``)."
+    template: lab_fuel_feed_valve
+    params: {}
+    color:
+    - 0.35
+    - 0.35
+    - 0.38
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.6
+      - 1.2
+      - 1.165
+  Pipe_CH4_Feed:
+    narrative: 'Cryo methane dewar roof valve boss (tank-end fitting for ``Cryo_Methane_Piping``).
+
+      '
+    template: lab_fuel_feed_valve
+    params: {}
+    color:
+    - 0.35
+    - 0.35
+    - 0.38
+    transform_chain:
+    - op: translate
+      xyz:
+      - -0.7
+      - 1.2
+      - 0.865
+  Engine_Mount_Frame:
+    narrative: 'Truss from the four load-cell corners to a shared top plate; the bell / fusion
+      stack pivot sits on this plate (see ``ENGINE_MOUNT_TOP_Z`` in ``arcjet_test_stand_cad.py``).
+      Posts start at load-cell top (+Z).
+
+      '
+    template: engine_mount_frame
+    params:
+      corner_x: 0.7
+      corner_y: 0.35
+    color:
+    - 0.32
+    - 0.32
+    - 0.35
+    transform_chain: []
+  LoadCell_0:
+    narrative: 'Corner load-cell puck on the **thrust sled** deck (+X, +Y); **engine mount
+      posts** bear on the cell top.
+
+      '
+    template: load_cell_puck
+    params: {}
+    color:
+    - 0.9
+    - 0.75
+    - 0.1
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.7
+      - 0.35
+      - 0.17
+  LoadCell_1:
+    narrative: "Thrust-sled corner puck (\u2212X, +Y).\n"
+    template: load_cell_puck
+    params: {}
+    color:
+    - 0.9
+    - 0.75
+    - 0.1
+    transform_chain:
+    - op: translate
+      xyz:
+      - -0.7
+      - 0.35
+      - 0.17
+  LoadCell_2:
+    narrative: "Thrust-sled corner puck (+X, \u2212Y).\n"
+    template: load_cell_puck
+    params: {}
+    color:
+    - 0.9
+    - 0.75
+    - 0.1
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.7
+      - -0.35
+      - 0.17
+  LoadCell_3:
+    narrative: "Thrust-sled corner puck (\u2212X, \u2212Y).\n"
+    template: load_cell_puck
+    params: {}
+    color:
+    - 0.9
+    - 0.75
+    - 0.1
+    transform_chain:
+    - op: translate
+      xyz:
+      - -0.7
+      - -0.35
+      - 0.17
+  Bellmouth_Inlet:
+    narrative: "Coarse axisymmetric bellmouth: **large flare (\u2212X)** reads as turbofan\
+      \ / ram intake;\nthroat mates the compressor stub on the **anode inlet plane** (\u2212\
+      X face of the core).\nFoot on deck height, rotate +90\xB0 about deck Y so the duct axis\
+      \ is +X, then shift **\u22121 m in X** so the intake sits **outside** the niobium shell\
+      \ instead of inside the bore.\n"
+    template: bellmouth_flare
+    params:
+      inlet_r: 0.3
+      throat_r: 0.06
+      length: 0.45
+    color:
+    - 0.55
+    - 0.58
+    - 0.62
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 0.32
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+    - op: translate
+      xyz:
+      - -1.0
+      - 0.0
+      - 0.0
+  Pad_Startup_Cart:
+    narrative: "**Ground APU cart** on the thrust-sled deck beside the **\u2212X** intake:\
+      \ skid, wheels, and\ninverter/battery box with a roof **power post** (toward ``Pad_Startup_Power_Cable``).\
+      \ Pad-only;\nnot flight mass. Sits clear of the tank-farm row at **+Y**.\n"
+    template: pad_startup_cart
+    params: {}
+    color:
+    - 0.38
+    - 0.39
+    - 0.42
+    transform_chain:
+    - op: translate
+      xyz:
+      - -1.52
+      - -0.34
+      - 0.02
+  Pad_Startup_Power_Cable:
+    narrative: '**Starter power cable** from ``Pad_Startup_Cart`` receptacle to ``Pad_Startup_Motor``.
+      Routed
+
+      along the deck with waypoints clear of the bellmouth; anchors in ``arcjet_test_stand_cad.py``
+
+      (``pad_startup_connector_anchors``).
+
+      '
+    template: lab_pad_startup_power_cable
+    params: {}
+    color:
+    - 0.12
+    - 0.12
+    - 0.14
+    transform_chain: []
+  Pad_Startup_Motor:
+    narrative: "**Pad APU** \u2014 coarse **electric starter motor** on the **\u2212X** end\
+      \ of the compressor spool\n(side pod, not in the annulus bore). Rig power only; not\
+      \ counted as flight weight. Shaft stub\npoints **+X** toward ``Compressor_Can``; disconnects\
+      \ after ``Turbine_Can`` takes over the spool.\n"
+    template: pad_starter_motor
+    params:
+      motor_length: 0.14
+      motor_od: 0.1
+    color:
+    - 0.92
+    - 0.48
+    - 0.08
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 0.58
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+    - op: translate
+      xyz:
+      - -1.22
+      - 0.2
+      - -0.04
+  Compressor_Can:
+    narrative: "**Compressor** on the **\u2212X** intake train (co-axial with **Turbine_Can**\
+      \ on +X). Coarse\nsingle-stage can; **pad starter** (``Pad_Startup_Motor`` in ``pad_startup_services``)\
+      \ couples\nto this shaft end at light-off. **Centre bore** is structural / sealing only;\
+      \ **propulsive air**\ndischarges into **Reactor_Bay_Inlet_Shroud** (annulus), not the\
+      \ plasma bore. After fusion\nheats the duct gas, the **turbine** drives this spool \u2014\
+      \ not a cruise ship battery.\n"
+    template: compressor_housing
+    params:
+      od: 0.16
+      length: 0.25
+    color:
+    - 0.35
+    - 0.62
+    - 0.78
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 0.77
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+    - op: translate
+      xyz:
+      - -1.0
+      - 0.0
+      - 0.0
+  Compressor_Bleed_Port:
+    narrative: "**Bleed scoop** on the compressor can OD — opens the bellmouth→compressor annulus
+      path for pad start (``bleed-air-open``). Parasitic bleed mass flow is modeled in 0D as
+      fraction β of inlet ṁ; core path continues to the fusion jacket and turbine."
+    template: compressor_bleed_port
+    params:
+      housing_od: 0.16
+      port_od: 0.045
+      port_length: 0.08
+    color:
+    - 0.55
+    - 0.72
+    - 0.85
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 0.77
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+    - op: translate
+      xyz:
+      - -0.92
+      - 0.0
+      - 0.0
+    - op: rotate_z
+      angle_deg: 90.0
+  Reactor_Bay_Inlet_Shroud:
+    narrative: "Coarse **air annulus** shroud: compressor discharge routes in the gap toward\
+      \ the hot **anode / first-wall** region. **ID** sits at the hot wall OD; **OD** should\
+      \ lie **inside** the future cryostat inner radius (not \"wrapped around the magnet OD\"\
+      \ as a cold surface). Centreline bore stays sealed vacuum/plasma \u2014 not open shop\
+      \ air through the discharge.\n"
+    template: bay_inlet_annulus_shroud
+    params: *id_radial
+    color:
+    - 0.42
+    - 0.44
+    - 0.48
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 0.32
+  Fusion_Hot_Gas_Outlet:
+    narrative: "Thin outlet ring at the anode / bay exhaust plane\u2014structural stand-in\
+      \ for the\nfusion_hot_gas_outlet group in this file (``logical.groups``).\n"
+    template: orbitron_exhaust_outlet_ring
+    params: *id_radial
+    color:
+    - 0.75
+    - 0.76
+    - 0.8
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 0.92
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+    - op: translate
+      xyz:
+      - 1.02
+      - 0.0
+      - 0.0
+  Insulators:
+    narrative: Ceramic standoffs.
+    template: orbitron_insulators
+    params: *id_radial
+    color:
+    - 0.85
+    - 0.85
+    - 0.9
+    transform_chain: &id004
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 0.92
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  Magnet:
+    narrative: "**HTS-class** 2 T solenoid **outside** the cryostat vacuum gap (annular coil\
+      \ r_cryostat\u2192r_magnet). Field penetrates bore; coil is **not** the Brayton heat-exchanger\
+      \ surface.\n"
+    template: orbitron_hts_magnet
+    params: *id_radial
+    color:
+    - 0.2
+    - 0.25
+    - 0.55
+    transform_chain: *id004
+  Magnet_Service_Bosses:
+    narrative: "**Solenoid OD feedthrough cluster** (world-space): bosses for the **CH\u2084\
+      ** wall-thermal process\nline, **cryostat / liquid CH\u2084** jacket conditioning tap,\
+      \ and **HV** ceramic feedthrough from the\nconsole bus into the yoke region. ``Hydrogen_Trunk_Line``\
+      \ / ``NBI_Injector`` are separate\u2014p-\xB9\xB9B\ninjectant uses the green injector\
+      \ flange. Routing anchors share ``_MAGNET_SHELL_SERVICE_TABLE`` in\n``full_reactor_cad.py``.\n"
+    template: lab_magnet_feedthrough_bosses
+    params: {}
+    color:
+    - 0.42
+    - 0.43
+    - 0.46
+    transform_chain: []
+  NBI_Injector:
+    narrative: "Tangential keV injectors \u2014 H\u2082 + laser-ablated \xB9\xB9B."
+    template: orbitron_nbi
+    params: *id_radial
+    color:
+    - 0.1
+    - 0.55
+    - 0.25
+    transform_chain: *id004
+  Turbine_Can:
+    narrative: "**Turbine** on the **+X** hot-gas train \u2014 same **shaft** as **Compressor_Can**.\
+      \ Extracts work\nto spin the compressor after pad **APU** disconnect. Upstream: fusion-heated\
+      \ annulus + **plenum\nmixer**; downstream: **Nozzle_CD_Contour**. See ``orbitron_reference_plant.yaml``.\n"
+    template: turbine_housing
+    params:
+      od: 0.16
+      length: 0.18
+    color:
+    - 0.72
+    - 0.45
+    - 0.22
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 1.955
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  Nozzle_Inlet_Plenum:
+    narrative: "**Mixer / plenum** \u2014 hot **core exhaust**, **\u2074He ash**, and compressed\
+      \ **annulus air** meet\nbefore the **turbine**. Mated to **Fusion_Hot_Gas_Outlet** (+X).\
+      \ Pre-rotation +Z maps to +X.\n\n'\n"
+    template: nozzle_inlet_plenum
+    params: {}
+    color:
+    - 0.2
+    - 0.2
+    - 0.22
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 1.92
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  Nozzle_CD_Contour:
+    narrative: 'Throat-forward CD segment between plenum adapter and divergent exit hardware.
+
+      '
+    template: nozzle_cd_contour
+    params: {}
+    color:
+    - 0.22
+    - 0.22
+    - 0.24
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 1.99
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  Nozzle_Exit_Hardware:
+    narrative: 'Divergent nozzle tail / exit hardware chunk mated to the blast-detuner flange.
+
+      '
+    template: nozzle_exit_hardware
+    params: {}
+    color:
+    - 0.18
+    - 0.18
+    - 0.2
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 2.04
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  BD_Annulus_Sleeve:
+    narrative: '**Outer bypass duct** segment: annular shell sized to the lab solenoid OD,
+      sitting **immediately downstream of the magnet** and feeding the **propulsive air path**
+      toward the CD nozzle. Coarse mesh: flow is in the **ring gap** around the central shock
+      insert, **not** through the niobium plasma bore.
+
+      '
+    template: bd_annulus_sleeve
+    params:
+      inner_flow_r: 0.1
+      annulus_gap: 0.034
+      wall: 0.018
+      length: 0.14
+    color:
+    - 0.35
+    - 0.35
+    - 0.38
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 1.67
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  BD_Shock_Detuner_Core:
+    narrative: '**Fluidic shock / blast conditioning insert** (not an acoustic silencer):
+      a porous or multi-port cavity narrative that **softens pressure spikes** in the bypass
+      stream before the flange to the nozzle plenum. Solid shown **inside** the annulus sleeve
+      bore; working air passes **around** it in the sleeve gap.
+
+      '
+    template: bd_shock_core_insert
+    params:
+      radius: 0.082
+      length: 0.09
+    color:
+    - 0.32
+    - 0.32
+    - 0.36
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 1.65
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  BD_Bracket_Seals:
+    narrative: 'Seal land / bolted flange **between detuner module and nozzle plenum**: closes
+      the bypass duct **before** the CD nozzle hardware. **Fusion hot gas** is a separate
+      narrative path through ``Fusion_Hot_Gas_Outlet`` into the nozzle train; this flange
+      is primarily the **air-breathing bypass** load path.
+
+      '
+    template: bd_bracket_seal_flange
+    params:
+      outer_r: 0.152
+      inner_r: 0.058
+      thickness: 0.036
+      n_bolts: 8
+    color:
+    - 0.38
+    - 0.38
+    - 0.42
+    transform_chain:
+    - op: translate
+      xyz:
+      - 0.0
+      - 0.0
+      - 1.755
+    - op: rotate_y_about_point
+      pivot:
+      - 0.0
+      - 0.0
+      - 0.32
+      angle_deg: 90.0
+  Vacuum_Chamber:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_vacuum_chamber
+    params: *id001
+    color:
+    - 0.4
+    - 0.42
+    - 0.45
+    transform_chain: *id003
+  Turbomolecular_Pump:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_turbomolecular_pump
+    params: *id001
+    color:
+    - 0.4
+    - 0.42
+    - 0.45
+    transform_chain: *id003
+  Roughing_Pump:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_roughing_pump
+    params: *id001
+    color:
+    - 0.4
+    - 0.42
+    - 0.45
+    transform_chain: *id003
+  Full_Range_Vacuum_Gauge:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_full_range_vacuum_gauge
+    params: *id001
+    color:
+    - 0.4
+    - 0.42
+    - 0.45
+    transform_chain: *id003
+  Solid_B11_Target_Holder:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_solid_b11_target_holder
+    params: *id001
+    color:
+    - 0.55
+    - 0.48
+    - 0.35
+    transform_chain: *id003
+  Central_Cathode_Wire:
+    narrative: W / W-Re cathode at ~600 kV class (plasma bore r < r_cathode).
+    template: orbitron_cathode
+    params: *id_radial
+    color:
+    - 0.55
+    - 0.55
+    - 0.6
+    transform_chain: *id004
+  Air_Annulus_Channel:
+    narrative: "Brayton **process air** annulus between hot first wall and cryostat (r_fw\u2192\
+      r_air). Not shop air over the HTS coil.\n"
+    template: orbitron_air_annulus
+    params: *id_radial
+    color:
+    - 0.55
+    - 0.72
+    - 0.88
+    transform_chain: *id004
+  Cryostat_Vacuum_Gap:
+    narrative: "Vacuum + MLI stand-in shell between air annulus and HTS (r_air\u2192r_cryostat).\n"
+    template: orbitron_cryostat_gap
+    params: *id_radial
+    color:
+    - 0.72
+    - 0.74
+    - 0.78
+    transform_chain: *id004
+  Outer_Anode_Grid:
+    narrative: "Hot **first wall** / grounded anode shell (niobium pressure boundary at r_fw)."
+    template: orbitron_first_wall
+    params: *id_radial
+    color:
+    - 0.45
+    - 0.45
+    - 0.5
+    transform_chain: *id004
+  HV_Vacuum_Feedthrough:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_hv_vacuum_feedthrough
+    params: *id001
+    color:
+    - 0.4
+    - 0.42
+    - 0.45
+    transform_chain: *id003
+  Solid_Boron_11_Target:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_solid_boron_11_target
+    params: *id001
+    color:
+    - 0.55
+    - 0.48
+    - 0.35
+    transform_chain: *id003
+  Solid_Boron_11_Target_2:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_solid_boron_11_target
+    params: *id001
+    color:
+    - 0.55
+    - 0.48
+    - 0.35
+    transform_chain: *id003
+  Q_Switched_NdYAG_Laser:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_q_switched_ndyag_laser
+    params: *id001
+    color:
+    - 0.22
+    - 0.22
+    - 0.28
+    transform_chain: *id003
+  Optical_Breadboard:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_optical_breadboard
+    params: *id001
+    color:
+    - 0.22
+    - 0.22
+    - 0.28
+    transform_chain: *id003
+  UV_Focusing_Lens:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_uv_focusing_lens
+    params: *id001
+    color:
+    - 0.22
+    - 0.22
+    - 0.28
+    transform_chain: *id003
+  Laser_Power_Meter:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_laser_power_meter
+    params: *id001
+    color:
+    - 0.22
+    - 0.22
+    - 0.28
+    transform_chain: *id003
+  Kinematic_Mirror_Mounts:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_kinematic_mirror_mounts
+    params: *id001
+    color:
+    - 0.22
+    - 0.22
+    - 0.28
+    transform_chain: *id003
+  Precision_DC_HVPS:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_precision_dc_hvps
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  High_Voltage_Cable:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_high_voltage_cable
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Ballast_Resistor:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_ballast_resistor
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Interlock_Safety_Controller:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_interlock_safety_controller
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Charged_Particle_Detector:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_charged_particle_detector
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Preamplifier:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_preamplifier
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Spectroscopy_Amplifier:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_spectroscopy_amplifier
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Multichannel_Analyzer_MCA:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_multichannel_analyzer_mca
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Faraday_Cup:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_faraday_cup
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Containment_Vessel_Jacket:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_containment_vessel_jacket
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  Heat_Exchanger_Channels:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_heat_exchanger_channels
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  Aerodynamic_Centerbody:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_aerodynamic_centerbody
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  High_Temp_Metallic_Seals:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_high_temp_metallic_seals
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Compressor_Assembly:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_compressor_assembly
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  Turbine_Assembly:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_turbine_assembly
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  Compressor_Shaft_Bearings:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_compressor_shaft_bearings
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  Inlet_Guide_Vanes_IGVs:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_inlet_guide_vanes_igvs
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  Industrial_Blower:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_industrial_blower
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  S_Duct_Intake_Simulation:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_s_duct_intake_simulation
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Exhaust_Silencer_Ducting:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_exhaust_silencer_ducting
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Airflow_Honeycomb_Filter:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_airflow_honeycomb_filter
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Pneumatic_Air_Starter:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_pneumatic_air_starter
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Solid_State_Marx_Generator:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_solid_state_marx_generator
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  HV_Bushing_Feedthrough:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_hv_bushing_feedthrough
+    params: *id001
+    color: *id002
+    transform_chain: *id004
+  Vacuum_Turbo_Pump_Array:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_vacuum_turbo_pump_array
+    params: *id001
+    color:
+    - 0.4
+    - 0.42
+    - 0.45
+    transform_chain: *id003
+  High_Temp_Thermocouples:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_high_temp_thermocouples
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Pitot_Static_Tubes:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_pitot_static_tubes
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Mass_Flow_Sensor:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_mass_flow_sensor
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Infrared_Pyrometer:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_infrared_pyrometer
+    params: *id001
+    color: *id002
+    transform_chain: *id003
+  Data_Acquisition_Chassis:
+    narrative: "Reply 19 BOM \u2014 see ``SOLID_B11_LASER_FUEL.md``."
+    template: reply19_data_acquisition_chassis
+    params: *id001
+    color: *id002
+    transform_chain: *id003

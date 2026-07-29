@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+
+<!-- this puts the Shuttle into orbit -->
+
+<PropertyList include="CatskillsFusionSSTO-common.xml">
+<sim>
+  <description>CATSKILLS-SSTO-TA-GRENADIER in orbit</description>
+  <long-description>
+     
+     CATSKILLS-SSTO-TA-GRENADIER is a single-stage-to-orbit test article (Grenadier): Shuttle-derived airframe with CHARM plant and 3-cycle electric engine. This phase starts near periapsis of an eccentric post-insertion orbit for orbital ops preparation.
+  
+  </long-description>
+  <variant-of>CatskillsFusionSSTO</variant-of>
+  <presets>
+	<altitude-ft>500000.0</altitude-ft>
+	<stage type="int">1</stage>
+  </presets>
+  <startup>
+    <splash-texture>Aircraft/CatskillsFusionSSTO/CatskillsFusionSSTO-grenadier-splash.png</splash-texture>
+  </startup>
+    <previews>
+      <preview>
+        <type>exterior</type>
+        <splash type="bool">true</splash>
+        <path>Pics/grenadier-splash-01.png</path>
+      </preview>
+      <preview>
+        <type>exterior</type>
+        <splash type="bool">true</splash>
+        <path>Pics/grenadier-splash-02.png</path>
+      </preview>
+      <preview>
+        <type>exterior</type>
+        <splash type="bool">true</splash>
+        <path>Pics/grenadier-splash-03.png</path>
+      </preview>
+  </previews>
+  <config>
+    <shuttle>
+      <prelaunch-flag type="int">0</prelaunch-flag>
+    </shuttle>
+  </config>
+  <menubar>
+     <default>
+	<menu n="51">
+	      <label>Payload Operations</label>
+
+	      <item>
+	       <label>Payload bay floodlights</label>
+	       <binding>
+		<command>nasal</command>
+		<script>SpaceShuttle.pb_floodlight_dlg.open()</script>
+	       </binding>
+	      </item>
+
+	      <item>
+	       <label>RMS arm deployment</label>
+	       <binding>
+		<command>nasal</command>
+		<script>SpaceShuttle.rms_deploy_dlg.open()</script>
+	       </binding>
+	      </item>
+
+	      <item>
+	       <label>RMS arm operation</label>
+	       <binding>
+		<command>nasal</command>
+		<script>SpaceShuttle.rms_operation_dlg.open()</script>
+	       </binding>
+	      </item>
+
+	      <item>
+	       <label>Payload retention</label>
+	       <binding>
+		<command>nasal</command>
+		<script>SpaceShuttle.pl_retention_dlg.open()</script>
+	       </binding>
+	      </item>
+
+	      <item>
+	       <label>RMS Pyro</label>
+	       <binding>
+		<command>nasal</command>
+		<script>SpaceShuttle.rms_pyro_dlg.open()</script>
+	       </binding>
+	      </item>
+	     </menu>
+     </default>
+  </menubar>
+</sim>
+
+<fdm>
+   <jsbsim>
+	<systems>
+	   <dps>
+		<ops type="int">1</ops>
+		<major-mode type="int">103</major-mode>
+		<ops-bfs type="int">1</ops-bfs>
+		<major-mode-bfs type="int">103</major-mode-bfs>
+	   </dps>
+	</systems>
+   </jsbsim>
+</fdm>
+
+
+
+</PropertyList>

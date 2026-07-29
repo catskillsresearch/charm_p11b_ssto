@@ -1,0 +1,1023 @@
+<?xml version="1.0"?>
+<!-- Source: tools/templates/orbitron-jsbsim.xml — copied to Aircraft/<pkg>/ by
+     tools/compile_orbitron_aircraft_runtime.py (see assembly_specs/orbitron_aircraft_flightgear.yaml). -->
+<fdm_config name="@AIRCRAFT_PACKAGE_DIR@" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+    <metrics>
+        <wingarea  unit="FT2"> 10.0 </wingarea>
+        <wingspan  unit="FT" >  5.0 </wingspan>
+        <wing_incid unit="DEG"> 0.0 </wing_incid>
+        <chord     unit="FT" >  2.0 </chord>
+        <htailarea unit="FT2">  0.0 </htailarea>
+        <htailarm  unit="FT" >  0.0 </htailarm>
+        <vtailarea unit="FT2">  0.0 </vtailarea>
+        <vtailarm  unit="FT" >  0.0 </vtailarm>
+        <location name="AERORP" unit="IN"> <x>0</x> <y>0</y> <z>0</z> </location>
+        <location name="CG"     unit="IN"> <x>0</x> <y>0</y> <z>0</z> </location>
+    </metrics>
+
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> @INERTIA_SLUGFT2@ </ixx>
+        <iyy unit="SLUG*FT2"> @INERTIA_SLUGFT2@ </iyy>
+        <izz unit="SLUG*FT2"> @INERTIA_SLUGFT2@ </izz>
+        <emptywt unit="LBS" > @EMPTYWT_LBF@ </emptywt>
+        <location name="CG" unit="IN"> <x>0</x> <y>0</y> <z>0</z> </location>
+    </mass_balance>
+
+    <!-- Single central BOGEY: FG requires >=1 gear unit for ground trim; one pad avoids corner sink. -->
+    <ground_reactions>
+        <contact type="BOGEY" name="PAD">
+            <location unit="IN">
+                <x>0</x>
+                <y>0</y>
+                <z>-36</z>
+            </location>
+            <static_friction>1.0</static_friction>
+            <dynamic_friction>1.0</dynamic_friction>
+            <rolling_friction>0.0</rolling_friction>
+            <spring_coeff unit="LBS/FT">@PAD_SPRING_LBSFT@</spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC">@PAD_DAMP_LBSFTSEC@</damping_coeff>
+            <max_steer unit="DEG">0</max_steer>
+            <brake_group>NONE</brake_group>
+            <retractable>0</retractable>
+        </contact>
+    </ground_reactions>
+
+    <!-- REQUIRED BY JSBSIM PARSER EVEN IF EMPTY -->
+    <aerodynamics>
+    </aerodynamics>
+
+    <!-- Arcjet thrust along body +X (engine exhaust to +X); 0D surrogate -->
+    <external_reactions>
+        <force name="arcjet_thrust" frame="BODY">
+            <function>
+                <property>systems/arcjet/thrust-lbf</property>
+            </function>
+            <location unit="M">
+                <x> @THRUST_ARM_X_M@ </x>
+                <y> @THRUST_ARM_Y_M@ </y>
+                <z> @THRUST_ARM_Z_M@ </z>
+            </location>
+            <direction>
+                <x> 1 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </direction>
+        </force>
+        <moment name="pad_rate_damp_p" frame="BODY">
+            <function>
+                <product>
+                    <property>velocities/p-aero-rad_sec</property>
+                    <value>@RATE_DAMP_LBFFT@</value>
+                </product>
+            </function>
+            <location unit="IN"><x>0</x><y>0</y><z>0</z></location>
+            <direction><x>1</x><y>0</y><z>0</z></direction>
+        </moment>
+        <moment name="pad_rate_damp_q" frame="BODY">
+            <function>
+                <product>
+                    <property>velocities/q-aero-rad_sec</property>
+                    <value>@RATE_DAMP_LBFFT@</value>
+                </product>
+            </function>
+            <location unit="IN"><x>0</x><y>0</y><z>0</z></location>
+            <direction><x>0</x><y>1</y><z>0</z></direction>
+        </moment>
+        <moment name="pad_rate_damp_r" frame="BODY">
+            <function>
+                <product>
+                    <property>velocities/r-aero-rad_sec</property>
+                    <value>@RATE_DAMP_LBFFT@</value>
+                </product>
+            </function>
+            <location unit="IN"><x>0</x><y>0</y><z>0</z></location>
+            <direction><x>0</x><y>0</y><z>1</z></direction>
+        </moment>
+    </external_reactions>
+
+    <!-- REACTOR 0D MODEL (Avalanche Orbitron-class core; see orbitron_avalanche_core.yaml) -->
+    <system name="Orbitron_Reactor">
+        <channel name="Reactor Input">
+            <!-- Ion beam command 0..1 → mA (Avalanche >1 mA milestone at moderate command) -->
+            <fcs_function name="systems/reactor/ion-beam-command">
+                <function>
+                    <property>systems/orbitron/fg-throttle</property>
+                </function>
+            </fcs_function>
+
+            <switch name="systems/reactor/active">
+                <default value="0.0"/>
+                <test value="1.0">
+                    systems/orbitron/fg-startup-armed GT 0.5
+                </test>
+            </switch>
+        </channel>
+
+        <channel name="Reactor Output">
+            <fcs_function name="systems/reactor/gross-power-mw">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <property>systems/orbitron/surrogate/power-c0</property>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/surrogate/power-ct</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/power-cc</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/power-ctc</property>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <fcs_function name="systems/reactor/heat-kw">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <property>systems/orbitron/surrogate/heat-c0</property>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/surrogate/heat-ct</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/heat-cc</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/heat-ctc</property>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <!-- WarpX-reduced viewport beam power (kW); bilinear in (throttle, compressor). -->
+            <fcs_function name="systems/reactor/beam-screen-deposition-kw">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <property>systems/orbitron/surrogate/beam-screen-kw-c0</property>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/surrogate/beam-screen-kw-ct</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/beam-screen-kw-cc</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/beam-screen-kw-ctc</property>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <!-- Beam current: P_beam_kW ≈ I_mA × 0.6 kW/mA at 600 kV class (I = P/0.6), floored at throttle×5 mA. -->
+            <fcs_function name="systems/reactor/beam-current-ma">
+                <function>
+                    <max>
+                        <product>
+                            <property>systems/reactor/active</property>
+                            <property>systems/reactor/ion-beam-command</property>
+                            <value> 5.0 </value>
+                        </product>
+                        <quotient>
+                            <property>systems/reactor/beam-screen-deposition-kw</property>
+                            <value> 0.6 </value>
+                        </quotient>
+                    </max>
+                </function>
+            </fcs_function>
+
+            <!-- p-¹¹B design cathode: ~400–600 kV vs throttle when active (D₂ Orbitron ~300 kV is not canon here). -->
+            <fcs_function name="systems/reactor/cathode-voltage-kv">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <value> 400.0 </value>
+                            <product>
+                                <property>systems/reactor/ion-beam-command</property>
+                                <value> 200.0 </value>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <!-- Bookkeeping density log10(cm^-3): hot+dense+shear-stabilized proxy -->
+            <fcs_function name="systems/reactor/plasma-density-log10">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <value> 9.0 </value>
+                            <product>
+                                <property>systems/reactor/ion-beam-command</property>
+                                <value> 1.8 </value>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/fg-cathode-pulse</property>
+                                <value> 1.2 </value>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <value> 0.3 </value>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+        </channel>
+    </system>
+
+    <!-- Pad APU / bleed / effective compressor (orbitron_operator_console_spec.yaml) -->
+    <system name="Orbitron_Pad_Ops">
+        <channel name="Pad startup and bleed">
+            <switch name="systems/orbitron/pad-apu-online">
+                <default value="0.0"/>
+                <test value="1.0">
+                    systems/orbitron/fg-pad-apu-online GT 0.5
+                </test>
+            </switch>
+            <switch name="systems/orbitron/starter-engage">
+                <default value="0.0"/>
+                <test value="1.0">
+                    systems/orbitron/pad-apu-online GT 0.5
+                    systems/orbitron/fg-starter-engage GT 0.5
+                </test>
+            </switch>
+            <switch name="systems/orbitron/bleed-air-open">
+                <default value="0.0"/>
+                <test value="1.0">
+                    systems/orbitron/fg-bleed-air-open GT 0.5
+                </test>
+            </switch>
+            <!-- Spool drive: full when reactor armed; partial when starter cranking with bleed -->
+            <fcs_function name="systems/orbitron/spool-drive-factor">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <sum>
+                            <property>systems/reactor/active</property>
+                            <product>
+                                <property>systems/orbitron/starter-engage</property>
+                                <property>systems/orbitron/bleed-air-open</property>
+                                <value> 0.42 </value>
+                            </product>
+                        </sum>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron/compressor-effective">
+                <function>
+                    <product>
+                        <property>systems/orbitron/fg-compressor</property>
+                        <property>systems/orbitron/bleed-air-open</property>
+                        <property>systems/orbitron/spool-drive-factor</property>
+                    </product>
+                </function>
+            </fcs_function>
+        </channel>
+    </system>
+
+    <!-- 0D arcjet thrust + thrust-sled load cells (see assembly_specs/README.md, orbitron_physics_surrogate.yaml thrust_sled_load_cells) -->
+    <system name="arcjet_airbreather">
+        <channel name="arcjet_outputs">
+            <!-- Multivariate control surface: y = c0 + ct*T + cc*C + ctc*T*C -->
+            <fcs_function name="systems/arcjet/thrust-lbf">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <property>systems/orbitron/surrogate/thrust-c0</property>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/surrogate/thrust-ct</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/thrust-cc</property>
+                            </product>
+                            <product>
+                                <property>systems/orbitron/fg-throttle</property>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/thrust-ctc</property>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <fcs_function name="systems/arcjet/mass-flow-kgps">
+                <function>
+                    <sum>
+                        <product>
+                            <property>systems/reactor/active</property>
+                            <sum>
+                                <property>systems/orbitron/surrogate/mdot-c0</property>
+                                <product>
+                                    <property>systems/orbitron/fg-throttle</property>
+                                    <property>systems/orbitron/surrogate/mdot-ct</property>
+                                </product>
+                                <product>
+                                    <property>systems/orbitron/compressor-effective</property>
+                                    <property>systems/orbitron/surrogate/mdot-cc</property>
+                                </product>
+                                <product>
+                                    <property>systems/orbitron/fg-throttle</property>
+                                    <property>systems/orbitron/compressor-effective</property>
+                                    <property>systems/orbitron/surrogate/mdot-ctc</property>
+                                </product>
+                            </sum>
+                        </product>
+                        <!-- Pre-ignite spin-up airflow (bleed + starter, no fusion thrust yet) -->
+                        <product>
+                            <property>systems/orbitron/starter-engage</property>
+                            <property>systems/orbitron/bleed-air-open</property>
+                            <max>
+                                <value> 0.0 </value>
+                                <difference>
+                                    <value> 1.0 </value>
+                                    <property>systems/reactor/active</property>
+                                </difference>
+                            </max>
+                            <product>
+                                <property>systems/orbitron/compressor-effective</property>
+                                <property>systems/orbitron/surrogate/mdot-cc</property>
+                                <value> 0.28 </value>
+                            </product>
+                        </product>
+                    </sum>
+                </function>
+            </fcs_function>
+
+            <!-- Jet 0D: F [N], v_e ≈ F/ṁ [m/s], ½ṁv_e² [MW]; coherent with η·P_gross when scales match physics YAML -->
+            <fcs_function name="systems/arcjet/thrust-newtons">
+                <function>
+                    <product>
+                        <property>systems/arcjet/thrust-lbf</property>
+                        <value> 4.4482216152605 </value>
+                    </product>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/arcjet/thrust-kn">
+                <function>
+                    <product>
+                        <property>systems/arcjet/thrust-newtons</property>
+                        <value> 0.001 </value>
+                    </product>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/arcjet/equiv-exhaust-velocity-mps">
+                <function>
+                    <quotient>
+                        <property>systems/arcjet/thrust-newtons</property>
+                        <max>
+                            <property>systems/arcjet/mass-flow-kgps</property>
+                            <value> 1.0e-9 </value>
+                        </max>
+                    </quotient>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/arcjet/jet-kinetic-power-mw">
+                <function>
+                    <product>
+                        <value> 0.5 </value>
+                        <property>systems/arcjet/mass-flow-kgps</property>
+                        <property>systems/arcjet/equiv-exhaust-velocity-mps</property>
+                        <property>systems/arcjet/equiv-exhaust-velocity-mps</property>
+                        <value> 1.0e-6 </value>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <!-- Total sled compression (thrust reaction + engine tare); coeffs from physics YAML → set.xml -->
+            <fcs_function name="systems/arcjet/sled-load-total-lbf">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <property>systems/arcjet/thrust-lbf</property>
+                            <property>systems/orbitron/thrust-sled/tare-lbf</property>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <fcs_function name="systems/arcjet/load-cell-avg-lbf">
+                <function>
+                    <property>systems/arcjet/sled-load-total-lbf</property>
+                </function>
+            </fcs_function>
+
+            <!-- Corner shares: 0.25 ± kcx*compressor ± kcy*throttle (signs per orbitron_physics_surrogate.yaml corners) -->
+            <fcs_function name="systems/arcjet/load-cell-0-lbf">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <quotient>
+                                <property>systems/orbitron/thrust-sled/tare-lbf</property>
+                                <value> 4.0 </value>
+                            </quotient>
+                            <product>
+                                <property>systems/arcjet/thrust-lbf</property>
+                                <difference>
+                                    <value> 0.25 </value>
+                                    <sum>
+                                        <product>
+                                            <property>systems/orbitron/thrust-sled/compressor-moment-gain</property>
+                                            <property>systems/orbitron/fg-compressor</property>
+                                        </product>
+                                        <product>
+                                            <property>systems/orbitron/thrust-sled/throttle-moment-gain</property>
+                                            <property>systems/orbitron/fg-throttle</property>
+                                        </product>
+                                    </sum>
+                                </difference>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <fcs_function name="systems/arcjet/load-cell-1-lbf">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <quotient>
+                                <property>systems/orbitron/thrust-sled/tare-lbf</property>
+                                <value> 4.0 </value>
+                            </quotient>
+                            <product>
+                                <property>systems/arcjet/thrust-lbf</property>
+                                <sum>
+                                    <value> 0.25 </value>
+                                    <product>
+                                        <property>systems/orbitron/thrust-sled/compressor-moment-gain</property>
+                                        <property>systems/orbitron/fg-compressor</property>
+                                    </product>
+                                    <product>
+                                        <property>systems/orbitron/thrust-sled/throttle-moment-gain</property>
+                                        <property>systems/orbitron/fg-throttle</property>
+                                        <value> -1.0 </value>
+                                    </product>
+                                </sum>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <fcs_function name="systems/arcjet/load-cell-2-lbf">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <quotient>
+                                <property>systems/orbitron/thrust-sled/tare-lbf</property>
+                                <value> 4.0 </value>
+                            </quotient>
+                            <product>
+                                <property>systems/arcjet/thrust-lbf</property>
+                                <sum>
+                                    <value> 0.25 </value>
+                                    <product>
+                                        <property>systems/orbitron/thrust-sled/compressor-moment-gain</property>
+                                        <property>systems/orbitron/fg-compressor</property>
+                                        <value> -1.0 </value>
+                                    </product>
+                                    <product>
+                                        <property>systems/orbitron/thrust-sled/throttle-moment-gain</property>
+                                        <property>systems/orbitron/fg-throttle</property>
+                                    </product>
+                                </sum>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+
+            <fcs_function name="systems/arcjet/load-cell-3-lbf">
+                <function>
+                    <product>
+                        <property>systems/reactor/active</property>
+                        <sum>
+                            <quotient>
+                                <property>systems/orbitron/thrust-sled/tare-lbf</property>
+                                <value> 4.0 </value>
+                            </quotient>
+                            <product>
+                                <property>systems/arcjet/thrust-lbf</property>
+                                <sum>
+                                    <value> 0.25 </value>
+                                    <product>
+                                        <property>systems/orbitron/thrust-sled/compressor-moment-gain</property>
+                                        <property>systems/orbitron/fg-compressor</property>
+                                    </product>
+                                    <product>
+                                        <property>systems/orbitron/thrust-sled/throttle-moment-gain</property>
+                                        <property>systems/orbitron/fg-throttle</property>
+                                        <value> -1.0 </value>
+                                    </product>
+                                </sum>
+                            </product>
+                        </sum>
+                    </product>
+                </function>
+            </fcs_function>
+        </channel>
+    </system>
+
+    <!--
+      Soundscape drivers (SpaceShuttle-style): continuous 0..1 channels from physics +
+      controls, consumed by Sounds/sound.xml looped beds. Atmospheric factor follows
+      systems/various/SSME-external-volume pattern in Shuttle computations.xml.
+    -->
+    <system name="orbitron_soundscape">
+        <channel name="sfx">
+
+            <fcs_function name="systems/orbitron_sfx/atmo_transmission">
+                <function>
+                    <quotient>
+                        <property>/environment/pressure-inhg</property>
+                        <property>/environment/pressure-sea-level-inhg</property>
+                    </quotient>
+                </function>
+            </fcs_function>
+
+            <!-- Core plasma / fusion channel: NBI, gross power, compressor bleed sketch -->
+            <fcs_function name="systems/orbitron_sfx/core_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <product>
+                                <property>systems/reactor/active</property>
+                                <sum>
+                                    <value> 0.05 </value>
+                                    <product>
+                                        <property>systems/orbitron/fg-throttle</property>
+                                        <value> 0.48 </value>
+                                    </product>
+                                    <product>
+                                        <property>systems/reactor/gross-power-mw</property>
+                                        <value> 0.20 </value>
+                                    </product>
+                                    <product>
+                                        <property>systems/orbitron/fg-compressor</property>
+                                        <value> 0.14 </value>
+                                    </product>
+                                </sum>
+                            </product>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- Bellmouth / electric compressor ingestion + duct mass flow -->
+            <!-- Bleed + compressor spin-up audible before full ignite; louder when reactor active -->
+            <fcs_function name="systems/orbitron_sfx/inlet_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <product>
+                                <property>systems/orbitron/bleed-air-open</property>
+                                <property>systems/orbitron_sfx/atmo_transmission</property>
+                                <max>
+                                    <property>systems/orbitron/fg-compressor</property>
+                                    <product>
+                                        <property>systems/orbitron/starter-engage</property>
+                                        <property>systems/orbitron/pad-apu-online</property>
+                                        <value> 0.22 </value>
+                                    </product>
+                                </max>
+                                <sum>
+                                    <value> 0.14 </value>
+                                    <product>
+                                        <property>systems/orbitron/compressor-effective</property>
+                                        <value> 0.42 </value>
+                                    </product>
+                                    <product>
+                                        <property>systems/reactor/active</property>
+                                        <sum>
+                                            <value> 0.14 </value>
+                                            <product>
+                                                <property>systems/arcjet/mass-flow-kgps</property>
+                                                <value> 0.14 </value>
+                                            </product>
+                                            <product>
+                                                <property>systems/arcjet/thrust-lbf</property>
+                                                <value> 0.00006 </value>
+                                            </product>
+                                        </sum>
+                                    </product>
+                                </sum>
+                            </product>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- Particle VFX scalars (thrust, mdot, nozzle_volume → rate / size / speed) -->
+            <fcs_function name="systems/orbitron_vfx/nozzle_core_particle_rate">
+                <function>
+                    <min>
+                        <value> 220.0 </value>
+                        <product>
+                            <property>systems/orbitron_sfx/nozzle_volume</property>
+                            <sum>
+                                <value> 18.0 </value>
+                                <product>
+                                    <property>systems/arcjet/thrust-lbf</property>
+                                    <value> 0.11 </value>
+                                </product>
+                                <product>
+                                    <property>systems/arcjet/mass-flow-kgps</property>
+                                    <value> 42.0 </value>
+                                </product>
+                            </sum>
+                        </product>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron_vfx/nozzle_plume_particle_rate">
+                <function>
+                    <min>
+                        <value> 160.0 </value>
+                        <product>
+                            <property>systems/orbitron_sfx/nozzle_volume</property>
+                            <sum>
+                                <value> 12.0 </value>
+                                <product>
+                                    <property>systems/arcjet/mass-flow-kgps</property>
+                                    <value> 55.0 </value>
+                                </product>
+                            </sum>
+                        </product>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron_vfx/nozzle_core_size-m">
+                <function>
+                    <min>
+                        <value> 1.6 </value>
+                        <sum>
+                            <value> 0.12 </value>
+                            <product>
+                                <property>systems/orbitron_sfx/nozzle_volume</property>
+                                <value> 0.55 </value>
+                            </product>
+                            <product>
+                                <property>systems/arcjet/thrust-lbf</property>
+                                <value> 0.00028 </value>
+                            </product>
+                        </sum>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron_vfx/nozzle_plume_size-m">
+                <function>
+                    <min>
+                        <value> 3.8 </value>
+                        <sum>
+                            <value> 0.18 </value>
+                            <product>
+                                <property>systems/orbitron_sfx/nozzle_volume</property>
+                                <value> 0.95 </value>
+                            </product>
+                            <product>
+                                <property>systems/arcjet/mass-flow-kgps</property>
+                                <value> 0.35 </value>
+                            </product>
+                            <product>
+                                <property>systems/arcjet/thrust-lbf</property>
+                                <value> 0.00018 </value>
+                            </product>
+                        </sum>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron_vfx/nozzle_exhaust_speed-mps">
+                <function>
+                    <min>
+                        <value> 95.0 </value>
+                        <sum>
+                            <value> 8.0 </value>
+                            <product>
+                                <property>systems/arcjet/equiv-exhaust-velocity-mps</property>
+                                <value> 0.22 </value>
+                            </product>
+                            <product>
+                                <property>systems/arcjet/mass-flow-kgps</property>
+                                <value> 12.0 </value>
+                            </product>
+                        </sum>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron_vfx/nozzle_core_trail_life-sec">
+                <function>
+                    <min>
+                        <value> 1.2 </value>
+                        <sum>
+                            <value> 0.18 </value>
+                            <product>
+                                <property>systems/orbitron_sfx/nozzle_volume</property>
+                                <value> 0.55 </value>
+                            </product>
+                            <product>
+                                <property>systems/arcjet/thrust-lbf</property>
+                                <value> 0.00035 </value>
+                            </product>
+                        </sum>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron_vfx/nozzle_plume_trail_life-sec">
+                <function>
+                    <min>
+                        <value> 2.8 </value>
+                        <sum>
+                            <value> 0.35 </value>
+                            <product>
+                                <property>systems/orbitron_sfx/nozzle_volume</property>
+                                <value> 1.05 </value>
+                            </product>
+                            <product>
+                                <property>systems/arcjet/mass-flow-kgps</property>
+                                <value> 0.22 </value>
+                            </product>
+                        </sum>
+                    </min>
+                </function>
+            </fcs_function>
+            <fcs_function name="systems/orbitron_vfx/nozzle_throat_glow_rate">
+                <function>
+                    <min>
+                        <value> 48.0 </value>
+                        <product>
+                            <property>systems/orbitron_sfx/nozzle_volume</property>
+                            <sum>
+                                <value> 14.0 </value>
+                                <product>
+                                    <property>systems/arcjet/thrust-lbf</property>
+                                    <value> 0.018 </value>
+                                </product>
+                            </sum>
+                        </product>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- Nozzle / cell exhaust (thrust line + air mass flow); thins with altitude -->
+            <fcs_function name="systems/orbitron_sfx/nozzle_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <product>
+                                <property>systems/reactor/active</property>
+                                <property>systems/orbitron_sfx/atmo_transmission</property>
+                                <sum>
+                                    <value> 0.04 </value>
+                                    <product>
+                                        <property>systems/arcjet/thrust-lbf</property>
+                                        <value> 0.00032 </value>
+                                    </product>
+                                    <product>
+                                        <property>systems/arcjet/mass-flow-kgps</property>
+                                        <value> 0.10 </value>
+                                    </product>
+                                    <product>
+                                        <property>systems/orbitron/fg-compressor</property>
+                                        <value> 0.12 </value>
+                                    </product>
+                                </sum>
+                            </product>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- HV bus crackle at the magnet / feedthrough (cathode kV class, not DEC). -->
+            <fcs_function name="systems/orbitron_sfx/hv_arc_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <product>
+                                <property>systems/reactor/active</property>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <property>systems/reactor/beam-current-ma</property>
+                                        <value> 0.022 </value>
+                                    </product>
+                                </min>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <quotient>
+                                        <property>systems/reactor/cathode-voltage-kv</property>
+                                        <value> 600.0 </value>
+                                    </quotient>
+                                </min>
+                            </product>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- Viewport / beam sputter: WarpX-surrogate beam_screen_kw + derived beam current -->
+            <fcs_function name="systems/orbitron_sfx/screen_beam_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <product>
+                                <property>systems/reactor/active</property>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <property>systems/reactor/beam-screen-deposition-kw</property>
+                                        <value> 0.0028 </value>
+                                    </product>
+                                </min>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <property>systems/reactor/beam-current-ma</property>
+                                        <value> 0.018 </value>
+                                    </product>
+                                </min>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <quotient>
+                                        <property>systems/reactor/cathode-voltage-kv</property>
+                                        <value> 600.0 </value>
+                                    </quotient>
+                                </min>
+                            </product>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- Pad starter whine + post-light-off motor/gen (compressor-effective) -->
+            <fcs_function name="systems/orbitron_sfx/motor_generator_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <sum>
+                                <product>
+                                    <property>systems/orbitron/bleed-air-open</property>
+                                    <property>systems/orbitron/pad-apu-online</property>
+                                    <property>systems/orbitron/starter-engage</property>
+                                    <sum>
+                                        <value> 0.18 </value>
+                                        <product>
+                                            <property>systems/orbitron/compressor-effective</property>
+                                            <value> 0.62 </value>
+                                        </product>
+                                    </sum>
+                                </product>
+                                <product>
+                                    <property>systems/reactor/active</property>
+                                    <sum>
+                                        <value> 0.10 </value>
+                                        <product>
+                                            <property>systems/orbitron/compressor-effective</property>
+                                            <value> 0.52 </value>
+                                        </product>
+                                        <product>
+                                            <property>systems/orbitron/compressor-effective</property>
+                                            <value> 0.28 </value>
+                                            <min>
+                                                <value> 1.0 </value>
+                                                <product>
+                                                    <property>systems/arcjet/thrust-lbf</property>
+                                                    <value> 0.00014 </value>
+                                                </product>
+                                            </min>
+                                        </product>
+                                    </sum>
+                                </product>
+                            </sum>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- Heated air in duct: Bremss + mass flow × compressor -->
+            <fcs_function name="systems/orbitron_sfx/duct_heat_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <product>
+                                <property>systems/reactor/active</property>
+                                <property>systems/orbitron/fg-compressor</property>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <property>systems/reactor/heat-kw</property>
+                                        <value> 0.0018 </value>
+                                    </product>
+                                </min>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <property>systems/arcjet/mass-flow-kgps</property>
+                                        <value> 0.11 </value>
+                                    </product>
+                                </min>
+                            </product>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+            <!-- Unusual run: thermal headroom without matching thrust (algebraic, no predicates) -->
+            <fcs_function name="systems/orbitron_sfx/stressor_volume">
+                <function>
+                    <min>
+                        <value> 1.0 </value>
+                        <max>
+                            <value> 0.0 </value>
+                            <product>
+                                <property>systems/reactor/active</property>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <max>
+                                            <value> 0.0 </value>
+                                            <sum>
+                                                <property>systems/reactor/heat-kw</property>
+                                                <value> -380.0 </value>
+                                            </sum>
+                                        </max>
+                                        <value> 0.0045 </value>
+                                    </product>
+                                </min>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <max>
+                                            <value> 0.0 </value>
+                                            <sum>
+                                                <value> 1100.0 </value>
+                                                <product>
+                                                    <value> -1.0 </value>
+                                                    <property>systems/arcjet/thrust-lbf</property>
+                                                </product>
+                                            </sum>
+                                        </max>
+                                        <value> 0.0020 </value>
+                                    </product>
+                                </min>
+                                <min>
+                                    <value> 1.0 </value>
+                                    <product>
+                                        <property>systems/reactor/heat-kw</property>
+                                        <value> 0.0010 </value>
+                                    </product>
+                                </min>
+                            </product>
+                        </max>
+                    </min>
+                </function>
+            </fcs_function>
+
+        </channel>
+    </system>
+</fdm_config>

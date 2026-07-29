@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<!-- this puts the Shuttle onto a gliding path -->
+
+<PropertyList include="CatskillsFusionSSTO-common.xml">
+<sim>
+  <description>CATSKILLS-SSTO-TA-GRENADIER on final</description>
+  <long-description>
+     
+     CATSKILLS-SSTO-TA-GRENADIER is a single-stage-to-orbit test article (Grenadier): Shuttle-derived airframe with CHARM plant and 3-cycle electric engine. This phase places the vehicle on final approach (~12,000 ft) with about a minute to touchdown; approach trainer evaluates the landing.
+  
+  </long-description>
+  <variant-of>CatskillsFusionSSTO</variant-of>
+  <presets>
+	<altitude-ft>11000.0</altitude-ft>
+	<pitch-deg>-5.0</pitch-deg>	
+	<stage type="int">4</stage>
+  </presets>
+  <startup>
+    <splash-texture>Aircraft/CatskillsFusionSSTO/CatskillsFusionSSTO-grenadier-splash.png</splash-texture>
+  </startup>
+   <previews>
+      <preview>
+        <type>exterior</type>
+        <splash type="bool">true</splash>
+        <path>Pics/grenadier-splash-01.png</path>
+      </preview>
+      <preview>
+        <type>exterior</type>
+        <splash type="bool">true</splash>
+        <path>Pics/grenadier-splash-02.png</path>
+      </preview>
+      <preview>
+        <type>exterior</type>
+        <splash type="bool">true</splash>
+        <path>Pics/grenadier-splash-03.png</path>
+      </preview>
+  </previews>
+  <config>
+    <shuttle>
+      <prelaunch-flag type="int">0</prelaunch-flag>
+    </shuttle>
+  </config>
+</sim>
+
+<fdm>
+   <jsbsim>
+	<systems>
+	   <dps>
+		<ops type="int">3</ops>
+		<major-mode type="int">305</major-mode>
+		<ops-bfs type="int">3</ops-bfs>
+		<major-mode-bfs type="int">305</major-mode-bfs>
+	   </dps>
+	</systems>
+   </jsbsim>
+</fdm>
+
+</PropertyList>

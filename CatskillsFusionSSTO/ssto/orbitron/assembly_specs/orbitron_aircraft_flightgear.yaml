@@ -1,0 +1,218 @@
+# FlightGear aircraft shell + model placement (*-set.xml, Models/Orbitron.xml).
+# orbitron-jsbsim.xml is emitted from tools/templates/orbitron-jsbsim.xml (structure) until
+# a full JSBSim AST exists in YAML.
+#
+# Consumed by: tools/compile_orbitron_aircraft_runtime.py
+# Bilinear surrogate corner scales (thrust / mdot / power / heat ctc) default from
+# orbitron_physics_surrogate.yaml surrogate_engineering when fg_set.surrogate_from_physics: true.
+# Thrust-sled load-cell split coeffs: orbitron_physics_surrogate.yaml thrust_sled_load_cells →
+# /sim/model/orbitron/thrust-sled/* (read by orbitron-jsbsim.xml; displayed on operator Screen).
+# Full telemetry doc: assembly_specs/README.md (thrust + four corner load cells).
+# Pad startup sequence + panel picks: orbitron_operator_console_spec.yaml
+
+schema_version: 1
+spec_kind: orbitron_aircraft_flightgear
+title: Orbitron-TestStand FlightGear + model placement
+
+# FlightGear aircraft directory name under $FG_AIRCRAFT (and basename of *-set.xml).
+aircraft:
+  package_dir: Orbitron-TestStand
+
+fg_telemetry:
+  doc: |
+    Thrust and thrust-sled load cells are **not** computed in Nasal or in this file.
+    JSBSim writes /fdm/jsbsim/systems/arcjet/* each frame; reactor_ui.nas displays them.
+  jsbsim_prefix: /fdm/jsbsim/systems/arcjet/
+  thrust_sled_coeffs_prefix: /sim/model/orbitron/thrust-sled/
+  physics_yaml_block: thrust_sled_load_cells
+  operator_controls:
+    pad_apu: /sim/model/orbitron/pad-apu-online
+    starter: /sim/model/orbitron/starter-engage
+    bleed_air: /sim/model/orbitron/bleed-air-open
+    startup: /sim/model/reactor/startup-trigger
+    throttle: /controls/reactor/throttle
+    compressor: /controls/orbitron/compressor
+
+fg_set:
+  surrogate_from_physics: true
+  # /sim/model/orbitron/surrogate/* bilinear c0, ct, cc, ctc (beam row is FG-specific stubs)
+  surrogate_beam_screen_kw:
+    c0: 0
+    ct: 55
+    cc: 48
+    ctc: 320
+  description: Orbitron SSTO test stand (p-¹¹B core + fusion-heated Brayton offload)
+  author: Catskills Aerospace
+  status: alpha
+  minimum_fg_version: 2020.3.0
+  flight_model: jsb
+  aero: orbitron-jsbsim
+  model_path: Models/Orbitron.xml
+  reactor_flags:
+    startup_trigger: false
+    debug_ui_window: false
+    startup_commissioning_audio: false
+    startup_starter_crank: false
+  orbitron_ops_flags:
+    pad_apu_online: false
+    starter_engage: false
+    bleed_air_open: false
+    spool_sfx_armed: false
+  mp_carriers:
+    enabled: false
+    auto_attach: false
+    latch_always: false
+  sound:
+    path: Sounds/sound.xml
+    chatter_volume: 0.0
+    atc_volume: 0.0
+    avionics_volume: 0.0
+  presets:
+    trim: false
+    latitude_deg: 63.98187
+    longitude_deg: -22.5884
+    altitude_ft: 158
+    heading_deg: 0
+    onground: true
+  startup:
+    view_number: 3
+  view_operator:
+    name: Operator View
+    # Pad axis Z: tanks −1.2, BRB +4.97. Eye +60 ft from tank plane toward apron (was +40, still low on tanks).
+    type: lookat
+    use_ac_view_offsets: true
+    eye_offset_m: [-3.64, 1.68, 16.48]
+    aim_offset_m: [-1.2, 1.38, 4.97]
+    view_index: 2
+    limits_enabled: false
+    ground_level_nearplane_m: 0.05
+    field_of_view_deg: 52.0
+  view_pad_overview:
+    name: Pad Overview
+    type: lookat
+    internal: false
+    # Fixed lookat (no platform/chase — chase breaks on ground test rigs).
+    x_offset_m: -90.0
+    y_offset_m: 70.0
+    z_offset_m: 40.0
+    target_x_offset_m: 0.0
+    target_y_offset_m: 0.0
+    target_z_offset_m: 12.0
+    field_of_view_deg: 55.0
+  # World-fixed: BIKF tower eye looking at the aircraft (not lookfrom — that went black underground).
+  view_bikf_apron:
+    name: Apron Overview
+    type: lookat
+    view_index: 3
+    internal: false
+    world_eye: true
+    at_model: true
+    latitude_deg: 63.98066
+    longitude_deg: -22.59533
+    altitude_ft: 115.0
+    heading_deg: 55.0
+    pitch_deg: -8.0
+    field_of_view_deg: 65.0
+  controls_defaults:
+    reactor_throttle: 0.0
+    orbitron_compressor: 0.0
+    orbitron_cathode_pulse: 0.5
+  keyboard:
+    - { key_n: 49, name: "1", desc: Pad APU cart online, toggle_property: /sim/model/orbitron/pad-apu-online }
+    - { key_n: 50, name: "2", desc: Starter engage (requires APU), toggle_property: /sim/model/orbitron/starter-engage }
+    - { key_n: 51, name: "3", desc: Bleed air / intake path open, toggle_property: /sim/model/orbitron/bleed-air-open }
+    - { key_n: 52, name: "4", desc: IGNITE — arm reactor (requires bleed), toggle_property: /sim/model/reactor/startup-trigger }
+    - { key_n: 32, name: SPACE, desc: IGNITE — arm reactor (requires bleed), toggle_property: /sim/model/reactor/startup-trigger }
+    - { key_n: 53, name: "5", desc: BEAM — increase ion beam command, adjust_property: /controls/reactor/throttle, step: 0.1, min: 0.0, max: 1.0 }
+    - { key_n: 54, name: "6", desc: COMP — increase compressor command, adjust_property: /controls/orbitron/compressor, step: 0.1, min: 0.0, max: 1.0 }
+    - { key_n: 119, name: w, desc: Increase ion beam command, adjust_property: /controls/reactor/throttle, step: 0.1, min: 0.0, max: 1.0 }
+    - { key_n: 115, name: s, desc: Decrease ion beam command, adjust_property: /controls/reactor/throttle, step: -0.1, min: 0.0, max: 1.0 }
+    - { key_n: 105, name: i, desc: Increase cathode pulse (shear / PSP2-Jin), adjust_property: /controls/orbitron/cathode-pulse, step: 0.1, min: 0.0, max: 1.0 }
+    - { key_n: 107, name: k, desc: Decrease cathode pulse, adjust_property: /controls/orbitron/cathode-pulse, step: -0.1, min: 0.0, max: 1.0 }
+    - { key_n: 109, name: m, desc: Toggle Reactor Telemetry Debug Window, toggle_property: /sim/model/reactor/debug-ui-window }
+    - { key_n: 118, name: v, desc: Operator console (view 2), nasal_script: OrbitronOps.apply_operator_view }
+    - { key_n: 98, name: b, desc: Apron overview (view 3), assign_property: /sim/current-view/view-number, assign_value: 3 }
+    - { key_n: 112, name: p, desc: Pad overview (view 1), assign_property: /sim/current-view/view-number, assign_value: 1 }
+    - { key_n: 117, name: u, desc: Increase compressor command, adjust_property: /controls/orbitron/compressor, step: 0.1, min: 0.0, max: 1.0 }
+    - { key_n: 106, name: j, desc: Decrease compressor command, adjust_property: /controls/orbitron/compressor, step: -0.1, min: 0.0, max: 1.0 }
+  nasal:
+    - { id: surrogate_load, file: Nasal/surrogate_load.nas }
+    - { id: orbitron_ops, file: Nasal/orbitron_ops.nas }
+    - { id: reactor_ui, file: Nasal/reactor_ui.nas }
+
+fg_model_orbitron_xml:
+  ac_path: orbitron.ac
+  comment: Mesh orbitron.ac from orbitron_lab.gltf; tune offsets if the rig sits wrong on the runway.
+  hide_cadquery_panel_labels: false
+  # Panel meshes merged into orbitron.ac (build_orbitron_shuttle_panel_ac.py); no nested model.
+  offsets:
+    pitch_deg: 0
+    roll_deg: 0
+    heading_deg: 0
+    y_m: 0.0
+    z_m: 0.0
+  # Panel toggles: literal R1 MN-bus levers from Models/cockpit.ac (orbitron_panel_shuttle.ac).
+  knob_animations:
+    - object_name: Panel_Switch_APU
+      property: /sim/model/orbitron/pad-apu-online
+      factor: -35
+      offset_deg: 0
+      axis: [-0.204, 0.608, 0.767]
+      center_m: [-1.620, 1.316, 4.909]
+      tooltip: "Pad APU cart online"
+    - object_name: Panel_Switch_Starter
+      property: /sim/model/orbitron/starter-engage
+      factor: -35
+      offset_deg: 0
+      axis: [-0.204, 0.608, 0.767]
+      center_m: [-1.480, 1.316, 4.909]
+      tooltip: "Starter engage (requires APU)"
+    - object_name: Panel_Switch_Bleed
+      property: /sim/model/orbitron/bleed-air-open
+      factor: -35
+      offset_deg: 0
+      axis: [-0.204, 0.608, 0.767]
+      center_m: [-1.340, 1.316, 4.909]
+      tooltip: "Bleed air / intake path open"
+    # Shuttle display dimmer knobs (L1-disp-dim, DIM/BRT stripe); pivot/axis from orbitron_panel_anims.json
+    - object_name: Panel_Lever_Beam
+      property: /controls/reactor/throttle
+      sync_shuttle_factor: true
+      offset_deg: 0
+      drag_factor: 0.04
+      repeatable: true
+      tooltip: "BEAM — ion beam rate (W/S also)"
+    - object_name: Panel_Lever_Compressor
+      property: /controls/orbitron/compressor
+      sync_shuttle_factor: true
+      offset_deg: 0
+      drag_factor: 0.04
+      repeatable: true
+      tooltip: "COMP — compressor rate (U/J also)"
+  slider_animations:
+    - object_name: Big_Red_Button
+      extra_object_names: [Big_Red_Button_Light]
+      property: /sim/model/reactor/startup-trigger
+      axis: [-0.969, -0.125, 0.216]
+      factor: 0.002
+      tooltip: "IGNITE — arm reactor (requires bleed air)"
+  pick_animations:
+    - object_name: Big_Red_Button
+      extra_object_names: [Big_Red_Button_Light]
+      button: 0
+      repeatable: false
+      toggle_property: /sim/model/reactor/startup-trigger
+      tooltip: "IGNITE — arm reactor (requires bleed air)"
+  effect_models:
+    - name: orbitron-nozzle-exhaust
+      path: Models/Effects/orbitron_nozzle_exhaust.xml
+      offsets:
+        # Nozzle_Exit_Hardware centroid in orbitron.ac (mesh coords).
+        x_m: 1.765
+        y_m: 0.319
+        z_m: 0.0
+        pitch_deg: 0.0
+        heading_deg: 0.0
+
+jsbsim:
+  template_file: orbitron-jsbsim.xml

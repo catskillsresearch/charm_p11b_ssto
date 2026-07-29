@@ -1,0 +1,4 @@
+# DEPRECATED — use scenario_anchors.yaml and BENCHMARK_METHODOLOGY.md
+# Kept so old imports fail loudly; forward evaluation uses benchmark_scenarios.py only.
+
+scenarios: {}
