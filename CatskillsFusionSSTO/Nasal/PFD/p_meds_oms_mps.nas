@@ -61,8 +61,8 @@ var PFD_addpage_p_meds_oms_mps = func(device)
     p_meds_oms_mps.Pc_oright.enableUpdate();
     p_meds_oms_mps.Pc_oleft.enableUpdate();
 
-    p_meds_oms_mps.menu_item = device.svg.getElementById("MI_1"); 
-    p_meds_oms_mps.menu_item_frame = device.svg.getElementById("MI_1_frame"); 
+    p_meds_oms_mps.menu_item = device.svg.getElementById("MI_2"); 
+    p_meds_oms_mps.menu_item_frame = device.svg.getElementById("MI_2_frame"); 
     
 
 
@@ -157,11 +157,11 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	if (peak > 1) thrust_frac = thrust / peak;
 	if (thrust_frac > 1.0) thrust_frac = 1.0;
 
-	# Left OMS-like column: stage cmd / allowed / recommended
-	p_meds_oms_mps.He_Tk_oleft.updateText(sprintf("%04d", sig * 1000));
-	p_meds_oms_mps.He_Tk_oright.updateText(sprintf("%04d", allw * 1000));
-	p_meds_oms_mps.N2_Tk_oleft.updateText(sprintf("%04d", rec * 1000));
-	p_meds_oms_mps.N2_Tk_oright.updateText(sprintf("%04d", sealed * 1000));
+	# STAGE: σ CMD / MAX, REC / SEAL, THR% / PLT
+	p_meds_oms_mps.He_Tk_oleft.updateText(sprintf("%04d", sig));
+	p_meds_oms_mps.He_Tk_oright.updateText(sprintf("%04d", allw));
+	p_meds_oms_mps.N2_Tk_oleft.updateText(sprintf("%04d", rec));
+	p_meds_oms_mps.N2_Tk_oright.updateText(sprintf("%04d", sealed));
 	p_meds_oms_mps.tape_HeTkP_oleft.setScale(1.0, sig / 3.0);
 	p_meds_oms_mps.tape_HeTkP_oleft.setTranslation(0.0, (1.0 - sig / 3.0) * (49.5 + 175.6));
 	p_meds_oms_mps.tape_HeTkP_oright.setScale(1.0, allw / 3.0);
@@ -175,9 +175,8 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_N2TkP_oleft.setColorFill(0.0, 1.0, 0.0);
 	if (sealed) {p_meds_oms_mps.tape_N2TkP_oright.setColorFill(0.0, 1.0, 0.0);} else {p_meds_oms_mps.tape_N2TkP_oright.setColorFill(1.0, 0.0, 0.0);}
 
-	# Stage "Pc" OMS side = throttle / plant-ok
 	p_meds_oms_mps.Pc_oleft.updateText(sprintf("%03d", thr * 100.0));
-	p_meds_oms_mps.Pc_oright.updateText(sprintf("%03d", plant * 100.0));
+	p_meds_oms_mps.Pc_oright.updateText(sprintf("%03d", plant));
 	p_meds_oms_mps.tape_Pc_oleft.setScale(1.0, thr);
 	p_meds_oms_mps.tape_Pc_oleft.setTranslation(0.0, (1.0 - thr) * (80.4 + 366));
 	p_meds_oms_mps.tape_Pc_oright.setScale(1.0, plant);
@@ -185,11 +184,11 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_Pc_oleft.setColorFill(1.0, 1.0, 1.0);
 	if (plant) {p_meds_oms_mps.tape_Pc_oright.setColorFill(1.0, 1.0, 1.0);} else {p_meds_oms_mps.tape_Pc_oright.setColorFill(1.0, 0.0, 0.0);}
 
-	# MPS-like He tanks: water frac, bus MW, thrust frac, bus-frac
-	p_meds_oms_mps.He_Tk_left.updateText(sprintf("%04d", water_frac * 1000));
+	# ENGINE: H2O% / bus MW / thrust kN / bus%, then GO / CPL / draw MW / MODE
+	p_meds_oms_mps.He_Tk_left.updateText(sprintf("%04d", water_frac * 100));
 	p_meds_oms_mps.He_Tk_center.updateText(sprintf("%04d", bus));
 	p_meds_oms_mps.He_Tk_right.updateText(sprintf("%04d", thrust));
-	p_meds_oms_mps.He_Tk_pneu.updateText(sprintf("%04d", busf * 1000));
+	p_meds_oms_mps.He_Tk_pneu.updateText(sprintf("%04d", busf * 100));
 	p_meds_oms_mps.tape_TkP_left.setScale(1.0, water_frac);
 	p_meds_oms_mps.tape_TkP_left.setTranslation(0.0, (1.0 - water_frac) * (49.4 + 175));
 	p_meds_oms_mps.tape_TkP_center.setScale(1.0, bus / 1000.0);
@@ -203,12 +202,11 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_TkP_right.setColorFill(0.0, 1.0, 0.0);
 	p_meds_oms_mps.tape_TkP_pneu.setColorFill(0.0, 1.0, 0.0);
 
-	# Reg tapes: stage-go / coupled / power-draw / mode-index proxy
 	var midx = getprop(C ~ "mode-index"); if (midx == nil) midx = 0;
-	p_meds_oms_mps.He_reg_left.updateText(sprintf("%04d", stage_go * 1000));
-	p_meds_oms_mps.He_reg_center.updateText(sprintf("%04d", coupled * 1000));
+	p_meds_oms_mps.He_reg_left.updateText(sprintf("%04d", stage_go));
+	p_meds_oms_mps.He_reg_center.updateText(sprintf("%04d", coupled));
 	p_meds_oms_mps.He_reg_right.updateText(sprintf("%04d", pdraw));
-	p_meds_oms_mps.He_reg_pneu.updateText(sprintf("%04d", midx * 200));
+	p_meds_oms_mps.He_reg_pneu.updateText(sprintf("%04d", midx));
 	p_meds_oms_mps.tape_regP_left.setScale(1.0, stage_go);
 	p_meds_oms_mps.tape_regP_left.setTranslation(0.0, (1.0 - stage_go) * (49.4 + 270.8));
 	p_meds_oms_mps.tape_regP_center.setScale(1.0, coupled);
@@ -217,6 +215,10 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_regP_right.setTranslation(0.0, (1.0 - pdraw / 1000.0) * (49.4 + 270.8));
 	p_meds_oms_mps.tape_regP_pneu.setScale(1.0, midx / 5.0);
 	p_meds_oms_mps.tape_regP_pneu.setTranslation(0.0, (1.0 - midx / 5.0) * (49.4 + 270.8));
+	if (stage_go) {p_meds_oms_mps.tape_regP_left.setColorFill(0.0, 1.0, 0.0);} else {p_meds_oms_mps.tape_regP_left.setColorFill(1.0, 0.0, 0.0);}
+	if (coupled) {p_meds_oms_mps.tape_regP_center.setColorFill(0.0, 1.0, 0.0);} else {p_meds_oms_mps.tape_regP_center.setColorFill(1.0, 0.0, 0.0);}
+	p_meds_oms_mps.tape_regP_right.setColorFill(0.0, 1.0, 0.0);
+	p_meds_oms_mps.tape_regP_pneu.setColorFill(0.0, 1.0, 0.0);
 
 	# Main Pc L/C/R = Stage 1/2/3 active fraction
 	var s1 = 0.0; var s2 = 0.0; var s3 = 0.0;

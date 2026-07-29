@@ -60,8 +60,9 @@ var PFD_addpage_p_meds_apu = func(device)
     p_meds_apu.tape_fuelP3 = device.svg.getElementById("p_meds_apu_tape_fuelP3"); 
 	 
 
-    p_meds_apu.menu_item = device.svg.getElementById("MI_2"); 
-    p_meds_apu.menu_item_frame = device.svg.getElementById("MI_2_frame"); 
+    # CHARM is first in scramble order (softkey 1); STAGE is softkey 2.
+    p_meds_apu.menu_item = device.svg.getElementById("MI_1"); 
+    p_meds_apu.menu_item_frame = device.svg.getElementById("MI_1_frame"); 
 
 
 	p_meds_apu.APU_label = device.svg.getElementById("APU_label"); 
@@ -100,8 +101,6 @@ var PFD_addpage_p_meds_apu = func(device)
 	var cart = getprop(C ~ "ground-cart"); if (cart == nil) cart = 0;
 	var batt = getprop(C ~ "battery-online"); if (batt == nil) batt = 0;
 	var cryo = getprop(C ~ "cryo-enable"); if (cryo == nil) cryo = 0;
-	var mag = getprop(C ~ "magnet-arm"); if (mag == nil) mag = 0;
-	var fuel = getprop(C ~ "fuel-enable"); if (fuel == nil) fuel = 0;
 	var dec = getprop(C ~ "dec-online"); if (dec == nil) dec = 0;
 	var vac = getprop(C ~ "vacuum-ready"); if (vac == nil) vac = 0;
 
@@ -162,21 +161,29 @@ var PFD_addpage_p_meds_apu = func(device)
 	if (gc) {p_meds_apu.tape_oilT2.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT2.setColorFill(1.0, 0.0, 0.0);}
 	if (dec and vac) {p_meds_apu.tape_oilT3.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT3.setColorFill(1.0, 0.0, 0.0);}
 
-	# "hyd qty" → mag / fuel / water inventory
-	p_meds_apu.hyd_qty1.setText(sprintf("%03d", mag * 100));
-	p_meds_apu.hyd_qty2.setText(sprintf("%03d", fuel * 100));
+	# p / B11 / H2O → proton (H2) kg, solid 11B kg, water kg — not the FUEL wall switch.
+	# Nominal full loads from grenadier_ops init: 40 / 120 / 44000 kg.
+	var pk = getprop(C ~ "fuel-proton-kg"); if (pk == nil) pk = 0;
+	var bk = getprop(C ~ "fuel-b11-kg"); if (bk == nil) bk = 0;
+	var p_frac = pk / 40.0; if (p_frac > 1) p_frac = 1; if (p_frac < 0) p_frac = 0;
+	var b_frac = bk / 120.0; if (b_frac > 1) b_frac = 1; if (b_frac < 0) b_frac = 0;
+	p_meds_apu.hyd_qty1.setText(sprintf("%03d", p_frac * 100));
+	p_meds_apu.hyd_qty2.setText(sprintf("%03d", b_frac * 100));
 	p_meds_apu.hyd_qty3.setText(sprintf("%03d", water_frac * 100));
-	set_tape(p_meds_apu.tape_hyd_qty1, mag, 60.7 + 295.8);
-	set_tape(p_meds_apu.tape_hyd_qty2, fuel, 60.7 + 295.8);
+	set_tape(p_meds_apu.tape_hyd_qty1, p_frac, 60.7 + 295.8);
+	set_tape(p_meds_apu.tape_hyd_qty2, b_frac, 60.7 + 295.8);
 	set_tape(p_meds_apu.tape_hyd_qty3, water_frac, 60.7 + 295.8);
+	if (p_frac < 0.1) {p_meds_apu.tape_hyd_qty1.setColorFill(1.0, 0.0, 0.0);} else {p_meds_apu.tape_hyd_qty1.setColorFill(0.0, 1.0, 0.0);}
+	if (b_frac < 0.1) {p_meds_apu.tape_hyd_qty2.setColorFill(1.0, 0.0, 0.0);} else {p_meds_apu.tape_hyd_qty2.setColorFill(0.0, 1.0, 0.0);}
+	p_meds_apu.tape_hyd_qty3.setColorFill(0.0, 1.0, 0.0);
 
-	# "hyd press" → go-magnet / go-fuel / go-bus as 0 or 3000
+	# GO MAG / FUEL / BUS → go-magnet / go-fuel / go-bus as 0000/0001
 	var gm = getprop(C ~ "go-magnet"); if (gm == nil) gm = 0;
 	var gf = getprop(C ~ "go-fuel"); if (gf == nil) gf = 0;
 	var gb = getprop(C ~ "go-bus"); if (gb == nil) gb = 0;
-	p_meds_apu.hyd_p1.setText(sprintf("%04d", gm * 3000));
-	p_meds_apu.hyd_p2.setText(sprintf("%04d", gf * 3000));
-	p_meds_apu.hyd_p3.setText(sprintf("%04d", gb * 3000));
+	p_meds_apu.hyd_p1.setText(sprintf("%04d", gm));
+	p_meds_apu.hyd_p2.setText(sprintf("%04d", gf));
+	p_meds_apu.hyd_p3.setText(sprintf("%04d", gb));
 	set_tape(p_meds_apu.tape_hyd_p1, gm, 60.7 + 295.8);
 	set_tape(p_meds_apu.tape_hyd_p2, gf, 60.7 + 295.8);
 	set_tape(p_meds_apu.tape_hyd_p3, gb, 60.7 + 295.8);

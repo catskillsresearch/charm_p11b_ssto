@@ -2,7 +2,7 @@
 
 <PropertyList>
 
-    <!-- Grenadier: pod shells + RCS + aft mount bases (OMS engine bells only stripped). -->
+    <!-- Grenadier: pod shells + RCS + mount cowling (OMS bell flare trimmed off .001). -->
     <path>Aircraft/CatskillsFusionSSTO/Models/OMSPods_grenadier.ac</path>
 
  <effect>
@@ -11,6 +11,8 @@
 	<object-name>omsRight</object-name>
 	<object-name>omsLeftBase</object-name>
 	<object-name>omsRightBase</object-name>
+	<object-name>omsLeft.001</object-name>
+	<object-name>omsRight.001</object-name>
 	<!-- Full aft RCS (the "4 dots" on each pod outboard face + other jets) -->
 	<object-name>rcsL1A</object-name>
 	<object-name>rcsL1L</object-name>

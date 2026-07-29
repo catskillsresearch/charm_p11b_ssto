@@ -782,8 +782,8 @@ var MDU_Device =
 		#me.PFD.p_main.addMenuItem(5, "VIDEO", "select_video");
 
         me.PFD.p_subsys.addMenuItem(0, "UP", me.PFD.p_main);
-        me.PFD.p_subsys.addMenuItem(1, "STAGE", me.PFD.p_meds_oms_mps);
-        me.PFD.p_subsys.addMenuItem(2, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_subsys.addMenuItem(1, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_subsys.addMenuItem(2, "STAGE", me.PFD.p_meds_oms_mps);
         me.PFD.p_subsys.addMenuItem(3, "SPI", me.PFD.p_meds_spi);
 	me.PFD.p_subsys.addMenuAction(4, " PORT\nSELECT", "select_port");
         me.PFD.p_subsys.addMenuAction(5, " MEDS\nMSG ACK", "meds_fault_ack");
@@ -937,22 +937,22 @@ var MDU_Device =
         me.PFD.p_dps_bfs_override.addMenuAction(5, " MEDS\nMSG ACK", "meds_fault_ack");
 
         me.PFD.p_meds_oms_mps.addMenuItem(0, "UP", me.PFD.p_main);
-        me.PFD.p_meds_oms_mps.addMenuItem(1, "STAGE", me.PFD.p_meds_oms_mps);
-        me.PFD.p_meds_oms_mps.addMenuItem(2, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_meds_oms_mps.addMenuItem(1, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_meds_oms_mps.addMenuItem(2, "STAGE", me.PFD.p_meds_oms_mps);
         me.PFD.p_meds_oms_mps.addMenuItem(3, "SPI", me.PFD.p_meds_spi);
 	me.PFD.p_meds_oms_mps.addMenuAction(4, " PORT\nSELECT", "select_port");
         me.PFD.p_meds_oms_mps.addMenuAction(5, " MEDS\nMSG ACK", "meds_fault_ack");
 
        	me.PFD.p_meds_apu.addMenuItem(0, "UP", me.PFD.p_main);
-        me.PFD.p_meds_apu.addMenuItem(1, "STAGE", me.PFD.p_meds_oms_mps);
-        me.PFD.p_meds_apu.addMenuItem(2, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_meds_apu.addMenuItem(1, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_meds_apu.addMenuItem(2, "STAGE", me.PFD.p_meds_oms_mps);
         me.PFD.p_meds_apu.addMenuItem(3, "SPI", me.PFD.p_meds_spi);
 	me.PFD.p_meds_apu.addMenuAction(4, " PORT\nSELECT", "select_port");
         me.PFD.p_meds_apu.addMenuAction(5, " MEDS\nMSG ACK", "meds_fault_ack");
 
        	me.PFD.p_meds_spi.addMenuItem(0, "UP", me.PFD.p_main);
-        me.PFD.p_meds_spi.addMenuItem(1, "STAGE", me.PFD.p_meds_oms_mps);
-        me.PFD.p_meds_spi.addMenuItem(2, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_meds_spi.addMenuItem(1, "CHARM", me.PFD.p_meds_apu);
+        me.PFD.p_meds_spi.addMenuItem(2, "STAGE", me.PFD.p_meds_oms_mps);
         me.PFD.p_meds_spi.addMenuItem(3, "SPI", me.PFD.p_meds_spi);
 	me.PFD.p_meds_spi.addMenuAction(4, " PORT\nSELECT", "select_port");
         me.PFD.p_meds_spi.addMenuAction(5, " MEDS\nMSG ACK", "meds_fault_ack");
@@ -1158,7 +1158,7 @@ append(MDU_array, MEDS_CDR2);
 append(MDU_array, MEDS_CRT1);
 MEDS_CDR1.PFD.selectPage(MEDS_CDR1.PFD.p_pfd);
 MEDS_CDR1.PFD.dps_page_flag = 0;
-MEDS_CDR2.PFD.selectPage(MEDS_CDR2.PFD.p_meds_oms_mps);
+MEDS_CDR2.PFD.selectPage(MEDS_CDR2.PFD.p_meds_apu);
 MEDS_CDR2.PFD.dps_page_flag = 0;
 MEDS_CRT1.PFD.selectPage(MEDS_CRT1.PFD.p_dps);
 MEDS_CRT1.PFD.dps_page_flag = 1;
@@ -1188,7 +1188,7 @@ if (mdu_level > 2)
 	append(MDU_array, MEDS_PLT2);
 	MEDS_MFD2.PFD.selectPage(MEDS_MFD2.PFD.p_meds_apu);
 	MEDS_MFD2.PFD.dps_page_flag = 0;
-	MEDS_PLT1.PFD.selectPage(MEDS_PLT1.PFD.p_meds_oms_mps);
+	MEDS_PLT1.PFD.selectPage(MEDS_PLT1.PFD.p_meds_apu);
 	MEDS_PLT1.PFD.dps_page_flag = 0;
 	MEDS_PLT2.PFD.selectPage(MEDS_PLT2.PFD.p_pfd);
 	MEDS_PLT2.dps_page_flag = 0;

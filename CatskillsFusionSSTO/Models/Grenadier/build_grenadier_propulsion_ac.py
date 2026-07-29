@@ -399,28 +399,8 @@ def build_scoop():
             f"grenadier-mw-pod-R-{i}", f"MW R{i}", 12.9, 14.1, -1.55, -0.95, zc - 0.18, zc + 0.18, mat_mw, L, tex_dir
         )
 
-    # Plug the heritage OMS engine apertures (bells stripped). Prior disks were
-    # undersized (r=0.55 vs hole ~0.74) so MW/precomp showed through aft.
-    mat_oms_blank = b.add_mat("oms-engine-blank", (0.16, 0.16, 0.17), amb=0.3, spec=0.12, shi=18)
-    for name, cy_i, cz_i in (
-        ("grenadier-oms-blank-L", -1.22, 2.085),
-        ("grenadier-oms-blank-R", -1.22, -2.085),
-    ):
-        b.solid_cylinder(name, 14.35, 15.05, 0.82, 28, mat_oms_blank, cy=cy_i, cz=cz_i)
-        b.disk(f"{name}-face", 0.82, 15.05, 28, mat_oms_blank, normal="+x", cy=cy_i, cz=cz_i, twosided=True)
-
-    # RCS pocket closeouts — engine blank is on the OMS centerline; outboard RCS
-    # banks sit outside that disk, so the hollow pod interior (and MW boxes) were
-    # visible between thruster packs and the shell. Prior boxes stopped at y=-2.55
-    # while RCS-D sits near y=-3.1, so belly/aft views still saw empty cavity.
-    b.box("grenadier-rcs-cavity-L", 14.15, 15.10, -3.18, -1.15, 2.45, 3.58, mat=mat_oms_blank)
-    b.box("grenadier-rcs-cavity-R", 14.15, 15.10, -3.18, -1.15, -3.58, -2.45, mat=mat_oms_blank)
-    # Thin aft liner across the rest of each pod bay (engine + inboard).
-    b.box("grenadier-oms-aft-liner-L", 14.10, 14.55, -3.15, -0.40, 0.95, 2.85, mat=mat_oms_blank)
-    b.box("grenadier-oms-aft-liner-R", 14.10, 14.55, -3.15, -0.40, -2.85, -0.95, mat=mat_oms_blank)
-    # Belly plates flush with the RCS-D face — seal looking up past thruster packs.
-    b.box("grenadier-rcs-belly-L", 14.35, 15.15, -3.20, -2.72, 2.35, 3.35, mat=mat_oms_blank)
-    b.box("grenadier-rcs-belly-R", 14.35, 15.15, -3.20, -2.72, -3.35, -2.35, mat=mat_oms_blank)
+    # OMS pod aperture cowling comes from trimmed heritage oms*.001 in
+    # OMSPods_grenadier.ac (strip_oms_engines.py) — do not invent box plugs here.
 
     b.write(OUT / "grenadier_scoop.ac")
 

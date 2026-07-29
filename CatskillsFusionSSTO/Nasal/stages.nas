@@ -3867,23 +3867,85 @@ if (getprop("/sim/presets/stage") == 7) # Grenadier: runway, gear down, no stack
 		setprop("/fdm/jsbsim/gear/unit[0]/z-position", -313.779528);
 	};
 	var _cold_powered_down = func {
-		# Completely cold: CHARM OFF, throttle 0, onboard battery charged for later bring-up.
-		setprop("/fdm/jsbsim/systems/grenadier/charm/mode", "OFF");
-		setprop("/fdm/jsbsim/systems/grenadier/charm/mode-index", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/scram", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/light-cmd", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/dec-online", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/bus-mw", 0.0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/go-bus", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/battery-online", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/ground-cart", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/cart-tied", 0);
-		setprop("/fdm/jsbsim/systems/grenadier/charm/startup-source", "BATTERY");
-		setprop("/fdm/jsbsim/systems/grenadier/charm/battery-kwh", 500.0);
-		setprop("/fdm/jsbsim/systems/grenadier/engine/throttle", 0.0);
+		# Dead-cold pad article: every plant/engine enable OFF, inventory available.
+		# Operator must scramble BATT→CRYO→…→POWER; nothing is "still warm from landing".
+		var C = "/fdm/jsbsim/systems/grenadier/charm/";
+		var E = "/fdm/jsbsim/systems/grenadier/engine/";
+		setprop(C ~ "mode", "OFF");
+		setprop(C ~ "mode-index", 0);
+		setprop(C ~ "scram", 0);
+		setprop(C ~ "ground-cart", 0);
+		setprop(C ~ "cart-tied", 0);
+		setprop(C ~ "battery-online", 0);
+		setprop(C ~ "startup-source", "BATTERY");
+		setprop(C ~ "battery-kwh", 500.0);
+		setprop(C ~ "cryo-enable", 0);
+		setprop(C ~ "cryo-kw", 0.0);
+		setprop(C ~ "magnet-arm", 0);
+		setprop(C ~ "magnet-i-frac", 0.0);
+		setprop(C ~ "magnet-t-k", 80.0); # ambient magnet; cryo cools toward ~20 K
+		setprop(C ~ "fuel-enable", 0);
+		setprop(C ~ "fuel-ready", 0);
+		setprop(C ~ "vacuum-ready", 0);
+		setprop(C ~ "rf-enable", 0);
+		setprop(C ~ "light-cmd", 0);
+		setprop(C ~ "plasma-proxy", 0.0);
+		setprop(C ~ "dec-online", 0);
+		setprop(C ~ "bus-mw", 0.0);
+		setprop(C ~ "recirc-mw", 0.0);
+		setprop(C ~ "aux-bus-v", 0.0);
+		setprop(C ~ "go-fuel", 0);
+		setprop(C ~ "go-cryo", 0);
+		setprop(C ~ "go-magnet", 0);
+		setprop(C ~ "go-bus", 0);
+		setprop(E ~ "throttle", 0.0);
+		setprop(E ~ "thrust-kn", 0.0);
+		setprop(E ~ "thrust-lbf", 0.0);
+		setprop(E ~ "power-draw-mw", 0.0);
+		setprop(E ~ "stage-go", 0);
+		setprop(E ~ "plant-ok", 0);
+		setprop(E ~ "coupled-ok", 0);
+		setprop(E ~ "bus-frac", 0.0);
+		setprop(E ~ "sigma-allowed", 0);
+		setprop(E ~ "sigma", 1);
+		setprop(E ~ "inlet-sealed", 0);
 		setprop("/controls/engines/engine[0]/throttle", 0);
 		setprop("/controls/engines/engine[1]/throttle", 0);
 		setprop("/controls/engines/engine[2]/throttle", 0);
+		# Force heritage panel props OFF so aliases do not re-light the plant
+		setprop("/fdm/jsbsim/systems/apu/apu/apu-operate", 0);
+		setprop("/fdm/jsbsim/systems/apu/apu[1]/apu-operate", 0);
+		setprop("/fdm/jsbsim/systems/apu/apu[2]/apu-operate", 0);
+		setprop("/fdm/jsbsim/systems/apu/apu/apu-controller-power", 0);
+		setprop("/fdm/jsbsim/systems/apu/apu[1]/apu-controller-power", 0);
+		setprop("/fdm/jsbsim/systems/apu/apu[2]/apu-controller-power", 0);
+		setprop("/fdm/jsbsim/systems/mps/engine/controller-A-power-switch-status", 0);
+		setprop("/fdm/jsbsim/systems/mps/engine[1]/controller-A-power-switch-status", 0);
+		setprop("/fdm/jsbsim/systems/mps/engine[2]/controller-A-power-switch-status", 0);
+		setprop("/fdm/jsbsim/systems/mps/engine/controller-B-power-switch-status", 0);
+		setprop("/fdm/jsbsim/systems/mps/engine[1]/controller-B-power-switch-status", 0);
+		setprop("/fdm/jsbsim/systems/mps/engine[2]/controller-B-power-switch-status", 0);
+		# Depressurize heritage APU/HYD (no spinning plant after a fictional landing)
+		setprop("/fdm/jsbsim/systems/apu/apu/circ-pressure-factor", 0.0);
+		setprop("/fdm/jsbsim/systems/apu/apu[1]/circ-pressure-factor", 0.0);
+		setprop("/fdm/jsbsim/systems/apu/apu[2]/circ-pressure-factor", 0.0);
+		setprop("/fdm/jsbsim/systems/apu/apu/hyd-circ-pump-cmd", 0);
+		setprop("/fdm/jsbsim/systems/apu/apu[1]/hyd-circ-pump-cmd", 0);
+		setprop("/fdm/jsbsim/systems/apu/apu[2]/hyd-circ-pump-cmd", 0);
+		# Heaters / thermal pads off
+		setprop("/fdm/jsbsim/systems/oms-hardware/heater-left-A-status", 0);
+		setprop("/fdm/jsbsim/systems/oms-hardware/heater-right-A-status", 0);
+		setprop("/fdm/jsbsim/systems/oms-hardware/heater-crossfeed-A-status", 0);
+		setprop("/fdm/jsbsim/systems/rcs-hardware/heater-left-B-status", 0);
+		setprop("/fdm/jsbsim/systems/rcs-hardware/heater-right-B-status", 0);
+		setprop("/fdm/jsbsim/systems/rcs-hardware/heater-fwd-A-status", 0);
+		setprop("/fdm/jsbsim/systems/rcs-hardware/heater-fwd-status", 0);
+		var hi = 1;
+		while (hi <= 5) {
+			setprop("/fdm/jsbsim/systems/rcs-hardware/heater-pod-" ~ hi ~ "-status", 0);
+			setprop("/fdm/jsbsim/systems/rcs-hardware/heater-fwd-" ~ hi ~ "-status", 0);
+			hi += 1;
+		}
 		# No drag chute on this article
 		setprop("/controls/shuttle/parachute", 0);
 		setprop("/controls/shuttle/drag-chute-arm", 0);

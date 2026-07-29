@@ -66,7 +66,7 @@ var init_defaults = func {
 
     _set(E ~ "sigma", 1);
     _set(E ~ "sigma-recommended", 1);
-    _set(E ~ "sigma-allowed", 1);
+    _set(E ~ "sigma-allowed", 0); # no stage until plant POWER
     _set(E ~ "sigma2-alt-ft", 25000.0);
     _set(E ~ "sigma3-alt-ft", 120000.0);
     _set(E ~ "inlet-sealed", 0);
@@ -419,17 +419,17 @@ var _wire_panel_aliases = func {
     _alias_bool("/fdm/jsbsim/systems/apu/apu[1]/apu-controller-power", C ~ "fuel-enable");
     _alias_bool("/fdm/jsbsim/systems/apu/apu[2]/apu-controller-power", C ~ "rf-enable");
 
-    # SSME controller A left/ctr/right
+    # SSME controller A left/ctr/right — sync both ON and OFF (not sticky ON)
     setlistener("/fdm/jsbsim/systems/mps/engine/controller-A-power-switch-status", func {
         if (!_num(S ~ "enabled", 0)) return;
-        if (_num("/fdm/jsbsim/systems/mps/engine/controller-A-power-switch-status", 0) > 0.5)
-            _set(C ~ "light-cmd", 1);
+        _set(C ~ "light-cmd",
+            (_num("/fdm/jsbsim/systems/mps/engine/controller-A-power-switch-status", 0) > 0.5) ? 1 : 0);
     }, 0, 0);
     # cockpit maps ctr switch → engine[2] (Shuttle indexing quirk)
     setlistener("/fdm/jsbsim/systems/mps/engine[2]/controller-A-power-switch-status", func {
         if (!_num(S ~ "enabled", 0)) return;
-        if (_num("/fdm/jsbsim/systems/mps/engine[2]/controller-A-power-switch-status", 0) > 0.5)
-            _set(C ~ "dec-online", 1);
+        _set(C ~ "dec-online",
+            (_num("/fdm/jsbsim/systems/mps/engine[2]/controller-A-power-switch-status", 0) > 0.5) ? 1 : 0);
     }, 0, 0);
     # SSME-right controller → vacuum ready (not SCRAM — too easy to fat-finger next to LIGHT/DEC)
     setlistener("/fdm/jsbsim/systems/mps/engine[1]/controller-A-power-switch-status", func {
@@ -469,6 +469,49 @@ var _loop = func {
     settimer(_loop, 0.2);
 };
 
+# Force panel props + CHARM bus to a pad cold state (also used after listeners wire).
+var apply_cold_pad = func {
+    if (_num("/sim/presets/stage", -1) != 7) return;
+    _set(C ~ "mode", "OFF");
+    _set(C ~ "mode-index", 0);
+    _set(C ~ "scram", 0);
+    _set(C ~ "ground-cart", 0);
+    _set(C ~ "cart-tied", 0);
+    _set(C ~ "battery-online", 0);
+    _set(C ~ "cryo-enable", 0);
+    _set(C ~ "cryo-kw", 0.0);
+    _set(C ~ "magnet-arm", 0);
+    _set(C ~ "magnet-i-frac", 0.0);
+    _set(C ~ "magnet-t-k", 80.0);
+    _set(C ~ "fuel-enable", 0);
+    _set(C ~ "fuel-ready", 0);
+    _set(C ~ "vacuum-ready", 0);
+    _set(C ~ "rf-enable", 0);
+    _set(C ~ "light-cmd", 0);
+    _set(C ~ "plasma-proxy", 0.0);
+    _set(C ~ "dec-online", 0);
+    _set(C ~ "bus-mw", 0.0);
+    _set(C ~ "aux-bus-v", 0.0);
+    _set(C ~ "go-fuel", 0);
+    _set(C ~ "go-cryo", 0);
+    _set(C ~ "go-magnet", 0);
+    _set(C ~ "go-bus", 0);
+    _set(E ~ "plant-ok", 0);
+    _set(E ~ "stage-go", 0);
+    _set(E ~ "coupled-ok", 0);
+    _set(E ~ "sigma-allowed", 0);
+    _set(E ~ "throttle", 0.0);
+    setprop("/fdm/jsbsim/systems/apu/apu/apu-operate", 0);
+    setprop("/fdm/jsbsim/systems/apu/apu[1]/apu-operate", 0);
+    setprop("/fdm/jsbsim/systems/apu/apu[2]/apu-operate", 0);
+    setprop("/fdm/jsbsim/systems/apu/apu/apu-controller-power", 0);
+    setprop("/fdm/jsbsim/systems/apu/apu[1]/apu-controller-power", 0);
+    setprop("/fdm/jsbsim/systems/apu/apu[2]/apu-controller-power", 0);
+    setprop("/fdm/jsbsim/systems/mps/engine/controller-A-power-switch-status", 0);
+    setprop("/fdm/jsbsim/systems/mps/engine[1]/controller-A-power-switch-status", 0);
+    setprop("/fdm/jsbsim/systems/mps/engine[2]/controller-A-power-switch-status", 0);
+};
+
 var start = func {
     init_defaults();
     # Never show heritage stack
@@ -482,6 +525,9 @@ var start = func {
             _set(C ~ "cart-tied", 1);
     }, 0, 0);
     _wire_panel_aliases();
+    apply_cold_pad();
+    settimer(apply_cold_pad, 1.0);
+    settimer(apply_cold_pad, 3.0);
     _loop();
     print("Grenadier ops: dual-control thrust (CHARM plant × engine cycle) coupled to JSBSim");
 };

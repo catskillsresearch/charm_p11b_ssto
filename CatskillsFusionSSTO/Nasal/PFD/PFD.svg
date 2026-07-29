@@ -67159,7 +67159,7 @@
          y="136.67781"
          x="350.63318"
          id="tspan4911"
-         sodipodi:role="line">MPS</tspan></text>
+         sodipodi:role="line">ENGINE</tspan></text>
 <path
        style="fill:none;fill-rule:evenodd;stroke:#1aca2f;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
        d="m 222.024,128.699 0,311.725"
@@ -67167,7 +67167,7 @@
        inkscape:connector-curvature="0" /><path
        id="path6153"
        style="fill:none;fill-rule:evenodd;stroke:#1aca2f;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m 365.049,128.699 100.7,0 0,25.35 m -330.925,-25.35 -20.525,0 0,25.35 m 220.025,-25.35 -147.925,0"
+       d="m 365.049,128.699 100.7,0 0,25.35 m -345,-25.35 -15,0 0,25.35 m 245,-25.35 -160,0"
        inkscape:connector-curvature="0" /><text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -67179,7 +67179,7 @@
          id="tspan6157"
          x="165.73856"
          y="136.67781"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">OMS</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">STAGE</tspan></text>
 <rect
        style="opacity:1;fill:none;fill-rule:nonzero;stroke:#1aca2f;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect6159"
@@ -67425,7 +67425,7 @@
          y="360.46933"
          x="293.26028"
          id="tspan6239"
-         sodipodi:role="line">LH2</tspan></text>
+         sodipodi:role="line">SEAL</tspan></text>
 <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -67437,7 +67437,7 @@
          id="tspan6243"
          x="252.01003"
          y="360.34509"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">LO2</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">H2O</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6245"
@@ -67449,7 +67449,7 @@
          y="349.95004"
          x="272.1795"
          id="tspan6247"
-         sodipodi:role="line">ENG MANF</tspan></text>
+         sodipodi:role="line">FEED</tspan></text>
 <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -67461,7 +67461,7 @@
          id="tspan6251"
          x="355.96039"
          y="343.30853"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">L/2</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">σ1</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6253"
@@ -67473,7 +67473,7 @@
          y="336.30853"
          x="396.14417"
          id="tspan6255"
-         sodipodi:role="line">C/1</tspan></text>
+         sodipodi:role="line">σ2</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6257"
@@ -67485,7 +67485,7 @@
          y="343.30853"
          x="437.87946"
          id="tspan6259"
-         sodipodi:role="line">R/3</tspan></text>
+         sodipodi:role="line">σ3</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6261"
@@ -67497,7 +67497,7 @@
          y="395.75443"
          x="375.25113"
          id="tspan6263"
-         sodipodi:role="line">Pc</tspan><tspan
+         sodipodi:role="line">THR</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="406.69193"
          x="375.25113"
@@ -67514,7 +67514,7 @@
          id="tspan6269"
          x="416.98642"
          y="395.75443"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">Pc</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">THR</tspan><tspan
          id="tspan6271"
          sodipodi:role="line"
          x="416.98642"
@@ -67644,17 +67644,17 @@
          id="tspan6342"
          x="325.00797"
          y="281.51389"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">He</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">GO</tspan><tspan
          sodipodi:role="line"
          x="327.00797"
          y="292.45139"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan6344">REG A</tspan><tspan
+         id="tspan6344">CPL</tspan><tspan
          sodipodi:role="line"
          x="327.00797"
          y="303.38889"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan6346">P</tspan></text>
+         id="tspan6346">MW</tspan></text>
 <path
        style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
        d="m 290.849,282.749 5.175,0"
@@ -67698,12 +67698,12 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="282.23749"
          x="252.25967"
-         sodipodi:role="line">REG</tspan><tspan
+         sodipodi:role="line">MODE</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="294.17499"
          x="252.25967"
          sodipodi:role="line"
-         id="tspan6377">P</tspan></text>
+         id="tspan6377"> </tspan></text>
 <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -67715,12 +67715,12 @@
          sodipodi:role="line"
          x="252.25967"
          y="198.21674"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">TANK</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">BUS</tspan><tspan
          sodipodi:role="line"
          x="252.25967"
          y="209.15424"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan6387">P</tspan></text>
+         id="tspan6387">%</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6395"
@@ -67732,17 +67732,17 @@
          y="183.39014"
          x="328.00797"
          id="tspan6397"
-         sodipodi:role="line">He</tspan><tspan
+         sodipodi:role="line">H2O</tspan><tspan
          id="tspan6399"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="194.32764"
          x="328.00797"
-         sodipodi:role="line">TANK</tspan><tspan
+         sodipodi:role="line">MW</tspan><tspan
          id="tspan6401"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="205.26514"
          x="328.00797"
-         sodipodi:role="line">P</tspan></text>
+         sodipodi:role="line">kN</tspan></text>
 <rect
        style="opacity:1;fill:none;fill-rule:nonzero;stroke:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect6403"
@@ -67794,7 +67794,7 @@
          y="153.95976"
          x="437.18631"
          id="tspan6421"
-         sodipodi:role="line">R/3</tspan></text>
+         sodipodi:role="line">kN</tspan></text>
 <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -67806,7 +67806,7 @@
          id="tspan6425"
          x="354.91107"
          y="153.95976"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">L/2</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">H2O</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6427"
@@ -67818,7 +67818,7 @@
          y="153.95952"
          x="285.53583"
          id="tspan6429"
-         sodipodi:role="line">PNEU</tspan></text>
+         sodipodi:role="line">BUS%</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6431"
@@ -67830,7 +67830,7 @@
          y="147.95976"
          x="395.93582"
          id="tspan6433"
-         sodipodi:role="line">C/1</tspan></text>
+         sodipodi:role="line">MW</tspan></text>
 <rect
        y="174.674"
        x="187.874"
@@ -67902,17 +67902,17 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="193.40709"
          x="126.27808"
-         sodipodi:role="line">He</tspan><tspan
+         sodipodi:role="line">σ</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="204.34459"
          x="126.27808"
          sodipodi:role="line"
-         id="tspan6467">TK</tspan><tspan
+         id="tspan6467">CMD</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="215.28209"
          x="126.27808"
          sodipodi:role="line"
-         id="tspan6469">P</tspan></text>
+         id="tspan6469">MAX</tspan></text>
 <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -67924,17 +67924,17 @@
          x="126.27808"
          y="288.66904"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan6473">N2</tspan><tspan
+         id="tspan6473">REC</tspan><tspan
          id="tspan6475"
          sodipodi:role="line"
          x="126.27808"
          y="299.60654"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">TK</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">SEAL</tspan><tspan
          id="tspan6477"
          sodipodi:role="line"
          x="126.27808"
          y="310.54404"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff">P</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"> </tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="text6481"
@@ -67946,12 +67946,12 @@
          y="401.00946"
          x="126.27808"
          sodipodi:role="line"
-         id="tspan6489">Pc</tspan><tspan
+         id="tspan6489">THR</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="411.94696"
          x="126.27808"
          sodipodi:role="line"
-         id="tspan6498">%</tspan></text>
+         id="tspan6498">PLT</tspan></text>
 <rect
        style="opacity:1;fill:none;fill-rule:nonzero;stroke:#1aca2f;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect6500"
@@ -68287,7 +68287,7 @@
          id="tspan4726"
          x="212.81572"
          y="254.59369"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#1aca2f;fill-opacity:1">HYDRAULIC</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#1aca2f;fill-opacity:1">PLANT</tspan></text>
 <text
        sodipodi:linespacing="125%"
        id="APU_label"
@@ -68303,7 +68303,7 @@
 <path
        id="path4050"
        style="fill:none;fill-rule:evenodd;stroke:#1aca2f;stroke-width:2px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m 171.002,245.95 -175.6002,0 0,14.375 m 258.4502,-14.375 153.775,0 0,14.375"
+       d="m 155,245.95 -160,0 0,14.375 m 300,-14.375 130,0 0,14.375"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" /><rect
        y="272.775"
@@ -68800,7 +68800,7 @@
          x="221.86655"
          y="204.11395"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan4503">T K</tspan><tspan
+         id="tspan4503">K</tspan><tspan
          sodipodi:role="line"
          x="221.86655"
          y="215.05145"
@@ -68815,9 +68815,24 @@
        xml:space="preserve"><tspan
          id="tspan4513"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
+         y="318.57367"
+         x="227.84801"
+         sodipodi:role="line">GO</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="329.51117"
          x="227.84801"
-         sodipodi:role="line">GO</tspan></text>
+         sodipodi:role="line"
+         id="tspan4513b">MAG</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
+         y="340.44867"
+         x="227.84801"
+         sodipodi:role="line"
+         id="tspan4513c">FUEL</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
+         y="351.38617"
+         x="227.84801"
+         sodipodi:role="line"
+         id="tspan4513d">BUS</tspan></text>
 <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:OcrB;-inkscape-font-specification:'OcrB, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -68829,12 +68844,12 @@
          x="24.160591"
          y="323.57867"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan4522">MAG</tspan><tspan
+         id="tspan4522">p</tspan><tspan
          sodipodi:role="line"
          x="24.160591"
          y="334.51617"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
-         id="tspan4524">FUEL</tspan><tspan
+         id="tspan4524">B11</tspan><tspan
          sodipodi:role="line"
          x="24.160591"
          y="345.45367"
@@ -68895,12 +68910,17 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="91.211502"
          x="231.39453"
-         sodipodi:role="line">AUX</tspan><tspan
+         sodipodi:role="line">V</tspan><tspan
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
          y="102.149"
          x="231.39453"
          sodipodi:role="line"
-         id="tspan4561">BUS</tspan></text>
+         id="tspan4561">MW</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.75px;font-family:Sans;-inkscape-font-specification:Sans;fill:#ffffff"
+         y="113.0865"
+         x="231.39453"
+         sodipodi:role="line"
+         id="tspan4561b">MODE</tspan></text>
 <path
        sodipodi:nodetypes="cccccc"
        inkscape:connector-curvature="0"

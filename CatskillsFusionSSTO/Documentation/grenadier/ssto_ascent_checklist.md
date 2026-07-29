@@ -31,9 +31,11 @@ On an MDU: **MAIN → SUBSYS STATUS**
 
 | Softkey | Page | Use for |
 |---------|------|---------|
-| **CHARM** | plant | mode, BATT/CRYO/MAGNET/FUEL/RF/DEC, bus |
-| **STAGE** | engine | Stage 1/2/3, throttle, seal, water, thrust |
+| **CHARM** (first) | plant | scramble plant to POWER |
+| **STAGE** | engine | Stage 1/2/3, throttle, seal, water, thrust — after CHARM |
 | SPI | leave | not required for scramble |
+
+Default MDUs open on **CHARM**. Stage 7 pads **dead cold** (all enables OFF; charged battery + propellant inventories only).
 
 Ignore Fuel Cells / APU–HYD DISP pages (blanked titles).
 
