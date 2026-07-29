@@ -50,7 +50,7 @@ GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 | Softkey | Page | Content |
 |---------|------|---------|
 | STAGE | `p_meds_oms_mps` | Stage, throttle, seal, water, thrust, bus |
-| CHARM | `p_meds_apu` | Mode, BATT/CRYO/MAGNET/FUEL/RF/DEC, bus MW |
+| CHARM | `p_meds_apu` | BATT/MAGI/PLAS, CART/BATT/CRYO enables, MAG T K + go-cryo, PLANT MAG/FUEL/H2O + GO lamps |
 | SPI | `p_meds_spi` | Keep |
 
 ## Physical engraving

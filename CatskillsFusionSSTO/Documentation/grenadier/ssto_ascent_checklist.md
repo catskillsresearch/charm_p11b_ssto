@@ -48,7 +48,7 @@ Ignore Fuel Cells / APU–HYD DISP pages (blanked titles).
 Stage 7 pads with a **charged flight battery**. Scramble on **BATT** alone — **CART** off.
 
 1. **BATT** → On.
-2. **CRYO** → On. Wait CHARM page cryo/magnet cold.
+2. **CRYO** → On. Wait CHARM page **MAG T K** &lt; 35 and **CRYO** col = `0001` (green) — that is `go-cryo`.
 3. **MAGNET** → Arm. Wait go-magnet.
 4. **FUEL** → On.
 5. **VACUUM** → Ready.

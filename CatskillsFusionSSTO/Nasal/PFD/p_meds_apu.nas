@@ -102,8 +102,6 @@ var PFD_addpage_p_meds_apu = func(device)
 	var cryo = getprop(C ~ "cryo-enable"); if (cryo == nil) cryo = 0;
 	var mag = getprop(C ~ "magnet-arm"); if (mag == nil) mag = 0;
 	var fuel = getprop(C ~ "fuel-enable"); if (fuel == nil) fuel = 0;
-	var rf = getprop(C ~ "rf-enable"); if (rf == nil) rf = 0;
-	var light = getprop(C ~ "light-cmd"); if (light == nil) light = 0;
 	var dec = getprop(C ~ "dec-online"); if (dec == nil) dec = 0;
 	var vac = getprop(C ~ "vacuum-ready"); if (vac == nil) vac = 0;
 
@@ -139,7 +137,7 @@ var PFD_addpage_p_meds_apu = func(device)
 	set_tape(p_meds_apu.tape_fuelP2, (bus / 1000.0), 60.7 + 63.7);
 	set_tape(p_meds_apu.tape_fuelP3, midx / 5.0, 60.7 + 63.7);
 
-	# "h2o qty" → cart / batt / cryo as 0/100
+	# "CART/BATT/CRYO" → enable switches as 0/100
 	p_meds_apu.h2o_qty1.setText(sprintf("%03d", cart * 100));
 	p_meds_apu.h2o_qty2.setText(sprintf("%03d", batt * 100));
 	p_meds_apu.h2o_qty3.setText(sprintf("%03d", cryo * 100));
@@ -148,17 +146,21 @@ var PFD_addpage_p_meds_apu = func(device)
 	set_tape(p_meds_apu.tape_h2o_qty3, cryo, 60.7 + 170.4);
 	p_meds_apu.tape_h2o_qty1.setColorFill(0.0, 1.0, 0.0);
 	p_meds_apu.tape_h2o_qty2.setColorFill(0.0, 1.0, 0.0);
-	p_meds_apu.tape_h2o_qty3.setColorFill(0.0, 1.0, 0.0);
+	if (cryo) {p_meds_apu.tape_h2o_qty3.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_h2o_qty3.setColorFill(1.0, 0.0, 0.0);}
 
-	# "oil T" → magnet T K, RF, LIGHT as coded ints
+	# "MAG T K / CRYO" → magnet T K, go-cryo, DEC+VAC
+	# Checklist "cryo/magnet cold": wait MAG T < 35 K and CRYO col = 0001 (green).
+	var gc = getprop(C ~ "go-cryo"); if (gc == nil) gc = 0;
 	p_meds_apu.oilT1.setText(sprintf("%04d", tk));
-	p_meds_apu.oilT2.setText(sprintf("%04d", rf * 1000 + light * 100));
+	p_meds_apu.oilT2.setText(sprintf("%04d", gc));
 	p_meds_apu.oilT3.setText(sprintf("%04d", dec * 1000 + vac * 100));
 	set_tape(p_meds_apu.tape_oilT1, (80.0 - tk) / 80.0, 170.4+60.7);
-	var oil2 = 0.2; if (rf and light) oil2 = 1.0;
-	var oil3 = 0.2; if (dec and vac) oil3 = 1.0;
-	set_tape(p_meds_apu.tape_oilT2, oil2, 170.4+60.7);
+	set_tape(p_meds_apu.tape_oilT2, gc, 170.4+60.7);
+	var oil3 = 0.0; if (dec and vac) oil3 = 1.0;
 	set_tape(p_meds_apu.tape_oilT3, oil3, 170.4+60.7);
+	if (gc) {p_meds_apu.tape_oilT1.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT1.setColorFill(1.0, 0.0, 0.0);}
+	if (gc) {p_meds_apu.tape_oilT2.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT2.setColorFill(1.0, 0.0, 0.0);}
+	if (dec and vac) {p_meds_apu.tape_oilT3.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT3.setColorFill(1.0, 0.0, 0.0);}
 
 	# "hyd qty" → mag / fuel / water inventory
 	p_meds_apu.hyd_qty1.setText(sprintf("%03d", mag * 100));

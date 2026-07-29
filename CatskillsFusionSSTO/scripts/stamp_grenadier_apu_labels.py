@@ -26,7 +26,8 @@ TEX = ROOT / "Models" / "fwd-cockpit-text-map-x.png"
 BAK = ROOT / "Models" / "fwd-cockpit-text-map-x.png.bak_pre_grenadier"
 
 # --- R2: blank whole plate (remapped labels stamped fresh below) ---
-R2_BLANK = (360, 990, 1020, 2140)
+# Include MPS PRPLT DUMP header row above ENGINE/REACTOR POWER (~y 900–990).
+R2_BLANK = (250, 900, 1020, 2140)
 R2_KEEP: tuple[tuple[int, int, int, int], ...] = ()
 
 # --- R4: blank whole plate; brake-isol labels stamped fresh below ---
@@ -124,13 +125,12 @@ def _stamp_centered(
 def main() -> None:
     src = BAK if BAK.is_file() else TEX
     img = Image.open(src).convert("RGB")
-    arr = np.asarray(img).copy()
+    arr = np.array(img)  # writable copy (np.asarray is read-only)
 
     _blank_with_keeps(arr, R2_BLANK, R2_KEEP)
     _blank_with_keeps(arr, R4_BLANK, R4_KEEP)
 
     img = Image.fromarray(arr)
-    arr = np.asarray(img)
 
     # Pixel centers measured on fwd-cockpit-text-map-x.png (4096²).
     _stamp_centered(

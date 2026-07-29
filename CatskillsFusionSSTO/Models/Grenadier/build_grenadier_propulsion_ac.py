@@ -360,7 +360,8 @@ def build_scoop():
     mat_duct = b.add_mat("scoop-duct", (0.22, 0.23, 0.25), amb=0.3, spec=0.2, shi=25)
     mat_hinge = b.add_mat("scoop-hinge", (0.18, 0.18, 0.19), amb=0.25, spec=0.25, shi=28)
     mat_pre = b.add_mat("precompressor", (0.55, 0.50, 0.40), amb=0.4, spec=0.4, shi=40)
-    mat_mw = b.add_mat("mw-box", (0.18, 0.55, 0.42), amb=0.4, spec=0.3, shi=30, emis=0.08)
+    # Dark structural grey — CAD teal was peeking through aft RCS gaps.
+    mat_mw = b.add_mat("mw-box", (0.14, 0.15, 0.16), amb=0.35, spec=0.18, shi=18, emis=0.0)
     mat_label = b.add_mat("label-plate", (0.95, 0.95, 0.97), amb=0.5, spec=0.1, shi=10)
     tex_dir = OUT / "textures"
     tex_dir.mkdir(exist_ok=True)
@@ -399,7 +400,7 @@ def build_scoop():
         )
 
     # Plug the heritage OMS engine apertures (bells stripped). Prior disks were
-    # undersized (r=0.55 vs hole ~0.74) so MW/precomp teal showed through aft.
+    # undersized (r=0.55 vs hole ~0.74) so MW/precomp showed through aft.
     mat_oms_blank = b.add_mat("oms-engine-blank", (0.16, 0.16, 0.17), amb=0.3, spec=0.12, shi=18)
     for name, cy_i, cz_i in (
         ("grenadier-oms-blank-L", -1.22, 2.085),
@@ -407,6 +408,19 @@ def build_scoop():
     ):
         b.solid_cylinder(name, 14.35, 15.05, 0.82, 28, mat_oms_blank, cy=cy_i, cz=cz_i)
         b.disk(f"{name}-face", 0.82, 15.05, 28, mat_oms_blank, normal="+x", cy=cy_i, cz=cz_i, twosided=True)
+
+    # RCS pocket closeouts — engine blank is on the OMS centerline; outboard RCS
+    # banks sit outside that disk, so the hollow pod interior (and MW boxes) were
+    # visible between thruster packs and the shell. Prior boxes stopped at y=-2.55
+    # while RCS-D sits near y=-3.1, so belly/aft views still saw empty cavity.
+    b.box("grenadier-rcs-cavity-L", 14.15, 15.10, -3.18, -1.15, 2.45, 3.58, mat=mat_oms_blank)
+    b.box("grenadier-rcs-cavity-R", 14.15, 15.10, -3.18, -1.15, -3.58, -2.45, mat=mat_oms_blank)
+    # Thin aft liner across the rest of each pod bay (engine + inboard).
+    b.box("grenadier-oms-aft-liner-L", 14.10, 14.55, -3.15, -0.40, 0.95, 2.85, mat=mat_oms_blank)
+    b.box("grenadier-oms-aft-liner-R", 14.10, 14.55, -3.15, -0.40, -2.85, -0.95, mat=mat_oms_blank)
+    # Belly plates flush with the RCS-D face — seal looking up past thruster packs.
+    b.box("grenadier-rcs-belly-L", 14.35, 15.15, -3.20, -2.72, 2.35, 3.35, mat=mat_oms_blank)
+    b.box("grenadier-rcs-belly-R", 14.35, 15.15, -3.20, -2.72, -3.35, -2.35, mat=mat_oms_blank)
 
     b.write(OUT / "grenadier_scoop.ac")
 
@@ -424,7 +438,7 @@ def build_internals():
     mat_inj = b.add_mat("injector", (0.35, 0.55, 0.70), amb=0.35, spec=0.35, shi=35)
     mat_cable = b.add_mat("bus-cable", (0.06, 0.06, 0.07), amb=0.25, spec=0.15, shi=12)
     mat_frame = b.add_mat("skid-frame", (0.32, 0.33, 0.34), amb=0.35, spec=0.3, shi=28)
-    mat_mw = b.add_mat("mw-box", (0.18, 0.55, 0.42), amb=0.4, spec=0.3, shi=30, emis=0.08)
+    mat_mw = b.add_mat("mw-box", (0.14, 0.15, 0.16), amb=0.35, spec=0.18, shi=18, emis=0.0)
     mat_label = b.add_mat("label-plate", (0.95, 0.95, 0.97), amb=0.5, spec=0.1, shi=10)
 
     tex_dir = OUT / "textures"

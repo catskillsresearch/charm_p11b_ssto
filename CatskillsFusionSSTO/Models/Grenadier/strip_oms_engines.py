@@ -13,7 +13,9 @@ from pathlib import Path
 SRC = Path(__file__).resolve().parents[1] / "OMSPods.ac"
 DST = Path(__file__).resolve().parents[1] / "OMSPods_grenadier.ac"
 
-DROP = {"omsLeft.001", "omsRight.001", "omsLeftBase", "omsRightBase"}
+# Keep oms*Base — those are aft mount/cowling plates, not engine bells.
+# Dropping them left the pod interiors open behind the RCS packs.
+DROP = {"omsLeft.001", "omsRight.001"}
 
 
 def obj_name(block: list[str]) -> str | None:

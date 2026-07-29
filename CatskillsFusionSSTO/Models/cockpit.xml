@@ -29195,7 +29195,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>prplt-dump-seq-start</tooltip-id>
-                <label>Prplt Dump Seq: %s</label>
+                <label></label>
                 <property>/fdm/jsbsim/systems/mps/propellant-dump-cmd</property>
                 <mapping>nasal</mapping>
                 <script>

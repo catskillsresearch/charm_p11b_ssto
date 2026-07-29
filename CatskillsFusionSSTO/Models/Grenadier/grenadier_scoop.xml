@@ -42,6 +42,12 @@
     <object-name>grenadier-oms-blank-L-face</object-name>
     <object-name>grenadier-oms-blank-R</object-name>
     <object-name>grenadier-oms-blank-R-face</object-name>
+    <object-name>grenadier-rcs-cavity-L</object-name>
+    <object-name>grenadier-rcs-cavity-R</object-name>
+    <object-name>grenadier-oms-aft-liner-L</object-name>
+    <object-name>grenadier-oms-aft-liner-R</object-name>
+    <object-name>grenadier-rcs-belly-L</object-name>
+    <object-name>grenadier-rcs-belly-R</object-name>
   </effect>
   <animation>
     <type>translate</type>
