@@ -3031,6 +3031,56 @@
     <!-- Panel A12 — Grenadier: switchgear removed from cockpit-detailed.ac -->
     <!-- ******************************************************************* -->
 
+    <!-- Panel A14 (aft station, +Z of A12): OMS heat / RCS heat / RMS pyro.
+         Grenadier has no OMS engines and does not use these for scramble ops —
+         hide switchgear + covers so the plate reads blank like A12. -->
+    <animation>
+        <type>select</type>
+        <object-name>A14-guards</object-name>
+        <object-name>A14-switches</object-name>
+        <object-name>A14-switches-base</object-name>
+        <object-name>A14-covers</object-name>
+        <object-name>fwd-rcs-heat</object-name>
+        <object-name>fwd-rcs-jett-heat-1</object-name>
+        <object-name>fwd-rcs-jett-heat-2</object-name>
+        <object-name>fwd-rcs-jett-heat-3</object-name>
+        <object-name>fwd-rcs-jett-heat-4</object-name>
+        <object-name>fwd-rcs-jett-heat-5</object-name>
+        <object-name>oms-cf-lines-a</object-name>
+        <object-name>oms-cf-lines-b</object-name>
+        <object-name>oms-heat-lp-a</object-name>
+        <object-name>oms-heat-lp-b</object-name>
+        <object-name>oms-heat-rp-a</object-name>
+        <object-name>oms-heat-rp-b</object-name>
+        <object-name>pod-rcs-jett-heat-1</object-name>
+        <object-name>pod-rcs-jett-heat-2</object-name>
+        <object-name>pod-rcs-jett-heat-3</object-name>
+        <object-name>pod-rcs-jett-heat-4</object-name>
+        <object-name>pod-rcs-jett-heat-5</object-name>
+        <object-name>pyro-ku-ant-arm</object-name>
+        <object-name>pyro-ku-ant-jett</object-name>
+        <object-name>pyro-port-rms-arm</object-name>
+        <object-name>pyro-port-rms-latch-aft</object-name>
+        <object-name>pyro-port-rms-latch-fwd</object-name>
+        <object-name>pyro-port-rms-latch-mid</object-name>
+        <object-name>pyro-port-rms-shldr</object-name>
+        <object-name>pyro-rms-latch-reset</object-name>
+        <object-name>pyro-stb-rms-arm</object-name>
+        <object-name>pyro-stb-rms-latch-aft</object-name>
+        <object-name>pyro-stb-rms-latch-fwd</object-name>
+        <object-name>pyro-stb-rms-latch-mid</object-name>
+        <object-name>pyro-stb-rms-shldr</object-name>
+        <object-name>oms-cover-lp-a</object-name>
+        <object-name>oms-cover-lp-b</object-name>
+        <object-name>oms-cover-rp-a</object-name>
+        <object-name>oms-cover-rp-b</object-name>
+        <condition>
+            <not>
+                <property>/sim/model/grenadier/enabled</property>
+            </not>
+        </condition>
+    </animation>
+
     <!-- ******************************************************************* -->
     <!-- Panel A13                                                           -->
     <!-- ******************************************************************* -->

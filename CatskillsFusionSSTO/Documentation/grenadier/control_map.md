@@ -52,6 +52,7 @@ Switches/manifold banks unchanged (A/B press + isolation).
 | SRB/ET SEP pushbuttons | Relabeled **STAGE − / +** with `STG` button faces | Stack separation removed; left decrements, right increments Stage |
 | OMS ENG arms | Legacy secondary mapping | Not needed in normal operation; use the labeled `STG` pushbuttons |
 | APU hydrazine / hyd pumps | Hardware hidden on R2; A12 aft plate stripped of all switchgear | No hyd TVC story |
+| A14 OMS/RCS heat + RMS pyro | Hardware hidden (plate + fasteners only) | No OMS engines; not used in scramble |
 
 ## CRT map
 
