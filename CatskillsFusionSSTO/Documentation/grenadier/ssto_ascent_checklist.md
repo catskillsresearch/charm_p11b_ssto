@@ -7,25 +7,25 @@ Use the **Pilot** view (`v` cycles forward, `Shift+V` backward). Turn **Num Lock
 | Step | Panel / view | Switch or key | Setting / action |
 |------|--------------|---------------|------------------|
 | 1 | View | `v` / `Shift+V` | Select **Pilot** (right-seat) view |
-| 2 | Keypad | `KP 5` | Center elevator, aileron, and rudder |
-| 3 | Keypad | `KP 3` | Hold until throttle is at idle / `THR 000` |
-| 4 | Brakes | `Shift+B` | **Do not press yet**; parking brake starts SET |
-| 5 | Right wall — **APU OPERATE** | **CART** | Leave **OFF** |
-| 6 | Right wall — **APU OPERATE** | **BATT** | **ON**; CHARM `V` should show about 260 V |
-| 7 | PLT forward displays | **R1 Power** (inner PLT MDU) | **ON**; it should open on **CHARM** |
-| 8 | PLT forward displays | **R2 Power** (outer PLT MDU) | **ON**; it should open on **FLT INST / PFD** |
-| 9 | Pilot HUD panel | **HUD Power** | **ON**; mode **NORM**, brightness **AUTO** or **DAY** |
-| 10 | Pilot F8 | **Flight Controller Power** | **ON** |
-| 11 | R1 MDU | Page | If not already there: **MAIN → SUBSYS STATUS → CHARM** |
-| 12 | Right wall — **APU OPERATE** | **CRYO** | **ON**; wait for `T·K < 35` and green `CRYO 0001` |
-| 13 | Right wall — **APU CNTLR PWR** | **MAGNET** | **ARM/ON**; wait for green `MAG` / `MAGI` near 100 |
-| 14 | Right wall — **APU CNTLR PWR** | **FUEL** | **ON** |
-| 15 | Right wall — **REACTOR POWER** | **VACUUM** | **ON/READY**; confirm `VAC 0001` and green `FUEL` |
-| 16 | Right wall — **APU CNTLR PWR** | **RF** | **ON** |
-| 17 | Right wall — **REACTOR POWER** | **CHARM** | **ON**; mode advances to `LIGHT` |
-| 18 | Right wall — **REACTOR POWER** | **DEC** | **ON** |
-| 19 | R1 — CHARM | Status | Wait for `MODE POWER`, green `BUS`, and bus MW rising |
-| 20 | R1 MDU | **STAGE** softkey | Select STAGE; confirm `CMD 1`, `MAX 1`, `GO 1`, `PLANT 1`, `THR 000` |
+| 2 | PLT forward displays | **R1 Power** (inner PLT MDU) | **ON**; screen remains dark until BATT |
+| 3 | PLT forward displays | **R2 Power** (outer PLT MDU) | **ON**; screen remains dark until BATT |
+| 4 | Right wall — **APU OPERATE** | **BATT** | **ON**; R1 opens on **CHARM**, R2 on **FLT INST / PFD**, and CHARM `V` shows about 260 V |
+| 5 | Pilot HUD panel | **HUD Power** | **ON**; mode **NORM**, brightness **AUTO** or **DAY** |
+| 6 | Pilot F8 | **Flight Controller Power** | **ON** |
+| 7 | R1 MDU | Page | If not already there: **MAIN → SUBSYS STATUS → CHARM** |
+| 8 | Right wall — **APU OPERATE** | **CRYO** | **ON**; wait for `T·K < 35` and green `CRYO 0001` |
+| 9 | Right wall — **APU CNTLR PWR** | **MAGNET** | **ARM/ON**; wait for green `MAG` / `MAGI` near 100 |
+| 10 | Right wall — **APU CNTLR PWR** | **FUEL** | **ON** |
+| 11 | Right wall — **REACTOR POWER** | **VACUUM** | **ON/READY**; confirm `VAC 0001` and green `FUEL` |
+| 12 | Right wall — **APU CNTLR PWR** | **RF** | **ON** |
+| 13 | Right wall — **REACTOR POWER** | **CHARM** | **ON**; mode advances to `LIGHT` |
+| 14 | Right wall — **REACTOR POWER** | **DEC** | **ON** |
+| 15 | R1 — CHARM | Status | Wait for `MODE POWER`, green `BUS`, and bus MW rising |
+| 16 | R1 MDU | **STAGE** softkey | Select STAGE; confirm `CMD 1`, `MAX 1`, `GO 1`, `PLANT 1`, `THR 000` |
+| 17 | Keypad | `KP 5` | Center elevator, aileron, and rudder |
+| 18 | Keypad | `KP 3` | Hold until throttle is at idle / `THR 000` |
+| 19 | Brakes | `Shift+B` | **Do not press yet**; parking brake starts SET |
+| 20 | Right wall — **APU OPERATE** | **CART** | Leave **OFF** |
 | 21 | Takeoff configuration | Gear / speedbrake / inlet | Gear **DOWN**, speedbrake **IN**, `SEAL 0`, controls neutral |
 | 22 | Brakes | `Shift+B` | Release parking brake |
 | 23 | Keypad | `KP 9` | Hold to advance throttle smoothly to `THR 100`; verify `CPL 1`, thrust and `DRAW` rising |

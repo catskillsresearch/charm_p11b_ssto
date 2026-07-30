@@ -727,6 +727,45 @@
         <object-name>O3-gauges</object-name>
     </effect>
 
+    <!-- Grenadier has no Shuttle APUs/hydraulics: retain the A12 blank plate,
+         but hide its legacy switchgear and talkbacks. -->
+    <animation>
+        <type>select</type>
+        <object-name>A12-guards</object-name>
+        <object-name>A12-talkback</object-name>
+        <object-name>A12-switches-base</object-name>
+        <object-name>fc3-struct-rtn</object-name>
+        <object-name>fc3-struct-rtn-base</object-name>
+        <object-name>gg-bed-heater1</object-name>
+        <object-name>gg-bed-heater2</object-name>
+        <object-name>gg-bed-heater3</object-name>
+        <object-name>lube-line-heater1</object-name>
+        <object-name>lube-line-heater2</object-name>
+        <object-name>lube-line-heater3</object-name>
+        <object-name>tank-heater1a</object-name>
+        <object-name>tank-heater1b</object-name>
+        <object-name>tank-heater2a</object-name>
+        <object-name>tank-heater2b</object-name>
+        <object-name>tank-heater3a</object-name>
+        <object-name>tank-heater3b</object-name>
+        <object-name>hyd-circ-pump-pwr-sel1</object-name>
+        <object-name>hyd-circ-pump-pwr-sel2</object-name>
+        <object-name>hyd-circ-pump-pwr-sel3</object-name>
+        <object-name>rudder-spd-brake-heat-a</object-name>
+        <object-name>rudder-spd-brake-heat-b</object-name>
+        <object-name>body-flap-heat-a</object-name>
+        <object-name>body-flap-heat-b</object-name>
+        <object-name>elevon-heat-a</object-name>
+        <object-name>elevon-heat-b</object-name>
+        <object-name>aft-fuselage-heat-a</object-name>
+        <object-name>aft-fuselage-heat-b</object-name>
+        <condition>
+            <not>
+                <property>/sim/model/grenadier/enabled</property>
+            </not>
+        </condition>
+    </animation>
+
     <!-- White button lights -->
     <animation>
         <type>material</type>
