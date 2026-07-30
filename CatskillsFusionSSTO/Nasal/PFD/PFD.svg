@@ -68260,6 +68260,49 @@
        x="278.874"
        y="175.674" />
 
+<!-- Grenadier brake status (STAGE column, below OUTPUT) -->
+<text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.75px;line-height:125%;font-family:Sans;text-align:start;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
+       x="126.27808"
+       y="428.5"
+       id="p_meds_oms_mps_brk_hdr">BRAKES</text>
+<text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;line-height:125%;font-family:Sans;text-align:start;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
+       x="126.27808"
+       y="442.5"
+       id="p_meds_oms_mps_brk_park_lbl">PARK</text>
+<text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;line-height:125%;font-family:Sans;text-align:start;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none"
+       x="168.0"
+       y="442.5"
+       id="p_meds_oms_mps_brk_park">SET</text>
+<text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;line-height:125%;font-family:Sans;text-align:start;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
+       x="126.27808"
+       y="455.5"
+       id="p_meds_oms_mps_brk_toel_lbl">TOE L</text>
+<text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;line-height:125%;font-family:Sans;text-align:start;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none"
+       x="168.0"
+       y="455.5"
+       id="p_meds_oms_mps_brk_toel">100</text>
+<text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;line-height:125%;font-family:Sans;text-align:start;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none"
+       x="126.27808"
+       y="468.5"
+       id="p_meds_oms_mps_brk_toer_lbl">TOE R</text>
+<text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.75px;line-height:125%;font-family:Sans;text-align:start;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none"
+       x="168.0"
+       y="468.5"
+       id="p_meds_oms_mps_brk_toer">100</text>
 
    </g>
   </g>

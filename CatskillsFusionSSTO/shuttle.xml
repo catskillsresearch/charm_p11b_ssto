@@ -4888,9 +4888,10 @@
     </direction>
   </force>
 
-  <!-- Grenadier combined-cycle thrust: BODY +X is aft on this airframe, so
-       force direction −X is forward (along the runway when level). Magnitude
-       is written by Nasal from CHARM plant × engine cycle × throttle. -->
+  <!-- Grenadier combined-cycle thrust.
+       Location is structural (+X aft: nose ~−21 m, nozzle ~+15.5 m).
+       Direction is BODY frame (+X nose-forward, +Z down) — not structural.
+       Force +X = nose-forward. Magnitude from Nasal: CHARM × cycle × throttle. -->
   <force name="grenadier_thrust" frame="BODY">
     <function>
       <property>systems/grenadier/engine/thrust-lbf</property>
@@ -4901,7 +4902,7 @@
       <z>-1.0</z>
     </location>
     <direction>
-      <x>-1</x>
+      <x>1</x>
       <y>0</y>
       <z>0</z>
     </direction>

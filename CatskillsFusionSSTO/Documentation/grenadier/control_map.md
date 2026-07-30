@@ -38,27 +38,27 @@ GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 `He (OXID)/(FUEL)` → **He (A)/(B)**; tank `OXID`/`FUEL` → **PROP**/**PROP**.
 Switches/manifold banks unchanged (A/B press + isolation).
 
-## BLANK / INERT (mesh may remain; no Grenadier function)
+## REMOVED / INERT (no Grenadier function)
 
 | Family | What you see | Why |
 |--------|--------------|-----|
-| R2 surplus (isol / He / hyd / boiler / ET door / …) | Paint blanked | Not aliased into Grenadier ops |
-| R4 surplus (heater / LG / MPS / TVC / …) | Paint blanked | Only brake isol is live |
-| Sys B controller row | Paint + hover blank | Duplicate SSME ctrl |
+| R2 surplus (isol / He / hyd / boiler / ET door / …) | Hardware hidden; smooth blank plate | Not aliased into Grenadier ops |
+| R4 surplus (heater / LG / MPS / TVC / …) | Hardware hidden; brake isol retained | Only brake isol is live |
+| Sys B controller row | Hardware hidden | Duplicate SSME ctrl |
 | Fuel cells | Hover blank | CHARM bus + BATT |
-| ET / SRB selector levers and heritage paint | Paint blanked | No stack; adjacent pushbuttons are repurposed below |
-| MAIN ENGINE LEFT/RIGHT SD | Paint blanked | Single nozzle; CTR label kept |
-| FUEL CELL REAC VLV (C3) | Paint blanked | No fuel cells — CHARM bus + BATT |
+| ET / SRB selector levers and heritage paint | Hardware hidden | No stack; adjacent pushbuttons are repurposed below |
+| MAIN ENGINE LEFT/RIGHT SD | Hardware hidden | Single nozzle; CTR label kept |
+| FUEL CELL REAC VLV (C3) | Hardware hidden | No fuel cells — CHARM bus + BATT |
 | SRB/ET SEP pushbuttons | Relabeled **STAGE − / +** with `STG` button faces | Stack separation removed; left decrements, right increments Stage |
 | OMS ENG arms | Legacy secondary mapping | Not needed in normal operation; use the labeled `STG` pushbuttons |
-| APU hydrazine / hyd pumps | Paint blanked | No hyd TVC story |
+| APU hydrazine / hyd pumps | Hardware hidden on R2; A12 aft plate stripped of all switchgear | No hyd TVC story |
 
 ## CRT map
 
 | Softkey | Page | Content |
 |---------|------|---------|
 | CHARM (first) | `p_meds_apu` | see table below |
-| STAGE | `p_meds_oms_mps` | Stage CMD/MAX, REC/SEAL, THR%/PLANT; engine DELIV%, H2O%, BUS MW, thrust kN, mode, GO/CPL/DRAW, feed kg/s, σ1–3 output |
+| STAGE | `p_meds_oms_mps` | Stage CMD/MAX, REC/SEAL, THR%/PLANT; **BRAKES** PARK/TOE L/TOE R; engine DELIV%, H2O%, BUS MW, thrust kN, mode, GO/CPL/DRAW, feed kg/s, σ1–3 output |
 | SPI | `p_meds_spi` | Keep |
 
 ### CHARM page labels (what each tape means)

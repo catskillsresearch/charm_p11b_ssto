@@ -96,6 +96,9 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.MPS_label = device.svg.getElementById("MPS_label"); 
 	p_meds_oms_mps.OMS_label = device.svg.getElementById("OMS_label");
 
+	p_meds_oms_mps.brk_park = device.svg.getElementById("p_meds_oms_mps_brk_park");
+	p_meds_oms_mps.brk_toel = device.svg.getElementById("p_meds_oms_mps_brk_toel");
+	p_meds_oms_mps.brk_toer = device.svg.getElementById("p_meds_oms_mps_brk_toer");
 
     p_meds_oms_mps.cp1 = device.svg.getElementById("p_meds_oms_mps_cp1"); 
 
@@ -246,6 +249,30 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_LO2.setTranslation(0.0, (1.0 - wflow / 80.0) * (49.0 + 384.0));
 	p_meds_oms_mps.tape_LH2.setScale(1.0, sealed);
 	p_meds_oms_mps.tape_LH2.setTranslation(0.0, (1.0 - sealed) * (49.0 + 384.0));
+
+	# Brakes — parking + toe (red = applied, green = clear)
+	var park = getprop("/controls/gear/brake-parking"); if (park == nil) park = 0;
+	var toel = getprop("/controls/gear/brake-left"); if (toel == nil) toel = 0;
+	var toer = getprop("/controls/gear/brake-right"); if (toer == nil) toer = 0;
+	if (p_meds_oms_mps.brk_park != nil) {
+		if (park > 0.05) {
+			p_meds_oms_mps.brk_park.setText("SET");
+			p_meds_oms_mps.brk_park.setColor(1.0, 0.0, 0.0);
+		} else {
+			p_meds_oms_mps.brk_park.setText("REL");
+			p_meds_oms_mps.brk_park.setColor(0.0, 1.0, 0.0);
+		}
+		p_meds_oms_mps.brk_toel.setText(sprintf("%03d", toel * 100.0));
+		p_meds_oms_mps.brk_toer.setText(sprintf("%03d", toer * 100.0));
+		if (toel > 0.05)
+			p_meds_oms_mps.brk_toel.setColor(1.0, 0.0, 0.0);
+		else
+			p_meds_oms_mps.brk_toel.setColor(0.0, 1.0, 0.0);
+		if (toer > 0.05)
+			p_meds_oms_mps.brk_toer.setColor(1.0, 0.0, 0.0);
+		else
+			p_meds_oms_mps.brk_toer.setColor(0.0, 1.0, 0.0);
+	}
 
     }
 
