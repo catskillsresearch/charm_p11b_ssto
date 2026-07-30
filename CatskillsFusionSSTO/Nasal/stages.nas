@@ -3961,6 +3961,17 @@ if (getprop("/sim/presets/stage") == 7) # Grenadier: runway, gear down, no stack
 		setprop("/fdm/jsbsim/systems/dps/idp-power-status[1]", 0);
 		setprop("/fdm/jsbsim/systems/dps/idp-power-status[2]", 0);
 		setprop("/fdm/jsbsim/systems/dps/idp-power-status[3]", 0);
+		# Pilot flight controls and takeoff displays are also genuinely cold.
+		setprop("/fdm/jsbsim/fcs/controller-power-cdr", 0);
+		setprop("/fdm/jsbsim/fcs/controller-power-plt", 0);
+		setprop("/fdm/jsbsim/fcs/controller-power-aft", 0);
+		setprop("/fdm/jsbsim/systems/electrical/hud/cmd-pwr-switch", 0);
+		setprop("/fdm/jsbsim/systems/electrical/hud/plt-pwr-switch", 0);
+		# A runway start must not inherit the deployed landing speedbrake.
+		setprop("/controls/flight/speedbrake", 0.0);
+		setprop("/controls/shuttle/speedbrake", 0.0);
+		setprop("/fdm/jsbsim/systems/fcs/speedbrake-cmd-norm", 0.0);
+		setprop("/controls/shuttle/speedbrake-string", "in");
 	};
 	var _force_level_park = func {
 		_park_structure_contacts();

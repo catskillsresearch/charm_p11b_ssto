@@ -17706,12 +17706,6 @@
                     if (getprop("/controls/shuttle/button_srb_sep-ss") == 0)
                         {
                             setprop("/controls/shuttle/button_srb_sep-ss", 1);
-
-
-                            if (getprop("/controls/shuttle/srb-separation-mode") == 1)
-						{
-						setprop("/controls/shuttle/srb-separation", 1);
-						}
                             SpaceShuttle.click("button-down", -11.95763, -0.07497, -1.01942);
                         }
                 </script>
@@ -17733,7 +17727,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>button_srb_sep</tooltip-id>
-                <label></label>
+                <label>Stage -</label>
             </binding>
         </hovered>
     </animation>
@@ -17820,17 +17814,6 @@
                     if (getprop("/controls/shuttle/button_et_sep-ss") == 0)
                         {
                             setprop("/controls/shuttle/button_et_sep-ss", 1);
-
-
-			    if (SpaceShuttle.failure_cmd.etsep_pb == 0) 
-				{
-				return;
-				}
-
-                            if ((getprop("/controls/shuttle/et-separation-mode") == 1) and (getprop("/controls/shuttle/et-separation") == 0)) {
-								SpaceShuttle.force_external_tank_separate();
-								#setprop("/controls/shuttle/et-separation", 1);
-							}
                             SpaceShuttle.click("button-down", -11.95808, -0.1429, -1.01936);
                         }
                 </script>
@@ -17852,7 +17835,7 @@
             <binding>
                 <command>set-tooltip</command>
                 <tooltip-id>button_et_sep</tooltip-id>
-                <label>Separate External Tank</label>
+                <label>Stage +</label>
             </binding>
         </hovered>
     </animation>

@@ -21,9 +21,9 @@ Prefixes: `C=/fdm/jsbsim/systems/grenadier/charm/` · `E=.../engine/`
 | DEC | **DEC** | `ctrl-pwr-sys-a-ac1-ctr` | DEC online | `C/dec-online` |
 | Vacuum | **VACUUM** | `ctrl-pwr-sys-a-ac3-right` | Vacuum ready | `C/vacuum-ready` |
 | SCRAM | *(center)* | `main-eng-limit-shut-dn` Enable | CHARM SCRAM | `C/scram` |
-| Stage − | *(center)* | `oms-eng-left` | Stage - | `E/sigma` |
-| Stage + | *(center)* | `oms-eng-right` | Stage + | `E/sigma` |
-| Throttle | *(center)* | engine[0] lever | Engine throttle | `E/throttle` |
+| Stage − | **STAGE −** *(center)* | left black `STG` pushbutton (former SRB SEP) | Stage - | `E/sigma` |
+| Stage + | **STAGE +** *(center)* | right black `STG` pushbutton (former ET SEP) | Stage + | `E/sigma` |
+| Throttle | **KP 9 / KP 3** | FlightGear engine[0] keyboard command | Increase / decrease | `E/throttle` |
 
 Header over CHARM/DEC/VACUUM: **REACTOR POWER** (was ENGINE POWER).
 
@@ -46,10 +46,11 @@ Switches/manifold banks unchanged (A/B press + isolation).
 | R4 surplus (heater / LG / MPS / TVC / …) | Paint blanked | Only brake isol is live |
 | Sys B controller row | Paint + hover blank | Duplicate SSME ctrl |
 | Fuel cells | Hover blank | CHARM bus + BATT |
-| ET / SRB separation | Paint blanked | No stack |
+| ET / SRB selector levers and heritage paint | Paint blanked | No stack; adjacent pushbuttons are repurposed below |
 | MAIN ENGINE LEFT/RIGHT SD | Paint blanked | Single nozzle; CTR label kept |
 | FUEL CELL REAC VLV (C3) | Paint blanked | No fuel cells — CHARM bus + BATT |
-| OMS ENG arms | Relabeled **STAGE − / +** | Still the Stage knobs |
+| SRB/ET SEP pushbuttons | Relabeled **STAGE − / +** with `STG` button faces | Stack separation removed; left decrements, right increments Stage |
+| OMS ENG arms | Legacy secondary mapping | Not needed in normal operation; use the labeled `STG` pushbuttons |
 | APU hydrazine / hyd pumps | Paint blanked | No hyd TVC story |
 
 ## CRT map
@@ -57,7 +58,7 @@ Switches/manifold banks unchanged (A/B press + isolation).
 | Softkey | Page | Content |
 |---------|------|---------|
 | CHARM (first) | `p_meds_apu` | see table below |
-| STAGE | `p_meds_oms_mps` | σ CMD/MAX, REC/SEAL, THR/PLT; ENGINE H2O/MW/kN, GO/CPL, σ1–3 THR% |
+| STAGE | `p_meds_oms_mps` | Stage CMD/MAX, REC/SEAL, THR%/PLANT; engine DELIV%, H2O%, BUS MW, thrust kN, mode, GO/CPL/DRAW, feed kg/s, σ1–3 output |
 | SPI | `p_meds_spi` | Keep |
 
 ### CHARM page labels (what each tape means)

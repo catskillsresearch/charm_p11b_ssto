@@ -461,6 +461,20 @@ var _wire_panel_aliases = func {
             set_sigma(int(_num(E ~ "sigma", 1)) + 1);
         prev_or = v;
     }, 0, 0);
+
+    # The two prominent heritage SEP pushbuttons are the discoverable STAGE
+    # controls on Grenadier: SRB (left) decrements, ET (right) increments.
+    # Their original stack-separation side effects are removed in cockpit.xml.
+    setlistener("/controls/shuttle/button_srb_sep-ss", func {
+        if (!_num(S ~ "enabled", 0)) return;
+        if (_num("/controls/shuttle/button_srb_sep-ss", 0) > 0.5)
+            set_sigma(int(_num(E ~ "sigma", 1)) - 1);
+    }, 0, 0);
+    setlistener("/controls/shuttle/button_et_sep-ss", func {
+        if (!_num(S ~ "enabled", 0)) return;
+        if (_num("/controls/shuttle/button_et_sep-ss", 0) > 0.5)
+            set_sigma(int(_num(E ~ "sigma", 1)) + 1);
+    }, 0, 0);
 };
 
 var _loop = func {
@@ -518,6 +532,15 @@ var apply_cold_pad = func {
     setprop("/fdm/jsbsim/systems/dps/idp-power-status[1]", 0);
     setprop("/fdm/jsbsim/systems/dps/idp-power-status[2]", 0);
     setprop("/fdm/jsbsim/systems/dps/idp-power-status[3]", 0);
+    setprop("/fdm/jsbsim/fcs/controller-power-cdr", 0);
+    setprop("/fdm/jsbsim/fcs/controller-power-plt", 0);
+    setprop("/fdm/jsbsim/fcs/controller-power-aft", 0);
+    setprop("/fdm/jsbsim/systems/electrical/hud/cmd-pwr-switch", 0);
+    setprop("/fdm/jsbsim/systems/electrical/hud/plt-pwr-switch", 0);
+    setprop("/controls/flight/speedbrake", 0.0);
+    setprop("/controls/shuttle/speedbrake", 0.0);
+    setprop("/fdm/jsbsim/systems/fcs/speedbrake-cmd-norm", 0.0);
+    setprop("/controls/shuttle/speedbrake-string", "in");
 };
 
 var start = func {

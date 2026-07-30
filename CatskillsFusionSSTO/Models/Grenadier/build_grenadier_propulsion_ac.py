@@ -144,6 +144,59 @@ class ACBuilder:
         ]
         self.add_mesh(name, v, f, mat=mat)
 
+    def crowned_cowl(self, name, stations, cross_segs, thickness, mat):
+        """Closed, aerodynamically crowned loft over the engine turtledeck.
+
+        stations: (x, half_width, edge_y, crown_height). The upper surface
+        follows a smooth elliptical crown from each side edge to centerline.
+        """
+        upper = []
+        lower = []
+        for x, half_width, edge_y, crown in stations:
+            for j in range(cross_segs + 1):
+                t = -1.0 + 2.0 * j / cross_segs
+                # Elliptical crown has zero height at the side seams and a
+                # rounded centerline; exponent softens the shoulder.
+                arch = max(0.0, 1.0 - t * t) ** 0.62
+                y = edge_y + crown * arch
+                upper.append(_v(x, y, half_width * t))
+                lower.append(_v(x, y - thickness, half_width * t))
+
+        nrow = cross_segs + 1
+        verts = upper + lower
+        nupper = len(upper)
+        faces = []
+
+        # Crown and underside.
+        for i in range(len(stations) - 1):
+            for j in range(cross_segs):
+                a = i * nrow + j
+                b = a + 1
+                c = (i + 1) * nrow + j + 1
+                d = (i + 1) * nrow + j
+                faces.append((a, d, c, b))
+                faces.append((nupper + a, nupper + b, nupper + c, nupper + d))
+
+        # Port/starboard seams.
+        for i in range(len(stations) - 1):
+            a = i * nrow
+            d = (i + 1) * nrow
+            faces.append((a, nupper + a, nupper + d, d))
+            b = i * nrow + cross_segs
+            c = (i + 1) * nrow + cross_segs
+            faces.append((b, c, nupper + c, nupper + b))
+
+        # Forward and aft caps.
+        for j in range(cross_segs):
+            a = j
+            b = j + 1
+            faces.append((a, b, nupper + b, nupper + a))
+            d = (len(stations) - 1) * nrow + j
+            c = d + 1
+            faces.append((d, nupper + d, nupper + c, c))
+
+        self.add_mesh(name, verts, faces, mat=mat, twosided=True)
+
     def labeled_box(self, name, text, x0, x1, y0, y1, z0, z1, mat, label_mat, tex_dir: Path):
         self.box(name, x0, x1, y0, y1, z0, z1, mat=mat)
         slug = name.replace("grenadier-", "")
@@ -252,51 +305,28 @@ def build_nozzle():
     # Forward bay wall
     b.disk("grenadier-aft-bulkhead", 3.95, 11.90, segs, mat_tps_dk, normal="-x", twosided=True)
 
-    # Top inter-pod cowl: heritage 3×SSME + full OMS bells used to fill the
-    # portal between OMS pods above the nozzle. Grenadier hides SSMEs and
-    # trims OMS bells, so close that gap with an explicit aft-facing TPS plate
-    # from fairing top (~Y −0.25) up to the fin-root underside (~Y 0.95).
-    b.box(
+    # Smooth inter-pod turtledeck over the single engine. The old rectangular
+    # patch left exposed hardware in oblique views and looked like a bulkhead,
+    # not an aerodynamic cowl. This loft overlaps the OMS pod inboard skins,
+    # follows the circular engine fairing at its side seams, and tapers into
+    # the nozzle collar aft.
+    cowl_stations = [
+        # x,     half-width, edge-y, crown
+        (12.15, 1.55, 1.05, 0.35),
+        (12.55, 1.48, 0.90, 0.46),
+        (13.00, 1.35, 0.62, 0.65),
+        (13.45, 1.20, 0.30, 0.81),
+        (13.85, 1.05, 0.00, 0.90),
+        (14.20, 0.90, -0.25, 0.85),
+        (14.50, 0.72, -0.36, 0.62),
+        (14.72, 0.58, -0.31, 0.30),
+    ]
+    b.crowned_cowl(
         "grenadier-interpod-top-cowl",
-        13.85,
-        14.65,
-        -0.20,
-        0.95,
-        -0.58,
-        0.58,
+        cowl_stations,
+        cross_segs=20,
+        thickness=0.10,
         mat=mat_tps,
-    )
-    # Side seals to OMS inboard faces (kill edge see-through)
-    b.box(
-        "grenadier-interpod-seal-L",
-        13.90,
-        14.60,
-        -0.15,
-        0.90,
-        0.50,
-        0.72,
-        mat=mat_tps_dk,
-    )
-    b.box(
-        "grenadier-interpod-seal-R",
-        13.90,
-        14.60,
-        -0.15,
-        0.90,
-        -0.72,
-        -0.50,
-        mat=mat_tps_dk,
-    )
-    # Aft face cap (looks-into gap from behind)
-    b.box(
-        "grenadier-interpod-aft-face",
-        14.55,
-        14.70,
-        -0.10,
-        0.90,
-        -0.55,
-        0.55,
-        mat=mat_tps_dk,
     )
 
     # Heritage fuselage still has three SSME cutouts at x≈13.0–13.45 (triangle

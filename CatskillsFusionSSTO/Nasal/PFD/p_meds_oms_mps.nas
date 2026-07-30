@@ -102,8 +102,6 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 
 	#SVG elements with different fonts (SSU B) and green color// OMS and MPS PC numbers
 
-	p_meds_oms_mps.MPS_label.setFont(p_pfd_font_2);
-	p_meds_oms_mps.OMS_label.setFont(p_pfd_font_2);
 	p_meds_oms_mps.Pc_oleft.setFont(p_pfd_font_2);
 	p_meds_oms_mps.Pc_oright.setFont(p_pfd_font_2);
 	p_meds_oms_mps.Pc_right.setFont(p_pfd_font_2);
@@ -122,8 +120,6 @@ var PFD_addpage_p_meds_oms_mps = func(device)
         device.MEDS_menu_title.setText("    SUBSYSTEM MENU");
 	p_meds_oms_mps.menu_item.setColor(1.0, 1.0, 1.0);
 	p_meds_oms_mps.menu_item_frame.setColor(1.0, 1.0, 1.0);
-	p_meds_oms_mps.OMS_label.setText("STAGE");
-	p_meds_oms_mps.MPS_label.setText("ENGINE");
     
 
     }
@@ -139,6 +135,7 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	var thr = getprop(E ~ "throttle"); if (thr == nil) thr = 0;
 	var sealed = getprop(E ~ "inlet-sealed"); if (sealed == nil) sealed = 0;
 	var water = getprop(E ~ "water-kg"); if (water == nil) water = 0;
+	var wflow = getprop(E ~ "water-flow-kgps"); if (wflow == nil) wflow = 0;
 	var thrust = getprop(E ~ "thrust-kn"); if (thrust == nil) thrust = 0;
 	var busf = getprop(E ~ "bus-frac"); if (busf == nil) busf = 0;
 	var pdraw = getprop(E ~ "power-draw-mw"); if (pdraw == nil) pdraw = 0;
@@ -170,7 +167,7 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_N2TkP_oleft.setTranslation(0.0, (1.0 - rec / 3.0) * (49.5 + 270.8));
 	p_meds_oms_mps.tape_N2TkP_oright.setScale(1.0, sealed);
 	p_meds_oms_mps.tape_N2TkP_oright.setTranslation(0.0, (1.0 - sealed) * (49.5 + 270.8));
-	p_meds_oms_mps.tape_HeTkP_oleft.setColorFill(0.0, 1.0, 0.0);
+	if (sig <= allw) {p_meds_oms_mps.tape_HeTkP_oleft.setColorFill(0.0, 1.0, 0.0);} else {p_meds_oms_mps.tape_HeTkP_oleft.setColorFill(1.0, 0.0, 0.0);}
 	p_meds_oms_mps.tape_HeTkP_oright.setColorFill(0.0, 1.0, 0.0);
 	p_meds_oms_mps.tape_N2TkP_oleft.setColorFill(0.0, 1.0, 0.0);
 	if (sealed) {p_meds_oms_mps.tape_N2TkP_oright.setColorFill(0.0, 1.0, 0.0);} else {p_meds_oms_mps.tape_N2TkP_oright.setColorFill(1.0, 0.0, 0.0);}
@@ -203,10 +200,13 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_TkP_pneu.setColorFill(0.0, 1.0, 0.0);
 
 	var midx = getprop(C ~ "mode-index"); if (midx == nil) midx = 0;
+	var mode_abbr = mode;
+	if (mode == "LIGHT") mode_abbr = "LITE";
+	elsif (mode == "POWER") mode_abbr = "PWR";
 	p_meds_oms_mps.He_reg_left.updateText(sprintf("%04d", stage_go));
 	p_meds_oms_mps.He_reg_center.updateText(sprintf("%04d", coupled));
 	p_meds_oms_mps.He_reg_right.updateText(sprintf("%04d", pdraw));
-	p_meds_oms_mps.He_reg_pneu.updateText(sprintf("%04d", midx));
+	p_meds_oms_mps.He_reg_pneu.updateText(sprintf("%4s", mode_abbr));
 	p_meds_oms_mps.tape_regP_left.setScale(1.0, stage_go);
 	p_meds_oms_mps.tape_regP_left.setTranslation(0.0, (1.0 - stage_go) * (49.4 + 270.8));
 	p_meds_oms_mps.tape_regP_center.setScale(1.0, coupled);
@@ -238,11 +238,12 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	p_meds_oms_mps.tape_Pc_center.setColorFill(1.0, 1.0, 1.0);
 	p_meds_oms_mps.tape_Pc_right.setColorFill(1.0, 1.0, 1.0);
 
-	# LO2/LH2 manifolds → water remaining % and inlet seal code
-	p_meds_oms_mps.LO2.updateText(sprintf("%03d", water_frac * 100));
-	p_meds_oms_mps.LH2.updateText(sprintf("%03d", sealed * 100));
-	p_meds_oms_mps.tape_LO2.setScale(1.0, water_frac);
-	p_meds_oms_mps.tape_LO2.setTranslation(0.0, (1.0 - water_frac) * (49.0 + 384.0));
+	# Feed detail: Stage-3 water flow (kg/s) and inlet-seal state.
+	# Water quantity is already shown in the upper H2O% tape.
+	p_meds_oms_mps.LO2.updateText(sprintf("%03d", wflow));
+	p_meds_oms_mps.LH2.updateText(sprintf("%03d", sealed));
+	p_meds_oms_mps.tape_LO2.setScale(1.0, wflow / 80.0);
+	p_meds_oms_mps.tape_LO2.setTranslation(0.0, (1.0 - wflow / 80.0) * (49.0 + 384.0));
 	p_meds_oms_mps.tape_LH2.setScale(1.0, sealed);
 	p_meds_oms_mps.tape_LH2.setTranslation(0.0, (1.0 - sealed) * (49.0 + 384.0));
 

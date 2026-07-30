@@ -44,6 +44,7 @@ R4_KEEP: tuple[tuple[int, int, int, int], ...] = ()
 C3_BLANKS: tuple[tuple[int, int, int, int], ...] = (
     (1445, 905, 1495, 935),  # MAIN ENGINE SHUT DOWN · LEFT
     (1555, 905, 1615, 935),  # MAIN ENGINE SHUT DOWN · RIGHT (keep CTR ~1500–1550)
+    (1485, 1005, 1558, 1110),  # former left SEP selector MAN/AUTO paint
     (1555, 975, 1925, 1165),  # SRB SEPARATION + ET SEPARATION (+ MAN/AUTO)
     (1335, 1285, 1675, 1415),  # FUEL CELL REAC VLV 1/2/3 CLOSE
 )
@@ -282,26 +283,42 @@ def main() -> None:
         font_size=8,
     )
 
-    # C3 — OMS ENG ARM knobs are Stage ± (keep switches; overwrite heritage paint)
+    # C3 — repurpose the two prominent black SEP pushbuttons as Stage -/+.
+    # These coordinates are the actual SRB/ET panel legends, not the nearby
+    # OMS ARM texture island used by the first attempt.
     _stamp_centered(
         img,
         arr,
-        "STAGE",
-        1520,
-        990,
-        cover_w=56,
+        "STAGE −",
+        1575,
+        1050,
+        cover_w=94,
         cover_h=12,
         font_size=9,
     )
-    _stamp_row(
+    _stamp_centered(
         img,
         arr,
-        [1490, 1555],
-        ["−", "+"],
-        1010,
-        cover_w=22,
+        "STAGE +",
+        1715,
+        1050,
+        cover_w=94,
         cover_h=12,
-        font_size=10,
+        font_size=9,
+    )
+
+    # Both button-label meshes share this UV patch. Replace SEP with STG on
+    # the black button face; the adjacent panel legends identify - versus +.
+    d = ImageDraw.Draw(img)
+    d.rectangle((1048, 312, 1087, 336), fill=(4, 4, 4))
+    font = _font(14)
+    label = "STG"
+    bbox = d.textbbox((0, 0), label, font=font)
+    d.text(
+        (int(1067.5 - (bbox[2] - bbox[0]) / 2), int(324 - (bbox[3] - bbox[1]) / 2 - 2)),
+        label,
+        fill=(245, 245, 245),
+        font=font,
     )
 
     # R4 — only live brake isol (failures.xml reads brake-isolation-valve-*-status)
