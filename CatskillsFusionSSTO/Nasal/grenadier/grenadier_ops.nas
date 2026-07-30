@@ -68,14 +68,16 @@ var init_defaults = func {
     _set(E ~ "sigma-recommended", 1);
     _set(E ~ "sigma-allowed", 0); # no stage until plant POWER
     _set(E ~ "sigma2-alt-ft", 25000.0);
-    _set(E ~ "sigma3-alt-ft", 120000.0);
+    # Paper seal altitude h_seal ≈ 39.6 km (constants.generated.json stage.h_seal_m)
+    _set(E ~ "sigma3-alt-ft", 130000.0);
     _set(E ~ "inlet-sealed", 0);
     _set(E ~ "throttle", 0.0);
     _set(E ~ "thrust-kn", 0.0);
     _set(E ~ "thrust-lbf", 0.0);
     _set(E ~ "power-draw-mw", 0.0);
     _set(E ~ "fan-spin-deg", 0.0);
-    _set(E ~ "water-kg", 44000.0);
+    # Paper m_w (constants.generated.json mass.m_w_kg)
+    _set(E ~ "water-kg", 44356.0);
     _set(E ~ "water-flow-kgps", 0.0);
     _set(E ~ "alt-ft", 0.0);
     _set(E ~ "q-psf", 0.0);
@@ -83,10 +85,16 @@ var init_defaults = func {
     _set(E ~ "plant-ok", 0);
     _set(E ~ "coupled-ok", 0);
     _set(E ~ "bus-frac", 0.0);
-    # Peak thrust by cycle at throttle=1 with full bus (kN → also published as lbf)
-    _set(E ~ "thrust-peak-kn-sigma1", 400.0);
-    _set(E ~ "thrust-peak-kn-sigma2", 800.0);
-    _set(E ~ "thrust-peak-kn-sigma3", 1200.0);
+    # Peak thrust / bus draw / σ3 mdot at throttle=1 — arxiv §10 /
+    # research/figures/cad/constants.generated.json (stage.t*_kn, stage.p*_mw,
+    # stage.mdot_w_kg_s). Not the old 400/800/1200 demo ladder.
+    _set(E ~ "thrust-peak-kn-sigma1", 589.4);
+    _set(E ~ "thrust-peak-kn-sigma2", 820.9);
+    _set(E ~ "thrust-peak-kn-sigma3", 55.8);
+    _set(E ~ "power-peak-mw-sigma1", 92.5);
+    _set(E ~ "power-peak-mw-sigma2", 995.0);
+    _set(E ~ "power-peak-mw-sigma3", 995.0);
+    _set(E ~ "water-flow-peak-kgps", 2.845);
 
     # Inert props for unwired heritage switches (fuel-cell valves, etc.)
     _set(G ~ "inert/fuel-cell-valve-1", 0);
@@ -255,7 +263,7 @@ var _update_engine = func (dt) {
 
     # --- Engine system (cycle + throttle demand) ---
     var a2 = _num(E ~ "sigma2-alt-ft", 25000);
-    var a3 = _num(E ~ "sigma3-alt-ft", 120000);
+    var a3 = _num(E ~ "sigma3-alt-ft", 130000);
     var rec = 1;
     if (alt >= a2) rec = 2;
     if (alt >= a3) rec = 3;
@@ -302,14 +310,21 @@ var _update_engine = func (dt) {
     var bus_frac = 0.0;
 
     if (coupled) {
-        var peak = _num(E ~ "thrust-peak-kn-sigma1", 400);
-        if (sig == 1) { pdraw = 200.0 * thr; peak = _num(E ~ "thrust-peak-kn-sigma1", 400); }
-        elsif (sig == 2) { pdraw = 600.0 * thr; peak = _num(E ~ "thrust-peak-kn-sigma2", 800); }
-        else {
-            pdraw = 900.0 * thr;
-            peak = _num(E ~ "thrust-peak-kn-sigma3", 1200);
-            wflow = 80.0 * thr;
+        # Defaults = paper freeze if props missing (same as init_defaults).
+        var peak = _num(E ~ "thrust-peak-kn-sigma1", 589.4);
+        var ppeak = _num(E ~ "power-peak-mw-sigma1", 92.5);
+        if (sig == 1) {
+            peak = _num(E ~ "thrust-peak-kn-sigma1", 589.4);
+            ppeak = _num(E ~ "power-peak-mw-sigma1", 92.5);
+        } elsif (sig == 2) {
+            peak = _num(E ~ "thrust-peak-kn-sigma2", 820.9);
+            ppeak = _num(E ~ "power-peak-mw-sigma2", 995.0);
+        } else {
+            peak = _num(E ~ "thrust-peak-kn-sigma3", 55.8);
+            ppeak = _num(E ~ "power-peak-mw-sigma3", 995.0);
+            wflow = _num(E ~ "water-flow-peak-kgps", 2.845) * thr;
         }
+        pdraw = ppeak * thr;
         thrust_kn = peak * thr;
         # Power cable limit: engine cannot exceed CHARM bus
         if (pdraw > bus and bus > 1) {
@@ -357,9 +372,9 @@ var _update_engine = func (dt) {
 # Map thrust → tiny nozzle glow vs big plasma plume
 var _update_exhaust_vfx = func (thrust_kn, sig, coupled) {
     var V = G ~ "vfx/";
-    var peak = _num(E ~ "thrust-peak-kn-sigma1", 400);
-    if (sig == 2) peak = _num(E ~ "thrust-peak-kn-sigma2", 800);
-    if (sig == 3) peak = _num(E ~ "thrust-peak-kn-sigma3", 1200);
+    var peak = _num(E ~ "thrust-peak-kn-sigma1", 589.4);
+    if (sig == 2) peak = _num(E ~ "thrust-peak-kn-sigma2", 820.9);
+    if (sig == 3) peak = _num(E ~ "thrust-peak-kn-sigma3", 55.8);
     if (peak < 1) peak = 1;
 
     var n = 0.0;

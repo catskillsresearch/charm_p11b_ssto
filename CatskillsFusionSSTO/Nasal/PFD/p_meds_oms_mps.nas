@@ -148,11 +148,13 @@ var PFD_addpage_p_meds_oms_mps = func(device)
 	var bus = getprop(C ~ "bus-mw"); if (bus == nil) bus = 0;
 	var mode = getprop(C ~ "mode"); if (mode == nil) mode = "OFF";
 
-	var water_frac = water / 44000.0;
+	# Water % vs paper freeze capacity (constants mass.m_w_kg ≈ 44356).
+	var water_frac = water / 44356.0;
 	if (water_frac > 1.0) water_frac = 1.0;
-	var peak = 400.0;
-	if (sig == 2) peak = 800.0;
-	if (sig == 3) peak = 1200.0;
+	if (water_frac < 0.0) water_frac = 0.0;
+	var peak = getprop(E ~ "thrust-peak-kn-sigma1"); if (peak == nil) peak = 589.4;
+	if (sig == 2) { peak = getprop(E ~ "thrust-peak-kn-sigma2"); if (peak == nil) peak = 820.9; }
+	if (sig == 3) { peak = getprop(E ~ "thrust-peak-kn-sigma3"); if (peak == nil) peak = 55.8; }
 	var thrust_frac = 0.0;
 	if (peak > 1) thrust_frac = thrust / peak;
 	if (thrust_frac > 1.0) thrust_frac = 1.0;

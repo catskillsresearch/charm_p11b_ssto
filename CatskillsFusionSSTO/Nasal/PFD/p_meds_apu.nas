@@ -113,7 +113,7 @@ var PFD_addpage_p_meds_apu = func(device)
 	var aux = getprop(C ~ "aux-bus-v"); if (aux == nil) aux = 0;
 	var tk = getprop(C ~ "magnet-t-k"); if (tk == nil) tk = 80;
 	var water = getprop(E ~ "water-kg"); if (water == nil) water = 0;
-	var water_frac = water / 44000.0;
+	var water_frac = water / 44356.0;
 	if (water_frac > 1) water_frac = 1;
 
 	# Row: "fuel qty" tapes → batt / magnet I / plasma
@@ -161,7 +161,7 @@ var PFD_addpage_p_meds_apu = func(device)
 	if (vac) {p_meds_apu.tape_oilT3.setColorFill(0.0, 1.0, 0.0);} else {p_meds_apu.tape_oilT3.setColorFill(1.0, 0.0, 0.0);}
 
 	# H+ / B11 / H2O → proton (H2) kg, solid 11B kg, water kg — not the FUEL wall switch.
-	# Nominal full loads from grenadier_ops init: 40 / 120 / 44000 kg.
+	# Nominal full loads from grenadier_ops init: 40 / 120 / 44356 kg (paper m_w).
 	var pk = getprop(C ~ "fuel-proton-kg"); if (pk == nil) pk = 0;
 	var bk = getprop(C ~ "fuel-b11-kg"); if (bk == nil) bk = 0;
 	var p_frac = pk / 40.0; if (p_frac > 1) p_frac = 1; if (p_frac < 0) p_frac = 0;
