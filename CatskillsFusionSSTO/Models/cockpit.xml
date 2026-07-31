@@ -1485,6 +1485,25 @@
         </condition>
     </animation>
 
+    <!-- Grenadier uses BATT/CHARM electrical power and L1/L2 ECLSS controls.
+         Hide the complete heritage R1 fuel-cell/power-distribution switchgear,
+         but retain the bare panel, base, and fasteners.  This is the sheet
+         panel only; the separate R1 MDU bezel controls are not in these groups. -->
+    <animation>
+        <type>select</type>
+        <object-name>R1-covers</object-name>
+        <object-name>R1-not-connected</object-name>
+        <object-name>R1-switches</object-name>
+        <object-name>R1-talkbacks</object-name>
+        <object-name>R1-talkback-base</object-name>
+        <object-name>R1-guards</object-name>
+        <condition>
+            <not>
+                <property>/sim/model/grenadier/enabled</property>
+            </not>
+        </condition>
+    </animation>
+
     <!-- R4 keeps only the three brake-isolation controls and their talkbacks. -->
     <animation>
         <type>select</type>

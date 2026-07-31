@@ -48,6 +48,7 @@ Switches/manifold banks unchanged (A/B press + isolation).
 
 | Family | What you see | Why |
 |--------|--------------|-----|
+| R1 power distribution | Hardware hidden; smooth blank plate | Heritage fuel-cell, inverter, and bus controls; Grenadier uses BATT + CHARM bus. R1 O₂/H₂ controls were dummy and did not operate ECLSS |
 | R2 surplus (isol / He / hyd / boiler / ET door / …) | Hardware hidden; smooth blank plate | Not aliased into Grenadier ops |
 | R4 surplus (heater / LG / MPS / TVC / …) | Hardware hidden; brake isol retained | Only brake isol is live |
 | Sys B controller row | Hardware hidden | Duplicate SSME ctrl |
@@ -93,6 +94,23 @@ Switches/manifold banks unchanged (A/B press + isolation).
 
 **FREON LOOP** on the top-center caution light is ATCS coolant (avionics / heat rejection) — not part of the CHARM scramble. Freon pumps are heritage ECLSS; leave alone unless you are doing a full thermal startup.
 
+## Cabin atmosphere / life support
+
+| Panel | Function |
+|-------|----------|
+| **L1** | Thermal-control pumps, cabin/avionics-bay fans, humidity separation, and fire suppression |
+| **L2** | Cabin vent/isolation valves and the live O₂/N₂ supply, crossover, and regulator controls |
+| **O1** | Cabin pressure, O₂ partial pressure, atmosphere flow, and thermal gauges |
+| **O2** | Cryogenic O₂/H₂ tank pressure, quantity, and temperature gauges |
+| **F7** | Caution/warning lights for cabin atmosphere and O₂ pressure |
+
+Cabin atmosphere is represented by virtual JSBSim tanks in `shuttle.xml`:
+O₂ tank 23 starts with **40 lb** (45 lb capacity), and N₂ tank 24 starts with
+**130 lb** (147 lb capacity). `Systems/eclss.xml` meters those stores through
+the **L2** valves and computes cabin pressure and O₂ fraction. Normal startup
+defaults leave ECLSS system 1 supplied and the cabin at 14.7 psi; do not close
+the L2 O₂/N₂ supply or regulator valves for crewed operation.
+
 ## Physical engraving
 
 `Models/fwd-cockpit-text-map-x.png` via `scripts/stamp_grenadier_apu_labels.py`:
@@ -100,5 +118,6 @@ Switches/manifold banks unchanged (A/B press + isolation).
 - APU OPERATE → **CART / BATT / CRYO**
 - APU CNTLR PWR → **MAGNET / FUEL / RF**
 - ENGINE POWER → **REACTOR POWER** + **CHARM / DEC / VACUUM**
+- R1 plate → blank (heritage fuel-cell power distribution)
 - R2 plate → blank except those three plant groups
 - R4 plate → blank except **BRAKE ISOL VLV**

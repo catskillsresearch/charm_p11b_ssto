@@ -8,6 +8,7 @@ Wired keep (see Nasal/grenadier/grenadier_ops.nas):
   APU OPERATE     →  CART / BATT / CRYO
   APU CNTLR PWR   →  MAGNET / FUEL / RF
   ENGINE POWER    →  REACTOR POWER + CHARM / DEC / VACUUM
+  Panel R1        →  blank (heritage fuel-cell power distribution)
   Panel R4        →  BRAKE ISOL VLV only
 
 Also relabels aft AFT LEFT/RIGHT RCS biprop OXID/FUEL → green monoprop
@@ -28,6 +29,11 @@ TEX = ROOT / "Models" / "fwd-cockpit-text-map-x.png"
 BAK = ROOT / "Models" / "fwd-cockpit-text-map-x.png.bak_pre_grenadier"
 AFT_TEX = ROOT / "Models" / "aft-cockpit-text-map-x.png"
 AFT_BAK = ROOT / "Models" / "aft-cockpit-text-map-x.png.bak_pre_grenadier"
+
+# --- R1: heritage fuel-cell / AC power distribution; unused by Grenadier ---
+# Sheet-panel UV island only. The R1 MDU bezel uses a different atlas region.
+R1_BLANK = (2930, 1110, 4096, 2410)
+R1_KEEP: tuple[tuple[int, int, int, int], ...] = ()
 
 # --- R2: blank whole plate (remapped labels stamped fresh below) ---
 # Include MPS PRPLT DUMP header row above ENGINE/REACTOR POWER (~y 900–990).
@@ -204,6 +210,7 @@ def main() -> None:
     img = Image.open(src).convert("RGB")
     arr = np.array(img)  # writable copy (np.asarray is read-only)
 
+    _blank_with_keeps(arr, R1_BLANK, R1_KEEP)
     _blank_with_keeps(arr, R2_BLANK, R2_KEEP)
     _blank_with_keeps(arr, R4_BLANK, R4_KEEP)
     for box in C3_BLANKS:
