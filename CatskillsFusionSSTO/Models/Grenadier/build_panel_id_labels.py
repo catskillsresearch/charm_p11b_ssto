@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
-"""Stamp magenta panel ID/purpose text into the cockpit texture atlases.
+"""Stamp bright-yellow panel ID/purpose text into the cockpit texture atlases.
 
-Uses the same method as the original Shuttle lettering: pixels in
-fwd-cockpit-text-map-x.png and aft-cockpit-text-map-x.png. No extra
-geometry, background plaque, or white lettering.
+Uses the same method as the original Shuttle lettering: pixels drawn into
+fwd-cockpit-text-map-x.png and aft-cockpit-text-map-x.png with a regular
+(not bold) DejaVu Sans face at the stock secondary-legend size (~9 px).
+Color is bright yellow so the IDs stand out from white heritage engraving.
 
 Placement rules (strict — skip rather than drape over controls):
   1. Extract crew-facing UV polygons for the panel mesh.
   2. Keep only large contiguous UV islands (real face plates). Tiny
      islands are usually switch/talkback UV patches and are ignored.
-  3. Build a "safe blank" mask: mid-gray panel paint with low local
-     variance, dilated clear of white legends and dark hardware.
-  4. Stamp only when the entire text rectangle lies on safe pixels,
-     preferring a quiet strip along the outer edge of the plate.
+  3. Build a "safe blank" mask: mid-gray panel paint clear of legends.
+  4. Stamp only when the entire text rectangle lies on safe rim pixels.
+
+Tiny MDU doors (C4/C5) originally used ~26×25 atlas islands, which
+upscaled into blurry cockpit smears. Those objects are UV-remapped onto
+larger blank atlas patches before stamping so the lettering stays sharp.
 
 Backups are made once as *.bak_pre_panel_ids and restored before every
 build. Run after scripts/stamp_grenadier_apu_labels.py.
@@ -29,9 +32,14 @@ from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[2]
 MODELS = ROOT / "Models"
+COCKPIT_AC = MODELS / "cockpit.ac"
 FWD = MODELS / "fwd-cockpit-text-map-x.png"
 AFT = MODELS / "aft-cockpit-text-map-x.png"
-MAGENTA = (255, 0, 210)
+
+# Bright yellow — same drawing path as stock white, different ink color.
+YELLOW = (255, 220, 0)
+# Stock secondary legends (ROLL / PITCH / AIR DATA) match ~9 px regular Sans.
+STOCK_FONT_PX = 9
 
 # Minimum UV island area (atlas pixels). Smaller patches are switch/gauge
 # UV holes; stamping there drapes text over 3D hardware in the cockpit.
@@ -99,6 +107,13 @@ PANELS: dict[str, str] = {
 
 MESH_NAME = {"O19": "O19-coas-panel"}
 
+# Expand tiny door UVs onto blank atlas patches so stock-sized glyphs stay sharp.
+# value: (texture path name, x0, y0, x1, y1) in atlas pixels.
+UV_REMAPS: dict[str, tuple[str, int, int, int, int]] = {
+    "C4-panel": (FWD.name, 1408, 16, 1568, 64),
+    "C5-panel": (FWD.name, 1600, 16, 1760, 64),
+}
+
 # Measured blank-edge stamps for plates where automatic search still cannot
 # find a continuous safe rectangle (tiny MDU faces, fragmented UVs).
 # value: (texture, x, y, compact, rotate90)
@@ -107,12 +122,12 @@ MANUAL_STAMPS: dict[str, tuple[str, int, int, bool, bool]] = {
     "L4": (FWD.name, 45, 1555, False, False),
     "R4": (FWD.name, 2700, 2530, False, False),
     "R7": (FWD.name, 40, 2045, False, False),
-    "C4": (FWD.name, 221, 444, True, False),
-    "C5": (FWD.name, 221, 473, True, False),
+    # Centered in UV-remapped MDU door patches.
+    "C4": (FWD.name, 1420, 28, False, False),
+    "C5": (FWD.name, 1612, 28, False, False),
     "C6": (FWD.name, 2020, 1375, False, False),
     "C7": (FWD.name, 2030, 1557, False, False),
-    # A1 AUDIO CENTER right rim — not the featureless switch UV holes and not
-    # the sibling S-BAND faces that share the A1 mesh.
+    # A1 AUDIO CENTER right rim — not switch UV holes / sibling S-BAND faces.
     "A1": (AFT.name, 3517, 989, True, True),
 }
 
@@ -130,10 +145,11 @@ class Mesh:
 
 
 def _font(size: int) -> ImageFont.ImageFont:
+    # Regular weight — matches heritage Shuttle panel engraving (not Bold).
     for fp in (
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
-        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
     ):
         try:
             return ImageFont.truetype(fp, size)
@@ -201,8 +217,6 @@ def _cross(a: np.ndarray, b: np.ndarray) -> np.ndarray:
 
 def _crew_uv_polygons(panel_id: str, mesh: Mesh, size: tuple[int, int]) -> list[list[tuple[int, int]]]:
     width, height = size
-    # Approximate eye point in the flight-deck cabin. Retain faces whose
-    # normals point inward toward the crew.
     cabin = np.array((-11.7, -0.7, 0.0))
     polygons: list[list[tuple[int, int]]] = []
     for face in mesh.faces:
@@ -249,24 +263,20 @@ def _backup(path: Path) -> Path:
     return backup
 
 
-def _text_size(text: str) -> tuple[ImageFont.ImageFont, int, int]:
-    for size in (8, 7, 6):
-        font = _font(size)
-        box = font.getbbox(text)
-        width, height = box[2] - box[0], box[3] - box[1]
-        if width <= 115:
-            return font, width, height
-    return font, width, height
-
-
 def _label_bitmap(panel_id: str, purpose: str, *, compact: bool = False) -> Image.Image:
-    """Transparent bitmap containing magenta letters only."""
+    """Transparent bitmap: bright-yellow letters at stock legend size/weight.
+
+    Drawn the same way as heritage white engraving and the Grenadier plant
+    stamps: 1:1 atlas pixels with a regular Sans face (no bold, no soft scale).
+    """
     if compact:
-        font = _font(6)
         lines = (panel_id, purpose)
+        font_px = STOCK_FONT_PX - 1
     else:
-        font, _, _ = _text_size(f"{panel_id}  {purpose}")
         lines = (f"{panel_id}  {purpose}",)
+        font_px = STOCK_FONT_PX
+
+    font = _font(font_px)
     boxes = [font.getbbox(line) for line in lines]
     widths = [box[2] - box[0] for box in boxes]
     heights = [box[3] - box[1] for box in boxes]
@@ -274,23 +284,133 @@ def _label_bitmap(panel_id: str, purpose: str, *, compact: bool = False) -> Imag
     bitmap = Image.new("RGBA", (max(widths), sum(heights) + gap), (0, 0, 0, 0))
     draw = ImageDraw.Draw(bitmap)
     y = 0
-    for line, width, height in zip(lines, widths, heights):
-        draw.text(((bitmap.width - width) // 2, y), line, fill=(*MAGENTA, 255), font=font)
+    for line, box, width, height in zip(lines, boxes, widths, heights):
+        draw.text(
+            ((bitmap.width - width) // 2 - box[0], y - box[1]),
+            line,
+            fill=(*YELLOW, 255),
+            font=font,
+        )
         y += height + gap
     return bitmap
+
+
+def _remap_object_uvs(
+    ac_path: Path,
+    object_name: str,
+    atlas_size: tuple[int, int],
+    dest: tuple[int, int, int, int],
+) -> bool:
+    """Map an object's current UV AABB onto dest atlas pixels. Returns True if written."""
+    width, height = atlas_size
+    x0, y0, x1, y1 = dest
+    lines = ac_path.read_text(errors="replace").splitlines()
+    i = 0
+    changed = False
+    while i < len(lines):
+        if not lines[i].startswith("OBJECT poly"):
+            i += 1
+            continue
+        start = i
+        i += 1
+        name: str | None = None
+        while i < len(lines) and not lines[i].startswith("OBJECT "):
+            if lines[i].startswith("name "):
+                name = lines[i].split(" ", 1)[1].strip().strip('"')
+            i += 1
+        end = i
+        if name != object_name:
+            continue
+
+        # Collect current UV AABB from all refs in this object.
+        us: list[float] = []
+        vs: list[float] = []
+        j = start
+        while j < end:
+            if lines[j].startswith("refs "):
+                count = int(lines[j].split()[1])
+                j += 1
+                for _ in range(count):
+                    fields = lines[j].split()
+                    us.append(float(fields[1]))
+                    vs.append(float(fields[2]))
+                    j += 1
+                continue
+            j += 1
+        if not us:
+            continue
+        u_min, u_max = min(us), max(us)
+        v_min, v_max = min(vs), max(vs)
+        # Already on the destination patch?
+        px0 = int(round(u_min * (width - 1)))
+        px1 = int(round(u_max * (width - 1)))
+        py0 = int(round((1.0 - v_max) * (height - 1)))
+        py1 = int(round((1.0 - v_min) * (height - 1)))
+        if abs(px0 - x0) <= 2 and abs(py0 - y0) <= 2 and abs(px1 - x1) <= 2 and abs(py1 - y1) <= 2:
+            return False
+
+        du = max(u_max - u_min, 1e-9)
+        dv = max(v_max - v_min, 1e-9)
+        # Dest in UV space (v increases upward in AC).
+        u_a = x0 / (width - 1)
+        u_b = (x1 - 1) / (width - 1)
+        v_a = 1.0 - (y1 - 1) / (height - 1)
+        v_b = 1.0 - y0 / (height - 1)
+
+        j = start
+        while j < end:
+            if lines[j].startswith("refs "):
+                count = int(lines[j].split()[1])
+                j += 1
+                for _ in range(count):
+                    fields = lines[j].split()
+                    idx = fields[0]
+                    u = float(fields[1])
+                    v = float(fields[2])
+                    u_n = u_a + (u - u_min) / du * (u_b - u_a)
+                    v_n = v_a + (v - v_min) / dv * (v_b - v_a)
+                    rest = " ".join(fields[3:])
+                    lines[j] = f"{idx} {u_n:.6f} {v_n:.6f}" + (f" {rest}" if rest else "")
+                    changed = True
+                    j += 1
+                continue
+            j += 1
+        if changed:
+            ac_path.write_text("\n".join(lines) + "\n")
+            print(f"remapped UVs {object_name} -> atlas ({x0},{y0})-({x1},{y1})")
+        return changed
+    print(f"warning: object {object_name} not found in {ac_path.name}")
+    return False
+
+
+def _prepare_uv_remaps(images: dict[str, Image.Image]) -> None:
+    """Expand tiny door UVs and paint their new atlas patches panel-gray."""
+    for object_name, (tex_name, x0, y0, x1, y1) in UV_REMAPS.items():
+        if tex_name not in images:
+            continue
+        _remap_object_uvs(COCKPIT_AC, object_name, images[tex_name].size, (x0, y0, x1, y1))
+        img = images[tex_name]
+        arr = np.asarray(img)
+        # Sample nearby panel gray for a seamless door face.
+        sample = arr[max(0, y0) : min(arr.shape[0], y1), max(0, x0 - 8) : x0]
+        if sample.size == 0:
+            gray = (156, 156, 149)
+        else:
+            mid = sample.reshape(-1, 3)
+            mid = mid[mid.max(axis=1) < 180]
+            gray = tuple(int(v) for v in (mid.mean(axis=0) if len(mid) else (156, 156, 149)))
+        ImageDraw.Draw(img).rectangle([x0, y0, x1 - 1, y1 - 1], fill=gray)
 
 
 def _large_panel_mask(
     polygons: list[list[tuple[int, int]]],
     size: tuple[int, int],
 ) -> np.ndarray:
-    """Rasterize UV faces, keep only large contiguous plate islands."""
     width, height = size
     mask_img = Image.new("L", (width, height), 0)
     draw = ImageDraw.Draw(mask_img)
     for polygon in polygons:
         draw.polygon(polygon, fill=255)
-    # Close one-pixel seams between AC triangles on a continuous plate.
     raw = ndimage.binary_closing(np.asarray(mask_img) > 0, structure=np.ones((3, 3)))
     labels, count = ndimage.label(raw)
     keep = np.zeros_like(raw)
@@ -301,7 +421,6 @@ def _large_panel_mask(
 
 
 def _safe_blank_mask(rgb: np.ndarray, panel_mask: np.ndarray) -> np.ndarray:
-    """Pixels that are quiet mid-gray panel paint, clear of legends/hardware."""
     gray = rgb.mean(axis=2)
     chroma = rgb.max(axis=2) - rgb.min(axis=2)
     gx = ndimage.sobel(gray, axis=1, mode="nearest")
@@ -311,7 +430,6 @@ def _safe_blank_mask(rgb: np.ndarray, panel_mask: np.ndarray) -> np.ndarray:
     mean2 = ndimage.uniform_filter(gray * gray, size=5, mode="nearest")
     local_std = np.sqrt(np.maximum(mean2 - mean * mean, 0.0))
 
-    # Shuttle panel paint is a dull mid-gray; legends are bright, bezels dark.
     paint = panel_mask & (gray >= 105) & (gray <= 168) & (chroma < 28)
     occupied = panel_mask & (
         (gray > 170)
@@ -320,15 +438,9 @@ def _safe_blank_mask(rgb: np.ndarray, panel_mask: np.ndarray) -> np.ndarray:
         | (detail > 22)
         | (local_std > 8)
     )
-    # Keep a healthy margin away from existing lettering and hardware cues.
     occupied = ndimage.binary_dilation(occupied, iterations=5)
     safe = paint & ~occupied
-    # Require a little neighborhood of blank paint, not a single-pixel corridor.
     safe = ndimage.binary_erosion(safe, iterations=1)
-
-    # Featureless interior rectangles are UV islands for 3D switches/talkbacks.
-    # Stamping there drapes magenta across the hardware in the cockpit. Keep
-    # only the outer rim of each plate face.
     edge_distance = ndimage.distance_transform_edt(panel_mask)
     rim = (edge_distance >= 2) & (edge_distance <= 14)
     return safe & rim
@@ -340,7 +452,6 @@ def _find_on_island(
     text_width: int,
     text_height: int,
 ) -> tuple[int, int, float] | None:
-    """Return (x, y, score) for a stamp on one UV island, or None."""
     ys, xs = np.where(island)
     if len(xs) == 0:
         return None
@@ -363,7 +474,6 @@ def _find_on_island(
     edge_distance = ndimage.distance_transform_edt(local)
     yy = np.arange(local.shape[0], dtype=np.float32)[:, None]
     y_norm = yy / max(1.0, float(local.shape[0] - 1))
-    # Lower is better: tight rim, then toward top of this island.
     score = edge_distance.astype(np.float32) + 20.0 * y_norm
     score[~valid] = np.inf
     cy, cx = np.unravel_index(np.argmin(score), score.shape)
@@ -382,14 +492,11 @@ def _find_blank_edge(
     text_width: int,
     text_height: int,
 ) -> tuple[int, int, float] | None:
-    """Return (x, y, score) or None. Score is lower-better."""
     if not polygons:
         return None
-
     panel_mask = _large_panel_mask(polygons, image.size)
     if not np.any(panel_mask):
         return None
-
     rgb_full = np.asarray(image.convert("RGB"), dtype=np.float32)
     labels, count = ndimage.label(panel_mask)
     best: tuple[int, int, float] | None = None
@@ -406,7 +513,6 @@ def _find_blank_edge(
 
 
 def _manual_spot_is_safe(image: Image.Image, x: int, y: int, w: int, h: int) -> bool:
-    """Reject manual stamps that land on legends or dark hardware."""
     pad = 4
     crop = np.asarray(
         image.crop((x - pad, y - pad, x + w + pad, y + h + pad)).convert("RGB"),
@@ -415,14 +521,16 @@ def _manual_spot_is_safe(image: Image.Image, x: int, y: int, w: int, h: int) -> 
     if crop.size == 0:
         return False
     gray = crop.mean(axis=2)
-    bright = gray > 170
+    # Allow yellow already present from a prior rebuild; block white legends / dark.
+    bright_white = (gray > 200) & (
+        (crop.max(axis=2) - crop.min(axis=2)) < 40
+    )
     dark = gray < 90
     core = gray[pad : pad + h, pad : pad + w]
     if core.size == 0:
         return False
-    core_paint = ((core >= 105) & (core <= 168)).mean()
-    # Manual coordinates are pre-chosen on plate rims; only block obvious ink.
-    return core_paint >= 0.98 and float(bright.mean()) <= 0.02 and float(dark.mean()) <= 0.02
+    core_ok = ((core >= 100) & (core <= 175)).mean()
+    return core_ok >= 0.90 and float(bright_white.mean()) <= 0.02 and float(dark.mean()) <= 0.05
 
 
 def main() -> None:
@@ -434,12 +542,15 @@ def main() -> None:
         images[path.name] = Image.open(backup).convert("RGB")
         sources[path.name] = path
 
+    _prepare_uv_remaps(images)
+    # Reload meshes after possible AC UV rewrite.
+    meshes = _load_meshes()
+
     placed: list[str] = []
     skipped: list[str] = []
     positions: list[tuple[str, str, int, int, str]] = []
 
     for panel_id, purpose in PANELS.items():
-        # Prefer explicit blank-edge coordinates when provided.
         manual = MANUAL_STAMPS.get(panel_id)
         if manual is not None:
             texture_name, x, y, compact, rotate90 = manual
@@ -461,8 +572,6 @@ def main() -> None:
         image = images[mesh.texture]
         polygons = _crew_uv_polygons(panel_id, mesh, image.size)
 
-        # Prefer readable horizontal lettering on a plate rim. Rotated text is
-        # a last resort for narrow edge strips only.
         variants: list[tuple[float, str, Image.Image]] = [
             (0.0, "auto", _label_bitmap(panel_id, purpose)),
             (30.0, "auto-compact", _label_bitmap(panel_id, purpose, compact=True)),
@@ -489,8 +598,6 @@ def main() -> None:
         placed.append(panel_id)
         positions.append((panel_id, mesh.texture, x, y, how))
 
-    # Manual fallback for panels that still skipped (coordinates not yet tried
-    # because auto path was preferred, or manual spot failed safety check).
     for panel_id in list(skipped):
         manual = MANUAL_STAMPS.get(panel_id)
         if manual is None:
@@ -512,7 +619,7 @@ def main() -> None:
     for texture_name, image in images.items():
         image.save(sources[texture_name])
         print(f"wrote {sources[texture_name]}")
-    print(f"placed {len(placed)} panel labels")
+    print(f"placed {len(placed)} panel labels (bright yellow, stock-size regular Sans)")
     for panel_id, texture, x, y, how in positions:
         print(f"  {panel_id:>3} {texture:<30} ({x:4d}, {y:4d})  {how}")
     if skipped:

@@ -2134,9 +2134,26 @@ else {speedbrake_string = int(speedbrake_state * 100.0)~"%";}
 setprop("/controls/shuttle/speedbrake-string", speedbrake_string);
 }
 
-# gear retraction message
+# gear retraction — heritage Shuttle is gravity-drop only; Grenadier can retract in flight
 
 var gear_up_message = func {
+
+if (getprop("/sim/model/grenadier/enabled"))
+	{
+	var wow0 = getprop("/gear/gear[0]/wow");
+	var wow1 = getprop("/gear/gear[1]/wow");
+	var wow2 = getprop("/gear/gear[2]/wow");
+	if ((wow0 == 1) or (wow1 == 1) or (wow2 == 1))
+		{
+		SpaceShuttle.callout.make("Gear retract inhibited — weight on wheels.", "help");
+		return;
+		}
+	setprop("/controls/gear/gear-down", 0);
+	setprop("/controls/gear/gear-down-cmd", 0);
+	setprop("/fdm/jsbsim/systems/landing/landing-gear-arm-cmd", 0);
+	setprop("/controls/shuttle/gear-string", "up");
+	return;
+	}
 
 #setprop("/sim/messages/copilot", "The gear can only be retracted by the ground crew!");
 SpaceShuttle.callout.make("The gear can only be retracted by the ground crew!", "help");

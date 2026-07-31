@@ -1536,6 +1536,37 @@
         </condition>
     </animation>
 
+    <!-- Grenadier has no drag chute (long runway + brakes only). Hide ARM /
+         DPY / JETTISON at both seats, their lights, covers, and the F3
+         U-guards that frame those pushbuttons. -->
+    <animation>
+        <type>select</type>
+        <object-name>button_chute_arm_cmd</object-name>
+        <object-name>button_chute_dpy_cmd</object-name>
+        <object-name>button_chute_arm_plt</object-name>
+        <object-name>button_chute_dpy_plt</object-name>
+        <object-name>button_chute_jett_cmd</object-name>
+        <object-name>button_chute_jett_plt</object-name>
+        <object-name>button_light_chute_arm_cmd</object-name>
+        <object-name>button_light_chute_dpy_cmd</object-name>
+        <object-name>button_light_chute_arm_plt</object-name>
+        <object-name>button_light_chute_dpy_plt</object-name>
+        <object-name>button_light_chute_jett_cmd</object-name>
+        <object-name>button_light_chute_jett_plt</object-name>
+        <object-name>chute-arm-cmd-cvr</object-name>
+        <object-name>chute-dpy-cmd-cvr</object-name>
+        <object-name>chute-arm-plt-cvr</object-name>
+        <object-name>chute-dpy-plt-cvr</object-name>
+        <object-name>chute-jett-cmd-cvr</object-name>
+        <object-name>chute-jett-plt-cvr</object-name>
+        <object-name>F3-guards</object-name>
+        <condition>
+            <not>
+                <property>/sim/model/grenadier/enabled</property>
+            </not>
+        </condition>
+    </animation>
+
     <!-- Remove only the C3 hardware whose legends were blanked.  Keep the
          center shutdown/SCRAM hardware and the STG pushbuttons beside these. -->
     <animation>

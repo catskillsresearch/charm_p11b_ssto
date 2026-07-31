@@ -243,7 +243,7 @@
 
    <key n="103">
     <name>g</name>
-    <desc>Disable gear up</desc>
+    <desc>Retract landing gear (Grenadier); heritage Shuttle ground-crew message</desc>
     <binding>
      <command>nasal</command>
      <script>SpaceShuttle.gear_up_message()</script>

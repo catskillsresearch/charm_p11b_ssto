@@ -44,7 +44,7 @@ view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
 | 32 | Display R2 | PLT outboard MDU / PFD | Observe PFD / HUD → **225 KIAS** | Not sheet panel R2 |
 | 33 | Keypad | — | `KP 2` → ~10–12° nose-up | At 225 KIAS. Num Lock ON |
 | 34 | Keypad | — | `KP 5`, then small `KP 2` / `KP 8` | Center then trim pitch. Num Lock ON |
-| 35 | Keypad | — | `g` → gear **UP** | Stay Stage 1 until STAGE page recommends Stage 2 |
+| 35 | Keypad | — | `g` → gear **UP** | Grenadier retracts in flight (`Shift+G` down). Stay Stage 1 until STAGE page recommends Stage 2 |
 
 **Control-surface check (steps 8–12) is mandatory before taxi.** If a surface does not move with BATT and Flight Controller Power ON, stop — do not release the parking brake.
 
@@ -52,7 +52,7 @@ view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
 
 Keypad: `2/8` elevon, `4/6` roll, `0/Enter` rudder/NWS, `5` center, `9/3` throttle. Hold to drive a surface; tap for runway corrections.
 
-Beginner path: **PLT** (right seat) for plant row; center console **C3** for Stage ± / SCRAM; keypad for flight/throttle. Use engraved names on magenta labels / plant row — not heritage Shuttle lettering. Hover empty = blanked / ignore.
+Beginner path: **PLT** (right seat) for plant row; center console **C3** for Stage ± / SCRAM; keypad for flight/throttle. Use engraved names on yellow panel-ID labels / plant row — not heritage Shuttle lettering. Hover empty = blanked / ignore.
 
 CHARM mode `OFF → CRYO → ARM → LIGHT → POWER` is **derived** (CHARM MEDS page).
 

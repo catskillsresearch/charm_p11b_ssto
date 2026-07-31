@@ -36,10 +36,12 @@ GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 
 **Steering / hyd:** **BATT** (not APU START) → `systems/grenadier/hyd/available` → NWS + aero. See [reactor_startup.md](reactor_startup.md) §1a and [ssto_ascent_checklist.md](ssto_ascent_checklist.md) Quick Start.
 
-**Panel ID labels:** small magenta letters baked into blank panel-edge regions of
-the original forward/aft cockpit texture atlases (no plaque geometry or
-background). Placement uses only large plate UV islands and their outer rim —
-never the featureless interior UV holes that host 3D switches. Rebuild with
+**Panel ID labels:** bright yellow letters baked into blank panel-edge regions of
+the original forward/aft cockpit texture atlases (same regular Sans engraving
+size as stock white legends; no plaque geometry). Placement uses only large
+plate UV islands and their outer rim — never the featureless interior UV holes
+that host 3D switches. Tiny MDU doors (C4/C5) are UV-remapped onto larger blank
+atlas patches so the lettering stays sharp. Rebuild with
 `python3 Models/Grenadier/build_panel_id_labels.py` after
 `scripts/stamp_grenadier_apu_labels.py`.
 
@@ -51,6 +53,7 @@ Switches/manifold banks unchanged (A/B press + isolation).
 
 | Family | What you see | Why |
 |--------|--------------|-----|
+| Drag chute ARM / DPY / JETTISON (both seats) | Hardware hidden | No drag chute — rollout uses gear brakes on a long runway |
 | R1 power distribution | Hardware hidden; smooth blank plate | Heritage fuel-cell, inverter, and bus controls; Grenadier uses BATT + CHARM bus. R1 O₂/H₂ controls were dummy and did not operate ECLSS |
 | R2 surplus (isol / He / hyd / boiler / ET door / …) | Hardware hidden; smooth blank plate | Not aliased into Grenadier ops |
 | R4 surplus (heater / LG / MPS / TVC / …) | Hardware hidden; brake isol retained | Only brake isol is live |
