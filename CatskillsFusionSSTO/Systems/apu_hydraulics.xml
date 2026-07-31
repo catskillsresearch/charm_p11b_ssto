@@ -922,6 +922,10 @@
 				systems/apu/apu/hyd-circ-pump == 0
 				systems/apu/apu/apu-rpm-target GT 0.5
 			</test>
+			<!-- Grenadier: electric hyd from BATT/CART/CHARM bus (no APU) -->
+			<test logic="AND" value="1.0">
+				systems/grenadier/hyd/available == 1
+			</test>
 		</switch>
 
 		<switch name="systems/apu/hyd-2-pressurized">
@@ -931,6 +935,9 @@
 				systems/apu/apu[1]/hyd-pressure-factor GT 0.8
 				systems/apu/apu[1]/hyd-circ-pump == 0
 				systems/apu/apu[1]/apu-rpm-target GT 0.5
+			</test>
+			<test logic="AND" value="1.0">
+				systems/grenadier/hyd/available == 1
 			</test>
 		</switch>
 
@@ -942,6 +949,9 @@
 				systems/apu/apu[2]/hyd-circ-pump == 0
 				systems/apu/apu[2]/apu-rpm-target GT 0.5
 			</test>
+			<test logic="AND" value="1.0">
+				systems/grenadier/hyd/available == 1
+			</test>
 		</switch>
 
 		<switch name="systems/apu/hyd-pressure-available">
@@ -951,6 +961,7 @@
 				systems/apu/hyd-2-pressurized == 1
 				systems/apu/hyd-3-pressurized == 1
 				systems/apu/init-hydraulics-on == 1
+				systems/grenadier/hyd/available == 1
 			</test>
 		</switch>
 

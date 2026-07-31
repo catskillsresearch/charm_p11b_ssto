@@ -36,11 +36,31 @@
     </item>
 
     <item>
-      <name>BATT Online (engraving; scramble — CART off)</name>
+      <name>BATT Online (engraving; scramble — CART off; arms electric hyd for NWS)</name>
       <value>ON</value>
       <condition>
         <equals>
           <property>/fdm/jsbsim/systems/grenadier/charm/battery-online</property>
+          <value>1</value>
+        </equals>
+      </condition>
+    </item>
+
+    <item>
+      <name>√ Electric hyd available (steering / brakes / aero — no APU start)</name>
+      <condition>
+        <equals>
+          <property>/fdm/jsbsim/systems/grenadier/hyd/available</property>
+          <value>1</value>
+        </equals>
+      </condition>
+    </item>
+
+    <item>
+      <name>√ Flight Controller Power PLT (auto with BATT)</name>
+      <condition>
+        <equals>
+          <property>/fdm/jsbsim/fcs/controller-power-plt</property>
           <value>1</value>
         </equals>
       </condition>
@@ -166,6 +186,81 @@
           <value>0</value>
         </equals>
       </condition>
+    </item>
+  </checklist>
+
+  <checklist>
+    <title>Grenadier — Steering / taxi</title>
+
+    <item>
+      <name>View — Pilot (right seat)</name>
+      <value>SELECTED</value>
+    </item>
+
+    <item>
+      <name>BATT Online (APU OPERATE engraving — not APU START)</name>
+      <value>ON</value>
+      <condition>
+        <equals>
+          <property>/fdm/jsbsim/systems/grenadier/charm/battery-online</property>
+          <value>1</value>
+        </equals>
+      </condition>
+    </item>
+
+    <item>
+      <name>√ Electric hyd available (replaces Shuttle APU hyd)</name>
+      <condition>
+        <equals>
+          <property>/fdm/jsbsim/systems/grenadier/hyd/available</property>
+          <value>1</value>
+        </equals>
+      </condition>
+    </item>
+
+    <item>
+      <name>√ Flight Controller Power PLT ON</name>
+      <condition>
+        <equals>
+          <property>/fdm/jsbsim/fcs/controller-power-plt</property>
+          <value>1</value>
+        </equals>
+      </condition>
+    </item>
+
+    <item>
+      <name>Num Lock ON</name>
+      <value>ON</value>
+    </item>
+
+    <item>
+      <name>External view — wing TE + vertical tail visible</name>
+      <value>SELECTED</value>
+    </item>
+
+    <item>
+      <name>Elevons — hold KP 2 (TE down) then KP 8 (TE up); watch both wings</name>
+      <value>CHECKED</value>
+    </item>
+
+    <item>
+      <name>Roll — hold KP 4 then KP 6; opposite wing motion</name>
+      <value>CHECKED</value>
+    </item>
+
+    <item>
+      <name>Rudder / NWS — hold KP 0 then KP Enter; rudder + nosewheel</name>
+      <value>CHECKED</value>
+    </item>
+
+    <item>
+      <name>KP 5 center all; return to Pilot view</name>
+      <value>CHECKED</value>
+    </item>
+
+    <item>
+      <name>Do not start heritage APU / hyd pump switches (blanked)</name>
+      <value>N/A</value>
     </item>
   </checklist>
 

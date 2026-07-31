@@ -34,6 +34,10 @@ Scramble progression: **BATT → CRYO → MAGNET → FUEL → VACUUM → RF → 
 Flight controls, gear, **brake isol** (R4), RHC/THC, DAP/RCS, HUD/ADI/HSI,
 GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 
+**Steering / hyd:** **BATT** (not APU START) → `systems/grenadier/hyd/available` → NWS + aero. See [reactor_startup.md](reactor_startup.md) §1a and [ssto_ascent_checklist.md](ssto_ascent_checklist.md) Quick Start.
+
+**Panel ID labels:** magenta strips (`Models/Grenadier/grenadier_panel_id_labels.*`) — rebuild with `python3 Models/Grenadier/build_panel_id_labels.py`.
+
 **AFT LEFT/RIGHT RCS** paint (aft text map): green monoprop **LMP-103S** —
 `He (OXID)/(FUEL)` → **He (A)/(B)**; tank `OXID`/`FUEL` → **PROP**/**PROP**.
 Switches/manifold banks unchanged (A/B press + isolation).
@@ -51,7 +55,7 @@ Switches/manifold banks unchanged (A/B press + isolation).
 | FUEL CELL REAC VLV (C3) | Hardware hidden | No fuel cells — CHARM bus + BATT |
 | SRB/ET SEP pushbuttons | Relabeled **STAGE − / +** with `STG` button faces | Stack separation removed; left decrements, right increments Stage |
 | OMS ENG arms | Legacy secondary mapping | Not needed in normal operation; use the labeled `STG` pushbuttons |
-| APU hydrazine / hyd pumps | Hardware hidden on R2; A12 aft plate stripped of all switchgear | No hyd TVC story |
+| APU hydrazine / hyd pumps | Hardware hidden on R2; A12 aft plate stripped of all switchgear | No hydrazine APUs; **BATT** (or CART / CHARM bus) drives electric hyd packs for NWS, brakes, and aero (`systems/grenadier/hyd/available`) |
 | A14 OMS/RCS heat + RMS pyro | Hardware hidden (plate + fasteners only) | No OMS engines; not used in scramble |
 
 ## CRT map

@@ -36,6 +36,8 @@ Pad discretes: `/sim/model/grenadier/charm/`
 | `scram` | bool | Hard trip latch |
 | `go-fuel` / `go-cryo` / `go-magnet` / `go-bus` | bool | Screen go lamps |
 
+Related (not under `charm/`): `/fdm/jsbsim/systems/grenadier/hyd/available` — set when BATT, CART-tied, or CHARM bus is live. JSBSim treats that as `hyd-*-pressurized` so NWS, brakes, and aero work without hydrazine APUs. See [reactor_startup.md](reactor_startup.md) §1a.
+
 ## Mode machine
 
 ```

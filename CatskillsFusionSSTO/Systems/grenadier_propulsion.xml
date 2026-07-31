@@ -15,4 +15,6 @@
   <property value="0">systems/grenadier/engine/stage-go</property>
   <property value="1">systems/grenadier/engine/sigma</property>
   <property value="0">systems/grenadier/engine/coupled-ok</property>
+  <!-- Electric hyd packs: BATT/CART/bus → NWS + aero without hydrazine APUs -->
+  <property value="0">systems/grenadier/hyd/available</property>
 </system>

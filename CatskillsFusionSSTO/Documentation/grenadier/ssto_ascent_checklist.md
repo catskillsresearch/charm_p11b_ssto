@@ -2,48 +2,55 @@
 
 ## Quick Start — cold runway to initial climb (PLT)
 
-Use the **Pilot** view (`v` cycles forward, `Shift+V` backward). Turn **Num Lock on**. Cockpit switches and MDU softkeys require the mouse; use the keypad for throttle and flight control.
+Magenta cockpit labels show **Panel ID** + purpose on each live plate. Non-panel inputs use **Keypad** or **Mouse**. For cockpit clicks: press **Ctrl** so the mouse is in pick/clickable mode (not view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
 
-| Step | Panel / view | Switch or key | Setting / action |
-|------|--------------|---------------|------------------|
-| 1 | View | `v` / `Shift+V` | Select **Pilot** (right-seat) view |
-| 2 | PLT forward displays | **R1 Power** (inner PLT MDU) | **ON**; screen remains dark until BATT |
-| 3 | PLT forward displays | **R2 Power** (outer PLT MDU) | **ON**; screen remains dark until BATT |
-| 4 | Right wall — **APU OPERATE** | **BATT** | **ON**; R1 opens on **CHARM**, R2 on **FLT INST / PFD**, and CHARM `V` shows about 260 V |
-| 5 | Pilot HUD panel | **HUD Power** | **ON**; mode **NORM**, brightness **AUTO** or **DAY** |
-| 6 | Pilot F8 | **Flight Controller Power** | **ON** |
-| 7 | R1 MDU | Page | If not already there: **MAIN → SUBSYS STATUS → CHARM** |
-| 8 | Right wall — **APU OPERATE** | **CRYO** | **ON**; wait for `T·K < 35` and green `CRYO 0001` |
-| 9 | Right wall — **APU CNTLR PWR** | **MAGNET** | **ARM/ON**; wait for green `MAG` / `MAGI` near 100 |
-| 10 | Right wall — **APU CNTLR PWR** | **FUEL** | **ON** |
-| 11 | Right wall — **REACTOR POWER** | **VACUUM** | **ON/READY**; confirm `VAC 0001` and green `FUEL` |
-| 12 | Right wall — **APU CNTLR PWR** | **RF** | **ON** |
-| 13 | Right wall — **REACTOR POWER** | **CHARM** | **ON**; mode advances to `LIGHT` |
-| 14 | Right wall — **REACTOR POWER** | **DEC** | **ON** |
-| 15 | R1 — CHARM | Status | Wait for `MODE POWER`, green `BUS`, and bus MW rising |
-| 16 | R1 MDU | **STAGE** softkey | Select STAGE; confirm `CMD 1`, `MAX 1`, `GO 1`, `PLANT 1`, `THR 000` |
-| 17 | Keypad | `KP 5` | Center elevator, aileron, and rudder |
-| 18 | Keypad | `KP 3` | Hold until throttle is at idle / `THR 000` |
-| 19 | Brakes | `Shift+B` | **Do not press yet**; parking brake starts SET |
-| 20 | Right wall — **APU OPERATE** | **CART** | Leave **OFF** |
-| 21 | Takeoff configuration | Gear / speedbrake / inlet | Gear **DOWN**, speedbrake **IN**, `SEAL 0`, controls neutral |
-| 22 | Brakes | `Shift+B` | Release parking brake |
-| 23 | Keypad | `KP 9` | Hold to advance throttle smoothly to `THR 100`; verify `CPL 1`, thrust and `DRAW` rising |
-| 24 | Runway steering | `KP 0` / `KP Enter` | Rudder left/right; use small taps to hold centerline |
-| 25 | Takeoff roll | R2 PFD / HUD | Accelerate through **225 KIAS** |
-| 26 | Keypad | `KP 2` | At 225 KIAS, pitch up to about **10–12° nose-up** |
-| 27 | Keypad | `KP 5`, then `KP 2` / `KP 8` | Center the initial input, then make small pitch corrections |
-| 28 | Positive climb | `g` | Gear **UP**; remain in Stage 1 until the STAGE page recommends Stage 2 |
+| Step | Panel ID | Panel Purpose | Switch / Setting | Notes |
+|------|----------|---------------|------------------|-------|
+| 1 | Keypad | — | `v` / `Shift+V` → **Pilot** (right seat) | Cycle views until Pilot |
+| 2 | R1 | PLT inboard MDU | **R1 Power** → **ON** | Mouse; Ctrl = clickable. Screen dark until BATT |
+| 3 | R2 | PLT MDU + CHARM plant row | **R2 Power** → **ON** | Mouse; Ctrl = clickable. Screen dark until BATT |
+| 4 | R2 | PLT MDU + CHARM plant row | **BATT** (APU OPERATE) → **ON** | Mouse; electric hyd live (NWS / brakes / aero). CHARM `V` ~260 |
+| 5 | F8 | PLT HUD | **HUD Power** → **ON**; mode **NORM** | Mouse; brightness AUTO or DAY |
+| 6 | F8 | PLT HUD | **Flight Controller Power** → **ON** | Mouse; auto-ON with BATT — confirm ON |
+| 7 | Keypad | — | **Num Lock** → **ON** | Required for all KP flight / throttle keys below |
+| 8 | Keypad | — | `v` → external view (wing TE + vertical tail) | Num Lock stays ON; Chase/Helicopter OK |
+| 9 | Keypad | — | Hold `KP 2`, then hold `KP 8` | Elevons TE down then up; watch both wings. Num Lock ON |
+| 10 | Keypad | — | Hold `KP 4`, then hold `KP 6` | Roll: opposite wing motion. Num Lock ON |
+| 11 | Keypad | — | Hold `KP 0`, then hold `KP Enter` | Rudder L/R; nosewheel steers on gear. Num Lock ON |
+| 12 | Keypad | — | `KP 5` | Center elevator / aileron / rudder. Num Lock ON |
+| 13 | Keypad | — | `v` / `Shift+V` → **Pilot** | Back to right seat before plant scramble |
+| 14 | R1 | PLT inboard MDU | Softkeys → **CHARM** page | Mouse; Ctrl = clickable. MAIN → SUBSYS STATUS → CHARM if needed |
+| 15 | R2 | PLT MDU + CHARM plant row | **CRYO** → **ON** | Mouse; wait `T·K < 35`, green `CRYO 0001` |
+| 16 | R2 | PLT MDU + CHARM plant row | **MAGNET** → **ARM/ON** | Mouse; wait green `MAG` / `MAGI` ~100 |
+| 17 | R2 | PLT MDU + CHARM plant row | **FUEL** → **ON** | Mouse |
+| 18 | R2 | PLT MDU + CHARM plant row | **VACUUM** → **ON/READY** | Mouse; `VAC 0001`, green `FUEL` |
+| 19 | R2 | PLT MDU + CHARM plant row | **RF** → **ON** | Mouse |
+| 20 | R2 | PLT MDU + CHARM plant row | **CHARM** → **ON** | Mouse; mode → `LIGHT` |
+| 21 | R2 | PLT MDU + CHARM plant row | **DEC** → **ON** | Mouse |
+| 22 | R1 | PLT inboard MDU | Confirm `MODE POWER`, green `BUS` | Mouse / observe CHARM page; bus MW rising |
+| 23 | R1 | PLT inboard MDU | Softkey **STAGE**; `CMD 1` `MAX 1` `GO 1` `PLANT 1` `THR 000` | Mouse; Ctrl = clickable |
+| 24 | Keypad | — | `KP 5` | Re-center controls. Num Lock ON |
+| 25 | Keypad | — | Hold `KP 3` → idle / `THR 000` | Num Lock ON |
+| 26 | Keypad | — | Leave parking brake **SET** | Do not press `Shift+B` yet |
+| 27 | R2 | PLT MDU + CHARM plant row | **CART** → leave **OFF** | Scramble does not need cart |
+| 28 | C6 / C7 | Gear / NWS / brakes · Speedbrake / body flap | Gear **DOWN**, speedbrake **IN**, `SEAL 0` | Confirm config; controls neutral |
+| 29 | Keypad | — | `Shift+B` → release parking brake | — |
+| 30 | Keypad | — | Hold `KP 9` → `THR 100` | Num Lock ON; verify `CPL 1`, thrust / `DRAW` rising |
+| 31 | Keypad | — | Tap `KP 0` / `KP Enter` | Small NWS taps for centerline. Num Lock ON |
+| 32 | R2 | PLT MDU + CHARM plant row | Observe PFD / HUD → **225 KIAS** | — |
+| 33 | Keypad | — | `KP 2` → ~10–12° nose-up | At 225 KIAS. Num Lock ON |
+| 34 | Keypad | — | `KP 5`, then small `KP 2` / `KP 8` | Center then trim pitch. Num Lock ON |
+| 35 | Keypad | — | `g` → gear **UP** | Stay Stage 1 until STAGE page recommends Stage 2 |
 
-**225 KIAS is the current provisional rotation target for the enlarged Plan-A FDM, not a flight-tested certified V-speed.** If the nose will not lift cleanly, continue accelerating rather than commanding excessive pitch.
+**Control-surface check (steps 8–12) is mandatory before taxi.** If a surface does not move with BATT and Flight Controller Power ON, stop — do not release the parking brake.
 
-Keypad summary: `2/8` nose up/down, `4/6` roll left/right, `0/Enter` rudder left/right, `5` center controls, `9/3` throttle up/down. `Page Up/Page Down` duplicate throttle up/down.
+**225 KIAS** is the current provisional rotation target for the enlarged Plan-A FDM, not a flight-tested certified V-speed.
 
-Beginner path: **sit PLT (right seat)** for plant switches and displays; use the center console for Stage ± / SCRAM and the keypad for throttle.
+Keypad: `2/8` elevon, `4/6` roll, `0/Enter` rudder/NWS, `5` center, `9/3` throttle. Hold to drive a surface; tap for runway corrections.
 
-Panel paint uses Grenadier logos (surplus Shuttle hull). Use the **engraved names** below — not Shuttle heritage lettering. If hover shows **nothing**, ignore that switch (blanked / unused).
+Beginner path: **PLT** (right seat) for plant row; center console **C3** for Stage ± / SCRAM; keypad for flight/throttle. Use engraved names on magenta labels / plant row — not heritage Shuttle lettering. Hover empty = blanked / ignore.
 
-CHARM mode `OFF → CRYO → ARM → LIGHT → POWER` is **derived** (CHARM MEDS page). There is no five-position mode rotary.
+CHARM mode `OFF → CRYO → ARM → LIGHT → POWER` is **derived** (CHARM MEDS page).
 
 ## Where the live keys are
 
@@ -63,6 +70,10 @@ CHARM mode `OFF → CRYO → ARM → LIGHT → POWER` is **derived** (CHARM MEDS
 | Throttle | Keyboard | `KP 9` increase / `KP 3` decrease (`Page Up/Down` also work) |
 
 **Landing only (panel R4):** **BRAKE ISOL VLV** stays labeled (leave OPEN). All other R4 paint is blanked — leave those switches alone.
+
+## Steering before taxi (replaces Shuttle APU–hyd)
+
+Same as Quick Start steps 1–13. Cold pad = no hyd until **BATT**; no heritage APU start. Surface check works as soon as BATT is on; thrust still needs CRYO…DEC → POWER.
 
 ## CRT pages
 
@@ -88,7 +99,9 @@ Ignore Fuel Cells / APU–HYD DISP pages (blanked titles).
 
 Stage 7 pads with a **charged flight battery**. Scramble on **BATT** alone — **CART** off.
 
-1. **BATT** → On.
+Do **not** start heritage APUs. **BATT** powers electric hyd packs so nosewheel steering (`KP 0` / `Enter`) and aero surfaces work. Stay in **Pilot** view so the stick/keypad are live.
+
+1. **BATT** → On (hyd + flight-controller power arm).
 2. **CRYO** → On. Wait CHARM page **MAG T K** &lt; 35 and **CRYO** col = `0001` (green) — that is `go-cryo`.
 3. **MAGNET** → Arm. Wait go-magnet.
 4. **FUEL** → On.

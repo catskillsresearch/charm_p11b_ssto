@@ -104,6 +104,9 @@ var init_defaults = func {
     _set(G ~ "inert/fuel-cell-valve-2-pos", 0.5);
     _set(G ~ "inert/fuel-cell-valve-3-pos", 0.5);
 
+    # Electric hyd packs (NWS / brakes / aero) — not hydrazine APUs
+    _set(G ~ "hyd/available", 0);
+
     # Exhaust VFX bus (tiny flame → big plasma plume)
     var V = G ~ "vfx/";
     _set(V ~ "plume-norm", 0.0);
@@ -115,6 +118,22 @@ var init_defaults = func {
     _set(V ~ "exhaust-speed-mps", 40.0);
     _set(V ~ "show-flame", 0);
     _set(V ~ "show-plume", 0);
+};
+
+# Nosewheel / elevons / brakes need pressurized hyd. Heritage APUs are remapped
+# (CART/BATT/CRYO); Grenadier uses battery-backed electric hyd packs instead.
+var _update_hyd = func {
+    var batt = _num(C ~ "battery-online", 0) > 0.5;
+    var cart = _num(C ~ "cart-tied", 0) > 0.5;
+    var bus = _num(C ~ "bus-mw", 0) > 5.0;
+    var want = (batt or cart or bus) ? 1 : 0;
+    var prev = _num(G ~ "hyd/available", 0);
+    _set(G ~ "hyd/available", want);
+    # Rising edge: arm PLT/CDR RHC so keypad pitch/roll/rudder are not gated cold
+    if (want and !prev) {
+        setprop("/fdm/jsbsim/fcs/controller-power-plt", 1);
+        setprop("/fdm/jsbsim/fcs/controller-power-cdr", 1);
+    }
 };
 
 var _set_mode = func (name) {
@@ -495,6 +514,7 @@ var _wire_panel_aliases = func {
 var _loop = func {
     _update_charm(0.2);
     _update_engine(0.2);
+    _update_hyd();
     settimer(_loop, 0.2);
 };
 
@@ -550,6 +570,7 @@ var apply_cold_pad = func {
     setprop("/fdm/jsbsim/fcs/controller-power-cdr", 0);
     setprop("/fdm/jsbsim/fcs/controller-power-plt", 0);
     setprop("/fdm/jsbsim/fcs/controller-power-aft", 0);
+    _set(G ~ "hyd/available", 0);
     setprop("/fdm/jsbsim/systems/electrical/hud/cmd-pwr-switch", 0);
     setprop("/fdm/jsbsim/systems/electrical/hud/plt-pwr-switch", 0);
     setprop("/controls/flight/speedbrake", 0.0);

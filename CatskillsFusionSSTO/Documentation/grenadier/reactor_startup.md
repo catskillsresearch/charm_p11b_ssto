@@ -37,6 +37,25 @@ Legend: **INPUT** = crew action (use **engraved** name). **√** = go/no-go.
 
 ---
 
+## 1a. Steering and flight controls (before taxi)
+
+Heritage Shuttle needed **APU → hydraulic pressure** for nosewheel steering and aero surfaces. On Grenadier those APU OPERATE switches are **CART / BATT / CRYO** — there is **no** hydrazine APU start. Electric hyd packs replace that path.
+
+| Step | Engraving / control | INPUT / √ | Property / note |
+|------|---------------------|-----------|-----------------|
+| 1a.1 | View → **Pilot** (right seat) | INPUT | Stick/keypad gated to PLT view |
+| 1a.2 | **BATT** → On (same as 1.1) | INPUT | Arms electric hyd |
+| 1a.3 | √ Hyd available | √ | `../hyd/available` = 1 → `hyd-*-pressurized` |
+| 1a.4 | **Flight Controller Power** (PLT F8) | √ | Auto-ON with BATT; confirm ON if dead |
+| 1a.5 | √ NWS / rudder | √ | `KP 0` / `KP Enter` — nosewheel responds |
+| 1a.6 | √ Pitch / roll | √ | `KP 2/8` / `KP 4/6` (Num Lock on) |
+
+**Do not** hunt for APU START / hyd pump switches on R2 — those panels are blanked. If the nosewheel stays locked straight, **BATT is off** or you are not in Pilot view.
+
+Optional pad alternate: **CART** tied also sets `hyd/available` (same electric packs). CHARM **POWER** bus keeps hyd live after BATT if you later open the battery.
+
+---
+
 ## 2. Cryo and magnets
 
 | Step | Engraving | INPUT / √ | Property |

@@ -7,19 +7,19 @@ inside monorepo `charm_p11b_ssto` (`CatskillsFusionSSTO/` = this aircraft).
 
 - `./fs.sh` from repo root
 - Menu **CATSKILLS-SSTO-TA-GRENADIER** → CHARM / Engine screens
-- Help → Checklist → **Grenadier — CHARM startup** / **Grenadier — Engine stage**
+- Help → Checklist → **Grenadier — CHARM startup** / **Steering / taxi** / **Engine stage**
 - Ops: [`Nasal/grenadier/grenadier_ops.nas`](../../Nasal/grenadier/grenadier_ops.nas)
 
 ## Docs
 
 | File | Role |
 |------|------|
-| [ssto_ascent_checklist.md](ssto_ascent_checklist.md) | Scramble / ascent (current engravings) |
+| [ssto_ascent_checklist.md](ssto_ascent_checklist.md) | Scramble / ascent + NWS before taxi |
 | [control_map.md](control_map.md) | Engraving → switch → property |
-| [reactor_startup.md](reactor_startup.md) | CHARM light-off checklist |
+| [reactor_startup.md](reactor_startup.md) | CHARM light-off + steering/hyd (§1a) |
 | [reactor_operator_model.md](reactor_operator_model.md) | Property bus |
 | [engine_operator_model.md](engine_operator_model.md) | Stage gates |
 | [panel_audit.md](panel_audit.md) | Keep / blank / remapped |
 | [bay_doors.md](bay_doors.md) | Bay / plant access |
 
-Panel logos: `scripts/stamp_grenadier_apu_labels.py` → **CART/BATT/CRYO**, **MAGNET/FUEL/RF**, **REACTOR POWER** / **CHARM/DEC/VACUUM**; R2/R4 surplus paint blanked (R4 keeps **BRAKE ISOL** only); C3 blanks MAIN ENGINE L/R, SRB/ET SEP, FUEL CELL REAC VLV; OMS arms stamped **STAGE −/+**.
+Panel logos: `scripts/stamp_grenadier_apu_labels.py` → **CART/BATT/CRYO**, **MAGNET/FUEL/RF**, **REACTOR POWER** / **CHARM/DEC/VACUUM**; R2/R4 surplus paint blanked (R4 keeps **BRAKE ISOL** only); C3 blanks MAIN ENGINE L/R, SRB/ET SEP, FUEL CELL REAC VLV; OMS arms stamped **STAGE −/+**. Magenta installer ID strips: `Models/Grenadier/build_panel_id_labels.py`.
