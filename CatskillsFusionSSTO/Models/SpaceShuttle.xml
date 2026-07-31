@@ -67,20 +67,6 @@
         </condition>
     </model>
 
-    <!-- Grenadier: magenta installer ID + purpose strips on live panels -->
-    <model>
-        <path>Aircraft/CatskillsFusionSSTO/Models/Grenadier/grenadier_panel_id_labels.xml</path>
-        <condition>
-            <and>
-                <property>/sim/model/grenadier/enabled</property>
-                <equals>
-                    <property>/sim/current-view/internal</property>
-                    <value>1</value>
-                </equals>
-            </and>
-        </condition>
-    </model>
-
   <!-- SSME cluster: heritage only. Grenadier TA uses a single combined-cycle nozzle (added later). -->
   <model>
     <path>Aircraft/CatskillsFusionSSTO/Models/SSME1.xml</path>

@@ -1,368 +1,396 @@
 #!/usr/bin/env python3
-"""Build magenta installer ID + purpose labels for live Grenadier cockpit panels.
+"""Stamp magenta panel ID/purpose text into the cockpit texture atlases.
 
-Reads panel plate bounds from cockpit.ac / cockpit-detailed.ac, writes
-grenadier_panel_id_labels.ac (+ textures) sized as a header strip on each
-panel face so switchgear is not covered.
+This uses the same method as the original Shuttle lettering: pixels in
+fwd-cockpit-text-map-x.png and aft-cockpit-text-map-x.png.  It creates no
+extra geometry, background plaque, or white lettering.
+
+For each live panel, the script:
+  1. extracts the crew-facing UV polygons from the AC mesh;
+  2. finds a low-detail blank patch near a polygon edge;
+  3. stamps one small line of magenta text at the original engraving scale.
+
+Backups are made once as *.bak_pre_panel_ids and restored before every build.
+Run after scripts/stamp_grenadier_apu_labels.py.
 """
 
 from __future__ import annotations
 
-import re
+from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[2]
 MODELS = ROOT / "Models"
-OUT = Path(__file__).resolve().parent
-TEX = OUT / "textures" / "panel_id"
+FWD = MODELS / "fwd-cockpit-text-map-x.png"
+AFT = MODELS / "aft-cockpit-text-map-x.png"
+MAGENTA = (255, 0, 210)
 
-# Live Grenadier plates only (blanked A12/A14/O2 omitted).
+# Short enough to read like existing panel-edge engraving.
 PANELS: dict[str, str] = {
-    "F1": "CDR caution & warning",
-    "F2": "CDR flight instruments",
-    "F3": "Center instruments / SPI",
-    "F4": "PLT flight instruments",
-    "F5": "PLT caution & warning",
+    "F1": "CDR C&W",
+    "F2": "CDR FLIGHT INST",
+    "F3": "CENTER SPI",
+    "F4": "PLT FLIGHT INST",
+    "F5": "C&W",
     "F6": "CDR HUD",
-    "F7": "Center glareshield annunciators",
+    "F7": "GLARESHIELD",
     "F8": "PLT HUD",
-    "F9": "Center air-data gauges",
-    "L1": "CDR inboard MDU",
-    "L2": "CDR outboard MDU",
-    "L4": "Left circuit breakers",
-    "L9": "Aft-left cabin lighting",
-    "L10": "Left connector / utility",
-    "L11": "Left mid-aft switches",
-    "L12": "Left talkbacks / status",
-    "R1": "PLT inboard MDU",
-    "R2": "PLT MDU + CHARM plant row",
-    "R4": "Brake isolation valves",
-    "R7": "Right circuit breakers",
-    "R10": "Aft-right cabin lighting",
-    "R11": "Aft MDU + keypad",
-    "R12": "Right aft systems / comm",
-    "R13": "Right aft systems",
-    "R14": "Right aft breakers",
-    "C2": "CRT/IDP keyboards",
-    "C3": "STAGE ± / SCRAM",
-    "C4": "Center MDU",
-    "C5": "Center MDU",
-    "C6": "Gear / NWS / brakes",
-    "C7": "Speedbrake / body flap",
-    "O1": "GPC status / COAS",
-    "O3": "Electrical / event timer",
-    "O4": "Overhead panel lighting",
-    "O5": "Communications (left ovhd)",
-    "O6": "GPC power + left lighting",
-    "O7": "ECLSS / cabin atmosphere",
-    "O8": "Right lighting + ECLSS",
-    "O9": "Communications / antennas",
-    "O10": "Overhead flood lighting",
-    "O13": "Overhead circuit breakers",
-    "O14": "Overhead systems / breakers",
-    "O15": "Overhead systems / breakers",
-    "O16": "Overhead systems / breakers",
-    "O17": "Overhead ATCS / water",
-    "O19": "Aft COAS mount",
-    "A1": "Audio / communications",
-    "A2": "Aft THC",
-    "A3": "CCTV monitors",
-    "A4": "Mission / event timers",
-    "A6": "Aft MDU + lighting + THC",
-    "A7": "Aft RHC station",
-    "A8": "Aft flight-control RHC",
-    "A11": "Payload bay / door switches",
-    "A13": "Propellant / heater controls",
-    "A15": "Aft circuit breakers",
+    "F9": "AIR DATA",
+    "L1": "CDR MDU INBD",
+    "L2": "CDR MDU OUTBD",
+    "L4": "BRK",
+    "L9": "AFT-L LIGHTS",
+    "L10": "UTIL",
+    "L11": "SW",
+    "L12": "L TALKBACKS",
+    "R1": "POWER DISTRIBUTION",
+    "R2": "CHARM PLANT / PROP",
+    "R4": "BRK ISOL",
+    "R7": "BRK",
+    "R10": "LIGHT",
+    "R11": "AFT MDU",
+    "R12": "R AFT / COMM",
+    "R13": "R AFT SYS",
+    "R14": "R AFT BREAKERS",
+    "C2": "CRT KEYBOARDS",
+    "C3": "STAGE / SCRAM",
+    "C4": "MDU",
+    "C5": "MDU",
+    "C6": "GEAR/NWS",
+    "C7": "SPDBK/BF",
+    "O1": "GPC / COAS",
+    "O3": "ELEC / TIMER",
+    "O4": "LIGHT",
+    "O5": "COMM L",
+    "O6": "GPC PWR / L LIT",
+    "O7": "ECLSS",
+    "O8": "R LIT / ECLSS",
+    "O9": "COMM / ANT",
+    "O10": "OVHD FLOOD",
+    "O13": "OVHD BREAKERS",
+    "O14": "OVHD SYSTEMS",
+    "O15": "OVHD SYSTEMS",
+    "O16": "OVHD SYSTEMS",
+    "O17": "ATCS / WATER",
+    "O19": "AFT COAS",
+    "A1": "AUDIO / COMM",
+    "A2": "AFT THC",
+    "A3": "CCTV",
+    "A4": "TIMERS",
+    "A6": "AFT MDU / THC",
+    "A7": "AFT RHC",
+    "A8": "AFT RHC",
+    "A11": "BAY DOORS",
+    "A13": "PROP HEATERS",
+    "A15": "AFT BREAKERS",
 }
 
-# Mesh object name overrides (default "{ID}-panel").
-MESH_NAME = {
-    "O19": "O19-coas-panel",
+MESH_NAME = {"O19": "O19-coas-panel"}
+
+# Tiny or heavily split UV islands where automatic edge search cannot fit a
+# continuous rectangle. These coordinates were measured on the pristine
+# 4096² atlas and are blank panel-edge pixels (not existing legends).
+# value: (texture, x, y, compact)
+MANUAL_STAMPS: dict[str, tuple[str, int, int, bool]] = {
+    "F5": (FWD.name, 562, 350, True),
+    "L4": (FWD.name, 45, 1555, False),
+    "R4": (FWD.name, 2700, 2530, False),
+    "R7": (FWD.name, 40, 2045, False),
+    "C4": (FWD.name, 221, 444, True),
+    "C5": (FWD.name, 221, 473, True),
+    "C6": (FWD.name, 2020, 1375, False),
+    "C7": (FWD.name, 2030, 1557, False),
 }
 
 
-def parse_ac_objects(path: Path) -> dict[str, list[tuple[float, float, float]]]:
-    text = path.read_text(errors="replace").splitlines()
-    objs: dict[str, list[tuple[float, float, float]]] = {}
+@dataclass
+class Face:
+    refs: list[tuple[int, float, float]]
+
+
+@dataclass
+class Mesh:
+    texture: str | None
+    verts: list[tuple[float, float, float]]
+    faces: list[Face]
+
+
+def _font(size: int) -> ImageFont.ImageFont:
+    for fp in (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+    ):
+        try:
+            return ImageFont.truetype(fp, size)
+        except OSError:
+            pass
+    return ImageFont.load_default()
+
+
+def _parse_ac(path: Path) -> dict[str, Mesh]:
+    lines = path.read_text(errors="replace").splitlines()
+    out: dict[str, Mesh] = {}
     i = 0
-    while i < len(text):
-        if not text[i].startswith("OBJECT poly"):
+    while i < len(lines):
+        if not lines[i].startswith("OBJECT poly"):
             i += 1
             continue
-        name = None
+        name: str | None = None
+        texture: str | None = None
         verts: list[tuple[float, float, float]] = []
+        faces: list[Face] = []
         loc = (0.0, 0.0, 0.0)
         i += 1
-        while i < len(text) and not text[i].startswith("OBJECT "):
-            if text[i].startswith("name "):
-                name = text[i].split(" ", 1)[1].strip().strip('"')
-            elif text[i].startswith("loc "):
-                loc = tuple(map(float, text[i].split()[1:4]))  # type: ignore[assignment]
-            elif text[i].startswith("numvert "):
-                n = int(text[i].split()[1])
+        while i < len(lines) and not lines[i].startswith("OBJECT "):
+            line = lines[i]
+            if line.startswith("name "):
+                name = line.split(" ", 1)[1].strip().strip('"')
+            elif line.startswith("texture "):
+                texture = line.split(" ", 1)[1].strip().strip('"')
+            elif line.startswith("loc "):
+                loc = tuple(map(float, line.split()[1:4]))  # type: ignore[assignment]
+            elif line.startswith("numvert "):
+                count = int(line.split()[1])
                 i += 1
-                for _ in range(n):
-                    x, y, z = map(float, text[i].split()[:3])
+                for _ in range(count):
+                    x, y, z = map(float, lines[i].split()[:3])
                     verts.append((x + loc[0], y + loc[1], z + loc[2]))
                     i += 1
                 continue
+            elif line.startswith("refs "):
+                count = int(line.split()[1])
+                i += 1
+                refs: list[tuple[int, float, float]] = []
+                for _ in range(count):
+                    fields = lines[i].split()
+                    refs.append((int(fields[0]), float(fields[1]), float(fields[2])))
+                    i += 1
+                faces.append(Face(refs))
+                continue
             i += 1
-        if name and verts:
-            objs[name] = verts
-    return objs
+        if name and verts and faces:
+            out[name] = Mesh(texture, verts, faces)
+    return out
 
 
-def load_panels() -> dict[str, list[tuple[float, float, float]]]:
-    merged: dict[str, list[tuple[float, float, float]]] = {}
-    for ac in (MODELS / "cockpit.ac", MODELS / "cockpit-detailed.ac"):
-        if not ac.is_file():
+def _load_meshes() -> dict[str, Mesh]:
+    result: dict[str, Mesh] = {}
+    for path in (MODELS / "cockpit.ac", MODELS / "cockpit-detailed.ac"):
+        result.update(_parse_ac(path))
+    return result
+
+
+def _cross(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return np.cross(a, b)
+
+
+def _crew_uv_polygons(panel_id: str, mesh: Mesh, size: tuple[int, int]) -> list[list[tuple[int, int]]]:
+    width, height = size
+    # Approximate eye point in the flight-deck cabin. This works for sloped
+    # overhead/forward plates too: retain faces whose normals point inward
+    # toward the crew, rather than assuming every O panel is horizontal.
+    cabin = np.array((-11.7, -0.7, 0.0))
+    polygons: list[list[tuple[int, int]]] = []
+    for face in mesh.faces:
+        if len(face.refs) < 3:
             continue
-        for name, verts in parse_ac_objects(ac).items():
-            merged[name] = verts
-    return merged
-
-
-def write_magenta_label(path: Path, panel_id: str, purpose: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    w, h = 768, 192
-    # Magenta plate, white text — high contrast in dim cockpit
-    bg = (220, 0, 180)
-    fg = (255, 255, 255)
-    im = Image.new("RGB", (w, h), bg)
-    draw = ImageDraw.Draw(im)
-    try:
-        font_id = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 64
-        )
-        font_p = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36
-        )
-    except OSError:
-        font_id = font_p = ImageFont.load_default()
-
-    line1 = panel_id
-    line2 = purpose
-    # Shrink purpose until it fits
-    for size in (36, 30, 26, 22, 18):
-        try:
-            font_p = ImageFont.truetype(
-                "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size
+        points = np.asarray([mesh.verts[ref[0]] for ref in face.refs])
+        normal = _cross(points[1] - points[0], points[2] - points[0])
+        norm = float(np.linalg.norm(normal))
+        to_cabin = cabin - points.mean(axis=0)
+        cabin_distance = float(np.linalg.norm(to_cabin))
+        if (
+            norm == 0
+            or cabin_distance == 0
+            or float(np.dot(normal / norm, to_cabin / cabin_distance)) < 0.25
+        ):
+            continue
+        polygon = [
+            (
+                int(round(u * (width - 1))),
+                int(round((1.0 - v) * (height - 1))),
             )
-        except OSError:
-            break
-        bbox = draw.textbbox((0, 0), line2, font=font_p)
-        if bbox[2] - bbox[0] <= w - 40:
-            break
-
-    b1 = draw.textbbox((0, 0), line1, font=font_id)
-    b2 = draw.textbbox((0, 0), line2, font=font_p)
-    tw1, th1 = b1[2] - b1[0], b1[3] - b1[1]
-    tw2, th2 = b2[2] - b2[0], b2[3] - b2[1]
-    gap = 10
-    total_h = th1 + gap + th2
-    y0 = (h - total_h) / 2 - 4
-    draw.text(((w - tw1) / 2, y0), line1, fill=fg, font=font_id)
-    draw.text(((w - tw2) / 2, y0 + th1 + gap), line2, fill=fg, font=font_p)
-    # Thin white border so plate reads against panel paint
-    draw.rectangle((2, 2, w - 3, h - 3), outline=(255, 255, 255), width=4)
-    im.save(path)
+            for _, u, v in face.refs
+        ]
+        # Ignore wrapped/repeated UV islands outside this atlas.
+        if all(0 <= x < width and 0 <= y < height for x, y in polygon):
+            polygons.append(polygon)
+    return polygons
 
 
-def face_label_quad(
-    panel_id: str,
-    xmin: float,
-    xmax: float,
-    ymin: float,
-    ymax: float,
-    zmin: float,
-    zmax: float,
-    *,
-    margin: float = 0.04,
-    strip_frac: float = 0.14,
-    lift: float = 0.012,
-) -> tuple[list[tuple[float, float, float]], list[tuple[int, ...]], list[list[tuple[float, float]]]]:
-    """Header-strip quad on the crew-facing side of the panel AABB."""
-    dx, dy, dz = xmax - xmin, ymax - ymin, zmax - zmin
-    # Keep strip thin so switches below stay clear
-    strip = max(0.035, min(0.11, max(dy, dz, dx) * strip_frac))
-    pad = margin
+def _mesh_for_panel(panel_id: str, meshes: dict[str, Mesh]) -> Mesh | None:
+    name = MESH_NAME.get(panel_id, f"{panel_id}-panel")
+    if name in meshes:
+        return meshes[name]
+    if f"{panel_id}-base" in meshes:
+        return meshes[f"{panel_id}-base"]
+    # A3 is two CTVM units rather than one named plate; use the first face set.
+    candidates = [mesh for name, mesh in meshes.items() if name.startswith(f"{panel_id}-")]
+    return candidates[0] if candidates else None
 
-    letter = panel_id[0]
-    # Outward / crew-facing placement by station
-    if letter == "F":
-        # Glare / forward: face crew (+X aft of panel)
-        x = xmax + lift
-        z0, z1 = zmin + pad * dz, zmax - pad * dz
-        y1 = ymax - pad * dy
-        y0 = y1 - strip
-        verts = [(x, y0, z0), (x, y0, z1), (x, y1, z1), (x, y1, z0)]
-    elif letter == "A":
-        # Aft station: face crew (−X)
-        x = xmin - lift
-        z0, z1 = zmin + pad * dz, zmax - pad * dz
-        y1 = ymax - pad * dy
-        y0 = y1 - strip
-        verts = [(x, y0, z1), (x, y0, z0), (x, y1, z0), (x, y1, z1)]
-    elif letter == "L":
-        # Left wall (+Z port): face cabin (−Z)
-        z = zmin - lift
-        x0, x1 = xmin + pad * dx, xmax - pad * dx
-        y1 = ymax - pad * dy
-        y0 = y1 - strip
-        # If panel is nearly horizontal (thin Y), put strip on top face instead
-        if dy < 0.20 and dx > dy and dz > dy:
-            y = ymax + lift
-            z0, z1 = zmin + pad * dz, zmax - pad * dz
-            # strip along forward edge of top face
-            x1s = xmin + pad * dx + max(0.04, dx * 0.18)
-            x0s = xmin + pad * dx
-            verts = [(x0s, y, z0), (x1s, y, z0), (x1s, y, z1), (x0s, y, z1)]
-        else:
-            verts = [(x0, y0, z), (x1, y0, z), (x1, y1, z), (x0, y1, z)]
-    elif letter == "R":
-        # Right wall (−Z): face cabin (+Z)
-        z = zmax + lift
-        x0, x1 = xmin + pad * dx, xmax - pad * dx
-        y1 = ymax - pad * dy
-        y0 = y1 - strip
-        if dy < 0.20 and dx > dy and dz > dy:
-            y = ymax + lift
-            z0, z1 = zmin + pad * dz, zmax - pad * dz
-            x1s = xmin + pad * dx + max(0.04, dx * 0.18)
-            x0s = xmin + pad * dx
-            verts = [(x0s, y, z0), (x1s, y, z0), (x1s, y, z1), (x0s, y, z1)]
-        else:
-            verts = [(x1, y0, z), (x0, y0, z), (x0, y1, z), (x1, y1, z)]
-    elif letter == "O":
-        # Overhead: face down (−Y), strip along forward (−X) edge
-        y = ymin - lift
-        x0 = xmin + pad * dx
-        x1 = x0 + max(0.05, min(dx * 0.22, 0.16))
-        z0, z1 = zmin + pad * dz, zmax - pad * dz
-        verts = [(x0, y, z0), (x1, y, z0), (x1, y, z1), (x0, y, z1)]
+
+def _backup(path: Path) -> Path:
+    backup = path.with_name(path.name + ".bak_pre_panel_ids")
+    if not backup.exists():
+        Image.open(path).save(backup, format="PNG")
+        print(f"wrote {backup.name}")
+    return backup
+
+
+def _text_size(text: str) -> tuple[ImageFont.ImageFont, int, int]:
+    # Existing secondary cockpit legends are about 7–8 px on this 4096 atlas.
+    # Keep these identifiers subordinate to the original control lettering.
+    for size in (8, 7, 6):
+        font = _font(size)
+        box = font.getbbox(text)
+        width, height = box[2] - box[0], box[3] - box[1]
+        if width <= 115:
+            return font, width, height
+    return font, width, height
+
+
+def _label_bitmap(panel_id: str, purpose: str, *, compact: bool = False) -> Image.Image:
+    """Transparent bitmap containing magenta letters only."""
+    if compact:
+        font = _font(6)
+        lines = (panel_id, purpose)
     else:
-        # Center console C*: face up (+Y), strip along aft or forward edge
-        y = ymax + lift
-        # Prefer forward edge of console (more negative X)
-        x0 = xmin + pad * dx
-        x1 = x0 + max(0.05, min(dx * 0.20, 0.14))
-        z0, z1 = zmin + pad * dz, zmax - pad * dz
-        verts = [(x0, y, z0), (x1, y, z0), (x1, y, z1), (x0, y, z1)]
-
-    # Width along the longer in-plane span — shrink if strip would dominate
-    faces = [(0, 1, 2, 3)]
-    uvs = [[(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]]
-    return verts, faces, uvs
-
-
-def write_ac(
-    path: Path,
-    objects: list[dict],
-) -> None:
-    # Emissive magenta so labels stay readable under cabin lighting
-    lines = [
-        "AC3Db",
-        'MATERIAL "panel-id-magenta" rgb 0.90 0.00 0.75  '
-        "amb 0.40 0.40 0.40  emis 0.55 0.05 0.45  "
-        "spec 0.20 0.20 0.20  shi 20  trans 0.00",
-        "OBJECT world",
-        'name "grenadier_panel_id_labels"',
-        f"kids {len(objects)}",
-    ]
-    for obj in objects:
-        lines.append("OBJECT poly")
-        lines.append(f'name "{obj["name"]}"')
-        lines.append("loc 0 0 0")
-        lines.append(f'texture "{obj["texture"]}"')
-        lines.append("texrep 1 1")
-        lines.append("crease 40.0")
-        lines.append(f"numvert {len(obj['verts'])}")
-        for x, y, z in obj["verts"]:
-            lines.append(f"{x:.6f} {y:.6f} {z:.6f}")
-        lines.append("numsurf 1")
-        lines.append("SURF 0x30")
-        lines.append("mat 0")
-        lines.append("refs 4")
-        for idx, (u, vv) in zip(obj["faces"][0], obj["uvs"][0]):
-            lines.append(f"{idx} {u:.6f} {vv:.6f}")
-        lines.append("kids 0")
-    path.write_text("\n".join(lines) + "\n")
+        font, _, _ = _text_size(f"{panel_id}  {purpose}")
+        lines = (f"{panel_id}  {purpose}",)
+    boxes = [font.getbbox(line) for line in lines]
+    widths = [box[2] - box[0] for box in boxes]
+    heights = [box[3] - box[1] for box in boxes]
+    gap = 1 if len(lines) > 1 else 0
+    bitmap = Image.new("RGBA", (max(widths), sum(heights) + gap), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(bitmap)
+    y = 0
+    for line, width, height in zip(lines, widths, heights):
+        draw.text(((bitmap.width - width) // 2, y), line, fill=(*MAGENTA, 255), font=font)
+        y += height + gap
+    return bitmap
 
 
-def write_xml(path: Path, object_names: list[str]) -> None:
-    lines = [
-        '<?xml version="1.0"?>',
-        "<!-- Magenta installer ID labels for Grenadier live panels. -->",
-        "<PropertyList>",
-        "  <path>Aircraft/CatskillsFusionSSTO/Models/Grenadier/grenadier_panel_id_labels.ac</path>",
-        "  <effect>",
-        "    <inherits-from>Aircraft/CatskillsFusionSSTO/Models/Effects/shuttle-main</inherits-from>",
-    ]
-    for n in object_names:
-        lines.append(f"    <object-name>{n}</object-name>")
-    lines += [
-        "  </effect>",
-        "</PropertyList>",
-        "",
-    ]
-    path.write_text("\n".join(lines))
+def _find_blank_edge(
+    image: Image.Image,
+    polygons: list[list[tuple[int, int]]],
+    text_width: int,
+    text_height: int,
+) -> tuple[int, int] | None:
+    if not polygons:
+        return None
+    all_x = [x for polygon in polygons for x, _ in polygon]
+    all_y = [y for polygon in polygons for _, y in polygon]
+    # Letters have no plaque/background, so only a one-pixel safety margin is
+    # needed. This lets tiny MDU and breaker edge islands carry compact IDs.
+    pad_x, pad_y = 1, 1
+    box_w, box_h = text_width + 2 * pad_x, text_height + 2 * pad_y
+    x0 = max(0, min(all_x) - 2)
+    y0 = max(0, min(all_y) - 2)
+    x1 = min(image.width, max(all_x) + 3)
+    y1 = min(image.height, max(all_y) + 3)
+    if x1 - x0 < box_w or y1 - y0 < box_h:
+        return None
+
+    mask_img = Image.new("L", (x1 - x0, y1 - y0), 0)
+    draw = ImageDraw.Draw(mask_img)
+    for polygon in polygons:
+        draw.polygon([(x - x0, y - y0) for x, y in polygon], fill=255)
+    # Rasterized AC triangles can leave one-pixel seams even though the panel
+    # is continuous. Close only those seams; do not expand beyond the panel.
+    mask = ndimage.binary_closing(np.asarray(mask_img) > 0, structure=np.ones((3, 3)))
+
+    # Candidate center must contain the whole text rectangle within the panel.
+    inside_fraction = ndimage.uniform_filter(
+        mask.astype(np.float32), size=(box_h, box_w), mode="constant"
+    )
+    # AC panel faces are often split into tightly packed UV islands. Permit
+    # narrow seams between those islands; the text has no background, and
+    # unmapped seam pixels simply do not render.
+    valid = inside_fraction > 0.70
+    if not np.any(valid):
+        return None
+
+    rgb = np.asarray(image.crop((x0, y0, x1, y1)).convert("RGB"), dtype=np.float32)
+    gray = rgb.mean(axis=2)
+    gx = ndimage.sobel(gray, axis=1, mode="nearest")
+    gy = ndimage.sobel(gray, axis=0, mode="nearest")
+    detail = np.hypot(gx, gy)
+    local_detail = ndimage.uniform_filter(detail, size=(box_h, box_w), mode="nearest")
+
+    # Prefer a quiet patch near a panel edge. Distance is measured inside the
+    # exact UV polygon, so this selects edge margins without drawing off-panel.
+    edge_distance = ndimage.distance_transform_edt(mask)
+    score = local_detail + 0.12 * edge_distance
+    score[~valid] = np.inf
+    cy, cx = np.unravel_index(np.argmin(score), score.shape)
+    if not np.isfinite(score[cy, cx]):
+        return None
+    return x0 + int(cx) - text_width // 2, y0 + int(cy) - text_height // 2
 
 
 def main() -> None:
-    meshes = load_panels()
-    objects = []
-    names = []
-    missing = []
-    for pid, purpose in PANELS.items():
-        mesh = MESH_NAME.get(pid, f"{pid}-panel")
-        verts = meshes.get(mesh)
-        if not verts:
-            # A2 has no -panel; use A2-base if present
-            alt = f"{pid}-base"
-            verts = meshes.get(alt)
-            mesh = alt if verts else mesh
-        if not verts:
-            # A3 is CTVM units — union any "{ID}-*" mesh verts
-            pref = f"{pid}-"
-            bundle = []
-            for n, vv in meshes.items():
-                if n.startswith(pref):
-                    bundle.extend(vv)
-            verts = bundle
-        if not verts:
-            missing.append(pid)
-            continue
-        xs = [p[0] for p in verts]
-        ys = [p[1] for p in verts]
-        zs = [p[2] for p in verts]
-        tex_name = f"panel_id_{pid}.png"
-        write_magenta_label(TEX / tex_name, pid, purpose)
-        qv, qf, quv = face_label_quad(
-            pid, min(xs), max(xs), min(ys), max(ys), min(zs), max(zs)
-        )
-        obj_name = f"panel-id-{pid}"
-        objects.append(
-            dict(
-                name=obj_name,
-                verts=qv,
-                faces=qf,
-                uvs=quv,
-                texture=f"textures/panel_id/{tex_name}",
-            )
-        )
-        names.append(obj_name)
+    meshes = _load_meshes()
+    images: dict[str, Image.Image] = {}
+    sources: dict[str, Path] = {}
+    for path in (FWD, AFT):
+        backup = _backup(path)
+        images[path.name] = Image.open(backup).convert("RGB")
+        sources[path.name] = path
 
-    ac_path = OUT / "grenadier_panel_id_labels.ac"
-    xml_path = OUT / "grenadier_panel_id_labels.xml"
-    write_ac(ac_path, objects)
-    write_xml(xml_path, names)
-    print(f"wrote {ac_path} ({len(objects)} labels)")
-    print(f"wrote {xml_path}")
-    if missing:
-        print("MISSING mesh for:", ", ".join(missing))
+    placed: list[str] = []
+    skipped: list[str] = []
+    positions: list[tuple[str, str, int, int]] = []
+    for panel_id, purpose in PANELS.items():
+        mesh = _mesh_for_panel(panel_id, meshes)
+        if mesh is None or mesh.texture not in images:
+            skipped.append(panel_id)
+            continue
+        image = images[mesh.texture]
+        polygons = _crew_uv_polygons(panel_id, mesh, image.size)
+        label = _label_bitmap(panel_id, purpose)
+        position = _find_blank_edge(image, polygons, label.width, label.height)
+        if position is None:
+            label = _label_bitmap(panel_id, purpose, compact=True)
+            position = _find_blank_edge(image, polygons, label.width, label.height)
+        if position is None:
+            # Narrow UV strips (notably breaker side plates) need the atlas
+            # lettering rotated; the mesh UV rotates it back on the panel.
+            label = _label_bitmap(panel_id, purpose, compact=True).rotate(90, expand=True)
+            position = _find_blank_edge(image, polygons, label.width, label.height)
+        if position is None:
+            skipped.append(panel_id)
+            continue
+        x, y = position
+        image.paste(label, (x, y), label)
+        placed.append(panel_id)
+        positions.append((panel_id, mesh.texture, x, y))
+
+    # Explicit blank-edge locations for UV islands too small/fragmented for
+    # the conservative automatic rectangle search.
+    for panel_id in list(skipped):
+        manual = MANUAL_STAMPS.get(panel_id)
+        if manual is None:
+            continue
+        texture_name, x, y, compact = manual
+        label = _label_bitmap(panel_id, PANELS[panel_id], compact=compact)
+        images[texture_name].paste(label, (x, y), label)
+        skipped.remove(panel_id)
+        placed.append(panel_id)
+        positions.append((panel_id, texture_name, x, y))
+
+    for texture_name, image in images.items():
+        image.save(sources[texture_name])
+        print(f"wrote {sources[texture_name]}")
+    print(f"placed {len(placed)} panel labels")
+    for panel_id, texture, x, y in positions:
+        print(f"  {panel_id:>3} {texture:<30} ({x:4d}, {y:4d})")
+    if skipped:
+        print("skipped (no safe blank edge):", ", ".join(skipped))
 
 
 if __name__ == "__main__":

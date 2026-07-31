@@ -36,7 +36,9 @@ GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 
 **Steering / hyd:** **BATT** (not APU START) → `systems/grenadier/hyd/available` → NWS + aero. See [reactor_startup.md](reactor_startup.md) §1a and [ssto_ascent_checklist.md](ssto_ascent_checklist.md) Quick Start.
 
-**Panel ID labels:** magenta strips (`Models/Grenadier/grenadier_panel_id_labels.*`) — rebuild with `python3 Models/Grenadier/build_panel_id_labels.py`.
+**Panel ID labels:** small magenta letters baked into blank panel-edge regions of
+the original forward/aft cockpit texture atlases (no plaque geometry or
+background). Rebuild with `python3 Models/Grenadier/build_panel_id_labels.py`.
 
 **AFT LEFT/RIGHT RCS** paint (aft text map): green monoprop **LMP-103S** —
 `He (OXID)/(FUEL)` → **He (A)/(B)**; tank `OXID`/`FUEL` → **PROP**/**PROP**.

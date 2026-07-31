@@ -2,14 +2,18 @@
 
 ## Quick Start — cold runway to initial climb (PLT)
 
-Magenta cockpit labels show **Panel ID** + purpose on each live plate. Non-panel inputs use **Keypad** or **Mouse**. For cockpit clicks: press **Ctrl** so the mouse is in pick/clickable mode (not view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
+Magenta cockpit labels show **Panel ID** + purpose on each live plate. MDU
+display positions also use names such as `R1`/`R2`, but those are **not** the
+same thing as sheet panels R1/R2. Non-panel inputs use **Keypad** or **Mouse**.
+For cockpit clicks: press **Ctrl** so the mouse is in pick/clickable mode (not
+view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
 
 | Step | Panel ID | Panel Purpose | Switch / Setting | Notes |
 |------|----------|---------------|------------------|-------|
 | 1 | Keypad | — | `v` / `Shift+V` → **Pilot** (right seat) | Cycle views until Pilot |
-| 2 | R1 | PLT inboard MDU | **R1 Power** → **ON** | Mouse; Ctrl = clickable. Screen dark until BATT |
-| 3 | R2 | PLT MDU + CHARM plant row | **R2 Power** → **ON** | Mouse; Ctrl = clickable. Screen dark until BATT |
-| 4 | R2 | PLT MDU + CHARM plant row | **BATT** (APU OPERATE) → **ON** | Mouse; electric hyd live (NWS / brakes / aero). CHARM `V` ~260 |
+| 2 | Mouse | PLT inboard MDU bezel | **R1 display POWER** rotary → **ON** | Small rotary immediately inboard of the R1 screen; hover says `R1 Power`. Do **not** use sheet panel R1 (POWER DISTRIBUTION). Ctrl = clickable; screen dark until BATT |
+| 3 | Mouse | PLT outboard MDU bezel | **R2 display POWER** rotary → **ON** | Small rotary immediately inboard of the R2 screen; hover says `R2 Power`. This is separate from sheet panel R2. Ctrl = clickable; screen dark until BATT |
+| 4 | R2 | CHARM plant / propulsion controls | **BATT** (APU OPERATE) → **ON** | Mouse; electric hyd live (NWS / brakes / aero). CHARM `V` ~260 |
 | 5 | F8 | PLT HUD | **HUD Power** → **ON**; mode **NORM** | Mouse; brightness AUTO or DAY |
 | 6 | F8 | PLT HUD | **Flight Controller Power** → **ON** | Mouse; auto-ON with BATT — confirm ON |
 | 7 | Keypad | — | **Num Lock** → **ON** | Required for all KP flight / throttle keys below |
@@ -19,25 +23,25 @@ Magenta cockpit labels show **Panel ID** + purpose on each live plate. Non-panel
 | 11 | Keypad | — | Hold `KP 0`, then hold `KP Enter` | Rudder L/R; nosewheel steers on gear. Num Lock ON |
 | 12 | Keypad | — | `KP 5` | Center elevator / aileron / rudder. Num Lock ON |
 | 13 | Keypad | — | `v` / `Shift+V` → **Pilot** | Back to right seat before plant scramble |
-| 14 | R1 | PLT inboard MDU | Softkeys → **CHARM** page | Mouse; Ctrl = clickable. MAIN → SUBSYS STATUS → CHARM if needed |
-| 15 | R2 | PLT MDU + CHARM plant row | **CRYO** → **ON** | Mouse; wait `T·K < 35`, green `CRYO 0001` |
-| 16 | R2 | PLT MDU + CHARM plant row | **MAGNET** → **ARM/ON** | Mouse; wait green `MAG` / `MAGI` ~100 |
-| 17 | R2 | PLT MDU + CHARM plant row | **FUEL** → **ON** | Mouse |
-| 18 | R2 | PLT MDU + CHARM plant row | **VACUUM** → **ON/READY** | Mouse; `VAC 0001`, green `FUEL` |
-| 19 | R2 | PLT MDU + CHARM plant row | **RF** → **ON** | Mouse |
-| 20 | R2 | PLT MDU + CHARM plant row | **CHARM** → **ON** | Mouse; mode → `LIGHT` |
-| 21 | R2 | PLT MDU + CHARM plant row | **DEC** → **ON** | Mouse |
-| 22 | R1 | PLT inboard MDU | Confirm `MODE POWER`, green `BUS` | Mouse / observe CHARM page; bus MW rising |
-| 23 | R1 | PLT inboard MDU | Softkey **STAGE**; `CMD 1` `MAX 1` `GO 1` `PLANT 1` `THR 000` | Mouse; Ctrl = clickable |
+| 14 | Mouse | PLT inboard MDU (display position R1) | Softkeys → **CHARM** page | Ctrl = clickable. MAIN → SUBSYS STATUS → CHARM if needed |
+| 15 | R2 | CHARM plant / propulsion controls | **CRYO** → **ON** | Mouse; wait `T·K < 35`, green `CRYO 0001` |
+| 16 | R2 | CHARM plant / propulsion controls | **MAGNET** → **ARM/ON** | Mouse; wait green `MAG` / `MAGI` ~100 |
+| 17 | R2 | CHARM plant / propulsion controls | **FUEL** → **ON** | Mouse |
+| 18 | R2 | CHARM plant / propulsion controls | **VACUUM** → **ON/READY** | Mouse; `VAC 0001`, green `FUEL` |
+| 19 | R2 | CHARM plant / propulsion controls | **RF** → **ON** | Mouse |
+| 20 | R2 | CHARM plant / propulsion controls | **CHARM** → **ON** | Mouse; mode → `LIGHT` |
+| 21 | R2 | CHARM plant / propulsion controls | **DEC** → **ON** | Mouse |
+| 22 | Display R1 | PLT inboard MDU | Confirm `MODE POWER`, green `BUS` | Observe CHARM page; bus MW rising. Not sheet panel R1 |
+| 23 | Mouse | PLT inboard MDU (display position R1) | Softkey **STAGE**; `CMD 1` `MAX 1` `GO 1` `PLANT 1` `THR 000` | Ctrl = clickable |
 | 24 | Keypad | — | `KP 5` | Re-center controls. Num Lock ON |
 | 25 | Keypad | — | Hold `KP 3` → idle / `THR 000` | Num Lock ON |
 | 26 | Keypad | — | Leave parking brake **SET** | Do not press `Shift+B` yet |
-| 27 | R2 | PLT MDU + CHARM plant row | **CART** → leave **OFF** | Scramble does not need cart |
+| 27 | R2 | CHARM plant / propulsion controls | **CART** → leave **OFF** | Scramble does not need cart |
 | 28 | C6 / C7 | Gear / NWS / brakes · Speedbrake / body flap | Gear **DOWN**, speedbrake **IN**, `SEAL 0` | Confirm config; controls neutral |
 | 29 | Keypad | — | `Shift+B` → release parking brake | — |
 | 30 | Keypad | — | Hold `KP 9` → `THR 100` | Num Lock ON; verify `CPL 1`, thrust / `DRAW` rising |
 | 31 | Keypad | — | Tap `KP 0` / `KP Enter` | Small NWS taps for centerline. Num Lock ON |
-| 32 | R2 | PLT MDU + CHARM plant row | Observe PFD / HUD → **225 KIAS** | — |
+| 32 | Display R2 | PLT outboard MDU / PFD | Observe PFD / HUD → **225 KIAS** | Not sheet panel R2 |
 | 33 | Keypad | — | `KP 2` → ~10–12° nose-up | At 225 KIAS. Num Lock ON |
 | 34 | Keypad | — | `KP 5`, then small `KP 2` / `KP 8` | Center then trim pitch. Num Lock ON |
 | 35 | Keypad | — | `g` → gear **UP** | Stay Stage 1 until STAGE page recommends Stage 2 |
