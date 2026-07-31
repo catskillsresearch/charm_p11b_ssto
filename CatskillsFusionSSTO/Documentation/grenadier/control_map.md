@@ -38,7 +38,10 @@ GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 
 **Panel ID labels:** small magenta letters baked into blank panel-edge regions of
 the original forward/aft cockpit texture atlases (no plaque geometry or
-background). Rebuild with `python3 Models/Grenadier/build_panel_id_labels.py`.
+background). Placement uses only large plate UV islands and their outer rim —
+never the featureless interior UV holes that host 3D switches. Rebuild with
+`python3 Models/Grenadier/build_panel_id_labels.py` after
+`scripts/stamp_grenadier_apu_labels.py`.
 
 **AFT LEFT/RIGHT RCS** paint (aft text map): green monoprop **LMP-103S** —
 `He (OXID)/(FUEL)` → **He (A)/(B)**; tank `OXID`/`FUEL` → **PROP**/**PROP**.
