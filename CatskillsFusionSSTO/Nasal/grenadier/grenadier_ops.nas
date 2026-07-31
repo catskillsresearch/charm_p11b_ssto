@@ -23,6 +23,17 @@ var _num = func (p, d) {
 
 var _set = func (p, v) { setprop(p, v); };
 
+# ISA sea-level density (slug/ft³). JSBSim atmosphere/rho-slugs_ft3.
+var RHO_SL_SLUGFT3 = 0.0023769;
+
+# Air-breathing thrust scale: ~rho^exp above a stall floor, else 0.
+var _air_thrust_scale = func (air_frac, stall, exp) {
+    if (air_frac == nil or air_frac <= 0) return 0.0;
+    if (air_frac < stall) return 0.0;
+    if (exp == nil or exp == 1.0) return air_frac;
+    return math.pow(air_frac, exp);
+};
+
 var init_defaults = func {
     if (_init_done) return;
     _init_done = 1;
@@ -70,6 +81,17 @@ var init_defaults = func {
     _set(E ~ "sigma2-alt-ft", 25000.0);
     # Paper seal altitude h_seal ≈ 39.6 km (constants.generated.json stage.h_seal_m)
     _set(E ~ "sigma3-alt-ft", 130000.0);
+    # Air-breathing density model (tunable). Peaks are sea-level / dense-air;
+    # delivered thrust scales with (rho/rho_sl)^exp until the stall floor.
+    # σ1 stall ~0.15 ≈ 50 kft ISA; σ2 holds thinner air until ~0.025.
+    _set(E ~ "rho-sl-slugft3", RHO_SL_SLUGFT3);
+    _set(E ~ "sigma1-stall-frac", 0.15);
+    _set(E ~ "sigma2-stall-frac", 0.025);
+    _set(E ~ "sigma1-air-exp", 1.0);
+    _set(E ~ "sigma2-air-exp", 0.9);
+    _set(E ~ "air-frac", 1.0);
+    _set(E ~ "air-scale", 1.0);
+    _set(E ~ "rho-slugft3", RHO_SL_SLUGFT3);
     _set(E ~ "inlet-sealed", 0);
     _set(E ~ "throttle", 0.0);
     _set(E ~ "thrust-kn", 0.0);
@@ -274,6 +296,22 @@ var _update_engine = func (dt) {
     _set(E ~ "alt-ft", alt);
     _set(E ~ "q-psf", q);
 
+    # Ambient density → air-breathing scale (σ1 EDF / σ2 air-plasma).
+    var rho_sl = _num(E ~ "rho-sl-slugft3", RHO_SL_SLUGFT3);
+    if (rho_sl < 1e-9) rho_sl = RHO_SL_SLUGFT3;
+    var rho = _num("/fdm/jsbsim/atmosphere/rho-slugs_ft3", rho_sl);
+    if (rho < 0) rho = 0;
+    var air_frac = rho / rho_sl;
+    if (air_frac > 1.0) air_frac = 1.0;
+    var stall1 = _num(E ~ "sigma1-stall-frac", 0.15);
+    var stall2 = _num(E ~ "sigma2-stall-frac", 0.025);
+    var exp1 = _num(E ~ "sigma1-air-exp", 1.0);
+    var exp2 = _num(E ~ "sigma2-air-exp", 0.9);
+    var air1_ok = (air_frac >= stall1);
+    var air2_ok = (air_frac >= stall2);
+    _set(E ~ "rho-slugft3", rho);
+    _set(E ~ "air-frac", air_frac);
+
     # --- Power system (CHARM) ---
     var plant_ok = (getprop(C ~ "mode") == "POWER") and (_num(C ~ "scram", 0) == 0);
     var bus = _num(C ~ "bus-mw", 0);
@@ -283,19 +321,21 @@ var _update_engine = func (dt) {
     # --- Engine system (cycle + throttle demand) ---
     var a2 = _num(E ~ "sigma2-alt-ft", 25000);
     var a3 = _num(E ~ "sigma3-alt-ft", 130000);
+    var sealed = _num(E ~ "inlet-sealed", 0);
+    var water_ok = (_num(E ~ "water-kg", 0) > 10);
     var rec = 1;
-    if (alt >= a2) rec = 2;
-    if (alt >= a3) rec = 3;
+    if (alt >= a2 or !air1_ok) rec = 2;
+    if (alt >= a3 or (alt >= a2 and !air2_ok)) rec = 3;
     _set(E ~ "sigma-recommended", rec);
 
-    # Cycle allow depends on sensors; plant must also be up for any stage-go
+    # Cycle allow: plant up + air still usable for σ1/σ2; σ3 needs seal+water.
     var allowed = 0;
     if (plant_ok) {
-        allowed = 1;
-        if (alt >= a2) allowed = 2;
-        if (alt >= a3 and _num(E ~ "inlet-sealed", 0) and _num(E ~ "water-kg", 0) > 10)
+        if (air1_ok) allowed = 1;
+        if (alt >= a2 and air2_ok) allowed = 2;
+        if (alt >= a3 and sealed and water_ok)
             allowed = 3;
-        elsif (alt >= a3)
+        elsif (alt >= a3 and air2_ok)
             allowed = 2;
     }
     _set(E ~ "sigma-allowed", allowed);
@@ -303,13 +343,20 @@ var _update_engine = func (dt) {
     var sig = int(_num(E ~ "sigma", 1));
     if (sig < 1) sig = 1;
     if (sig > 3) sig = 3;
-    if (sig == 3 and (_num(E ~ "water-kg", 0) <= 10 or !_num(E ~ "inlet-sealed", 0)))
+    # Do not auto-advance stages (crew commands σ). Drop σ3 if dry/unsealed.
+    if (sig == 3 and (!water_ok or !sealed))
         sig = (allowed >= 2) ? 2 : 1;
     _set(E ~ "sigma", sig);
 
-    var stage_go = plant_ok and (sig <= allowed);
-    if (sig == 3)
-        stage_go = plant_ok and _num(E ~ "inlet-sealed", 0) and (_num(E ~ "water-kg", 0) > 10);
+    var stage_go = 0;
+    if (plant_ok) {
+        if (sig == 1)
+            stage_go = air1_ok;
+        elsif (sig == 2)
+            stage_go = (alt >= a2) and air2_ok;
+        else
+            stage_go = sealed and water_ok;
+    }
     _set(E ~ "stage-go", stage_go ? 1 : 0);
 
     # Throttle demand SSOT: pilot lever (controls/engines/engine[0]/throttle).
@@ -327,6 +374,7 @@ var _update_engine = func (dt) {
     var thrust_kn = 0.0;
     var wflow = 0.0;
     var bus_frac = 0.0;
+    var air_scale = 1.0;
 
     if (coupled) {
         # Defaults = paper freeze if props missing (same as init_defaults).
@@ -335,16 +383,19 @@ var _update_engine = func (dt) {
         if (sig == 1) {
             peak = _num(E ~ "thrust-peak-kn-sigma1", 589.4);
             ppeak = _num(E ~ "power-peak-mw-sigma1", 92.5);
+            air_scale = _air_thrust_scale(air_frac, stall1, exp1);
         } elsif (sig == 2) {
             peak = _num(E ~ "thrust-peak-kn-sigma2", 820.9);
             ppeak = _num(E ~ "power-peak-mw-sigma2", 995.0);
+            air_scale = _air_thrust_scale(air_frac, stall2, exp2);
         } else {
             peak = _num(E ~ "thrust-peak-kn-sigma3", 55.8);
             ppeak = _num(E ~ "power-peak-mw-sigma3", 995.0);
+            air_scale = 1.0; # water reaction mass — not air-limited
             wflow = _num(E ~ "water-flow-peak-kgps", 2.845) * thr;
         }
-        pdraw = ppeak * thr;
-        thrust_kn = peak * thr;
+        pdraw = ppeak * thr * air_scale;
+        thrust_kn = peak * thr * air_scale;
         # Power cable limit: engine cannot exceed CHARM bus
         if (pdraw > bus and bus > 1) {
             bus_frac = bus / pdraw;
@@ -360,7 +411,14 @@ var _update_engine = func (dt) {
         thrust_kn = 0.0;
         wflow = 0.0;
         bus_frac = 0.0;
+        if (sig == 1)
+            air_scale = _air_thrust_scale(air_frac, stall1, exp1);
+        elsif (sig == 2)
+            air_scale = _air_thrust_scale(air_frac, stall2, exp2);
+        else
+            air_scale = 1.0;
     }
+    _set(E ~ "air-scale", air_scale);
 
     _set(E ~ "bus-frac", bus_frac);
     _set(E ~ "power-draw-mw", pdraw);
@@ -376,10 +434,10 @@ var _update_engine = func (dt) {
 
     _hold_heritage_engines_cold();
 
-    # Visual: spin σ1 EDF when coupled in air-breathing
+    # Visual: spin σ1 EDF when coupled in air-breathing (slows as air-scale falls)
     var spin = _num(E ~ "fan-spin-deg", 0);
     if (coupled and sig == 1)
-        spin += dt * (720.0 * thr);
+        spin += dt * (720.0 * thr * air_scale);
     elsif (coupled)
         spin += dt * (180.0 * thr);
     while (spin > 360.0) spin -= 360.0;

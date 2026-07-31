@@ -120,8 +120,8 @@ There is no power-up button for the single nozzle. After CHARM is in **POWER**:
 
 1. Confirm **CMD 1** on the STAGE CRT. Use the left/right black **STG** pushbuttons for Stage −/+.
 2. Hold `KP 9` to throttle up for the takeoff roll. The visible heritage center throttle is not the Grenadier command source.
-3. Climb: Stage 2 when schedule allows (inlets open).
-4. Before Stage 3: seal inlets; need water. Then Stage 3.
+3. Climb on σ1 while air is dense; thrust falls with density and stalls near ~50 kft — Stage + to σ2 when MAX/GO allow (inlets open).
+4. σ2 also fades in thin air; before it stalls: seal inlets, confirm water, Stage + to σ3.
 5. MECO / circularize on bus; RCS for attitude only.
 
 Ignore blanked **MAIN ENGINE LEFT/RIGHT** shutdown and FUEL CELL REAC VLV labels. The former SRB/ET SEP pushbuttons are now explicitly relabeled **STAGE − / +**; their stack-separation behavior is removed.
