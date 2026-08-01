@@ -13,7 +13,7 @@ engine:
   stages: [1, 2, 3]
   primary_sensor: alt-ft
   defaults:
-    sigma2-alt-ft: 25000
+    sigma2-alt-ft: 12000
     sigma3-alt-ft: 120000
 
 panel_aliases:

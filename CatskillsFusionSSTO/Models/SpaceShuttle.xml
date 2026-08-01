@@ -1,5 +1,5 @@
 <PropertyList>
-	<!-- Plan A loft wing (b≈38 m, S≈600 m²). Heritage: shuttle_o2_heritage.ac -->
+	<!-- Plan A high-AR wing (b≈60 m, S≈900 m², AR≈4). Heritage: shuttle_o2_heritage.ac -->
 	<path>shuttle_o2_plan_a.ac</path>
 
    <!-- heat shield glow -->
@@ -2191,12 +2191,12 @@
   	<factor>1.0</factor>
 	<offset-deg>0.0</offset-deg>
   	<axis>   
-   		<x1-m> 15.05</x1-m>
+   		<x1-m> 17.20</x1-m>
    		<y1-m> 0.0</y1-m>
-   		<z1-m>-4.83</z1-m>
-   		<x2-m> 15.05</x2-m>
-   		<y2-m> 15.00</y2-m>
-   		<z2-m>-4.83</z2-m>
+   		<z1-m>-4.90</z1-m>
+   		<x2-m> 17.20</x2-m>
+   		<y2-m> 18.00</y2-m>
+   		<z2-m>-4.90</z2-m>
   	</axis>
  </animation>
 
@@ -2207,12 +2207,12 @@
   	<factor>1.0</factor>
 	<offset-deg>0.0</offset-deg>
   	<axis>   
-   		<x1-m> 15.05</x1-m>
+   		<x1-m> 17.20</x1-m>
    		<y1-m> 0.0</y1-m>
-   		<z1-m>-4.83</z1-m>
-   		<x2-m> 15.05</x2-m>
-   		<y2-m> 15.00</y2-m>
-   		<z2-m>-4.83</z2-m>
+   		<z1-m>-4.90</z1-m>
+   		<x2-m> 17.20</x2-m>
+   		<y2-m> 18.00</y2-m>
+   		<z2-m>-4.90</z2-m>
   	</axis>
  </animation>
 
@@ -2223,12 +2223,12 @@
   	<factor>-1.0</factor>
 	<offset-deg>0.0</offset-deg>
   	<axis>   
-   		<x1-m> 15.05</x1-m>
+   		<x1-m> 17.20</x1-m>
    		<y1-m> 0.0</y1-m>
-   		<z1-m>-4.83</z1-m>
-   		<x2-m> 15.05</x2-m>
-   		<y2-m> -15.00</y2-m>
-   		<z2-m>-4.83</z2-m>
+   		<z1-m>-4.90</z1-m>
+   		<x2-m> 17.20</x2-m>
+   		<y2-m> -18.00</y2-m>
+   		<z2-m>-4.90</z2-m>
   	</axis>
  </animation>
 
@@ -2239,12 +2239,12 @@
   	<factor>-1.0</factor>
 	<offset-deg>0.0</offset-deg>
   	<axis>   
-   		<x1-m> 15.05</x1-m>
+   		<x1-m> 17.20</x1-m>
    		<y1-m> 0.0</y1-m>
-   		<z1-m>-4.83</z1-m>
-   		<x2-m> 15.05</x2-m>
-   		<y2-m> -15.00</y2-m>
-   		<z2-m>-4.83</z2-m>
+   		<z1-m>-4.90</z1-m>
+   		<x2-m> 17.20</x2-m>
+   		<y2-m> -18.00</y2-m>
+   		<z2-m>-4.90</z2-m>
   	</axis>
  </animation>
 

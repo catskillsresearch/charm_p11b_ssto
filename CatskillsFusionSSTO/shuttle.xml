@@ -20,21 +20,22 @@
 
 
  <!--
-  Plan A loft pack (CATSKILLS-SSTO-TA-GRENADIER):
-  Geometric metrics + mass for runway climb; aero coeffs tuned for denser-air
-  loft (CLα, Clp/Clb, pitch damping) while staying Shuttle-family tables.
-    length ×1.396 (37.24→52 m), span ×1.597 (23.79→38 m),
-    S ×2.401 (249.9→600 m²), empty ≈171.7 t dry (no cargo).
+  Plan A high-AR loft (CATSKILLS-SSTO-TA-GRENADIER):
+  Same S≈900 m² stall floor as the slow-path pack, but span 60 m (AR≈4)
+  so induced drag allows a stable shallow climb on paper σ1/σ2 thrust.
+  Not a vertical rocket. Aero α² drag scaled with AR.
+    length ×1.396 (37.24→52 m), span ×2.522 (23.79→60 m),
+    S ×3.601 (249.9→900 m²), empty ≈171.7 t dry (no cargo).
   Visual: Models/shuttle_o2_plan_a.ac (build_plan_a_wings.py).
  -->
  <metrics>
-   <wingarea  unit="FT2"> 6458.35 </wingarea>
-   <wingspan  unit="FT" >  124.67 </wingspan>
-   <wing_incidence>          3.50 </wing_incidence>
-   <chord     unit="FT" >   51.80 </chord>
-   <htailarea unit="FT2"> 1615.39 </htailarea>
+   <wingarea  unit="FT2"> 9687.52 </wingarea>
+   <wingspan  unit="FT" >  196.85 </wingspan>
+   <wing_incidence>          4.00 </wing_incidence>
+   <chord     unit="FT" >   49.21 </chord>
+   <htailarea unit="FT2"> 2150.00 </htailarea>
    <htailarm  unit="FT" >   76.77 </htailarm>
-   <vtailarea unit="FT2"> 1292.31 </vtailarea>
+   <vtailarea unit="FT2"> 1720.00 </vtailarea>
    <vtailarm  unit="FT" >   76.77 </vtailarm>
    <location name="AERORP" unit="M">
      <x>   3.77 </x>
@@ -137,7 +138,7 @@
 
  <ground_reactions>
 
-	<!-- Plan A loft: gear X×1.396, track Y×1.597 (span 38 m); z (−7.97 m) level park.
+	<!-- Plan A high-AR: gear X×1.396, track Y×2.522 (span 60 m); z (−7.97 m) level park.
 	     Spring/damping × mass ratio (~2.10) for ~172 t dry. -->
 	<contact type="BOGEY" name="NOSE">
 		<location unit="M">
@@ -159,7 +160,7 @@
 <contact type="BOGEY" name="LEFT_MAIN">
 		<location unit="M">
 		<x> 5.03 </x>
-		<y> -6.70 </y>
+		<y> -10.57 </y>
 		<z>-7.97 </z>
 		</location>
 		<static_friction> 0.40 </static_friction>
@@ -175,7 +176,7 @@
 	<contact type="BOGEY" name="RIGHT_MAIN">
 		<location unit="M">
 		<x> 5.03 </x>
-		<y> 6.70 </y>
+		<y> 10.57 </y>
 		<z>-7.97 </z>
 		</location>
 		<static_friction> 0.40 </static_friction>
@@ -255,11 +256,11 @@
 		<damping_coeff unit="LBS/FT/SEC"> 110000.00 </damping_coeff>
 	</contact>
 
-	<!-- contact points 8, 9, 10-->
+	<!-- contact points 8, 9, 10 — tip at |y|≈22.2 m for 60 m span -->
 	<contact type="STRUCTURE" name="LEFT_WING_TIP">
 		<location unit="M">
 		<x> 15.84 </x>
-		<y> -16.63 </y>
+		<y> -22.17 </y>
 		<z> 20.0 </z>
 		</location>
 		<static_friction> 0.90 </static_friction>
@@ -272,7 +273,7 @@
 	<contact type="STRUCTURE" name="RIGHT_WING_TIP">
 		<location unit="M">
 		<x> 15.84 </x>
-		<y> 16.63 </y>
+		<y> 22.17 </y>
 		<z> 20.0 </z>
 		</location>
 		<static_friction> 0.90 </static_friction>
@@ -3040,18 +3041,18 @@
 	</product>
   </function>
 
-  <!-- Plan A loft: steeper CLα (+~28%) and softer quadratic so moderate-α
-       climb (≈8–12°) has margin instead of riding the mush/stall edge. -->
+  <!-- High-AR loft (b≈60 m, AR≈4): modest CLα bump vs fat-delta pack;
+       softer quadratic so moderate-α climb has margin. -->
   <function name="aero/coefficient/CL-basic-parametrization">
 	<product>
 		<sum>
 			<value>-0.053</value>
 			<product>
-				<value>3.50</value>
+				<value>4.30</value>
 				<property>aero/alpha-rad</property>			
 			</product>
 			<product>
-				<value>-1.40</value>
+				<value>-1.15</value>
 				<pow>
 					<property>aero/alpha-rad</property>
 					<value>2.0</value>
@@ -3132,8 +3133,9 @@
 					<value>1.4</value>
 				</pow>			
 			</product>
+			<!-- α² term scaled ~AR_old/AR_new (2.25/4) for slender delta induced drag -->
 			<product>
-				<value>1.79</value>
+				<value>1.00</value>
 				<pow>
 					<property>aero/alpha-rad</property>
 					<value>2.0</value>

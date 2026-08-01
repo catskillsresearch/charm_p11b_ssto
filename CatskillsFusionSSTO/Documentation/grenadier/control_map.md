@@ -34,6 +34,11 @@ Scramble progression: **BATT → CRYO → MAGNET → FUEL → VACUUM → RF → 
 Flight controls, gear, **brake isol** (R4), RHC/THC, DAP/RCS, HUD/ADI/HSI,
 GPC/IDP/MDU, lighting, cabin fans, abort CWS.
 
+**RCS / DAP (vacuum attitude):** not altitude-automatic on Grenadier ascent.
+`Ctrl+m` → HUD control-mode string **`RCS ROT DAP-A`** (jets on RHC). Panel A6
+Orbital DAP for AUTO/INRTL/LVLH/FREE. HUD does **not** show per-jet pulses —
+use the mode string + SPEC 23 / external flames. See ascent checklist RCS note.
+
 **Steering / hyd:** **BATT** (not APU START) → `systems/grenadier/hyd/available` → NWS + aero. See [reactor_startup.md](reactor_startup.md) §1a and [ssto_ascent_checklist.md](ssto_ascent_checklist.md) Quick Start.
 
 **Panel ID labels:** bright yellow letters baked into blank panel-edge regions of

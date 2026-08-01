@@ -78,17 +78,19 @@ var init_defaults = func {
     _set(E ~ "sigma", 1);
     _set(E ~ "sigma-recommended", 1);
     _set(E ~ "sigma-allowed", 0); # no stage until plant POWER
-    _set(E ~ "sigma2-alt-ft", 25000.0);
+    # Slow-path loft: open σ2 once clear of dense-air mush (~12 kft), not 25 kft.
+    _set(E ~ "sigma2-alt-ft", 12000.0);
     # Paper seal altitude h_seal ≈ 39.6 km (constants.generated.json stage.h_seal_m)
     _set(E ~ "sigma3-alt-ft", 130000.0);
     # Air-breathing density model (tunable). Peaks are sea-level / dense-air;
     # delivered thrust scales with (rho/rho_sl)^exp until the stall floor.
-    # σ1 stall ~0.15 ≈ 50 kft ISA; σ2 holds thinner air until ~0.025.
+    # Softened vs linear-ρ so σ1 still climbs through the teens; σ2 takes over
+    # earlier and holds thinner air until ~0.025 (~80 kft).
     _set(E ~ "rho-sl-slugft3", RHO_SL_SLUGFT3);
-    _set(E ~ "sigma1-stall-frac", 0.15);
+    _set(E ~ "sigma1-stall-frac", 0.12);
     _set(E ~ "sigma2-stall-frac", 0.025);
-    _set(E ~ "sigma1-air-exp", 1.0);
-    _set(E ~ "sigma2-air-exp", 0.9);
+    _set(E ~ "sigma1-air-exp", 0.65);
+    _set(E ~ "sigma2-air-exp", 0.70);
     _set(E ~ "air-frac", 1.0);
     _set(E ~ "air-scale", 1.0);
     _set(E ~ "rho-slugft3", RHO_SL_SLUGFT3);
@@ -319,7 +321,7 @@ var _update_engine = func (dt) {
     _set(E ~ "plant-ok", plant_ok ? 1 : 0);
 
     # --- Engine system (cycle + throttle demand) ---
-    var a2 = _num(E ~ "sigma2-alt-ft", 25000);
+    var a2 = _num(E ~ "sigma2-alt-ft", 12000);
     var a3 = _num(E ~ "sigma3-alt-ft", 130000);
     var sealed = _num(E ~ "inlet-sealed", 0);
     var water_ok = (_num(E ~ "water-kg", 0) > 10);

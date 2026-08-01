@@ -2,9 +2,9 @@
 """Stretch Shuttle wing mesh to Plan A span/area (visual matches FDM).
 
 Heritage OV: b≈23.79 m, S≈250 m².
-Plan A loft pack: b≈38 m, S≈600 m² (was 33 m / 480 m² first cut).
-  k_span  = 38/23.79 ≈ 1.597
-  k_chord = (600/249.9)/k_span ≈ 1.504
+Plan A high-AR loft: b≈60 m, S≈900 m² (AR≈4 — climb margin on paper σ1/σ2 T/W).
+  k_span  = 60/23.79 ≈ 2.522
+  k_chord = (900/249.9)/k_span ≈ 1.428
 
 AC axes (shuttle_o2.ac): +X aft, +Y up, +Z right.
 
@@ -31,10 +31,10 @@ DST = ROOT / "shuttle_o2_plan_a.ac"
 FALLBACK = ROOT / "shuttle_o2.ac"
 
 # Plan A loft / heritage
-K_SPAN = 38.0 / 23.79
-K_CHORD = (600.0 / 249.9) / K_SPAN
+K_SPAN = 60.0 / 23.79
+K_CHORD = (900.0 / 249.9) / K_SPAN
 Z_BODY = 3.60  # fuselage half-width (upper body |z|max ≈ 3.62)
-Z_TIP = 11.93  # outboard elevon tip
+Z_TIP = 11.93  # outboard elevon tip (heritage mesh; delta wing sets real tip)
 X_PIVOT = -1.50  # root LE-ish (heatshield wing min x ≈ -1.52)
 
 # Objects whose vertices participate in the wing warp.
@@ -199,7 +199,7 @@ def hinge_report() -> None:
 # OMS still end ≈17.8 m. Stretch the aft body so the tail rides with the flaps;
 # the Grenadier nozzle is rebuilt separately to exit just past that line.
 AFT_PIVOT = 11.0
-AFT_SCALE = (19.40 - 11.0) / (17.768 - 11.0)  # fuse tip → ≈19.4 m
+AFT_SCALE = (21.00 - 11.0) / (17.768 - 11.0)  # fuse tip → ≈21.0 m (slender elevon TE)
 AFT_FULL_OBJECTS = {"BodyFlap", "SpeedBrakeL", "SpeedBrakeR"}
 OMS_GREN = ROOT / "OMSPods_grenadier.ac"
 OMS_HERITAGE = ROOT / "OMSPods.ac"

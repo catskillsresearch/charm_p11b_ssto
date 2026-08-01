@@ -40,10 +40,10 @@ Prefix: `/fdm/jsbsim/systems/grenadier/engine/`
 | `air-scale` | double | Applied density scale for current σ (0 if stalled) |
 | `rho-slugft3` | double | Ambient density mirror |
 | `rho-sl-slugft3` | double | Sea-level reference (default 0.0023769) |
-| `sigma1-stall-frac` | double | σ1 hard stall below this air-frac (default 0.15 ≈ 50 kft) |
+| `sigma1-stall-frac` | double | σ1 hard stall below this air-frac (default 0.12) |
 | `sigma2-stall-frac` | double | σ2 hard stall below this air-frac (default 0.025) |
-| `sigma1-air-exp` | double | σ1 thrust ∝ air-frac^exp (default 1.0) |
-| `sigma2-air-exp` | double | σ2 thrust ∝ air-frac^exp (default 0.9) |
+| `sigma1-air-exp` | double | σ1 thrust ∝ air-frac^exp (default 0.65) |
+| `sigma2-air-exp` | double | σ2 thrust ∝ air-frac^exp (default 0.70) |
 | `water-kg` | double | Carried water |
 | `water-flow-kgps` | double | σ3 mass flow |
 | `water-flow-peak-kgps` | double | σ3 \(\dot m\) at throttle=1 |
@@ -56,8 +56,8 @@ Prefix: `/fdm/jsbsim/systems/grenadier/engine/`
 
 | Stage | Sensor gate (default) | Other |
 |-------|----------------------|-------|
-| σ1 | `air-frac` ≥ `sigma1-stall-frac` (0.15) | Inlet open; thrust ∝ air-frac |
-| σ2 | `alt-ft` ≥ `sigma2-alt-ft` (25000) **and** `air-frac` ≥ `sigma2-stall-frac` (0.025) | Inlet open; thrust ∝ air-frac^0.9 |
+| σ1 | `air-frac` ≥ `sigma1-stall-frac` (0.12) | Inlet open; thrust ∝ air-frac^0.65 |
+| σ2 | `alt-ft` ≥ `sigma2-alt-ft` (12000) **and** `air-frac` ≥ `sigma2-stall-frac` (0.025) | Inlet open; thrust ∝ air-frac^0.70 |
 | σ3 | `alt-ft` ≥ `sigma3-alt-ft` (130000) | `inlet-sealed` = 1; water > 10 kg; no air scale |
 
 Altitude / stall floors are editable props for tuning. Stage command stays **manual**

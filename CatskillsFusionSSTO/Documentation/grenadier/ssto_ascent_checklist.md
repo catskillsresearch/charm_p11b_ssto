@@ -41,14 +41,14 @@ view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
 | 29 | Keypad | — | `Shift+B` → release parking brake | — |
 | 30 | Keypad | — | Hold `KP 9` → `THR 100` | Num Lock ON; verify `CPL 1`, thrust / `DRAW` rising |
 | 31 | Keypad | — | Tap `KP 0` / `KP Enter` | Small NWS taps for centerline. Num Lock ON |
-| 32 | Display R2 | PLT outboard MDU / PFD | Observe PFD / HUD → **~210 KIAS** | Not sheet panel R2 |
-| 33 | Keypad | — | `KP 2` → gentle nose-up | At ~200–220 KIAS (Plan A loft). Num Lock ON |
-| 34 | Keypad | — | `KP 5`, then small `KP 2` / `KP 8` | Trim a **shallow** climb at ~240–280 KIAS — avoid chasing pitch into stall/dive. Num Lock ON |
-| 35 | Keypad | — | `g` → gear **UP** | Grenadier retracts in flight (`Shift+G` down). Stay Stage 1 until STAGE page recommends Stage 2 |
+| 32 | Display R2 | PLT outboard MDU / PFD | Observe PFD / HUD → **~85–90 KEAS** | Not sheet panel R2; HUD airspeed is **KEAS** |
+| 33 | Keypad | — | `KP 2` → gentle nose-up | At **~80–90 KEAS** (slow-path loft). Num Lock ON |
+| 34 | Keypad | — | `KP 5`, then small `KP 2` / `KP 8` | Trim a **shallow** climb at **~110–125 KEAS** — do not haul into stall. Num Lock ON |
+| 35 | Keypad | — | `g` → gear **UP** | Grenadier retracts in flight (`Shift+G` down). STAGE + to σ2 from **~12,000 ft** when MAX/GO allow |
 
 **Control-surface check (steps 8–12) is mandatory before taxi.** If a surface does not move with BATT and Flight Controller Power ON, stop — do not release the parking brake.
 
-**~200–220 KIAS** rotate / **240–280 KIAS** shallow climb are provisional Plan A loft targets (600 m² / 38 m wing), not certified V-speeds.
+**HUD units (use these in the cockpit):** airspeed **KEAS**, altitude **ft**. Provisional targets: rotate **~80–90 KEAS**, σ1 shallow climb **~110–125 KEAS** at ~**2°** path (900 m² / **60 m** wing, AR≈4, paper σ1 T/W≈0.28) — not certified V-speeds.
 
 Keypad: `2/8` elevon, `4/6` roll, `0/Enter` rudder/NWS, `5` center, `9/3` throttle. Hold to drive a surface; tap for runway corrections.
 
@@ -116,17 +116,106 @@ Do **not** start heritage APUs. **BATT** powers electric hyd packs so nosewheel 
 9. Confirm CHARM CRT **mode = POWER** and bus MW rising.
 
 ### 2. Engine (center console — not a “MAIN ENGINE” button)
-There is no power-up button for the single nozzle. After CHARM is in **POWER**:
 
-1. Confirm **CMD 1** on the STAGE CRT. Use the left/right black **STG** pushbuttons for Stage −/+.
-2. Hold `KP 9` to throttle up for the takeoff roll. The visible heritage center throttle is not the Grenadier command source.
-3. Climb on σ1 while air is dense; thrust falls with density and stalls near ~50 kft — Stage + to σ2 when MAX/GO allow (inlets open).
-4. σ2 also fades in thin air; before it stalls: seal inlets, confirm water, Stage + to σ3.
-5. MECO / circularize on bus; RCS for attitude only.
+There is no power-up button for the single nozzle. After CHARM is in **POWER**, open the **STAGE** CRT (`CMD` / `MAX` / `GO` / `SEAL` / `THR`) and fly the four slow-path segments below. Stage command is manual: left/right black **STG** pushbuttons (former SRB/ET SEP) for Stage −/+. Throttle is `KP 9` / `KP 3` only — the heritage center throttle is not the Grenadier command source.
 
-Ignore blanked **MAIN ENGINE LEFT/RIGHT** shutdown and FUEL CELL REAC VLV labels. The former SRB/ET SEP pushbuttons are now explicitly relabeled **STAGE − / +**; their stack-separation behavior is removed.
+Ignore blanked **MAIN ENGINE LEFT/RIGHT** shutdown and FUEL CELL REAC VLV labels.
 
-### 3. If something breaks
+## Ascent stages (slow path)
+
+Plan A TA profile: **900 m² / 60 m** wing (AR≈4), paper thrust freeze (σ1 T/W≈0.28 at GLOW — wing-borne climb, not a vertical rocket). Pad to ISS ≈ **5 h** total.
+
+**Units match the HUD / cockpit:** airspeed **KEAS** (HUD tape / readout from equivalent airspeed), altitude **ft**, climb **fpm**, along-track **nmi**. At high altitude KEAS falls toward zero even as true speed rises — σ2/σ3 energy targets are therefore also given as **fps** (relative / inertial scale). Speeds and times are provisional; σ2/σ3 durations follow the paper energy freeze. Along-track is path length while thrusting, not great-circle distance from Edwards.
+
+**σ2 is not Shuttle main engines.** In dense air (teens of kft) nose-down acceleration tops out near **Mach ~0.85 / ~400+ KEAS** where drag rise meets density-derated thrust. That wall is expected. Later, true speed rises while HUD KEAS falls — fly energy / STAGE cues, not “more KEAS forever.”
+
+### Takeoff roll (σ1)
+
+| | |
+|--|--|
+| Stage | σ1 (EDF) — confirm `CMD 1` `MAX≥1` `GO 1` `PLANT 1` on STAGE CRT |
+| Speed | 0 → **~85–90 KEAS** |
+| Climb rate | 0 (on runway) |
+| Time | ≈ **18 s** |
+| Heading | KEDW **Rwy 22** (~224°) |
+| Altitude | **0 ft** |
+| Along-track | ≈ **0.2 nmi** |
+
+Release the parking brake (`Shift+B`), hold `KP 9` to `THR 100`, and verify `CPL 1` with thrust / `DRAW` rising. Keep the nosewheel on centerline with small `KP 0` / `KP Enter` taps. Rotate with a gentle `KP 2` at **~80–90 KEAS** — do **not** wait for a high KEAS that puts you on the stall edge. Gear stays **DOWN** until you are cleanly airborne and trimmed.
+
+### Stage 1 → Stage 2 (σ1)
+
+| | |
+|--|--|
+| Stage | σ1 until handoff; then **STAGE +** → σ2 |
+| Speed | Shallow climb at **~110–125 KEAS** |
+| Climb rate | ≈ **1,000–1,500 fpm** (path ~**2°** — not a zoom) |
+| Time | ≈ **13 min** |
+| Heading | Runway / departure heading |
+| Altitude | **0 → 12,000 ft** |
+| Along-track | ≈ **24 nmi** |
+
+Trim a **shallow** climb — small `KP 2` / `KP 8` after `KP 5` center. Hauling the nose bleeds energy and puts you back on the stall. Retract gear (`g`) once climbing. Watch STAGE CRT: when HUD altitude approaches **~12,000 ft** and `MAX` / `GO` allow σ2, press the right black **STG** (**STAGE +**). Do not wait until the EDF is gasping in thinner air; the slow-path gate opens σ2 here on purpose.
+
+### Stage 2 → Stage 3 (σ2)
+
+| | |
+|--|--|
+| Stage | σ2 (air plasma); inlets **open** |
+| Speed | Early climb **~150–200 KEAS**; dense-air wall ~**400+ KEAS / M0.85**. Then KEAS falls as true speed rises. Energy target ≈ **11,500 fps** at seal (Mach_seal ≈ 11) |
+| Climb rate | Hold **~1,000–1,500 fpm** / ~**2°** path early; segment average ≈ **4,100 fpm** is mostly later energy into speed |
+| Time | **28.7 min** (paper \(t_2\)) |
+| Heading | Mission azimuth toward the **ISS plane** (51.6° class) |
+| Altitude | **12,000 → 130,000 ft** (seal) |
+| Along-track | ≈ **1,670 nmi** |
+
+Do **not** chase zoom climbs or a fixed high KEAS. On the STAGE CRT watch thrust, `DRAW`, and `REC` / seal cues. Before aero authority dies, engage RCS (below). Before σ2 stalls in rarefied air: set **SEAL** (inlets sealed), confirm water inventory, and when `MAX` / `GO` allow, **STAGE +** to σ3.
+
+### RCS when the air runs out
+
+The single nozzle is **axial thrust only** — it does not steer. Direction/attitude in thin air is **heritage Shuttle RCS / DAP** (OMS pods are RCS-only on Grenadier).
+
+| | |
+|--|--|
+| Engage | **`Ctrl+m`** cycles control mode → look for HUD string **`RCS ROT DAP-A`** (or similar). Or Panel **A6** Orbital DAP (AUTO / INRTL / LVLH / FREE, DAP A/B). |
+| Stick (RHC) | Same axes command **rotation** jets, not elevons. |
+| Translate (THC) | Press **`m`** to toggle RHC ↔ THC. HUD string becomes **`RCS TRANS …`**. Keypad then maps to **body translate**, including reverse. |
+| Automatic? | **Not by altitude.** Heritage auto-launch arms RCS after MECO/ET-sep events; Grenadier ascent does **not** auto-hand over when qbar falls — you switch. |
+| HUD | Control-mode string (`/controls/shuttle/control-system-string`) — e.g. `RCS ROT DAP-A` vs `RCS TRANS DAP-A`. HUD still shows body-flap / gear / speedbrake; it does **not** paint per-jet RCS pulses. |
+| MDU | DPS **SPEC 20** (DAP config), **SPEC 23** (RCS jet status). Thruster flames are external VFX when jets fire. |
+| Propellant | FWD / aft RCS tanks (OMS/RCS gauges) — keep inventory for attitude through σ3 / insertion. |
+
+**THC keypad map** (Num Lock ON; only after `m` → TRANS — not the main-engine throttle):
+
+| Key | THC translate |
+|-----|----------------|
+| `KP 0` | **−X aft** (backwards) |
+| `KP Enter` | **+X forward** |
+| `KP 4` / `KP 6` | **±Y** left / right |
+| `KP 2` / `KP 8` | **±Z** up / down (elevator sense) |
+| `KP 5` | center / stop pulse |
+| `KP 9` / `KP 3` | still **CHARM throttle** — not RCS ±X |
+
+`KP 9` only opens the big nozzle; it cannot fire RCS aft. For reverse Δv use **`m` → THC → `KP 0`**.
+
+Switch to RCS **before** elevons go soft (late σ2 / seal). Use RHC for attitude, THC when you need translate (including backwards); the engine still provides the long axial Δv in σ3.
+
+### Stage 3 → ISS (σ3)
+
+| | |
+|--|--|
+| Stage | σ3 (water plasma); `SEAL 1`, water &gt; ~10 kg |
+| Speed | ≈ **11,500 → 25,200 fps** (ISS circular ~1,310,000 ft — not Earth escape). HUD **KEAS** is not the useful cue here |
+| Climb rate | ≈ **4,500 fpm** geometric average over the segment |
+| Time | **4.33 h** (paper \(t_3\)) |
+| Heading | Orbital / plane-change margin |
+| Altitude | **130,000 → ~1,310,000 ft** |
+| Along-track | ≈ **47,000 nmi** |
+
+This is a long, mostly horizontal insertion burn at T/W≈0.03 — not standing on the tail. The ~47,000 nmi figure is **path length** at orbital speeds over 4.3 h (multiple Earth revolutions of arc), not “Edwards to ISS in a straight line.” Circularize on the bus when apoapsis / velocity match the ISS target; use RCS for attitude only. MECO when insertion is complete.
+
+### If something breaks
+
 - **SCRAM**: Main Eng Limit → **Enable** (center console; keep that switch).
 
 ## CDR vs PLT

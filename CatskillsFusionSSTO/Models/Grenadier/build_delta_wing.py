@@ -3,8 +3,8 @@
 
 The OV planform is a cranked glove: warping it to Plan A span/chord produced
 SR-71-like chines that suddenly widen, plus see-through notches at the elevons.
-JSBSim Plan A assumes an equivalent fat delta (S≈600 m², b≈38 m), so build that
-shape directly instead of stretching heritage topology:
+JSBSim Plan A assumes an equivalent slender cropped delta (S≈900 m², b≈60 m),
+so build that shape directly instead of stretching heritage topology:
 
   * delete every fuselage/heatshield surface outboard of the body wall at wing
     level (the old glove + strake skins),
@@ -35,25 +35,27 @@ from pathlib import Path
 # and the underside must be flat and level with the boat rather than an airfoil
 # belly curving up away from it.
 Z_ROOT = 2.10  # root rib, well inboard of the hull chine and of the bay opening
-Z_TIP = 19.05  # tip → span ≈ 38.1 m
-X_LE_ROOT = -2.00
-X_LE_TIP = 10.20
-X_TE = 15.05  # straight elevon hinge line
+# High-AR slow-path loft: same S≈900 m², span 60 m → AR≈4 (was 45 m / AR≈2.25).
+# Chord scaled ~0.762 about the elevon hinge so area holds while induced drag falls.
+Z_TIP = 30.00  # tip → span ≈ 60.0 m
+X_LE_ROOT = 1.05
+X_LE_TIP = 10.49
+X_TE = 17.20  # straight elevon hinge line (unchanged)
 
 Y_LOWER_ROOT = -5.230  # flat underside, just under the OV boat plane (-5.20)
 Y_LOWER_TIP = -5.020
-T_MAX_ROOT = 1.060  # full thickness at the max-thickness station
-T_MAX_TIP = 0.560
-T_TE_ROOT = 0.760  # full thickness at the blunt TE (sets the elevon LE)
-T_TE_TIP = 0.400
+T_MAX_ROOT = 0.900  # thinner section with shorter chord
+T_MAX_TIP = 0.400
+T_TE_ROOT = 0.620  # full thickness at the blunt TE (sets the elevon LE)
+T_TE_TIP = 0.280
 
 # Elevons: hinge on X_TE, trailing edge tapering aft of the fin/boat-tail.
-X_ELEVON_LE = 15.02  # slight overlap so the hinge never opens a slit
-X_ELEVON_TE_ROOT = 19.70
-X_ELEVON_TE_TIP = 18.40
-T_ELEVON_TE = 0.16  # blunt trailing edge thickness
+X_ELEVON_LE = 17.17  # slight overlap so the hinge never opens a slit
+X_ELEVON_TE_ROOT = 21.01
+X_ELEVON_TE_TIP = 19.79
+T_ELEVON_TE = 0.14  # blunt trailing edge thickness
 Z_ELEVON_ROOT = 3.05  # clear of the body flap, which reaches |z| = 3.02
-Z_ELEVON_SPLIT = 11.94  # inboard/outboard seam
+Z_ELEVON_SPLIT = 18.80  # inboard/outboard seam (scaled with span)
 ELEVON_SEAM = 0.015  # half the inboard/outboard slit; small enough not to show ground
 
 # Chord fractions of the airfoil loop, LE → TE, and thickness multipliers.
