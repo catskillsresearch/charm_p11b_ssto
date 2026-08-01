@@ -345,32 +345,41 @@ def build_nozzle():
     b.disk("grenadier-throat-bulkhead-face", 1.75, 13.55, segs, mat_tps_dk, normal="+x", twosided=True)
 
     # --- Outer bell (opaque) ---
+    # Plan A wing TE / elevons end ≈19.6 m; hang the exit just past that so the
+    # combined-cycle bell is not dwarfed by the lofted flaps.
     bell_outer = [
         (14.45, 2.15),
-        (14.75, 2.25),
-        (15.15, 2.40),
-        (15.60, 2.55),
-        (16.05, 2.65),
-        (16.40, 2.72),
+        (14.90, 2.28),
+        (15.50, 2.42),
+        (16.20, 2.55),
+        (17.00, 2.64),
+        (17.80, 2.70),
+        (18.60, 2.74),
+        (19.40, 2.76),
+        (20.20, 2.78),
+        (20.55, 2.80),
     ]
     b.lathe_shell("grenadier-nozzle-outer", bell_outer, segs, mat_bell, outward=True, twosided=False)
 
     # --- Inner bell (heat-stained, normals face inward so throat reads solid) ---
     bell_inner = [
         (14.50, 2.00),
-        (14.80, 2.10),
-        (15.20, 2.25),
-        (15.65, 2.40),
-        (16.10, 2.50),
-        (16.37, 2.55),
+        (15.00, 2.12),
+        (15.70, 2.28),
+        (16.50, 2.40),
+        (17.40, 2.50),
+        (18.40, 2.56),
+        (19.40, 2.60),
+        (20.20, 2.62),
+        (20.50, 2.63),
     ]
     b.lathe_shell("grenadier-nozzle-inner", bell_inner, segs, mat_heat, outward=False, twosided=False)
 
     # Exit lip ring
     lip = [
-        (16.35, 2.55),
-        (16.43, 2.74),
-        (16.50, 2.70),
+        (20.45, 2.63),
+        (20.55, 2.82),
+        (20.65, 2.78),
     ]
     b.lathe_shell("grenadier-nozzle-lip", lip, segs, mat_petal, outward=True)
 
@@ -399,8 +408,8 @@ def build_nozzle():
         verts = []
         faces = []
         # strip along outer profile, slightly proud
-        xs = [14.45, 15.0, 15.6, 16.2, 16.38]
-        rs = [2.18, 2.38, 2.55, 2.68, 2.74]
+        xs = [14.45, 15.5, 16.5, 17.5, 18.5, 19.5, 20.50]
+        rs = [2.18, 2.42, 2.58, 2.68, 2.74, 2.78, 2.82]
         for x, r in zip(xs, rs):
             verts.append(_v(x, CY + r * math.sin(a0), CZ + r * math.cos(a0)))
             verts.append(_v(x, CY + r * math.sin(a1), CZ + r * math.cos(a1)))

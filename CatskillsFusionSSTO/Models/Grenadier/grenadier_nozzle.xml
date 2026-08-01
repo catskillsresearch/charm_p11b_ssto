@@ -48,7 +48,7 @@
   <model>
     <path>Aircraft/CatskillsFusionSSTO/Models/Effects/Grenadier/grenadier_exhaust.xml</path>
     <offsets>
-      <x-m>16.50</x-m>
+      <x-m>20.65</x-m>
       <y-m>0.0</y-m>
       <z-m>-2.45</z-m>
       <pitch-deg>-6.0</pitch-deg>

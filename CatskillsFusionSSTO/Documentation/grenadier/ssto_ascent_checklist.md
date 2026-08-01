@@ -41,14 +41,14 @@ view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
 | 29 | Keypad | — | `Shift+B` → release parking brake | — |
 | 30 | Keypad | — | Hold `KP 9` → `THR 100` | Num Lock ON; verify `CPL 1`, thrust / `DRAW` rising |
 | 31 | Keypad | — | Tap `KP 0` / `KP Enter` | Small NWS taps for centerline. Num Lock ON |
-| 32 | Display R2 | PLT outboard MDU / PFD | Observe PFD / HUD → **225 KIAS** | Not sheet panel R2 |
-| 33 | Keypad | — | `KP 2` → ~10–12° nose-up | At 225 KIAS. Num Lock ON |
-| 34 | Keypad | — | `KP 5`, then small `KP 2` / `KP 8` | Center then trim pitch. Num Lock ON |
+| 32 | Display R2 | PLT outboard MDU / PFD | Observe PFD / HUD → **~210 KIAS** | Not sheet panel R2 |
+| 33 | Keypad | — | `KP 2` → gentle nose-up | At ~200–220 KIAS (Plan A loft). Num Lock ON |
+| 34 | Keypad | — | `KP 5`, then small `KP 2` / `KP 8` | Trim a **shallow** climb at ~240–280 KIAS — avoid chasing pitch into stall/dive. Num Lock ON |
 | 35 | Keypad | — | `g` → gear **UP** | Grenadier retracts in flight (`Shift+G` down). Stay Stage 1 until STAGE page recommends Stage 2 |
 
 **Control-surface check (steps 8–12) is mandatory before taxi.** If a surface does not move with BATT and Flight Controller Power ON, stop — do not release the parking brake.
 
-**225 KIAS** is the current provisional rotation target for the enlarged Plan-A FDM, not a flight-tested certified V-speed.
+**~200–220 KIAS** rotate / **240–280 KIAS** shallow climb are provisional Plan A loft targets (600 m² / 38 m wing), not certified V-speeds.
 
 Keypad: `2/8` elevon, `4/6` roll, `0/Enter` rudder/NWS, `5` center, `9/3` throttle. Hold to drive a surface; tap for runway corrections.
 

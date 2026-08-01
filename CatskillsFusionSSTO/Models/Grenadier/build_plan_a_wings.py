@@ -1,31 +1,38 @@
 #!/usr/bin/env python3
 """Stretch Shuttle wing mesh to Plan A span/area (visual matches FDM).
 
-Heritage OV: b≈23.79 m, S≈250 m². Plan A: b≈33 m, S≈480 m².
-  k_span  = 33/23.79 ≈ 1.387
-  k_chord = (480/250)/k_span ≈ 1.385
+Heritage OV: b≈23.79 m, S≈250 m².
+Plan A loft pack: b≈38 m, S≈600 m² (was 33 m / 480 m² first cut).
+  k_span  = 38/23.79 ≈ 1.597
+  k_chord = (600/249.9)/k_span ≈ 1.504
 
 AC axes (shuttle_o2.ac): +X aft, +Y up, +Z right.
 
-Only wing-bearing objects are warped. Fuselage half-width (|Z|≲3.6 m)
-and bay doors stay put. Span map is continuous from the body wall so
-the glove does not tear. Chord grows about the root LE station.
+The span/chord warp only carries the body glove and gear doors to the Plan A
+track. The wing itself comes from build_delta_wing.install_delta_wing(), which
+deletes the OV glove/strake skins and lofts a clean cropped delta with the
+trailing edge on a straight elevon hinge line.
 """
 
 from __future__ import annotations
 
 import math
 import shutil
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from build_delta_wing import install_delta_wing  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]  # Models/
 SRC = ROOT / "shuttle_o2_heritage.ac"
 DST = ROOT / "shuttle_o2_plan_a.ac"
 FALLBACK = ROOT / "shuttle_o2.ac"
 
-# Plan A / heritage
-K_SPAN = 33.0 / 23.79
-K_CHORD = (480.0 / 249.9) / K_SPAN
+# Plan A loft / heritage
+K_SPAN = 38.0 / 23.79
+K_CHORD = (600.0 / 249.9) / K_SPAN
 Z_BODY = 3.60  # fuselage half-width (upper body |z|max ≈ 3.62)
 Z_TIP = 11.93  # outboard elevon tip
 X_PIVOT = -1.50  # root LE-ish (heatshield wing min x ≈ -1.52)
@@ -175,157 +182,73 @@ def rewrite(src: Path, dst: Path) -> None:
 
 
 def hinge_report() -> None:
-    """Print updated elevon hinge suggestions (FG: x aft, y lateral=AC z, z up=AC y)."""
-    # Heritage hinges
-    hinges = [
-        ("left", 9.2, 0.0, -4.1, 8.5, 10.0, -4.1),
-        ("right", 9.2, 0.0, -4.1, 8.5, -10.0, -4.1),
-    ]
-    print("elevon hinge suggestions (animation y = AC z):")
-    for name, x1, y1, z1, x2, y2, z2 in hinges:
-        # Transform as elevon (full wing). Animation y ↔ AC z, z ↔ AC y.
-        ax1, ay1, az1 = transform(x1, z1, y1, "outboard-elevon-left")  # careful mapping
-        # Better: treat (x, anim_z as AC_y, anim_y as AC_z)
-        def map_hinge(x, anim_y, anim_z):
-            ac_x, ac_y, ac_z = x, anim_z, anim_y
-            nx, ny, nz = transform(ac_x, ac_y, ac_z, "outboard-elevon-left")
-            return nx, nz, ny  # back to anim x,y,z
+    """Print the elevon hinge line for SpaceShuttle.xml (FG y = AC z, FG z = AC y)."""
+    import build_delta_wing as dw
 
-        x1n, y1n, z1n = map_hinge(x1, y1, z1)
-        x2n, y2n, z2n = map_hinge(x2, y2, z2)
-        print(
-            f"  {name}: "
-            f"({x1n:.2f},{y1n:.2f},{z1n:.2f}) → ({x2n:.2f},{y2n:.2f},{z2n:.2f})"
-        )
+    # Flat-bottomed sections: the hinge sits mid-height of the blunt trailing edge.
+    root = dw.y_lower(dw.Z_ELEVON_ROOT) + 0.5 * dw.T_TE_ROOT
+    tip = dw.y_lower(dw.Z_TIP) + 0.5 * dw.T_TE_TIP
+    print(
+        "elevon hinge axis (straight, both sides): "
+        f"x={dw.X_TE:.2f}  z={0.5 * (root + tip):.2f}  y=0 → ±{dw.Z_TIP:.2f}"
+    )
 
 
-def _parse_named_verts(lines: list[str], names: set[str]) -> dict[str, list[tuple[float, float, float]]]:
-    out: dict[str, list[tuple[float, float, float]]] = {n: [] for n in names}
-    obj = None
-    collecting = False
-    left = 0
-    for line in lines:
-        if line.startswith("name "):
-            obj = line.split('"')[1] if '"' in line else line.split()[1]
-            collecting = False
-            continue
-        if line.startswith("numvert") and obj in names:
-            left = int(line.split()[1])
-            collecting = True
-            continue
-        if collecting and left > 0:
-            parts = line.split()
-            if len(parts) >= 3:
-                try:
-                    out[obj].append(tuple(map(float, parts[:3])))  # type: ignore[arg-type]
-                except ValueError:
-                    pass
-            left -= 1
-            if left == 0:
-                collecting = False
-    return out
+
+# Plan A chord loft parks elevon TE ≈19.6 m while the heritage boat-tail / fin /
+# OMS still end ≈17.8 m. Stretch the aft body so the tail rides with the flaps;
+# the Grenadier nozzle is rebuilt separately to exit just past that line.
+AFT_PIVOT = 11.0
+AFT_SCALE = (19.40 - 11.0) / (17.768 - 11.0)  # fuse tip → ≈19.4 m
+AFT_FULL_OBJECTS = {"BodyFlap", "SpeedBrakeL", "SpeedBrakeR"}
+OMS_GREN = ROOT / "OMSPods_grenadier.ac"
+OMS_HERITAGE = ROOT / "OMSPods.ac"
 
 
-def _elevon_le_samples(elev_verts: dict[str, list[tuple[float, float, float]]]) -> list[tuple[float, float]]:
-    """(|z|, x_le) samples along both elevons — flap hinge line."""
-    samples: list[tuple[float, float]] = []
-    for verts in elev_verts.values():
-        if not verts:
-            continue
-        xs = [v[0] for v in verts]
-        xmin, xmax = min(xs), max(xs)
-        thr = xmin + 0.18 * (xmax - xmin)
-        for x, _y, z in verts:
-            if x <= thr:
-                samples.append((abs(z), x))
-    samples.sort()
-    # Bin by |z| and keep min x (true LE) per bin
-    bins: dict[float, float] = {}
-    for az, x in samples:
-        key = round(az * 4.0) / 4.0
-        bins[key] = x if key not in bins else min(bins[key], x)
-    return sorted(bins.items())
+def map_aft_x(x: float) -> float:
+    if x <= AFT_PIVOT:
+        return x
+    return AFT_PIVOT + (x - AFT_PIVOT) * AFT_SCALE
 
 
-def _interp_le(samples: list[tuple[float, float]], az: float) -> float | None:
-    if not samples:
-        return None
-    if az <= samples[0][0]:
-        return samples[0][1]
-    if az >= samples[-1][0]:
-        return samples[-1][1]
-    for (z0, x0), (z1, x1) in zip(samples, samples[1:]):
-        if z0 <= az <= z1:
-            t = 0.0 if z1 <= z0 else (az - z0) / (z1 - z0)
-            return x0 + t * (x1 - x0)
-    return None
+def aft_body_weight(x: float, y: float, z: float, obj: str) -> float:
+    """1 = follow aft stretch (boat-tail / fin), 0 = leave (wing skin)."""
+    if obj in AFT_FULL_OBJECTS:
+        return 1.0 if x > AFT_PIVOT else 0.0
+    if obj not in ("fuselage", "heatshield"):
+        return 0.0
+    if x <= AFT_PIVOT:
+        return 0.0
+    az = abs(z)
+    if az < 0.85 and y > 1.2:  # vertical fin
+        return 1.0
+    if az < 3.85:  # boat-tail / OMS mount / aft belly
+        return 1.0
+    if az < 5.0:  # soft glove so wing root does not tear
+        return max(0.0, 1.0 - (az - 3.85) / 1.15)
+    return 0.0
 
 
-def pull_wing_te_to_flap_line(path: Path) -> None:
-    """Pull wing TE aft to a straight elevon-LE flap line (no overlay 'tape').
-
-    Plan A chord stretch leaves the TE short/curved inboard of the tip; the old
-    fix laid scotch-tape skins over the gap. Instead, move the wing mesh's own
-    trailing-edge verts aft onto the elevon leading-edge line.
-    """
+def _rewrite_verts(
+    path: Path,
+    want: set[str] | None,
+    weight_fn,
+) -> tuple[int, float]:
+    """Apply map_aft_x blended by weight_fn. want=None means all objects."""
     lines = path.read_text(errors="ignore").splitlines(keepends=True)
-    elev_names = {
-        "inboard-elevon-left",
-        "inboard-elevon-right",
-        "outboard-elevon-left",
-        "outboard-elevon-right",
-    }
-    wing_names = {"fuselage", "heatshield"}
-    elev = _parse_named_verts(lines, elev_names)
-    wing = _parse_named_verts(lines, wing_names)
-    samples = _elevon_le_samples(elev)
-    if len(samples) < 2:
-        print("pull_wing_te_to_flap_line: no elevon LE samples — skipped")
-        return
-
-    # Per-|z| bin: aft-most x and chord. Keep bins that look like a real wing
-    # section (decent aft TE, or enough chord that the aft lip is a cutout edge).
-    bin_xs: dict[float, list[float]] = {}
-    for verts in wing.values():
-        for x, y, z in verts:
-            az = abs(z)
-            if az < 2.55 or az > 16.7:
-                continue
-            if y > -3.70 or y < -5.45:
-                continue
-            key = round(az * 4.0) / 4.0
-            bin_xs.setdefault(key, []).append(x)
-    local_te: dict[float, float] = {}
-    for key, xs in bin_xs.items():
-        te, x0 = max(xs), min(xs)
-        chord = te - x0
-        if te >= 4.0 or (chord >= 1.5 and te >= 0.8):
-            local_te[key] = te
-
-    def near_local_te(x: float, az: float) -> float | None:
-        """Return local TE x if this vert sits on the TE lip."""
-        best = None
-        best_dz = 0.40
-        for key, te in local_te.items():
-            dz = abs(key - az)
-            if dz <= best_dz and x >= te - 0.40:
-                best_dz = dz
-                best = te
-        return best
-
     out: list[str] = []
     obj = None
     collecting = False
     left = 0
-    n_fix = 0
-    max_pull = 0.0
+    n_move = 0
+    max_dx = 0.0
     for line in lines:
         if line.startswith("name "):
             obj = line.split('"')[1] if '"' in line else line.split()[1]
             collecting = False
             out.append(line)
             continue
-        if line.startswith("numvert") and obj in wing_names:
+        if line.startswith("numvert") and (want is None or obj in want):
             left = int(line.split()[1])
             collecting = True
             out.append(line)
@@ -335,24 +258,14 @@ def pull_wing_te_to_flap_line(path: Path) -> None:
             if len(parts) >= 3:
                 try:
                     x, y, z = float(parts[0]), float(parts[1]), float(parts[2])
-                    az = abs(z)
-                    tgt = _interp_le(samples, az)
-                    if (
-                        tgt is not None
-                        and 2.55 <= az <= 16.7
-                        and -5.45 <= y <= -3.70
-                        and x >= 0.5
-                    ):
-                        te = near_local_te(x, az)
-                        # Only pull TE lip verts that fall short of the flap line.
-                        if te is not None and x < tgt - 0.02:
-                            new_x = tgt - 0.03
-                            pull = new_x - x
-                            # Real shortfalls are ~0.5–13 m (inboard cutout → flap).
-                            if 0.02 < pull <= 13.0:
-                                x = new_x
-                                n_fix += 1
-                                max_pull = max(max_pull, pull)
+                    w = weight_fn(x, y, z, obj or "")
+                    if w > 1e-6:
+                        x2 = x + w * (map_aft_x(x) - x)
+                        dx = x2 - x
+                        if abs(dx) > 0.01:
+                            x = x2
+                            n_move += 1
+                            max_dx = max(max_dx, dx)
                     rest = " ".join(parts[3:])
                     nl = "\n" if line.endswith("\n") else ""
                     line = f"{x:.6f} {y:.6f} {z:.6f}" + (f" {rest}" if rest else "") + nl
@@ -364,20 +277,92 @@ def pull_wing_te_to_flap_line(path: Path) -> None:
             out.append(line)
             continue
         out.append(line)
-
     path.write_text("".join(out))
-    z0, x0 = samples[0]
-    z1, x1 = samples[-1]
+    return n_move, max_dx
+
+
+def stretch_aft_tail(path: Path) -> None:
+    """Pull boat-tail, fin, body flap and speedbrake aft toward elevon TE."""
+    names = {"fuselage", "heatshield"} | AFT_FULL_OBJECTS
+    n_move, max_dx = _rewrite_verts(path, names, aft_body_weight)
     print(
-        f"wing TE → flap line: moved {n_fix} TE verts (max pull {max_pull:.2f} m); "
-        f"LE line |z|={z0:.2f}→{z1:.2f} x={x0:.2f}→{x1:.2f}"
+        f"aft tail stretch: moved {n_move} verts (max +x {max_dx:.2f} m), "
+        f"scale={AFT_SCALE:.3f} from x={AFT_PIVOT:.1f}"
     )
+
+
+def stretch_oms_pods() -> None:
+    """Re-strip heritage OMS pods then apply the same aft stretch."""
+    strip = Path(__file__).resolve().parent / "strip_oms_engines.py"
+    if OMS_HERITAGE.exists() and strip.exists():
+        import runpy
+
+        runpy.run_path(str(strip), run_name="__main__")
+    if not OMS_GREN.exists():
+        print("stretch_oms_pods: OMSPods_grenadier.ac missing — skipped")
+        return
+
+    def w(x, y, z, obj):
+        return 1.0 if x > AFT_PIVOT else 0.0
+
+    n_move, max_dx = _rewrite_verts(OMS_GREN, None, w)
+    print(f"OMS pods aft stretch: moved {n_move} verts (max +x {max_dx:.2f} m)")
+
+
+def stretch_grenadier_aft_meshes() -> None:
+    """Rebuild scoop/internals from unscaled source, then apply aft stretch once."""
+    prop = Path(__file__).resolve().parent / "build_grenadier_propulsion_ac.py"
+    if prop.exists():
+        import runpy
+        import sys
+
+        gdir = str(Path(__file__).resolve().parent)
+        if gdir not in sys.path:
+            sys.path.insert(0, gdir)
+        ns = runpy.run_path(str(prop))
+        # Nozzle is authored already in Plan A length — do not aft-stretch it.
+        ns["build_scoop"]()
+        ns["build_internals"]()
+
+    for rel in (
+        "grenadier_scoop.ac",
+        "grenadier_internals.ac",
+    ):
+        p = Path(__file__).resolve().parent / rel
+        if not p.exists():
+            continue
+
+        def w(x, y, z, obj, _x0=AFT_PIVOT):
+            return 1.0 if x > _x0 else 0.0
+
+        n_move, max_dx = _rewrite_verts(p, None, w)
+        print(f"{rel}: aft stretch moved {n_move} verts (max +x {max_dx:.2f} m)")
+
+
+
+def rebuild_long_nozzle() -> None:
+    """Regenerate petal bell with Plan A exit (past elevon TE); no aft stretch."""
+    prop = Path(__file__).resolve().parent / "build_grenadier_propulsion_ac.py"
+    if not prop.exists():
+        return
+    import runpy
+    import sys
+
+    gdir = str(Path(__file__).resolve().parent)
+    if gdir not in sys.path:
+        sys.path.insert(0, gdir)
+    ns = runpy.run_path(str(prop))
+    ns["build_nozzle"]()
 
 
 def main() -> None:
     src = ensure_heritage()
     rewrite(src, DST)
-    pull_wing_te_to_flap_line(DST)
+    install_delta_wing(DST)
+    stretch_aft_tail(DST)
+    stretch_oms_pods()
+    stretch_grenadier_aft_meshes()
+    rebuild_long_nozzle()
     hinge_report()
     print(f"heritage={SRC.name}  plan_a={DST.name}")
 

@@ -20,21 +20,21 @@
 
 
  <!--
-  Plan A FDM pack (CATSKILLS-SSTO-TA-GRENADIER, arxiv.md §1.2b):
-  Heritage Shuttle aero *coefficients* retained; geometric metrics + mass
-  scaled so JSBSim sees Plan A size/weight for runway flyability.
-    length ×1.396 (37.24→52 m), span ×1.387 (23.79→33 m),
-    S ×1.921 (249.9→480 m²), empty ≈171.7 t dry (no cargo).
-  Visual mesh is still heritage-sized — FDM-only stretch for now.
+  Plan A loft pack (CATSKILLS-SSTO-TA-GRENADIER):
+  Geometric metrics + mass for runway climb; aero coeffs tuned for denser-air
+  loft (CLα, Clp/Clb, pitch damping) while staying Shuttle-family tables.
+    length ×1.396 (37.24→52 m), span ×1.597 (23.79→38 m),
+    S ×2.401 (249.9→600 m²), empty ≈171.7 t dry (no cargo).
+  Visual: Models/shuttle_o2_plan_a.ac (build_plan_a_wings.py).
  -->
  <metrics>
-   <wingarea  unit="FT2"> 5166.68 </wingarea>
-   <wingspan  unit="FT" >  108.27 </wingspan>
-   <wing_incidence>          2.00 </wing_incidence>
-   <chord     unit="FT" >   47.74 </chord>
-   <htailarea unit="FT2"> 1292.31 </htailarea>
+   <wingarea  unit="FT2"> 6458.35 </wingarea>
+   <wingspan  unit="FT" >  124.67 </wingspan>
+   <wing_incidence>          3.50 </wing_incidence>
+   <chord     unit="FT" >   51.80 </chord>
+   <htailarea unit="FT2"> 1615.39 </htailarea>
    <htailarm  unit="FT" >   76.77 </htailarm>
-   <vtailarea unit="FT2"> 1033.85 </vtailarea>
+   <vtailarea unit="FT2"> 1292.31 </vtailarea>
    <vtailarm  unit="FT" >   76.77 </vtailarm>
    <location name="AERORP" unit="M">
      <x>   3.77 </x>
@@ -137,7 +137,7 @@
 
  <ground_reactions>
 
-	<!-- Plan A: gear X×1.396, track Y×1.387; z kept (−7.97 m) for level park.
+	<!-- Plan A loft: gear X×1.396, track Y×1.597 (span 38 m); z (−7.97 m) level park.
 	     Spring/damping × mass ratio (~2.10) for ~172 t dry. -->
 	<contact type="BOGEY" name="NOSE">
 		<location unit="M">
@@ -159,7 +159,7 @@
 <contact type="BOGEY" name="LEFT_MAIN">
 		<location unit="M">
 		<x> 5.03 </x>
-		<y> -5.82 </y>
+		<y> -6.70 </y>
 		<z>-7.97 </z>
 		</location>
 		<static_friction> 0.40 </static_friction>
@@ -175,7 +175,7 @@
 	<contact type="BOGEY" name="RIGHT_MAIN">
 		<location unit="M">
 		<x> 5.03 </x>
-		<y> 5.82 </y>
+		<y> 6.70 </y>
 		<z>-7.97 </z>
 		</location>
 		<static_friction> 0.40 </static_friction>
@@ -3040,16 +3040,18 @@
 	</product>
   </function>
 
+  <!-- Plan A loft: steeper CLα (+~28%) and softer quadratic so moderate-α
+       climb (≈8–12°) has margin instead of riding the mush/stall edge. -->
   <function name="aero/coefficient/CL-basic-parametrization">
 	<product>
 		<sum>
 			<value>-0.053</value>
 			<product>
-				<value>2.73</value>
+				<value>3.50</value>
 				<property>aero/alpha-rad</property>			
 			</product>
 			<product>
-				<value>-1.55</value>
+				<value>-1.40</value>
 				<pow>
 					<property>aero/alpha-rad</property>
 					<value>2.0</value>
@@ -4072,6 +4074,8 @@
            <property>aero/beta-rad</property>
 	   <property>aero/orbiter-config</property>
 	   <value>57.2975</value>
+	   <!-- Plan A loft: stronger dihedral / lateral stability -->
+	   <value>1.65</value>
 	   <sum>
 	   <table>
                   <independentVar lookup="row">velocities/mach</independentVar>
@@ -4139,6 +4143,8 @@
            <property>aero/bi2vel</property>
            <property>velocities/p-aero-rad_sec</property>
 	   <property>aero/orbiter-config</property>
+	   <!-- Plan A loft: roll damping vs ×4 inertia (heritage Clp was too light) -->
+	   <value>1.90</value>
             <table>
                   <independentVar lookup="row">velocities/mach</independentVar>
                   <tableData>
@@ -4205,6 +4211,8 @@
 	  <property>systems/failures/airfoils-roll-condition</property>
 	  <property>systems/apu/hyd-pressure-available</property>
  	  <value>57.2975</value>
+	  <!-- Plan A loft: keep roll authority usable under stronger Clp -->
+	  <value>1.20</value>
 	   <product>
 	   <table>
                   <independentVar lookup="row">velocities/mach</independentVar>
@@ -4393,8 +4401,8 @@
            <property>metrics/cbarw-ft</property>
            <property>aero/ci2vel</property>
            <property>velocities/q-aero-rad_sec</property>
-           <!--<value>-17</value>-->
-	  <value>-70</value>
+           <!-- Plan A loft: damp pitch phugoid (climb↔dive) -->
+	  <value>-100</value>
        </product>
     </function>
 
@@ -4406,7 +4414,7 @@
            <property>metrics/cbarw-ft</property>
            <property>aero/ci2vel</property>
            <property>aero/alphadot-rad_sec</property>
-           <value>-6</value>
+           <value>-10</value>
        </product>
     </function>
     
