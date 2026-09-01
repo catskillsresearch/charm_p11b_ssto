@@ -15,7 +15,7 @@ view-drag); **Esc** releases pointer capture if the view has grabbed the mouse.
 | 3 | Mouse | PLT outboard MDU bezel | **R2 display POWER** rotary → **ON** | Small rotary immediately inboard of the R2 screen; hover says `R2 Power`. This is separate from sheet panel R2. Ctrl = clickable; screen dark until BATT |
 | 4 | R2 | CHARM plant / propulsion controls | **BATT** (APU OPERATE) → **ON** | Mouse; electric hyd live (NWS / brakes / aero). CHARM `V` ~260 |
 | 5 | F8 | PLT HUD | **HUD Power** → **ON**; mode **NORM** | Mouse; brightness AUTO or DAY |
-| 6 | F8 | PLT HUD | **Flight Controller Power** → **ON** | Mouse; auto-ON with BATT — confirm ON |
+| 6 | F8 | Below inboard PLT MDU (R1) | **FLT CNTLR POWER** → **ON** | Guarded toggle, right of **RDR ALTM** (not the HUD brow). Auto-ON with BATT — confirm ON |
 | 7 | Keypad | — | **Num Lock** → **ON** | Required for all KP flight / throttle keys below |
 | 8 | Keypad | — | `v` → external view (wing TE + vertical tail) | Num Lock stays ON; Chase/Helicopter OK |
 | 9 | Keypad | — | Hold `KP 2`, then hold `KP 8` | Elevons TE down then up; watch both wings. Num Lock ON |

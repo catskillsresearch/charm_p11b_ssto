@@ -183,6 +183,41 @@
     </binding>
    </key>-->
 
+   <!-- Num Lock ON: KP_0 is OSG 0xFFB0, not ASCII '0'. Stock FG only binds
+        '0' (48) and Insert (364), so keypad 0 did nothing while KP Enter worked. -->
+   <key n="48">
+    <name>0</name>
+    <desc>Rudder / NWS (opposite KP Enter)</desc>
+    <repeatable type="bool">true</repeatable>
+    <binding>
+     <command>property-adjust</command>
+     <property>/controls/flight/rudder</property>
+     <step type="double">-0.05</step>
+    </binding>
+   </key>
+
+   <key n="256">
+    <name>KP_0 (legacy)</name>
+    <desc>Rudder / NWS (opposite KP Enter)</desc>
+    <repeatable type="bool">true</repeatable>
+    <binding>
+     <command>property-adjust</command>
+     <property>/controls/flight/rudder</property>
+     <step type="double">-0.05</step>
+    </binding>
+   </key>
+
+   <key n="65456">
+    <name>KP_0</name>
+    <desc>Rudder / NWS (opposite KP Enter)</desc>
+    <repeatable type="bool">true</repeatable>
+    <binding>
+     <command>property-adjust</command>
+     <property>/controls/flight/rudder</property>
+     <step type="double">-0.05</step>
+    </binding>
+   </key>
+
    <key n="91">
     <name>[</name>
     <desc>Move rudder left</desc>
